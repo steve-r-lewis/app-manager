@@ -1,0 +1,100 @@
+{
+  "metadataEntity": {
+    "description": "List of AI Models and Hubs API keys",
+    "targetFile": "~/scripts/config/llmRegistry.json",
+    "currentVersion": "1.0.0",
+    "createdAt": "2025-12-17T15:15:00Z",
+    "revisionHistory": [
+      {
+        "schemaVersion": "1.0.0",
+        "archivedAt": "2025-12-17T15:15:00Z",
+        "revisionNote": "Initial document creation and release."
+      }
+    ]
+  },
+  "records": [
+    {
+      "id": "claude",
+      "label": null,
+      "type": null,
+      "model": null,
+      "baseUrl": null,
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_CLAUDE"
+
+    },
+    {
+      "id": "deepseek",
+      "label": "DeepSeek V3",
+      "type": "openai-compatible",
+      "model": "deepseek-chat",
+      "baseUrl": "https://api.deepseek.com",
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_DEEPSEEK"
+    },
+    {
+      "id": "gemini",
+      "label": "Gemini 2.0 Flash",
+      "type": "gemini",
+      "model": "gemini-2.0-flash",
+      "baseUrl": null,
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_GEMINI"
+    },
+    {
+      "id": "grok",
+      "label": null,
+      "type": null,
+      "model": null,
+      "baseUrl": null,
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_GROK"
+
+    },
+    {
+      "id": "kimi",
+      "label": "Kimi (Moonshot)",
+      "type": "openai-compatible",
+      "model": "moonshot-v1-8k",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_KIMI"
+    },
+    {
+      "id": "meta",
+      "label": null,
+      "type": null,
+      "model": null,
+      "baseUrl": null,
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_META"
+    },
+    {
+      "id": "ollama",
+      "label": "Ollama (Local)",
+      "type": "ollama",
+      "model": "llama3:8b",
+      "baseUrl": "http://localhost:11434",
+      "timeOut": 200,
+      "apiKeyEnv": "API_KEY_OLLAMA"
+    },
+    {
+      "id": "openrouter",
+      "label": null,
+      "type": null,
+      "model": null,
+      "baseUrl": null,
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_OPENROUTER"
+    },
+    {
+      "id": "huggingface",
+      "label": null,
+      "type": null,
+      "model": null,
+      "baseUrl": null,
+      "timeOut": null,
+      "apiKeyEnv": "API_KEY_HUGGINGFACE"
+    }
+  ]
+}

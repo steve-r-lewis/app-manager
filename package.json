@@ -1,0 +1,56 @@
+{
+  "name": "app-manager",
+  "version": "1.0.0",
+  "description": "A Typescript based application to manage the codebase source code for my Nuxt4 monorepo layer based projects",
+  "private": true,
+  "main": "appManager.ts",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "administration",
+    "application code manager",
+    "typescript"
+  ],
+  "packageManager": "pnpm@10.25.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steve-r-lewis/app-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/steve-r-lewis/app-manager/issues"
+  },
+  "authors": [
+    {
+      "name": "Steve R Lewis",
+      "email": "me@steve-lewis.uk",
+      "url": "https://www.steve-lewis.uk"
+    }
+  ],
+  "funding": {
+    "type": "individual",
+    "url": "patreon.com/TheModuleFactory"
+  },
+  "scripts": {
+    "appTools": "tsx runApp.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@clack/prompts": "^0.11.0",
+    "@google/generative-ai": "^0.24.1",
+    "@types/node": "^25.0.3",
+    "consola": "^3.4.2",
+    "dotenv": "^17.2.3",
+    "picocolors": "^1.1.1",
+    "simple-git": "^3.30.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitepress": "2.0.0-alpha.15",
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {}
+}
