@@ -1,7 +1,7 @@
 {
   "name": "app-manager",
   "version": "1.0.0",
-  "description": "A Typescript based application to manage the codebase source code for my Nuxt4 monorepo layer based projects",
+  "description": "A Typescript based application to manage the codebase source code for my Nuxt4 based projects",
   "private": true,
   "main": "appManager.ts",
   "type": "module",
