@@ -34,6 +34,9 @@
     "type": "individual",
     "url": "patreon.com/TheModuleFactory"
   },
+	"bin": {
+		"app-manager": "./appManager.ts"
+	},
   "scripts": {
     "appTools": "tsx runApp.ts"
   },

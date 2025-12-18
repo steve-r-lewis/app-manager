@@ -1,3 +1,5 @@
+#!/usr/bin/env -S npx tsx
+
 /**
  * ================================================================================
  *
@@ -23,7 +25,6 @@
  * ================================================================================
  */
 
-#!/usr/bin/env -S npx tsx
 import { main } from './app/app.js';
 import { consola } from 'consola';
 import dotenv from 'dotenv';
