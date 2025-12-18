@@ -1,8 +1,8 @@
 /**
  * ================================================================================
  *
- * @project:    nuxt4-data-generator
- * @file:       ~/scripts/tui/commands/git/syncRepos.ts
+ * @project:    app-manager
+ * @file:       ~/app/commands/git/syncRepos.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:29
