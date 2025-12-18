@@ -17,7 +17,8 @@
       "repositoryName": "GitHub",
       "tokenType": "github",
       "baseURL": "https://api.github.com",
-      "githubOrg": "steve-r-lewis"
+      "githubToken": "GITHUB_TOKEN",
+      "githubOrg": "GITHUB_ORG"
     }
   ]
 }

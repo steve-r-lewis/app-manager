@@ -24,35 +24,62 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { select, isCancel } from '@clack/prompts';
 import { consola } from 'consola';
-import fs from 'fs';
-import path from 'path';
-import '../initEnv';
+import 'dotenv/config';
 
-// IMPORTS
-import type {
-  LLMConfigRecord,
-  LLMRequest,
-  LLMRegistryFile
-} from '../../types/llm.types';
+export type LLMProvider = 'gemini' | 'ollama' | 'kimi' | 'deepseek';
 
-// Driver Signature
-type DriverFunction = (cfg: LLMConfigRecord, req: LLMRequest) => Promise<string>;
+interface LLMRequest {
+  systemPrompt?: string;
+  userPrompt: string;
+  jsonMode?: boolean;
+  temperature?: number;
+}
 
-// ============================================================================
-// 1. Driver Implementations
-// ============================================================================
+class LLMService {
+  private activeProvider: LLMProvider = (process.env.LLM_PROVIDER as LLMProvider) || 'gemini';
 
-const drivers: Record<string, DriverFunction> = {
+  constructor() {
+    // Optional: Warn if keys are missing for the ACTIVE provider only
+    this.validateConfig();
+  }
 
-  // --- Strategy: Google Gemini ---
-  'gemini': async (cfg, req) => {
-    if (!cfg.apiKey) throw new Error(`Missing API Key for ${cfg.label}`);
+  private validateConfig() {
+    if (this.activeProvider === 'gemini' && !process.env.GEMINI_API_CREDENTIALS) consola.warn("Missing GEMINI_API_CREDENTIALS");
+    if (this.activeProvider === 'kimi' && !process.env.KIMI_API_KEY) consola.warn("Missing KIMI_API_KEY");
+    if (this.activeProvider === 'deepseek' && !process.env.DEEPSEEK_API_KEY) consola.warn("Missing DEEPSEEK_API_KEY");
+  }
 
-    const genAI = new GoogleGenerativeAI(cfg.apiKey);
+  // Allow switching at runtime (e.g. via a settings menu)
+  setProvider(provider: LLMProvider) {
+    this.activeProvider = provider;
+    this.validateConfig();
+    consola.info(`Switched AI Provider to: ${provider}`);
+  }
+
+  async invoke(req: LLMRequest): Promise<string> {
+    switch (this.activeProvider) {
+      case 'ollama':
+        return this.invokeOllama(req);
+      case 'kimi':
+        return this.invokeKimi(req);
+      case 'deepseek':
+        return this.invokeDeepSeek(req);
+      case 'gemini':
+      default:
+        return this.invokeGemini(req);
+    }
+  }
+
+  // --- 1. GEMINI (Google SDK) ---
+  private async invokeGemini(req: LLMRequest): Promise<string> {
+    const creds = process.env.GEMINI_API_CREDENTIALS ? JSON.parse(process.env.GEMINI_API_CREDENTIALS) : {};
+    const apiKey = creds.APIKey;
+    if (!apiKey) throw new Error("Missing Gemini API Key");
+
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: cfg.model!,
+      model: creds.Model || 'gemini-2.0-flash',
       generationConfig: {
         temperature: req.temperature ?? 0.7,
         responseMimeType: req.jsonMode ? 'application/json' : 'text/plain'
@@ -61,263 +88,112 @@ const drivers: Record<string, DriverFunction> = {
 
     const prompt = `${req.systemPrompt ? `System: ${req.systemPrompt}\n` : ''}${req.userPrompt}`;
 
-    try {
-      const result = await model.generateContent(prompt);
-      return result.response.text();
-    } catch (err: any) {
-      if (err.message?.includes('429')) {
-        consola.warn("Rate limit (429). Retrying in 2s...");
-        await new Promise(r => setTimeout(r, 2000));
-        const retry = await model.generateContent(prompt);
-        return retry.response.text();
+    // Retry Logic
+    let attempt = 0;
+    while (attempt < 3) {
+      try {
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+      } catch (error: any) {
+        if (error.message?.includes('429')) {
+          attempt++;
+          await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000));
+        } else {
+          throw error;
+        }
       }
-      throw err;
     }
-  },
+    throw new Error("Gemini API Failed after 3 retries");
+  }
 
-  // --- Strategy: OpenAI Compatible (DeepSeek, Kimi, Grok, etc.) ---
-  'openai-compatible': async (cfg, req) => {
-    if (!cfg.apiKey) throw new Error(`Missing API Key for ${cfg.label}`);
-    if (!cfg.baseUrl) throw new Error(`Missing Base URL for ${cfg.label}`);
-
-    const messages = [];
-    if (req.systemPrompt) messages.push({ role: "system", content: req.systemPrompt });
-    messages.push({ role: "user", content: req.userPrompt });
-
-    // Hinting for models that require explicit JSON instructions
-    if (req.jsonMode && !req.systemPrompt?.toLowerCase().includes('json')) {
-      messages[messages.length - 1].content += "\n\nIMPORTANT: Return valid JSON.";
-    }
-
-    const response = await fetch(`${cfg.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${cfg.apiKey}`
-      },
-      body: JSON.stringify({
-        model: cfg.model,
-        messages,
-        temperature: req.temperature ?? 0.7,
-        response_format: req.jsonMode ? { type: "json_object" } : undefined
-      })
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`API Error (${cfg.id}): ${response.status} - ${errText}`);
-    }
-    const data: any = await response.json();
-    return data.choices[0].message.content;
-  },
-
-  // --- Strategy: Ollama (Local) ---
-  'ollama': async (cfg, req) => {
-    const baseUrl = cfg.baseUrl || 'http://localhost:11434';
-
-    // Setup timeout controller
-    const controller = new AbortController();
-    const timeoutId = cfg.timeOut ? setTimeout(() => controller.abort(), cfg.timeOut * 1000) : null;
+  // --- 2. OLLAMA (Local JSON API) ---
+  private async invokeOllama(req: LLMRequest): Promise<string> {
+    const baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
+    const model = process.env.OLLAMA_MODEL || 'llama3:8b';
 
     try {
       const response = await fetch(`${baseUrl}/api/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: cfg.model,
+          model,
           prompt: `${req.systemPrompt || ''}\n\n${req.userPrompt}`,
           stream: false,
           format: req.jsonMode ? 'json' : undefined,
           options: { temperature: req.temperature ?? 0.7 }
-        }),
-        signal: controller.signal
+        })
       });
-
-      if (!response.ok) throw new Error("Ollama connection failed");
       const data: any = await response.json();
       return data.response;
-    } finally {
-      if (timeoutId) clearTimeout(timeoutId);
-    }
-  }
-};
-
-// ============================================================================
-// 2. Registry Loading
-// ============================================================================
-
-function loadRegistry(): Record<string, LLMConfigRecord> {
-  const configPath = path.resolve(process.cwd(), 'scripts/config/llmRegistry.json');
-
-  if (!fs.existsSync(configPath)) {
-    consola.error(`Missing Registry: ${configPath}`);
-    return {};
-  }
-
-  try {
-    const rawData = fs.readFileSync(configPath, 'utf-8');
-    // TYPE-SAFE PARSING
-    const parsed: LLMRegistryFile = JSON.parse(rawData);
-    const registry: Record<string, LLMConfigRecord> = {};
-
-    for (const item of parsed.records) {
-      if (!item.type) continue;
-      if (item.apiKeyEnv && process.env[item.apiKeyEnv]) {
-        item.apiKey = process.env[item.apiKeyEnv];
-      } else {
-        item.apiKey = '';
-      }
-      registry[item.id] = item;
-    }
-    return registry;
-  } catch (e) {
-    consola.error("Error parsing llmRegistry.json", e);
-    return {};
-  }
-}
-
-// ============================================================================
-// 3. Registry Loading (Configuration)
-// ============================================================================
-
-interface RegistryFile {
-  metadataEntity: any;
-  records: LLMConfigRecord[];
-}
-
-function loadRegistry(): Record<string, LLMConfigRecord> {
-  const configPath = path.resolve(process.cwd(), 'scripts/config/llmRegistry.json');
-
-  if (!fs.existsSync(configPath)) {
-    consola.error(`Missing Registry: ${configPath}`);
-    return {};
-  }
-
-  try {
-    const rawData = fs.readFileSync(configPath, 'utf-8');
-    const parsed: RegistryFile = JSON.parse(rawData);
-    const registry: Record<string, LLMConfigRecord> = {};
-
-    for (const item of parsed.records) {
-      // 1. Skip items without a type (e.g. placeholder records)
-      if (!item.type) continue;
-
-      // 2. Hydrate API Key from Environment
-      if (item.apiKeyEnv && process.env[item.apiKeyEnv]) {
-        item.apiKey = process.env[item.apiKeyEnv];
-      } else {
-        item.apiKey = ''; // Explicitly empty if missing
-      }
-
-      registry[item.id] = item;
-    }
-    return registry;
-  } catch (e) {
-    consola.error("Error parsing llmRegistry.json", e);
-    return {};
-  }
-}
-
-const REGISTRY = loadRegistry();
-
-// ============================================================================
-// 4. Initialization Logic
-// ============================================================================
-
-function getInitialConfig(): LLMConfigRecord {
-  // 1. Try Default from Env
-  const envDefault = process.env.API_MODEL_DEFAULT?.toLowerCase();
-
-  if (envDefault && REGISTRY[envDefault]) {
-    const candidate = REGISTRY[envDefault];
-    // Only accept if it's usable (has key or doesn't need one)
-    if (!candidate.apiKeyEnv || candidate.apiKey) {
-      return candidate;
+    } catch (error) {
+      consola.error("Ollama Connection Failed");
+      throw error;
     }
   }
 
-  // 2. Find first valid provider
-  const valid = Object.values(REGISTRY).find(p => {
-    if (p.apiKeyEnv && !p.apiKey) return false;
-    return true;
-  });
+  // --- 3. GENERIC OPENAI-COMPATIBLE INVOKER ---
+  // Shared logic for Kimi, DeepSeek, OpenAI, Groq, etc.
+  private async invokeOpenAICompatible(
+    req: LLMRequest,
+    baseUrl: string,
+    apiKey: string,
+    model: string
+  ): Promise<string> {
+    if (!apiKey) throw new Error(`Missing API Key for endpoint: ${baseUrl}`);
 
-  if (valid) return valid;
+    const messages = [];
+    if (req.systemPrompt) messages.push({ role: "system", content: req.systemPrompt });
+    messages.push({ role: "user", content: req.userPrompt });
 
-  // 3. Safe Fallback
-  return {
-    id: 'ollama', label: 'Fallback (Ollama)', type: 'ollama',
-    model: 'llama3:8b', apiKeyEnv: null, baseUrl: 'http://localhost:11434', timeOut: 200
-  };
-}
-
-const STATE = { activeConfig: getInitialConfig() };
-
-// ============================================================================
-// 5. Public Service Singleton
-// ============================================================================
-
-export const llm = {
-  /** Get current active config */
-  getConfig() { return STATE.activeConfig; },
-
-  /** Manually set active config by ID */
-  setConfig(configId: string) {
-    if (REGISTRY[configId]) {
-      STATE.activeConfig = REGISTRY[configId];
-      consola.success(`Active AI Model: ${STATE.activeConfig.label}`);
-    } else {
-      consola.error(`Unknown Provider ID: ${configId}`);
+    // Enforce JSON if requested
+    const responseFormat = req.jsonMode ? { type: "json_object" } : undefined;
+    if (req.jsonMode && !req.systemPrompt?.toLowerCase().includes('json')) {
+      // Some providers require the word "json" in the prompt to activate json mode
+      messages[messages.length - 1].content += "\n\nIMPORTANT: Return valid JSON.";
     }
-  },
 
-  /** * Interactive Provider Selection
-   * FILTERS OUT providers that are missing their required API keys in .env
-   */
-  async selectProvider() {
-    // Discovery Pattern: Filter available options based on health/config
-    const availableProviders = Object.values(REGISTRY).filter(p => {
-      // Rule 1: Must have a known driver
-      if (!p.type || !drivers[p.type]) return false;
-
-      // Rule 2: If it needs a key, that key must exist
-      if (p.apiKeyEnv && !p.apiKey) return false;
-
-      return true;
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: req.temperature ?? 0.7,
+        response_format: responseFormat
+      })
     });
 
-    if (availableProviders.length === 0) {
-      consola.warn("No configured AI Providers found. Check scripts/.env keys.");
-      return;
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`API Error (${baseUrl}): ${response.status} - ${err}`);
     }
 
-    const options = availableProviders.map(p => ({
-      value: p.id,
-      label: p.label || p.id,
-      hint: p.type as string
-    }));
-
-    const selectedId = await select({
-      message: `Current: ${STATE.activeConfig.label}. Switch to:`,
-      options: [...options, { value: 'cancel', label: 'Cancel' }]
-    });
-
-    if (isCancel(selectedId) || selectedId === 'cancel') return;
-    this.setConfig(selectedId as string);
-  },
-
-  /** * Unified Invoker
-   * Dispatches to the correct driver based on config.type
-   */
-  async invoke(req: LLMRequest): Promise<string> {
-    const config = STATE.activeConfig;
-    const driver = drivers[config.type as string];
-
-    if (!driver) {
-      throw new Error(`No driver implementation found for type: '${config.type}'`);
-    }
-
-    // Delegate execution to the strategy
-    return driver(config, req);
+    const data: any = await response.json();
+    return data.choices[0].message.content;
   }
-};
+
+  // --- 4. DEEPSEEK IMPLEMENTATION ---
+  private async invokeDeepSeek(req: LLMRequest): Promise<string> {
+    return this.invokeOpenAICompatible(
+      req,
+      'https://api.deepseek.com',
+      process.env.DEEPSEEK_API_KEY || '',
+      'deepseek-chat' // or 'deepseek-coder'
+    );
+  }
+
+  // --- 5. KIMI (MOONSHOT) IMPLEMENTATION ---
+  private async invokeKimi(req: LLMRequest): Promise<string> {
+    return this.invokeOpenAICompatible(
+      req,
+      'https://api.moonshot.cn/v1',
+      process.env.KIMI_API_KEY || '',
+      'moonshot-v1-8k' // or 'moonshot-v1-32k'
+    );
+  }
+}
+
+export const llm = new LLMService();

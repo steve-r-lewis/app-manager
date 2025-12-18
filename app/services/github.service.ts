@@ -24,57 +24,20 @@
  */
 
 import { consola } from 'consola';
-import fs from 'fs';
-import path from 'path';
-import '../initEnv';
-
-// IMPORTS
-import type { RepoRegistryFile } from '../../types/github.types';
 
 export class GitHubService {
   private token: string;
   private org: string;
-  private baseUrl: string;
 
   constructor() {
-    this.token = process.env.API_KEY_GITHUB_TOKEN || '';
-    this.org = 'steve-r-lewis';
-    this.baseUrl = 'https://api.github.com';
-    this.loadConfig();
-
-    if (!this.token) {
-      consola.warn("GitHub Token missing. Check 'API_KEY_GITHUB_TOKEN' in scripts/.env");
-    }
-  }
-
-  private loadConfig() {
-    const configPath = path.resolve(process.cwd(), 'scripts/config/repositoryRegistry.json');
-
-    if (fs.existsSync(configPath)) {
-      try {
-        const raw = fs.readFileSync(configPath, 'utf-8');
-        // TYPE-SAFE PARSING
-        const parsed: RepoRegistryFile = JSON.parse(raw);
-
-        const ghRecord = parsed.records.find(r => r.tokenType === 'github');
-
-        if (ghRecord) {
-          this.org = ghRecord.githubOrg;
-          this.baseUrl = ghRecord.baseURL;
-        }
-      } catch (e) {
-        consola.warn("Failed to parse repositoryRegistry.json, using defaults.");
-      }
-    }
+    this.token = process.env.GITHUB_TOKEN || '';
+    this.org = process.env.GITHUB_ORG || 'steve-r-lewis'; // Default from your script
   }
 
   private async api(endpoint: string, method: string = 'GET', body?: any) {
-    if (!this.token) throw new Error("Missing GitHub API Token");
+    if (!this.token) throw new Error("Missing GITHUB_TOKEN");
 
-    // Ensure no double slashes when joining base + endpoint
-    const cleanBase = this.baseUrl.replace(/\/$/, '');
-
-    const res = await fetch(`${cleanBase}${endpoint}`, {
+    const res = await fetch(`https://api.github.com${endpoint}`, {
       method,
       headers: {
         'Authorization': `Bearer ${this.token}`,
@@ -85,14 +48,14 @@ export class GitHubService {
     });
 
     if (!res.ok) {
-      if (res.status === 404) return null; // Graceful 404
+      if (res.status === 404) return null; // Handle 404 gracefully
       throw new Error(`GitHub API Error: ${res.statusText}`);
     }
     return res.json();
   }
 
   async ensureRepoExists(name: string, isOrg: boolean = false): Promise<string> {
-    const owner = this.org;
+    const owner = this.org; // Simplify for now, assuming org context
     const existing = await this.api(`/repos/${owner}/${name}`);
 
     if (existing) {

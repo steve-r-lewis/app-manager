@@ -1,8 +1,8 @@
 /**
  * ================================================================================
  *
- * @project:    nuxt4-data-generator
- * @file:       ~/scripts/initEnv.ts
+ * @project:    app-manager
+ * @file:       ~/appManager.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 16:56
@@ -23,19 +23,42 @@
  * ================================================================================
  */
 
+#!/usr/bin/env -S npx tsx
+import { main } from './app/app.js';
+import { consola } from 'consola';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { consola } from 'consola';
+import { fileURLToPath } from 'url';
 
-// Resolve paths relative to the project root
-const projectRoot = process.cwd();
-const scriptsEnvPath = path.resolve(projectRoot, 'scripts/.env');
+// 1. Resolve Paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-if (fs.existsSync(scriptsEnvPath)) {
-  dotenv.config({ path: scriptsEnvPath });
-  // Optional: Verbose check during debug
-  if (process.env.DEBUG) consola.info(`Loaded env from: ${scriptsEnvPath}`);
+// toolRoot: Where this script and the config/ folder live
+const toolRoot = __dirname;
+// targetRoot: Where the user ran the command (the Nuxt project)
+const targetRoot = process.cwd();
+
+// 2. Load Environment from Tool Root
+const envPath = path.resolve(toolRoot, '.env');
+if (fs.existsSync(envPath)) {
+	dotenv.config({ path: envPath });
 } else {
-  consola.warn(`Environment file not found at: ${scriptsEnvPath}`);
+	consola.warn(`[AppManager] No .env found at ${envPath}. Ensure API keys are set.`);
 }
+
+// 3. Launch App
+(async () => {
+	try {
+		if (process.env.DEBUG) {
+			consola.info(`[AppManager] Tool Root: ${toolRoot}`);
+			consola.info(`[AppManager] Target: ${targetRoot}`);
+		}
+		// Pass context to the main application
+		await main(targetRoot, toolRoot);
+	} catch (error) {
+		consola.error("Fatal Application Error:", error);
+		process.exit(1);
+	}
+})();

@@ -26,7 +26,6 @@
 // scripts/tui/app.ts
 import { intro, outro, select, isCancel } from '@clack/prompts';
 import pc from 'picocolors';
-import { initFileLogging } from './services/logger.service';
 
 // Nuxt Commands
 import { createLayer } from './commands/nuxt/createLayer';
@@ -52,33 +51,19 @@ import { runDocs } from './commands/docs/runDocs';
 import { runApp } from './commands/app/runApp';
 
 async function main() {
-  console.clear();   // Clear the console before we start.
-  initFileLogging(); // Initialize Logging (Clean one-liner).
-
+  console.clear();
   intro(pc.inverse(pc.cyan(' Nuxt 4 Monorepo Manager ')));
 
   while (true) {
     const domain = await select({
       message: 'Select Domain:',
       options: [
-        // "app:postinstall": "nuxt prepare",
-        // "app:preview": "nuxt preview",
-        // "app:dev": "nuxt dev --force",
-        // "app:build": "nuxt build",
-        // "app:generate": "nuxt generate"
         { value: 'app', label: 'App', hint: 'Dev, Build, Generate' },
-        { value: 'nuxt', label: 'Nuxt Operations', hint: 'Create Layers, Extract Layer Documentation, Manage Development Environment' },
-        { value: 'git', label: 'Git Operations', hint: 'Manage Repos, Manage Commits' },
-
+        { value: 'nuxt', label: 'Nuxt Operations', hint: 'Layers, Docs, Env' },
+        { value: 'git', label: 'Git Operations', hint: 'Sync, Commits' },
         { value: 'quality', label: 'Quality', hint: 'Lint, Test, Typecheck' },
-        /**
-         * { value: 'quality', label: 'Quality', hint: 'vitest:run, vitest:watch vitest:coverage' },
-         * { value: 'quality', label: 'Quality', hint: 'typecheck, typecheck:debug' },
-         * { value: 'quality', label: 'Quality', hint: 'lint, lint:debug, lint:fix' },
-         */
-
-        { value: 'docs', label: 'Documentation', hint: 'Vitepress:dev, Vitepress:build, Vitepress:preview' },
-        { value: 'utils', label: 'Utilities', hint: 'Validate headers, File version, Auto Document' },
+        { value: 'docs', label: 'Documentation', hint: 'Vitepress' },
+        { value: 'utils', label: 'Utilities', hint: 'Validation, Auto-Doc, Auto-Version' },
         { value: 'exit', label: 'Exit' }
       ]
     });

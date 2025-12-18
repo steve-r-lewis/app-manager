@@ -28,7 +28,7 @@ export default defineVitestConfig({
   test: {
     // Ensure we scan the root tests AND the layer tests
     include: [
-      'app/tests/**/*.test.ts'
+      './tests/**/*.test.ts'
     ],
   }
 })
