@@ -23,19 +23,6 @@
  * ================================================================================
  */
 
-/**
- * ================================================================================
- *
- * @project:    app-manager
- * @file:       ~/app/app.ts
- * @version:    1.1.0
- * @createDate: 2025 Dec 17
- * @createTime: 01:25
- * @author:     Steve R Lewis
- *
- * ================================================================================
- */
-
 import { intro, outro, select, multiselect, isCancel } from '@clack/prompts';
 import pc from 'picocolors';
 import { consola } from 'consola';
@@ -128,8 +115,8 @@ export async function main(targetRoot: string, toolRoot: string) {
 			outro('Goodbye!');
 			return;
 		}
-		
-		if (domain === 'app') await runApp();
+		// In app/app.ts
+		if (domain === 'app') await runApp(targetRoot);
 		
 		if (domain === 'nuxt') {
 			const action = await select({

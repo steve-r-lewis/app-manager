@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    nuxt4-data-generator
- * @file:       ~/scripts/tui/commands/app/runApp.ts
+ * @file:       ~/app/commands/app/runApp.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 10:42
@@ -27,48 +27,100 @@ import { select, isCancel } from '@clack/prompts';
 import { spawn } from 'child_process';
 import { consola } from 'consola';
 import pc from 'picocolors';
+import fs from 'fs';
+import path from 'path';
 
-async function runShell(command: string, args: string[]) {
-  consola.info(`> ${command} ${args.join(' ')}`);
-  return new Promise<void>((resolve, reject) => {
-    const child = spawn(command, args, { stdio: 'inherit', shell: true });
-    child.on('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`Exit Code: ${code}`));
-    });
-  });
+/**
+ * Detects the package manager used in the target project.
+ * Defaults to 'npm' if no lockfile is found.
+ */
+function detectPackageManager(targetRoot: string): string {
+	if (fs.existsSync(path.join(targetRoot, 'pnpm-lock.yaml'))) return 'pnpm';
+	if (fs.existsSync(path.join(targetRoot, 'yarn.lock'))) return 'yarn';
+	if (fs.existsSync(path.join(targetRoot, 'bun.lockb'))) return 'bun';
+	return 'npm';
 }
 
-export async function runApp() {
-  const action = await select({
-    message: 'Select App Action:',
-    options: [
-      { value: 'dev', label: 'Start Dev Server', hint: 'nuxt dev --force' },
-      { value: 'build', label: 'Build for Production', hint: 'nuxt build' },
-      { value: 'generate', label: 'Static Generation', hint: 'nuxt generate' },
-      { value: 'preview', label: 'Preview Build', hint: 'nuxt preview' },
-      { value: 'back', label: 'Go Back' }
-    ]
-  });
+/**
+ * Executes a shell command and streams output to stdio.
+ * Logs the attempt via consola (which is captured by logger.service).
+ */
+async function runShell(command: string, args: string[]) {
+	const fullCmd = `${command} ${args.join(' ')}`;
+	consola.info(pc.dim(`> Executing: ${fullCmd}`));
+	
+	return new Promise<void>((resolve, reject) => {
+		const child = spawn(command, args, {
+			stdio: 'inherit',
+			shell: true
+		});
+		
+		child.on('close', (code) => {
+			if (code === 0) {
+				resolve();
+			} else {
+				reject(new Error(`Command failed with Exit Code: ${code}`));
+			}
+		});
+		
+		child.on('error', (err) => {
+			reject(err);
+		});
+	});
+}
 
-  if (isCancel(action) || action === 'back') return;
-
-  try {
-    switch (action) {
-      case 'dev':
-        await runShell('npx', ['nuxt', 'dev', '--force']);
-        break;
-      case 'build':
-        await runShell('npx', ['nuxt', 'build']);
-        break;
-      case 'generate':
-        await runShell('npx', ['nuxt', 'generate']);
-        break;
-      case 'preview':
-        await runShell('npx', ['nuxt', 'preview']);
-        break;
-    }
-  } catch (err: any) {
-    consola.error(pc.red(err.message));
-  }
+export async function runApp(targetRoot: string) {
+	// 1. Locate and Parse package.json
+	const pkgPath = path.join(targetRoot, 'package.json');
+	
+	if (!fs.existsSync(pkgPath)) {
+		consola.error(pc.red(`No package.json found in ${targetRoot}`));
+		return;
+	}
+	
+	let scripts: Record<string, string> = {};
+	try {
+		const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+		scripts = pkg.scripts || {};
+	} catch (error) {
+		consola.error(pc.red('Failed to parse package.json'), error);
+		return;
+	}
+	
+	if (Object.keys(scripts).length === 0) {
+		consola.warn(pc.yellow('No scripts found in package.json'));
+		return;
+	}
+	
+	// 2. Detect Package Manager (npm, pnpm, yarn, etc.)
+	const pm = detectPackageManager(targetRoot);
+	consola.info(pc.dim(`Detected Package Manager: ${pm}`));
+	
+	// 3. Build Menu Options
+	const options = Object.entries(scripts).map(([key, script]) => ({
+		value: key,
+		label: key,
+		hint: pc.dim(script) // Show the actual command as a hint
+	}));
+	
+	// Add explicit Back option
+	options.push({ value: 'back', label: 'Go Back', hint: '' });
+	
+	// 4. Prompt User
+	const selectedScript = await select({
+		message: `Select a script to run (${pm}):`,
+		options: options,
+		initialValue: 'dev' // Common default, falls back gracefully if missing
+	});
+	
+	if (isCancel(selectedScript) || selectedScript === 'back') return;
+	
+	// 5. Execute
+	try {
+		// Example: pnpm run dev
+		await runShell(pm, ['run', selectedScript as string]);
+		consola.success(pc.green(`Script '${selectedScript}' completed successfully.`));
+	} catch (err: any) {
+		consola.error(pc.red(`Script execution failed: ${err.message}`));
+	}
 }

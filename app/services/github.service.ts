@@ -28,24 +28,33 @@ import { configService } from './config.service.js';
 
 export class GitHubService {
 	
-	// Lazy Getter: Reads config only when accessed, ensuring .env is loaded
-	private get token(): string {
-		// 1. Check Registry first (if we implemented per-repo tokens)
-		// For now, we fall back to the global env
-		const envToken = process.env.GITHUB_TOKEN;
-		if (!envToken) {
+	/**
+	 * Tries to find specific config for a repo, or falls back to global defaults.
+	 */
+	private getConfig(repoName: string): { token: string; org: string } {
+		let token = process.env.GITHUB_TOKEN;
+		let org = process.env.GITHUB_ORG || 'steve-r-lewis';
+		
+		// Try to find a specific override in the registry
+		if (configService.repoConfig) {
+			const record = configService.repoConfig.records.find(r => r.repositoryName === repoName);
+			if (record) {
+				// If the record has a specific token (or env var name), use it
+				// Note: In a real app, you might distinguish between "Raw Token" and "Env Var Name"
+				// For now, we assume global token unless specific logic is added.
+				if (record.githubOrg) org = record.githubOrg;
+			}
+		}
+		
+		if (!token) {
 			throw new Error("Missing GITHUB_TOKEN. Check your .env file.");
 		}
-		return envToken;
+		
+		return { token, org };
 	}
 	
-	private get org(): string {
-		return process.env.GITHUB_ORG || 'steve-r-lewis';
-	}
-	
-	private async api(endpoint: string, method: string = 'GET', body?: any) {
-		// Token access here is safe because api() is called AFTER app start
-		const token = this.token;
+	private async api(endpoint: string, method: string = 'GET', body?: any, token?: string) {
+		if (!token) throw new Error("No token provided for API call");
 		
 		const res = await fetch(`https://api.github.com${endpoint}`, {
 			method,
@@ -58,9 +67,7 @@ export class GitHubService {
 		});
 		
 		if (!res.ok) {
-			if (res.status === 404) return null; // Handle 404 gracefully
-			
-			// Log detailed error for debugging
+			if (res.status === 404) return null;
 			const errText = await res.text();
 			throw new Error(`GitHub API Error [${res.status}]: ${res.statusText} - ${errText}`);
 		}
@@ -68,31 +75,29 @@ export class GitHubService {
 	}
 	
 	async ensureRepoExists(name: string, isOrg: boolean = false): Promise<string> {
-		const owner = this.org;
+		const { token, org } = this.getConfig(name);
 		
 		try {
-			// 1. Check if it exists
-			const existing = await this.api(`/repos/${owner}/${name}`);
+			const existing = await this.api(`/repos/${org}/${name}`, 'GET', undefined, token);
 			if (existing) {
-				consola.success(`Repo exists: ${owner}/${name}`);
+				consola.success(`Repo exists: ${org}/${name}`);
 				return existing.clone_url;
 			}
 			
-			// 2. Create if missing
-			consola.info(`Creating repo: ${owner}/${name}`);
-			const endpoint = isOrg ? `/orgs/${owner}/repos` : `/user/repos`;
+			consola.info(`Creating repo: ${org}/${name}`);
+			const endpoint = isOrg ? `/orgs/${org}/repos` : `/user/repos`;
 			
 			const created = await this.api(endpoint, 'POST', {
 				name,
-				private: true, // Default to private security
-				auto_init: true // Create with README so we can clone immediately
-			});
+				private: true,
+				auto_init: true
+			}, token);
 			
 			consola.success(`Created repo: ${created.full_name}`);
 			return created.clone_url;
 			
 		} catch (error) {
-			consola.error(`Failed to ensure repo ${owner}/${name}`);
+			consola.error(`Failed to ensure repo ${org}/${name}`);
 			throw error;
 		}
 	}

@@ -28,21 +28,7 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import { consola } from 'consola';
 import pc from 'picocolors';
-
-export interface LLMRegistry {
-	records: Array<{
-		id: string;
-		apiKeyEnv: string;
-		model: string;
-	}>;
-}
-
-export interface RepoRegistry {
-	records: Array<{
-		repositoryName: string;
-		githubToken: string;
-	}>;
-}
+import type { LLMRegistry, RepoRegistry } from '../types/index.js';
 
 class ConfigService {
 	private toolRoot: string = '';
@@ -68,21 +54,17 @@ class ConfigService {
 	
 	private loadRegistries() {
 		try {
-			// Load LLM Registry
 			const llmPath = path.resolve(this.toolRoot, 'config/llmRegistry.json');
 			if (fs.existsSync(llmPath)) {
-				const raw = fs.readFileSync(llmPath, 'utf-8');
-				this.llmConfig = JSON.parse(raw);
+				this.llmConfig = JSON.parse(fs.readFileSync(llmPath, 'utf-8'));
 				if (process.env.DEBUG) consola.success(pc.dim(`Loaded ${this.llmConfig?.records.length} LLM providers`));
 			} else {
 				consola.warn('llmRegistry.json not found.');
 			}
 			
-			// Load Repo Registry
 			const repoPath = path.resolve(this.toolRoot, 'config/repositoryRegistry.json');
 			if (fs.existsSync(repoPath)) {
-				const raw = fs.readFileSync(repoPath, 'utf-8');
-				this.repoConfig = JSON.parse(raw);
+				this.repoConfig = JSON.parse(fs.readFileSync(repoPath, 'utf-8'));
 				if (process.env.DEBUG) consola.success(pc.dim(`Loaded ${this.repoConfig?.records.length} Repository configs`));
 			} else {
 				consola.warn('repositoryRegistry.json not found.');
@@ -90,16 +72,12 @@ class ConfigService {
 			
 		} catch (error) {
 			consola.error('Failed to parse Configuration Registries:', error);
-			process.exit(1); // Fatal error if config is corrupt
+			process.exit(1);
 		}
 	}
 	
 	private validateEnvironment() {
-		// Example: Check if the Default Provider's key is present
 		const defaultProvider = process.env.LLM_PROVIDER || 'gemini';
-		
-		// This is a basic check. In the future, we can cross-reference
-		// this.llmConfig.records to ensure the specific apiKeyEnv exists.
 		if (process.env.DEBUG) {
 			consola.info(pc.dim(`Active LLM Provider: ${defaultProvider}`));
 		}

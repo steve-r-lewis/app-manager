@@ -31,71 +31,54 @@ import crypto from 'crypto';
 const BASE_FIXTURE_PATH = path.resolve(__dirname, '../fixtures');
 export const REAL_TOOL_ROOT = path.resolve(__dirname, '../../');
 
-// THE JANITOR: deletes old mock folders to keep your disk clean
+// Export the interface for use in test files
+export interface TestContext {
+	targetRoot: string;
+	toolRoot: string;
+	restore: () => void;
+}
+
 function cleanupOldFixtures() {
 	if (!fs.existsSync(BASE_FIXTURE_PATH)) return;
-	
 	const files = fs.readdirSync(BASE_FIXTURE_PATH);
 	const now = Date.now();
-	
 	files.forEach(file => {
-		const fullPath = path.join(BASE_FIXTURE_PATH, file);
-		// Only touch folders starting with 'mock-'
 		if (file.startsWith('mock-')) {
+			const fullPath = path.join(BASE_FIXTURE_PATH, file);
 			try {
-				const stats = fs.statSync(fullPath);
-				// If folder is older than 5 minutes, delete it
-				if (now - stats.mtimeMs > 5 * 60 * 1000) {
+				if (now - fs.statSync(fullPath).mtimeMs > 5 * 60 * 1000) {
 					fs.rmSync(fullPath, { recursive: true, force: true });
 				}
-			} catch (e) {
-				// If locked, skip it. We'll get it next time.
-			}
+			} catch (e) {}
 		}
 	});
 }
 
-export function setupTestContext() {
-	// 1. Run the Janitor
+export function setupTestContext(): TestContext {
 	cleanupOldFixtures();
-	
-	// 2. Snapshot Environment
 	const envSnapshot = { ...process.env };
 	
-	// 3. Create Unique Sandbox
 	const uniqueId = crypto.randomBytes(4).toString('hex');
 	const mockTargetRoot = path.join(BASE_FIXTURE_PATH, `mock-${uniqueId}`);
 	
-	if (!fs.existsSync(mockTargetRoot)) {
-		fs.mkdirSync(mockTargetRoot, { recursive: true });
-	}
+	if (!fs.existsSync(mockTargetRoot)) fs.mkdirSync(mockTargetRoot, { recursive: true });
 	
-	// 4. Mock CWD
 	const spy = vi.spyOn(process, 'cwd').mockReturnValue(mockTargetRoot);
 	
 	return {
 		targetRoot: mockTargetRoot,
 		toolRoot: REAL_TOOL_ROOT,
 		restore: () => {
-			// A. Restore CWD Mock
 			spy.mockRestore();
-			
-			// B. Restore Environment Variables
 			process.env = envSnapshot;
-			
-			// C. Try to delete the sandbox (Best Effort)
 			try {
 				if (fs.existsSync(mockTargetRoot)) {
-					// Retry logic often helps Windows release locks
+					// Small delay to allow file handles to release
 					setTimeout(() => {
-						try {
-							fs.rmSync(mockTargetRoot, { recursive: true, force: true });
-						} catch(e) {}
+						try { fs.rmSync(mockTargetRoot, { recursive: true, force: true }); } catch (e) {}
 					}, 100);
 				}
-			} catch (e) {
-				// Ignore. The Janitor will get it in the next run.
-			}
+			} catch (e) {}
 		}
 	};
 }

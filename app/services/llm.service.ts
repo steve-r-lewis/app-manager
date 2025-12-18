@@ -26,18 +26,14 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { consola } from 'consola';
 import { configService } from './config.service.js';
+import type { LLMProviderConfig } from '../types/index.js';
 
 class LLMService {
 	private _client: GoogleGenerativeAI | null = null;
 	
-	/**
-	 * Retrieves the configuration record for the active provider.
-	 * Defaults to 'gemini' if LLM_PROVIDER is not set.
-	 */
-	private get providerConfig() {
+	private get providerConfig(): LLMProviderConfig {
 		const providerId = process.env.LLM_PROVIDER || 'gemini';
 		
-		// Ensure registry is loaded (safe to call multiple times)
 		if (!configService.llmConfig) {
 			throw new Error('LLM Registry not loaded. Has configService.init() run?');
 		}
@@ -50,18 +46,10 @@ class LLMService {
 		return record;
 	}
 	
-	/**
-	 * Lazy-loads the Gemini Client.
-	 * Only throws errors when we actually try to USE the AI, not on app start.
-	 */
 	private get client(): GoogleGenerativeAI {
 		if (this._client) return this._client;
 		
 		const config = this.providerConfig;
-		
-		// Dynamic Key Lookup:
-		// 1. Registry says: apiKeyEnv = "GEMINI_API_CREDENTIALS"
-		// 2. We look up process.env["GEMINI_API_CREDENTIALS"]
 		const apiKey = process.env[config.apiKeyEnv];
 		
 		if (!apiKey) {
@@ -74,23 +62,14 @@ class LLMService {
 		return this._client;
 	}
 	
-	/**
-	 * Generates content using the configured model.
-	 */
 	async generate(prompt: string): Promise<string> {
 		try {
-			// 1. Get Client & Config
 			const client = this.client;
 			const modelName = this.providerConfig.model;
-			
-			// 2. Initialize Model
 			const model = client.getGenerativeModel({ model: modelName });
 			
-			// 3. Generate
 			const result = await model.generateContent(prompt);
-			const response = result.response;
-			
-			return response.text();
+			return result.response.text();
 			
 		} catch (error) {
 			consola.error('LLM Generation Failed:', error);
