@@ -1,7 +1,7 @@
 /**
  * ================================================================================
  *
- * @project:    nuxt4-data-generator
+ * @project:    app-manager
  * @file:       ~/scripts/tui/services/llm.service.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17

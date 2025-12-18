@@ -1,7 +1,7 @@
 /**
  * ================================================================================
  *
- * @project:    nuxt4-monorepo-base-app
+ * @project:    app-manager
  * @file:       ~/vitest.config.ts
  * @version:    V1.0.0
  * @createDate: 2025 Dec 10
@@ -23,13 +23,15 @@
  * ================================================================================
  */
 
-// vitest.config.ts
-export default defineVitestConfig({
-  test: {
-    // Ensure we scan the root tests AND the layer tests
-    include: [
-      './tests/**/*.test.ts'
-    ],
-  }
-})
+import { defineConfig } from 'vitest/config';
 
+export default defineConfig({
+	test: {
+		// Ensure we scan the root tests AND the layer tests
+		include: [
+			'./tests/**/*.test.ts'
+		],
+		// Clean up mocks after each test
+		restoreMocks: true,
+	}
+});

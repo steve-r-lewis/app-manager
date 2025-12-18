@@ -25,29 +25,33 @@
  * ================================================================================
  */
 
+/**
+ * ================================================================================
+ * @project:    app-manager
+ * @file:       ~/appManager.ts
+ * @version:    1.1.0
+ * ================================================================================
+ */
+
 import { main } from './app/app.js';
 import { consola } from 'consola';
-import dotenv from 'dotenv';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { configService } from './app/services/config.service.js';
+import { logger } from './app/services/logger.service.js'; // Import Logger
 
 // 1. Resolve Paths
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// toolRoot: Where this script and the config/ folder live
 const toolRoot = __dirname;
-// targetRoot: Where the user ran the command (the Nuxt project)
 const targetRoot = process.cwd();
 
-// 2. Load Environment from Tool Root
-const envPath = path.resolve(toolRoot, '.env');
-if (fs.existsSync(envPath)) {
-	dotenv.config({ path: envPath });
-} else {
-	consola.warn(`[AppManager] No .env found at ${envPath}. Ensure API keys are set.`);
-}
+// 2. Initialize Infrastructure
+// A. Create Directories & Error Hooks immediately
+logger.init(targetRoot);
+
+// B. Load Configuration
+configService.init(toolRoot);
 
 // 3. Launch App
 (async () => {
@@ -56,9 +60,9 @@ if (fs.existsSync(envPath)) {
 			consola.info(`[AppManager] Tool Root: ${toolRoot}`);
 			consola.info(`[AppManager] Target: ${targetRoot}`);
 		}
-		// Pass context to the main application
 		await main(targetRoot, toolRoot);
 	} catch (error) {
+		// This will now be caught by our logger.service hook and written to error.log
 		consola.error("Fatal Application Error:", error);
 		process.exit(1);
 	}

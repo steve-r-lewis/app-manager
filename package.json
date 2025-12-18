@@ -11,7 +11,7 @@
     "application code manager",
     "typescript"
   ],
-  "packageManager": "pnpm@10.25.0",
+  "packageManager": "pnpm@10.26.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
@@ -34,26 +34,29 @@
     "type": "individual",
     "url": "patreon.com/TheModuleFactory"
   },
-	"bin": {
-		"app-manager": "./appManager.ts"
-	},
+  "bin": {
+    "app-manager": "./appManager.ts"
+  },
   "scripts": {
-    "appTools": "tsx runApp.ts"
+	  "test": "vitest run",
+	  "watch": "vitest",
+	  "coverage": "vitest run --coverage"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "@clack/prompts": "^0.11.0",
-    "@google/generative-ai": "^0.24.1",
-    "@types/node": "^25.0.3",
-    "consola": "^3.4.2",
-    "dotenv": "^17.2.3",
-    "picocolors": "^1.1.1",
-    "simple-git": "^3.30.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitepress": "2.0.0-alpha.15",
-    "vitest": "^4.0.15"
-  },
-  "peerDependencies": {}
+	"dependencies": {
+		"@clack/prompts": "^0.11.0",
+		"@google/generative-ai": "^0.24.1",
+		"consola": "^3.4.2",
+		"dotenv": "^17.2.3",
+		"picocolors": "^1.1.1",
+		"simple-git": "^3.30.0",
+		"tsx": "^4.21.0"
+	},
+	"devDependencies": {
+		"@types/node": "^25.0.3",
+		"typescript": "^5.9.3",
+		"vite-tsconfig-paths": "^5.1.4",
+		"vitepress": "2.0.0-alpha.15",
+		"vitest": "^4.0.15"
+	},
+	"peerDependencies": {}
 }
