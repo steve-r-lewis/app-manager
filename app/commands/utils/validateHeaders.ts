@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/utils/validateHeaders.ts
- * @version:    1.0.0
+ * @version:    2.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:46
  * @author:     Steve R Lewis
@@ -16,6 +16,9 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V2.0.0, 20251219-19:11
+ * Added support for multi-author headers.
  *
  * V1.0.0, 20251217-01:46
  * Initial creation and release of validateHeaders.ts
@@ -37,14 +40,17 @@ const EXCLUDE_DIRS = new Set(['node_modules', '.git', '.nuxt', '.output', 'dist'
 // Regex Patterns
 const RX_PROJECT = /(@project:\s*)(.+)/;
 const RX_FILE = /(@file:\s*)(.+)/;
+// Global flag to find ALL author lines
+const RX_AUTHOR_GLOBAL = /(@author:\s*)(.+)/g;
+// Single flag for extraction
 const RX_AUTHOR = /(@author:\s*)(.+)/;
 const RX_VERSION_TAG = /(@version:\s*)(\S+)/;
-// Matches "V1.0.0" or "v1.0.0" in history blocks
 const RX_HISTORY_VER = /[Vv](\d+\.\d+\.\d+)/g;
 
-/**
- * Get current git user to use as Author default.
- */
+// Helper: Anchors to insert new fields if missing
+const RX_CREATE_TIME = /(@createTime:.+)/;
+const RX_HEADER_START = /(\/\*\*)/;
+
 async function getGitAuthor(root: string): Promise<string> {
 	try {
 		const git = simpleGit(root);
@@ -55,9 +61,6 @@ async function getGitAuthor(root: string): Promise<string> {
 	}
 }
 
-/**
- * Recursive file walker.
- */
 function walk(dir: string, fileList: string[] = []) {
 	if (!fs.existsSync(dir)) return fileList;
 	const files = fs.readdirSync(dir, { withFileTypes: true });
@@ -77,45 +80,23 @@ function walk(dir: string, fileList: string[] = []) {
 	return fileList;
 }
 
-/**
- * STRICT Project Name Resolution based on Directory Structure.
- * * Rule 1: layers/{name}/* -> @monorepo/{name}
- * Rule 2: anything else   -> {rootDirectoryName}
- */
 function resolveProjectName(filePath: string, targetRoot: string): string {
 	const rootName = path.basename(targetRoot);
-	
-	// Get path relative to the target root
-	// e.g., "layers/billing/components/Button.vue"
-	// e.g., "app/utils/helper.ts"
 	const relPath = path.relative(targetRoot, filePath);
-	
-	// Split by separator (handle Windows \ or POSIX /)
 	const segments = relPath.split(path.sep);
 	
-	// Check if it is inside 'layers' directory
 	if (segments[0] === 'layers' && segments.length > 1) {
-		const layerName = segments[1];
-		return `@monorepo/${layerName}`;
+		return `@monorepo/${segments[1]}`;
 	}
-	
-	// Default to Root Directory Name
 	return rootName;
 }
 
-/**
- * Processes a single file to validate/update headers.
- */
-async function processFile(filePath: string, targetRoot: string, authorName: string) {
+async function processFile(filePath: string, targetRoot: string, gitAuthor: string) {
 	let content = fs.readFileSync(filePath, 'utf-8');
 	let newContent = content;
 	const changes: string[] = [];
 	
-	// Calculate standardized relative path (e.g. ~/app/utils.ts)
-	// Force forward slashes for documentation consistency
 	const relPath = '~/' + path.relative(targetRoot, filePath).replace(/\\/g, '/');
-	
-	// Resolve Project Name (Strict Directory Logic)
 	const projectName = resolveProjectName(filePath, targetRoot);
 	
 	// 1. Update @project
@@ -136,22 +117,39 @@ async function processFile(filePath: string, targetRoot: string, authorName: str
 		}
 	}
 	
-	// 3. Update @author
-	if (RX_AUTHOR.test(newContent)) {
-		const current = newContent.match(RX_AUTHOR)?.[2];
-		if (current?.trim() !== authorName) {
-			newContent = newContent.replace(RX_AUTHOR, `$1${authorName}`);
-			changes.push('Author');
+	// 3. Update @author (Multi-Author Support)
+	const authorMatches = [...newContent.matchAll(RX_AUTHOR_GLOBAL)];
+	const existingAuthors = authorMatches.map(m => m[2].trim());
+	
+	if (existingAuthors.length === 0) {
+		// No author field exists? Insert one.
+		// Try to insert after @createTime, or just inside the block start
+		if (RX_CREATE_TIME.test(newContent)) {
+			newContent = newContent.replace(RX_CREATE_TIME, `$1\n * @author:     ${gitAuthor}`);
+			changes.push('Author (New)');
+		}
+	} else {
+		// Authors exist. Check if Git User is present.
+		if (!existingAuthors.includes(gitAuthor)) {
+			// Append new author after the LAST author found
+			const lastMatch = authorMatches[authorMatches.length - 1];
+			const lastAuthorString = lastMatch[0]; // e.g. " * @author:     Steve"
+			
+			// Reconstruct padding based on previous line
+			const prefix = lastMatch[1]; // " * @author:     "
+			
+			newContent = newContent.replace(
+				lastAuthorString,
+				`${lastAuthorString}\n${prefix}${gitAuthor}`
+			);
+			changes.push('Author (Append)');
 		}
 	}
 	
-	// 4. Sync @version with Revision History
+	// 4. Sync @version
 	const historyMatches = [...newContent.matchAll(RX_HISTORY_VER)];
 	if (historyMatches.length > 0) {
-		// Extract version strings (e.g. "1.0.0")
 		const versions = historyMatches.map(m => m[1]);
-		
-		// Sort to find the highest version (Simple semantic sort)
 		const latest = versions.sort((a, b) => {
 			const pa = a.split('.').map(Number);
 			const pb = b.split('.').map(Number);
@@ -160,7 +158,7 @@ async function processFile(filePath: string, targetRoot: string, authorName: str
 				if (pa[i] < pb[i]) return 1;
 			}
 			return 0;
-		})[0]; // Descending sort, take first
+		})[0];
 		
 		const verMatch = newContent.match(RX_VERSION_TAG);
 		if (verMatch && verMatch[2] !== latest) {
