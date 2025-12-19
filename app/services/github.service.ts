@@ -23,13 +23,21 @@
  * ================================================================================
  */
 
+/**
+ * ================================================================================
+ * @project:    app-manager
+ * @file:       app/services/github.service.ts
+ * ================================================================================
+ */
+
 import { consola } from 'consola';
 import { configService } from './config.service.js';
 
 export class GitHubService {
 	
 	/**
-	 * Tries to find specific config for a repo, or falls back to global defaults.
+	 * Tries to find specific config for a repo in the registry,
+	 * or falls back to global environment defaults.
 	 */
 	private getConfig(repoName: string): { token: string; org: string } {
 		let token = process.env.GITHUB_TOKEN;
@@ -39,10 +47,8 @@ export class GitHubService {
 		if (configService.repoConfig) {
 			const record = configService.repoConfig.records.find(r => r.repositoryName === repoName);
 			if (record) {
-				// If the record has a specific token (or env var name), use it
-				// Note: In a real app, you might distinguish between "Raw Token" and "Env Var Name"
-				// For now, we assume global token unless specific logic is added.
 				if (record.githubOrg) org = record.githubOrg;
+				// Future: If records have specific tokens, load them here
 			}
 		}
 		
@@ -51,6 +57,15 @@ export class GitHubService {
 		}
 		
 		return { token, org };
+	}
+	
+	/**
+	 * Helper to get the global token for general operations (like listing repos)
+	 */
+	private get globalToken(): string {
+		const token = process.env.GITHUB_TOKEN;
+		if (!token) throw new Error("Missing GITHUB_TOKEN. Check your .env file.");
+		return token;
 	}
 	
 	private async api(endpoint: string, method: string = 'GET', body?: any, token?: string) {
@@ -100,6 +115,35 @@ export class GitHubService {
 			consola.error(`Failed to ensure repo ${org}/${name}`);
 			throw error;
 		}
+	}
+	
+	/**
+	 * Lists repositories for the authenticated user/org.
+	 * Uses the Global Token since we are discovering repos.
+	 */
+	async listRepos(org?: string): Promise<{ name: string, full_name: string }[]> {
+		const token = this.globalToken;
+		const owner = org || (process.env.GITHUB_ORG || 'steve-r-lewis');
+		const endpoint = org ? `/orgs/${org}/repos` : '/user/repos';
+		
+		try {
+			// Fetch up to 100 recent repos
+			const data = await this.api(`${endpoint}?sort=updated&per_page=100`, 'GET', undefined, token);
+			return data || [];
+		} catch (error) {
+			consola.error("Failed to list repos", error);
+			throw error;
+		}
+	}
+	
+	/**
+	 * Deletes a repository. DANGEROUS.
+	 * Uses repo-specific config if available, otherwise global token.
+	 */
+	async deleteRepo(owner: string, name: string): Promise<void> {
+		const { token } = this.getConfig(name); // Use smart config lookup
+		await this.api(`/repos/${owner}/${name}`, 'DELETE', undefined, token);
+		consola.success(`Deleted remote repo: ${owner}/${name}`);
 	}
 }
 

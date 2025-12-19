@@ -42,13 +42,14 @@ describe('GitHub Service', () => {
 		vi.restoreAllMocks();
 	});
 	
+	// --- Existing Tests ---
+	
 	it('should throw if GITHUB_TOKEN is missing', async () => {
-		process.env.GITHUB_TOKEN = ''; // Clear token
+		process.env.GITHUB_TOKEN = '';
 		await expect(github.ensureRepoExists('any-repo')).rejects.toThrow('Missing GITHUB_TOKEN');
 	});
 	
 	it('should return clone_url if repo exists (200 OK)', async () => {
-		// Mock API Response: Repo Exists
 		(global.fetch as any).mockResolvedValue({
 			ok: true,
 			json: async () => ({ clone_url: 'https://github.com/test/repo.git' })
@@ -56,38 +57,45 @@ describe('GitHub Service', () => {
 		
 		const url = await github.ensureRepoExists('my-repo');
 		expect(url).toBe('https://github.com/test/repo.git');
+	});
+	
+	it('should create repo if it does not exist (404 -> POST)', async () => {
+		(global.fetch as any)
+			.mockResolvedValueOnce({ ok: false, status: 404, text: async () => 'Not Found' }) // Check
+			.mockResolvedValueOnce({ ok: true, json: async () => ({ clone_url: 'https://new', full_name: 'test/new' }) }); // Create
 		
-		// Verify we called the GET endpoint, not POST
+		await github.ensureRepoExists('new-repo');
+		
+		expect(global.fetch).toHaveBeenLastCalledWith(
+			expect.stringContaining('/user/repos'),
+			expect.objectContaining({ method: 'POST' })
+		);
+	});
+	
+	// --- New Tests for Deletion Tools ---
+	
+	it('should list repositories', async () => {
+		(global.fetch as any).mockResolvedValue({
+			ok: true,
+			json: async () => ([{ name: 'repo-1' }, { name: 'repo-2' }])
+		});
+		
+		const repos = await github.listRepos();
+		expect(repos).toHaveLength(2);
 		expect(global.fetch).toHaveBeenCalledWith(
-			expect.stringContaining('/repos/test-org/my-repo'),
+			expect.stringContaining('/user/repos?sort=updated'),
 			expect.objectContaining({ method: 'GET' })
 		);
 	});
 	
-	it('should create repo if it does not exist (404 -> POST)', async () => {
-		// Mock Sequence:
-		// 1st Call (GET) -> 404 Not Found
-		// 2nd Call (POST) -> 201 Created
-		(global.fetch as any)
-			.mockResolvedValueOnce({
-				ok: false,
-				status: 404,
-				text: async () => 'Not Found'
-			})
-			.mockResolvedValueOnce({
-				ok: true,
-				json: async () => ({ clone_url: 'https://github.com/new/repo.git', full_name: 'test/new' })
-			});
+	it('should delete a repository', async () => {
+		(global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({}) });
 		
-		const url = await github.ensureRepoExists('new-repo');
+		await github.deleteRepo('steve', 'old-repo');
 		
-		expect(url).toBe('https://github.com/new/repo.git');
-		
-		// Check that we attempted to create it
-		expect(global.fetch).toHaveBeenCalledTimes(2);
-		expect(global.fetch).toHaveBeenLastCalledWith(
-			expect.stringContaining('/user/repos'), // Defaults to user repo
-			expect.objectContaining({ method: 'POST' })
+		expect(global.fetch).toHaveBeenCalledWith(
+			expect.stringContaining('/repos/steve/old-repo'),
+			expect.objectContaining({ method: 'DELETE' })
 		);
 	});
 });

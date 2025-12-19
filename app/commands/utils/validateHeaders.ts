@@ -1,8 +1,8 @@
 /**
  * ================================================================================
  *
- * @project:    nuxt4-data-generator
- * @file:       ~/scripts/tui/commands/utils/validateHeaders.ts
+ * @project:    app-manager
+ * @file:       ~/app/commands/utils/validateHeaders.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:46
@@ -23,106 +23,176 @@
  * ================================================================================
  */
 
-import fs from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
 import { spinner } from '@clack/prompts';
 import { consola } from 'consola';
 import pc from 'picocolors';
+import { simpleGit } from 'simple-git';
+
+// --- Configuration ---
+const EXTENSIONS = new Set(['.ts', '.vue', '.js', '.tsx', '.jsx']);
+const EXCLUDE_DIRS = new Set(['node_modules', '.git', '.nuxt', '.output', 'dist', 'coverage']);
 
 // Regex Patterns
 const RX_PROJECT = /(@project:\s*)(.+)/;
 const RX_FILE = /(@file:\s*)(.+)/;
 const RX_AUTHOR = /(@author:\s*)(.+)/;
 const RX_VERSION_TAG = /(@version:\s*)(\S+)/;
-const RX_HISTORY_VER = /V\d+\.\d+\.\d+/g;
+// Matches "V1.0.0" or "v1.0.0" in history blocks
+const RX_HISTORY_VER = /[Vv](\d+\.\d+\.\d+)/g;
 
-// Helper: Get Project Context (Root vs Layer)
-function getProjectName(filePath: string) {
-  const match = filePath.match(/[\\/]layers[\\/]([^\\/]+)[\\/]/);
-  return match ? `@monorepo/${match[1]}` : path.basename(process.cwd()); // Default to root folder name
+/**
+ * Get current git user to use as Author default.
+ */
+async function getGitAuthor(root: string): Promise<string> {
+	try {
+		const git = simpleGit(root);
+		const name = await git.raw(['config', 'user.name']);
+		return name.trim() || 'App Manager';
+	} catch {
+		return 'App Manager';
+	}
 }
 
-async function processFile(filePath: string, rootPath: string) {
-  const content = await fs.readFile(filePath, 'utf-8');
-  let newContent = content;
-  const changes: string[] = [];
-
-  const relPath = '~/' + path.relative(rootPath, filePath).replace(/\\/g, '/');
-  const projectName = getProjectName(filePath);
-  const author = "Steve R Lewis"; // Centralized Author
-
-  // 1. Update Header Fields
-  if (RX_PROJECT.test(newContent)) {
-    newContent = newContent.replace(RX_PROJECT, `$1${projectName}`);
-  }
-  if (RX_FILE.test(newContent)) {
-    const currentFileVal = newContent.match(RX_FILE)?.[2];
-    if (currentFileVal !== relPath) {
-      newContent = newContent.replace(RX_FILE, `$1${relPath}`);
-      changes.push('Path');
-    }
-  }
-  if (RX_AUTHOR.test(newContent)) {
-    newContent = newContent.replace(RX_AUTHOR, `$1${author}`);
-  }
-
-  // 2. Sync Version with History
-  // Find all "V.x.x.x" in the file. The last one usually corresponds to the history block.
-  // A more robust check might look specifically inside the @notes block, but strict regex usually works.
-  const historyMatches = newContent.match(RX_HISTORY_VER);
-  if (historyMatches && historyMatches.length > 0) {
-    const latestRev = historyMatches[0]; // Regex usually finds the first one. Your history is top-down?
-    // Actually, usually history is descended. Let's assume the @version tag should match the *top-most* history entry found.
-
-    // Check current @version
-    const verMatch = newContent.match(RX_VERSION_TAG);
-    if (verMatch && verMatch[2] !== latestRev) {
-      newContent = newContent.replace(RX_VERSION_TAG, `$1${latestRev}`);
-      changes.push(`Ver->${latestRev}`);
-    }
-  }
-
-  if (newContent !== content) {
-    await fs.writeFile(filePath, newContent, 'utf-8');
-    return changes;
-  }
-  return null;
+/**
+ * Recursive file walker.
+ */
+function walk(dir: string, fileList: string[] = []) {
+	if (!fs.existsSync(dir)) return fileList;
+	const files = fs.readdirSync(dir, { withFileTypes: true });
+	
+	for (const file of files) {
+		const fullPath = path.join(dir, file.name);
+		if (file.isDirectory()) {
+			if (!EXCLUDE_DIRS.has(file.name)) {
+				walk(fullPath, fileList);
+			}
+		} else {
+			if (EXTENSIONS.has(path.extname(file.name))) {
+				fileList.push(fullPath);
+			}
+		}
+	}
+	return fileList;
 }
 
-// Recursive Walker
-async function walk(dir: string, fileList: string[] = []) {
-  const files = await fs.readdir(dir, { withFileTypes: true });
-  for (const file of files) {
-    const res = path.resolve(dir, file.name);
-    if (file.isDirectory()) {
-      if (['node_modules', '.git', '.nuxt', '.output', 'dist'].includes(file.name)) continue;
-      await walk(res, fileList);
-    } else {
-      if (['.ts', '.vue'].includes(path.extname(file.name))) {
-        fileList.push(res);
-      }
-    }
-  }
-  return fileList;
+/**
+ * STRICT Project Name Resolution based on Directory Structure.
+ * * Rule 1: layers/{name}/* -> @monorepo/{name}
+ * Rule 2: anything else   -> {rootDirectoryName}
+ */
+function resolveProjectName(filePath: string, targetRoot: string): string {
+	const rootName = path.basename(targetRoot);
+	
+	// Get path relative to the target root
+	// e.g., "layers/billing/components/Button.vue"
+	// e.g., "app/utils/helper.ts"
+	const relPath = path.relative(targetRoot, filePath);
+	
+	// Split by separator (handle Windows \ or POSIX /)
+	const segments = relPath.split(path.sep);
+	
+	// Check if it is inside 'layers' directory
+	if (segments[0] === 'layers' && segments.length > 1) {
+		const layerName = segments[1];
+		return `@monorepo/${layerName}`;
+	}
+	
+	// Default to Root Directory Name
+	return rootName;
 }
 
-export async function validateHeaders() {
-  const s = spinner();
-  s.start('Scanning source files...');
+/**
+ * Processes a single file to validate/update headers.
+ */
+async function processFile(filePath: string, targetRoot: string, authorName: string) {
+	let content = fs.readFileSync(filePath, 'utf-8');
+	let newContent = content;
+	const changes: string[] = [];
+	
+	// Calculate standardized relative path (e.g. ~/app/utils.ts)
+	// Force forward slashes for documentation consistency
+	const relPath = '~/' + path.relative(targetRoot, filePath).replace(/\\/g, '/');
+	
+	// Resolve Project Name (Strict Directory Logic)
+	const projectName = resolveProjectName(filePath, targetRoot);
+	
+	// 1. Update @project
+	if (RX_PROJECT.test(newContent)) {
+		const current = newContent.match(RX_PROJECT)?.[2];
+		if (current?.trim() !== projectName) {
+			newContent = newContent.replace(RX_PROJECT, `$1${projectName}`);
+			changes.push('Project');
+		}
+	}
+	
+	// 2. Update @file
+	if (RX_FILE.test(newContent)) {
+		const current = newContent.match(RX_FILE)?.[2];
+		if (current?.trim() !== relPath) {
+			newContent = newContent.replace(RX_FILE, `$1${relPath}`);
+			changes.push('Path');
+		}
+	}
+	
+	// 3. Update @author
+	if (RX_AUTHOR.test(newContent)) {
+		const current = newContent.match(RX_AUTHOR)?.[2];
+		if (current?.trim() !== authorName) {
+			newContent = newContent.replace(RX_AUTHOR, `$1${authorName}`);
+			changes.push('Author');
+		}
+	}
+	
+	// 4. Sync @version with Revision History
+	const historyMatches = [...newContent.matchAll(RX_HISTORY_VER)];
+	if (historyMatches.length > 0) {
+		// Extract version strings (e.g. "1.0.0")
+		const versions = historyMatches.map(m => m[1]);
+		
+		// Sort to find the highest version (Simple semantic sort)
+		const latest = versions.sort((a, b) => {
+			const pa = a.split('.').map(Number);
+			const pb = b.split('.').map(Number);
+			for (let i = 0; i < 3; i++) {
+				if (pa[i] > pb[i]) return -1;
+				if (pa[i] < pb[i]) return 1;
+			}
+			return 0;
+		})[0]; // Descending sort, take first
+		
+		const verMatch = newContent.match(RX_VERSION_TAG);
+		if (verMatch && verMatch[2] !== latest) {
+			newContent = newContent.replace(RX_VERSION_TAG, `$1${latest}`);
+			changes.push(`Ver->${latest}`);
+		}
+	}
+	
+	if (newContent !== content) {
+		fs.writeFileSync(filePath, newContent, 'utf-8');
+		return changes;
+	}
+	return null;
+}
 
-  const root = process.cwd();
-  const files = await walk(root);
-
-  let updated = 0;
-
-  for (const file of files) {
-    const changes = await processFile(file, root);
-    if (changes) {
-      const name = path.basename(file);
-      s.message(`Updated ${name}: ${changes.join(', ')}`);
-      updated++;
-    }
-  }
-
-  s.stop(`Validation Complete. ${updated} files updated.`);
+export async function validateHeaders(targetRoot: string) {
+	const s = spinner();
+	s.start('Scanning source files...');
+	
+	const files = walk(targetRoot);
+	const author = await getGitAuthor(targetRoot);
+	
+	let updatedCount = 0;
+	
+	for (const file of files) {
+		const changes = await processFile(file, targetRoot, author);
+		if (changes) {
+			const name = path.basename(file);
+			s.message(pc.dim(`Updated ${name}: ${changes.join(', ')}`));
+			updatedCount++;
+		}
+	}
+	
+	s.stop(`Validation Complete. Checked ${files.length} files. Updated ${updatedCount}.`);
 }

@@ -23,154 +23,65 @@
  * ================================================================================
  */
 
-import simpleGit, { SimpleGit } from 'simple-git';
-import path from 'path';
-import fs from 'fs/promises';
-import { existsSync } from 'fs';
+import { simpleGit, SimpleGit } from 'simple-git';
+import { spinner } from '@clack/prompts';
 import { consola } from 'consola';
 import pc from 'picocolors';
-import { spinner } from '@clack/prompts';
-import { github } from '../../services/github.service';
-import { llm } from '../../services/llm.service';
+import fs from 'fs';
+import path from 'path';
 
-// --- Helper: Auto-commit if dirty (AI Powered) ---
-async function ensureCleanRepo(git: SimpleGit, label: string) {
-  const status = await git.status();
-  if (status.isClean()) return;
-
-  consola.info(`[${label}] Changes detected. Auto-committing...`);
-  await git.add('.');
-
-  // Get Diff for AI
-  const diff = await git.diff(['--staged']);
-  let message = "WIP: Auto-commit during sync";
-
-  if (diff && diff.length < 6000) {
-    try {
-      // Use standard concatenation to avoid template literal parser issues
-      const promptText = "Generate a commit message for:\n" + diff;
-
-      const aiResponse = await llm.invoke({
-        systemPrompt: "You are a git commit message generator. Output ONLY the message. Max 50 chars.",
-        userPrompt: promptText
-      });
-      message = aiResponse;
-    } catch (e) {
-      consola.warn(`[${label}] AI Commit Gen failed, using default.`);
-    }
-  }
-
-  await git.commit(message.trim());
-  consola.success(`[${label}] Committed: "${message.trim()}"`);
+async function syncSingleRepo(repoPath: string, name: string) {
+	const git: SimpleGit = simpleGit(repoPath);
+	if (!await git.checkIsRepo()) {
+		return { name, status: 'skipped', msg: 'Not a git repo' };
+	}
+	try {
+		await git.pull(['--rebase']);
+		return { name, status: 'success' };
+	} catch (error: any) {
+		return { name, status: 'error', msg: error.message };
+	}
 }
 
-// --- Helper: Ensure Remote & Push ---
-async function ensureRemoteAndPush(git: SimpleGit, repoName: string, label: string) {
-  // 1. Ensure GitHub Repo Exists (Idempotent)
-  const remoteUrl = await github.ensureRepoExists(repoName);
-
-  // 2. Configure Local Remote
-  const remotes = await git.getRemotes(true);
-  const origin = remotes.find(r => r.name === 'origin');
-
-  if (!origin) {
-    await git.addRemote('origin', remoteUrl);
-    consola.info(`[${label}] Added remote: ${remoteUrl}`);
-  } else if (origin.refs.push !== remoteUrl) {
-    await git.removeRemote('origin');
-    await git.addRemote('origin', remoteUrl);
-    consola.warn(`[${label}] Updated remote URL.`);
-  }
-
-  // 3. Push
-  try {
-    // Push master and set upstream. If it fails, try HEAD.
-    await git.push('origin', 'master', { '-u': null });
-  } catch (e) {
-    try {
-      await git.push(['-u', 'origin', 'HEAD']);
-    } catch (err: any) {
-      consola.warn(`[${label}] Push failed (is the repo empty?): ${err.message}`);
-    }
-  }
-}
-
-export async function syncRepos() {
-  const s = spinner();
-  s.start('Initializing Sync...');
-
-  const rootPath = process.cwd();
-  const rootGit = simpleGit(rootPath);
-  const rootName = path.basename(rootPath);
-  // Default to a safe placeholder if ENV is missing
-  const org = process.env.GITHUB_ORG || 'steve-r-lewis';
-
-  // ---------------------------------------------------------
-  // 1. Process ROOT Repository
-  // ---------------------------------------------------------
-  s.message(`Processing Root: ${rootName}`);
-
-  if (!await rootGit.checkIsRepo()) {
-    await rootGit.init();
-    await rootGit.add('.');
-    await rootGit.commit('Initial commit');
-  }
-
-  await ensureCleanRepo(rootGit, 'ROOT');
-  await ensureRemoteAndPush(rootGit, rootName, 'ROOT');
-
-  // ---------------------------------------------------------
-  // 2. Process LAYER Repositories
-  // ---------------------------------------------------------
-  const layersDir = path.resolve(rootPath, 'layers');
-  if (!existsSync(layersDir)) await fs.mkdir(layersDir);
-
-  const entries = await fs.readdir(layersDir, { withFileTypes: true });
-  const layerFolders = entries.filter(e => e.isDirectory());
-
-  for (const folder of layerFolders) {
-    const layerName = folder.name;
-    const layerPath = path.join(layersDir, layerName);
-    const layerGit = simpleGit(layerPath);
-
-    // Naming convention: nuxt4-layer-<name>
-    // Sanitized without regex inside template literal
-    const sanitized = layerName.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-    const repoName = `nuxt4-layer-${sanitized}`;
-    const label = `LAYER:${layerName}`;
-
-    s.message(`Processing Layer: ${layerName}`);
-
-    // A. Init & Commit
-    if (!await layerGit.checkIsRepo()) {
-      await layerGit.init();
-    }
-    await ensureCleanRepo(layerGit, label);
-
-    // B. Sync Remote
-    await ensureRemoteAndPush(layerGit, repoName, label);
-
-    // C. Ensure Submodule Link in Root
-    // We need the remote URL to add it as a submodule
-    const remoteUrl = `https://github.com/${org}/${repoName}.git`;
-    const relPath = `layers/${layerName}`;
-
-    // Check if already registered in .gitmodules
-    // We use a raw call to ls-files to see if the path is tracked
-    const submoduleStatus = await rootGit.raw(['ls-files', '--stage', relPath]);
-
-    if (!submoduleStatus) {
-      consola.info(`Linking submodule: ${layerName}...`);
-      try {
-        await rootGit.submoduleAdd(remoteUrl, relPath);
-        await rootGit.commit(`chore: link submodule ${layerName}`);
-        await rootGit.push(); // Push root immediately to save the link
-      } catch (e: any) {
-        consola.error(`Failed to link submodule ${layerName}: ${e.message}`);
-      }
-    }
-  }
-
-  s.stop('Repository Sync Complete.');
-  consola.success(pc.green('All repositories synced and submodules linked.'));
+export async function syncRepos(targetRoot: string) {
+	const s = spinner();
+	const results: Array<{ name: string, status: string, msg?: string }> = [];
+	
+	// 1. Root Sync
+	s.start('Syncing Root Repository...');
+	const rootResult = await syncSingleRepo(targetRoot, 'ROOT');
+	results.push(rootResult);
+	
+	// 2. Submodule Update (Root context)
+	if (rootResult.status === 'success') {
+		const git = simpleGit(targetRoot);
+		try {
+			await git.submoduleUpdate(['--init', '--recursive']);
+		} catch (e) {
+			consola.warn('Submodule update warning (continuing...)');
+		}
+	}
+	
+	// 3. Layer Discovery & Sync
+	const layersDir = path.join(targetRoot, 'layers');
+	if (fs.existsSync(layersDir)) {
+		s.message('Scanning layers...');
+		const entries = fs.readdirSync(layersDir, { withFileTypes: true });
+		for (const entry of entries) {
+			if (entry.isDirectory()) {
+				const layerPath = path.join(layersDir, entry.name);
+				s.message(`Syncing Layer: ${entry.name}`);
+				results.push(await syncSingleRepo(layerPath, `LAYER:${entry.name}`));
+			}
+		}
+	}
+	
+	s.stop('Sync Operations Complete');
+	
+	// Report
+	results.forEach(res => {
+		if (res.status === 'success') consola.success(pc.green(`✅ Synced ${res.name}`));
+		else if (res.status === 'error') consola.error(pc.red(`❌ Failed ${res.name}: ${res.msg}`));
+		else consola.info(pc.dim(`ℹ️  Skipped ${res.name}`));
+	});
 }

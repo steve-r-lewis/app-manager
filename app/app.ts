@@ -38,6 +38,10 @@ import { manageEnv } from './commands/nuxt/manageEnv';
 // Git Commands
 import { syncRepos } from './commands/git/syncRepos';
 import { manageCommits } from './commands/git/manageCommits';
+import { pushToRemote } from './commands/git/pushToRemote';
+import { initLayers } from './commands/git/initLayers';
+import { addSubmodules } from './commands/git/addSubmodules';
+import { deleteRemoteRepos } from './commands/git/deleteRemoteRepos';
 
 // Utils Commands
 import { validateHeaders } from './commands/utils/validateHeaders';
@@ -139,18 +143,29 @@ export async function main(targetRoot: string, toolRoot: string) {
 			const action = await select({
 				message: 'Git Action:',
 				options: [
-					{ value: 'commit', label: 'Smart Commit (AI)' },
-					{ value: 'sync', label: 'Sync Repos', hint: 'Submodules & Remotes' },
+					{ value: 'commit', label: 'Smart Commit (AI)', hint: 'Stage & Commit' },
+					{ value: 'push', label: 'Push to Remote', hint: 'Select Remotes' },
+					{ value: 'sync', label: 'Sync Repos', hint: 'Pull & Update Submodules' },
+					{ value: 'init', label: 'Init Layers', hint: 'Initialize new git repos' },
+					{ value: 'link', label: 'Link Submodules', hint: 'Add layers to Root' },
+					{ value: 'delete', label: 'Delete Remote Repo', hint: '⚠️ Destructive' },
 					{ value: 'back', label: 'Go Back' }
 				]
 			});
 			if (isCancel(action) || action === 'back') continue;
-			if (action === 'commit') await manageCommits();
-			if (action === 'sync') await syncRepos();
+			
+			if (action === 'commit') await manageCommits(targetRoot);
+			if (action === 'push') await pushToRemote(targetRoot);
+			if (action === 'sync') await syncRepos(targetRoot);
+			if (action === 'init') await initLayers(targetRoot);
+			if (action === 'link') await addSubmodules(targetRoot);
+			if (action === 'delete') await deleteRemoteRepos();
 		}
 		
 		if (domain === 'quality') await runQuality();
+		
 		if (domain === 'docs') await runDocs();
+		
 		if (domain === 'utils') {
 			const action = await select({
 				message: 'Utility Action:',
