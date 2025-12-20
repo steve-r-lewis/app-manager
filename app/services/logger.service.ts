@@ -47,8 +47,11 @@ export class LoggerService {
 	
 	init() {
 		const monitorDir = path.join(this.root, 'app-monitor');
+		const processDir = path.join(monitorDir, 'process-logs');
 		const sessionDir = path.join(monitorDir, 'session-logs');
 		const errorDir = path.join(monitorDir, 'error-logs');
+		const fixtureDir = path.join(monitorDir, 'test-fixtures');
+		const testDir = path.join(monitorDir, 'test-logs');
 		
 		[monitorDir, sessionDir, errorDir].forEach(dir => {
 			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
