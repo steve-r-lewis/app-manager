@@ -37,7 +37,7 @@ export default defineConfig({
 		pool: 'forks',
 		
 		// We can keep this true now because 'forks' makes parallel execution safe.
-		fileParallelism: false,
+		fileParallelism: true,
 		
 		watchExclude: [
 			'**/node_modules/**',
@@ -50,9 +50,10 @@ export default defineConfig({
 		
 		include: ['./tests/**/*.test.ts'],
 		restoreMocks: true,
+		
 		reporters: ['default', 'json'],
 		outputFile: {
-			json: `./tests/logs/test-report-${dateStr}.json`
+			json: `./app-monitor/test-logs/test-report-${dateStr}.json`
 		},
 	}
 });

@@ -163,7 +163,7 @@ nuxt.config.ts
 **/.vitest/
 **/vitest.*.json
 coverage/                # Coverage output (Vitest, Jest, etc.)
-**/tests
+**/tests/fixtures
 
 
 # =============================================

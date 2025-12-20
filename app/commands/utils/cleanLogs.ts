@@ -30,7 +30,7 @@ import { consola } from 'consola';
 import pc from 'picocolors';
 
 export async function cleanLogs(targetRoot: string) {
-	const logsDir = path.join(targetRoot, 'tests', 'logs');
+	const logsDir = path.join(targetRoot, 'app-monitor', 'test-logs');
 	const fixturesDir = path.join(targetRoot, 'tests', 'fixtures');
 	
 	let logFiles: string[] = [];
