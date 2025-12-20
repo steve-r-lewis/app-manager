@@ -28,14 +28,13 @@ import fs from 'fs';
 import path from 'path';
 import { LoggerService } from '../../app/services/logger.service';
 
-// 1. Hoist the reporters array so it's available to the mock factory
+// 1. Hoist reporters so the mock factory can see them
 const { reporters } = vi.hoisted(() => {
 	return { reporters: [] as any[] };
 });
 
-// 2. Mock Consola INLINE to avoid ReferenceError
+// 2. Define the mock INSIDE the factory to prevent ReferenceError
 vi.mock('consola', () => {
-	// Define the fake instance INSIDE the factory
 	const fakeInstance = {
 		addReporter: (r: any) => reporters.push(r),
 		info: (...args: any[]) => reporters.forEach(r => r.log({ type: 'info', args, level: 3 })),
@@ -49,7 +48,6 @@ vi.mock('consola', () => {
 	return {
 		consola: {
 			...fakeInstance,
-			// Return the same fake instance when create() is called
 			create: vi.fn().mockReturnValue(fakeInstance),
 		}
 	};
@@ -61,7 +59,7 @@ describe('Logger Service', () => {
 	
 	beforeEach(() => {
 		vi.clearAllMocks();
-		reporters.length = 0; // Clear reporters
+		reporters.length = 0;
 		
 		if (fs.existsSync(testLogDir)) {
 			fs.rmSync(testLogDir, { recursive: true, force: true });
@@ -74,7 +72,6 @@ describe('Logger Service', () => {
 	});
 	
 	afterEach(() => {
-		// Safe cleanup only
 		logger?.close();
 		if (fs.existsSync(testLogDir)) {
 			fs.rmSync(testLogDir, { recursive: true, force: true });
@@ -94,10 +91,7 @@ describe('Logger Service', () => {
 	
 	it('should write errors to the error log', () => {
 		const errorFile = path.join(testLogDir, 'app-monitor/error-logs/error.log');
-		
-		// This triggers the mocked reporter inside vi.mock
 		logger.error('Test Error Message');
-		
 		const content = fs.readFileSync(errorFile, 'utf-8');
 		expect(content).toContain('Test Error Message');
 	});
@@ -106,7 +100,6 @@ describe('Logger Service', () => {
 		const l = new LoggerService();
 		(l as any).root = testLogDir;
 		l.init();
-		
 		const sessionDir = path.join(testLogDir, 'app-monitor/session-logs');
 		const files = fs.readdirSync(sessionDir);
 		expect(files.length).toBe(0);
@@ -114,7 +107,6 @@ describe('Logger Service', () => {
 	
 	it('should create session log when enabled', () => {
 		logger.enableSessionLogging();
-		
 		const sessionDir = path.join(testLogDir, 'app-monitor/session-logs');
 		const files = fs.readdirSync(sessionDir);
 		expect(files.length).toBeGreaterThan(0);

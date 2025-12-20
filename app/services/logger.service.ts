@@ -39,6 +39,7 @@ export class LoggerService {
 		this.logger = consola.create({});
 	}
 	
+	// NEW: Safe cleanup hook
 	close() {
 		this.sessionLogPath = null;
 		this.errorLogPath = null;
@@ -73,8 +74,10 @@ export class LoggerService {
 	enableSessionLogging() {
 		const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 		this.sessionLogPath = path.join(this.root, 'app-monitor', 'session-logs', `session-${timestamp}.log`);
-		// Eager creation ensures tests pass
+		
+		// FIX: Eagerly create the file immediately so tests can see it
 		fs.writeFileSync(this.sessionLogPath, '');
+		
 		this.info(`Session logging enabled: ${this.sessionLogPath}`);
 	}
 	
@@ -101,4 +104,4 @@ export class LoggerService {
 }
 
 export const logger = new LoggerService();
-// FIX: Removed logger.init() to prevent side effects
+// REMOVED: logger.init(); <-- This was causing issues by running on import

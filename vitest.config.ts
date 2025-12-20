@@ -32,15 +32,20 @@ export default defineConfig({
 		setupFiles: ['./vitest.setup.ts'],
 		testTimeout: 30000,
 		
-		// FIX: 'forks' creates a fresh process per file (No Memory Leaks)
+		// CRITICAL FIX: Use 'forks' for isolation.
+		// This creates a fresh Node process for each file, killing memory leaks.
 		pool: 'forks',
 		
-		// FIX: Run sequentially to save resources
+		// We can keep this true now because 'forks' makes parallel execution safe.
 		fileParallelism: false,
 		
 		watchExclude: [
-			'**/node_modules/**', '**/dist/**', '**/.nuxt/**', '**/.output/**',
-			'**/tests/logs/**', '**/tests/fixtures/**'
+			'**/node_modules/**',
+			'**/dist/**',
+			'**/.nuxt/**',
+			'**/.output/**',
+			'**/tests/logs/**',
+			'**/tests/fixtures/**'
 		],
 		
 		include: ['./tests/**/*.test.ts'],
