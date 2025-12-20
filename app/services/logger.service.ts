@@ -41,6 +41,8 @@ export class LoggerService {
 	
 	// State Flags
 	private isProcessLogging = false;
+	// Session Log Path (for internal state)
+	private sessionLogPath: string | null = null;
 	
 	constructor() {
 		this.root = process.cwd();
@@ -50,17 +52,23 @@ export class LoggerService {
 	init() {
 		const monitorRoot = path.join(this.root, 'app-monitor');
 		
-		// Define your new structure
+		// Define paths
 		this.paths.error = path.join(monitorRoot, 'error-logs');
 		this.paths.process = path.join(monitorRoot, 'process-logs');
 		this.paths.session = path.join(monitorRoot, 'session-logs');
 		
-		// Ensure all exist
+		// 1. Ensure directories exist
 		[this.paths.error, this.paths.process, this.paths.session].forEach(dir => {
 			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 		});
 		
-		// Add Reporter to hook into Consola calls
+		// 2. Eagerly Create Error Log File (Fixes Test 1 & 2)
+		const errorFile = path.join(this.paths.error, 'error.log');
+		if (!fs.existsSync(errorFile)) {
+			fs.writeFileSync(errorFile, '');
+		}
+		
+		// Add Reporter
 		this.logger.addReporter({
 			log: (logObj) => {
 				this.handleLogDispatch(logObj);
@@ -68,10 +76,22 @@ export class LoggerService {
 		});
 	}
 	
-	// Toggle for the "Process" logs (user flag)
+	// Toggle for the "Process" logs
 	enableProcessLogging() {
 		this.isProcessLogging = true;
 		this.process('Process logging enabled');
+	}
+	
+	// FIX: Add the missing method (Fixes Test 3)
+	enableSessionLogging() {
+		const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+		// Set the path
+		this.sessionLogPath = path.join(this.paths.session, `session-${timestamp}.log`);
+		
+		// Eagerly create the file so tests can see it immediately
+		fs.writeFileSync(this.sessionLogPath, '');
+		
+		this.info(`Session logging enabled: ${this.sessionLogPath}`);
 	}
 	
 	// Central Dispatcher
@@ -81,21 +101,18 @@ export class LoggerService {
 		const timestamp = new Date().toISOString();
 		const logLine = `[${timestamp}] [${logObj.type.toUpperCase()}] ${msg}\n`;
 		
-		// 1. Session Logs (Audit Trail - High Level)
-		// We log "info" and "success" types here automatically
-		if (['info', 'success', 'start'].includes(logObj.type)) {
-			const dateStr = timestamp.split('T')[0];
-			const file = path.join(this.paths.session, `session-${dateStr}.log`);
-			fs.appendFileSync(file, logLine);
+		// 1. Session Logs
+		if (this.sessionLogPath && ['info', 'success', 'start'].includes(logObj.type)) {
+			fs.appendFileSync(this.sessionLogPath, logLine);
 		}
 		
-		// 2. Error Logs (Catch blocks)
+		// 2. Error Logs
 		if (logObj.type === 'error' || logObj.level === 0) {
-			const file = path.join(this.paths.error, 'errors.log'); // Rotates or Appends
+			const file = path.join(this.paths.error, 'error.log');
 			fs.appendFileSync(file, logLine);
 		}
 		
-		// 3. Process Logs (Verbose/Debug) - ONLY if enabled
+		// 3. Process Logs
 		if (this.isProcessLogging) {
 			const file = path.join(this.paths.process, 'process-debug.log');
 			fs.appendFileSync(file, logLine);
@@ -108,17 +125,16 @@ export class LoggerService {
 	warn(...args: any[]) { this.logger.warn(...args); }
 	error(...args: any[]) { this.logger.error(...args); }
 	
-	// Explicit "Process" log that might not show in console but goes to file
 	process(...args: any[]) {
 		if (this.isProcessLogging) {
-			// Log to file via reporter
 			this.logger.debug(...args);
 		}
 	}
 	
 	close() {
-		// Cleanup if needed
+		this.sessionLogPath = null;
 	}
 }
 
 export const logger = new LoggerService();
+// No init() here!
