@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A Typescript based application to manage the codebase source code for my Nuxt4 based projects",
   "private": true,
-  "main": "appManager.ts",
+  "main": "index.ts",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -35,7 +35,7 @@
     "url": "patreon.com/TheModuleFactory"
   },
   "bin": {
-    "app-manager": "./appManager.ts"
+    "app-manager": "index.ts"
   },
   "scripts": {
     "vitest:test": "vitest run",

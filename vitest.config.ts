@@ -30,6 +30,23 @@ const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 
 export default defineConfig({
 	test: {
+		
+		setupFiles: ['./vitest.setup.ts'],
+		testTimeout: 20000, // Increased timeout for E2E
+		
+		// 1. Force tests to run one by one (Fixes OOM & Race Conditions)
+		fileParallelism: false,
+		
+		// STOP THE LOOP: Ignore these folders when watching for changes
+		watchExclude: [
+			'**/node_modules/**',
+			'**/dist/**',
+			'**/.nuxt/**',
+			'**/.output/**',
+			'**/tests/logs/**',      // <--- Critical
+			'**/tests/fixtures/**'   // <--- Critical
+		],
+		
 		// Ensure we scan the root tests AND the layer tests
 		include: [
 			'./tests/**/*.test.ts'
@@ -47,6 +64,6 @@ export default defineConfig({
 		// We map the 'json' reporter to a dynamic file path
 		outputFile: {
 			json: `./tests/logs/test-report-${dateStr}.json`
-		}
+		},
 	}
 });

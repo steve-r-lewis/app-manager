@@ -23,63 +23,20 @@
  * ================================================================================
  */
 
-import { select, isCancel, spinner, confirm } from '@clack/prompts';
+/**
+ * ================================================================================
+ * @project:    app-manager
+ * @file:       ~/app/commands/nuxt/manageEnv.ts
+ * ================================================================================
+ */
+
+import { select, multiselect, isCancel, confirm, intro, outro, spinner } from '@clack/prompts';
 import { consola } from 'consola';
-import pc from 'picocolors';
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
+import pc from 'picocolors';
 
-// --- Configuration ---
-// Build Artifacts (Recursive Clean)
-const CLEAN_TARGETS = new Set(['.nuxt', '.output', 'dist', 'coverage', '.cache']);
-
-// Dependency Artifacts (Prune)
-const LOCK_FILES = ['pnpm-lock.yaml', 'package-lock.json', 'yarn.lock', 'bun.lockb'];
-
-/**
- * Recursively finds directories matching specific names.
- * Optimized to skip traversing into a match (e.g., if deleting node_modules, don't scan inside it).
- */
-function findRecursively(dir: string, targetNames: Set<string>, results: string[] = []) {
-	if (!fs.existsSync(dir)) return results;
-	
-	try {
-		const entries = fs.readdirSync(dir, { withFileTypes: true });
-		
-		for (const entry of entries) {
-			if (entry.isDirectory()) {
-				const fullPath = path.join(dir, entry.name);
-				
-				// 1. Found a target? Add it and STOP recursing down this branch (we'll delete it all)
-				if (targetNames.has(entry.name)) {
-					results.push(fullPath);
-				}
-					// 2. Special Case: node_modules
-					// If we are cleaning .cache, we MUST check inside node_modules/.cache
-				// But we don't want to scan the entire 1GB node_modules tree.
-				else if (entry.name === 'node_modules') {
-					if (targetNames.has('.cache')) {
-						const cachePath = path.join(fullPath, '.cache');
-						if (fs.existsSync(cachePath)) results.push(cachePath);
-					}
-					// Do not recurse further into node_modules
-				}
-				// 3. Normal Directory? Recurse.
-				else {
-					findRecursively(fullPath, targetNames, results);
-				}
-			}
-		}
-	} catch (e) {
-		// Ignore permission/access errors
-	}
-	return results;
-}
-
-/**
- * Detects the package manager used in the target project.
- */
+// FIX: Add targetRoot parameter
 function detectPackageManager(targetRoot: string): string {
 	if (fs.existsSync(path.join(targetRoot, 'pnpm-lock.yaml'))) return 'pnpm';
 	if (fs.existsSync(path.join(targetRoot, 'yarn.lock'))) return 'yarn';
@@ -87,117 +44,80 @@ function detectPackageManager(targetRoot: string): string {
 	return 'npm';
 }
 
-/**
- * Deletes a list of paths.
- */
-async function deletePaths(paths: string[], label: string) {
-	if (paths.length === 0) return;
-	
-	const s = spinner();
-	s.start(label);
-	
-	let count = 0;
-	for (const fullPath of paths) {
-		try {
-			if (fs.existsSync(fullPath)) {
-				fs.rmSync(fullPath, { recursive: true, force: true });
-				count++;
-			}
-		} catch (e: any) {
-			consola.warn(`Failed to delete ${path.basename(fullPath)}: ${e.message}`);
-		}
-	}
-	s.stop(`Removed ${count} items.`);
-}
-
-/**
- * Runs the install command.
- */
-async function runInstall(targetRoot: string, pm: string) {
-	consola.info(pc.dim(`> Running ${pm} install...`));
-	
-	return new Promise<void>((resolve, reject) => {
-		const child = spawn(pm, ['install'], {
-			cwd: targetRoot,
-			stdio: 'inherit',
-			shell: true
-		});
-		
-		child.on('close', (code) => {
-			if (code === 0) {
-				consola.success('Dependencies installed.');
-				resolve();
-			} else {
-				reject(new Error(`Install failed with code ${code}`));
-			}
-		});
-		
-		child.on('error', (err) => reject(err));
-	});
-}
-
+// FIX: Add targetRoot parameter
 export async function manageEnv(targetRoot: string) {
-	// Detect PM *before* we potentially delete the lockfile
-	const pm = detectPackageManager(targetRoot);
+	const s = spinner();
 	
+	// 1. Select Action
 	const action = await select({
-		message: `Environment Management (${pm}):`,
+		message: 'Manage Environment:',
 		options: [
-			{ value: 'clean', label: '🧹 Clean Artifacts', hint: 'Recursive: .nuxt, .output, .cache' },
-			{ value: 'prune', label: '🗑️  Prune Dependencies', hint: 'Recursive: node_modules + lockfiles' },
-			{ value: 'reset', label: '🧨 Hard Reset', hint: 'Prune + Clean + Reinstall' },
-			{ value: 'install', label: '📥 Install Dependencies', hint: `${pm} install` },
-			{ value: 'back', label: '🔙 Go Back' }
+			{ value: 'clean', label: 'Clean Artifacts', hint: 'Delete .nuxt, node_modules, dist' },
+			{ value: 'reinstall', label: 'Reinstall Dependencies', hint: 'Clean + Install' },
+			{ value: 'back', label: 'Go Back' }
 		]
 	});
 	
 	if (isCancel(action) || action === 'back') return;
 	
-	// Safety Check for Destructive Actions
-	if (['prune', 'reset'].includes(action as string)) {
-		const sure = await confirm({
-			message: 'This will delete all node_modules and lockfiles. Are you sure?',
-			initialValue: false
+	// 2. Define targets based on targetRoot
+	const targets = [
+		'node_modules',
+		'.nuxt',
+		'.output',
+		'dist',
+		'.cache'
+	];
+	
+	if (action === 'clean' || action === 'reinstall') {
+		const selected = await multiselect({
+			message: 'Select directories to delete:',
+			options: targets.map(t => ({ value: t, label: t })),
+			required: false
 		});
-		if (isCancel(sure) || !sure) return;
+		
+		if (isCancel(selected)) return;
+		
+		const dirsToDelete = selected as string[];
+		
+		if (dirsToDelete.length === 0) {
+			consola.warn('No directories selected.');
+			return;
+		}
+		
+		const shouldContinue = await confirm({ message: `Delete ${dirsToDelete.join(', ')}?` });
+		if (!shouldContinue) return;
+		
+		s.start('Cleaning directories...');
+		
+		for (const dir of dirsToDelete) {
+			// FIX: Use targetRoot instead of process.cwd()
+			const fullPath = path.join(targetRoot, dir);
+			if (fs.existsSync(fullPath)) {
+				fs.rmSync(fullPath, { recursive: true, force: true });
+			}
+		}
+		
+		s.stop('Cleanup complete.');
 	}
 	
-	try {
-		// 1. Clean Build Artifacts (Recursive)
-		if (action === 'clean' || action === 'reset') {
-			const targets = findRecursively(targetRoot, CLEAN_TARGETS);
-			if (targets.length > 0) {
-				await deletePaths(targets, 'Cleaning build artifacts recursively...');
-			} else {
-				consola.info('No build artifacts found.');
-			}
-		}
+	if (action === 'reinstall') {
+		// FIX: Pass targetRoot
+		const pm = detectPackageManager(targetRoot);
+		const { spawn } = await import('child_process');
 		
-		// 2. Prune Dependencies (Recursive node_modules + Root Lockfiles)
-		if (action === 'prune' || action === 'reset') {
-			// A. Recursive node_modules
-			const modules = findRecursively(targetRoot, new Set(['node_modules']));
-			
-			// B. Root Lockfiles
-			const locks = LOCK_FILES.map(f => path.join(targetRoot, f)).filter(f => fs.existsSync(f));
-			
-			const allTargets = [...modules, ...locks];
-			
-			if (allTargets.length > 0) {
-				await deletePaths(allTargets, 'Pruning dependencies & lockfiles...');
-			} else {
-				consola.info('No dependencies found.');
-			}
-		}
+		consola.info(`Running ${pm} install...`);
 		
-		// 3. Reinstall
-		if (action === 'install' || action === 'reset') {
-			await runInstall(targetRoot, pm);
-		}
+		const child = spawn(pm, ['install'], {
+			cwd: targetRoot, // FIX: Run in targetRoot
+			stdio: 'inherit',
+			shell: true
+		});
 		
-		consola.success(pc.green('Environment operation completed.'));
+		await new Promise<void>((resolve) => {
+			child.on('close', () => resolve());
+		});
 		
-	} catch (err: any) {
-		consola.error(pc.red(`Operation Failed: ${err.message}`));
+		outro('Dependencies reinstalled.');
 	}
 }

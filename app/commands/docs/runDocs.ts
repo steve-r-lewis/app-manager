@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/docs/runDocs.ts
- * @version:    1.0.0
+ * @version:    1.1.0
  * @createDate: 2025 Dec 17
  * @createTime: 10:47
  * @author:     Steve R Lewis
@@ -16,6 +16,9 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20251219-21:08
+ * - Added support for vitepress docs in target project in addition to tool docs.
  *
  * V1.0.0, 20251217-10:47
  * Initial creation and release of runDocs.ts
@@ -31,134 +34,112 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * Detects the package manager used in the target project.
+ * Helper: Detect package manager (npm/pnpm/yarn/bun)
  */
-function detectPackageManager(targetRoot: string): string {
-	if (fs.existsSync(path.join(targetRoot, 'pnpm-lock.yaml'))) return 'pnpm';
-	if (fs.existsSync(path.join(targetRoot, 'yarn.lock'))) return 'yarn';
-	if (fs.existsSync(path.join(targetRoot, 'bun.lockb'))) return 'bun';
+function detectPM(root: string) {
+	if (fs.existsSync(path.join(root, 'pnpm-lock.yaml'))) return 'pnpm';
+	if (fs.existsSync(path.join(root, 'yarn.lock'))) return 'yarn';
+	if (fs.existsSync(path.join(root, 'bun.lockb'))) return 'bun';
 	return 'npm';
 }
 
 /**
- * Executes a shell command and streams output.
+ * Helper: Run a command interactively
  */
-async function runShell(command: string, args: string[], cwd: string) {
-	const fullCmd = `${command} ${args.join(' ')}`;
-	consola.info(pc.dim(`> Executing: ${fullCmd}`));
+async function runScript(cmd: string, args: string[], cwd: string) {
+	consola.info(pc.blue(`> Executing in ${cwd}: ${cmd} ${args.join(' ')}`));
 	
 	return new Promise<void>((resolve, reject) => {
-		const child = spawn(command, args, {
-			stdio: 'inherit',
-			shell: true,
-			cwd
+		const child = spawn(cmd, args, {
+			cwd,
+			stdio: 'inherit', // Important: lets user interact/see output
+			shell: true
 		});
 		
 		child.on('close', (code) => {
 			if (code === 0) resolve();
-			else reject(new Error(`Exit Code: ${code}`));
+			else reject(new Error(`Process exited with code ${code}`));
 		});
 		
 		child.on('error', (err) => reject(err));
 	});
 }
 
-export async function runDocs(targetRoot: string) {
-	const pkgPath = path.join(targetRoot, 'package.json');
+export async function runDocs(targetRoot: string, toolRoot: string) {
+	// 1. Analyze Project Capabilities
+	const targetPkgPath = path.join(targetRoot, 'package.json');
+	let hasProjectDocs = false;
+	let projectPM = 'npm';
 	
-	if (!fs.existsSync(pkgPath)) {
-		consola.error(pc.red(`No package.json found in ${targetRoot}`));
-		return;
+	if (fs.existsSync(targetPkgPath)) {
+		try {
+			const pkg = JSON.parse(fs.readFileSync(targetPkgPath, 'utf-8'));
+			const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+			if (deps.vitepress) {
+				hasProjectDocs = true;
+				projectPM = detectPM(targetRoot);
+			}
+		} catch (e) { /* ignore invalid json */ }
 	}
 	
-	let pkg: any = {};
-	try {
-		pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-	} catch (error) {
-		consola.error(pc.red('Failed to parse package.json'));
-		return;
-	}
+	const toolPM = detectPM(toolRoot);
 	
-	// 1. Validation: Is Vitepress installed?
-	const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-	if (!allDeps['vitepress']) {
-		consola.warn(pc.yellow('⚠️  Vitepress is not listed in dependencies.'));
-		const confirm = await select({
-			message: 'Continue anyway?',
-			options: [
-				{ value: 'no', label: 'No, abort' },
-				{ value: 'yes', label: 'Yes, try running commands' }
-			]
+	// 2. Build Menu
+	const options = [
+		{
+			value: 'tool:dev',
+			label: '📘 Start App Manager Docs',
+			hint: `View this tool's documentation`
+		},
+	];
+	
+	if (hasProjectDocs) {
+		options.push({
+			value: 'project:dev',
+			label: '🚀 Start Project Docs',
+			hint: 'Run vitepress dev in target'
 		});
-		if (isCancel(confirm) || confirm === 'no') return;
+		options.push({
+			value: 'project:build',
+			label: '🔨 Build Project Docs',
+			hint: 'Run vitepress build'
+		});
+		options.push({
+			value: 'project:preview',
+			label: '👀 Preview Project Docs',
+			hint: 'View production build'
+		});
 	}
 	
-	// 2. Discovery: Find existing scripts that use 'vitepress'
-	const scripts = pkg.scripts || {};
-	const docScripts = Object.entries(scripts).filter(([_, cmd]) =>
-		(cmd as string).includes('vitepress')
-	);
+	options.push({ value: 'back', label: 'Go Back' });
 	
-	const pm = detectPackageManager(targetRoot);
-	let options = [];
-	
-	// Scenario A: Custom Scripts Found
-	if (docScripts.length > 0) {
-		options = docScripts.map(([key, script]) => ({
-			value: `script:${key}`,
-			label: `Run "${key}"`,
-			hint: pc.dim(script as string)
-		}));
-		consola.success(pc.green(`Found ${docScripts.length} Vitepress scripts.`));
-	} else {
-		// Scenario B: No Scripts, use Raw Commands
-		options = [
-			{ value: 'raw:dev', label: 'Start Dev Server', hint: 'vitepress dev' },
-			{ value: 'raw:build', label: 'Build Site', hint: 'vitepress build' },
-			{ value: 'raw:preview', label: 'Preview Build', hint: 'vitepress preview' }
-		];
-	}
-	
-	options.push({ value: 'back', label: 'Go Back', hint: '' });
-	
-	// 3. Selection
+	// 3. User Selection
 	const action = await select({
-		message: 'Select Documentation Task:',
+		message: 'Documentation Actions:',
 		options
 	});
 	
 	if (isCancel(action) || action === 'back') return;
 	
-	// 4. Execution
 	try {
-		const act = action as string;
-		
-		// If running a package.json script (e.g. "pnpm run docs:dev")
-		if (act.startsWith('script:')) {
-			const scriptName = act.replace('script:', '');
-			await runShell(pm, ['run', scriptName], targetRoot);
-		}
-		// If running raw binary (e.g. "pnpm exec vitepress dev")
-		else if (act.startsWith('raw:')) {
-			const command = act.replace('raw:', '');
-			// use 'exec' (pnpm) or 'npx' (npm) or 'yarn' logic
-			// For simplicity/compatibility, 'npx' or package manager 'exec' pattern
-			// npm/pnpm/yarn all support 'exec' or 'x' usually, but safe bet is:
-			const runner = pm === 'npm' ? 'npx' : `${pm} exec`;
-			// Note: spawn requires command and args split.
-			// 'pnpm exec' is two words. We handle this by splitting or using shell=true.
-			// Let's use the package manager's 'exec' capability if possible, or npx fallback.
-			
-			if (pm === 'npm') {
-				await runShell('npx', ['vitepress', command], targetRoot);
-			} else {
-				// pnpm exec vitepress dev
-				await runShell(pm, ['exec', 'vitepress', command], targetRoot);
-			}
+		// A. App Manager Docs (Tool Root)
+		if (action === 'tool:dev') {
+			// Assumes 'docs:dev' exists in your app-manager package.json, or fallback to npx
+			await runScript(toolPM === 'npm' ? 'npx' : toolPM, ['vitepress', 'dev'], toolRoot);
 		}
 		
-		consola.success(pc.green('Docs command completed successfully.'));
+		// B. Project Docs (Target Root)
+		else if (action === 'project:dev') {
+			await runScript(projectPM === 'npm' ? 'npx' : projectPM, ['vitepress', 'dev'], targetRoot);
+		}
+		else if (action === 'project:build') {
+			await runScript(projectPM === 'npm' ? 'npx' : projectPM, ['vitepress', 'build'], targetRoot);
+		}
+		else if (action === 'project:preview') {
+			await runScript(projectPM === 'npm' ? 'npx' : projectPM, ['vitepress', 'preview'], targetRoot);
+		}
+		
 	} catch (err: any) {
-		consola.error(pc.red(`Docs execution failed: ${err.message}`));
+		consola.error(`Docs Command Failed: ${err.message}`);
 	}
 }
