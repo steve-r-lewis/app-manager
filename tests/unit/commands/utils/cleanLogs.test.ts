@@ -52,7 +52,7 @@ describe('Command: cleanLogs', () => {
 	
 	it('should find and delete logs and mock fixtures', async () => {
 		// 1. Setup Environment
-		const logsDir = path.join(ctx.targetRoot, 'app-monitor', 'test', 'logs');
+		const logsDir = path.join(ctx.targetRoot, 'app-monitor', 'test-logs');
 		const fixturesDir = path.join(ctx.targetRoot, 'tests', 'fixtures');
 		
 		fs.mkdirSync(logsDir, { recursive: true });
@@ -81,7 +81,7 @@ describe('Command: cleanLogs', () => {
 	});
 	
 	it('should abort if user cancels', async () => {
-		const logsDir = path.join(ctx.targetRoot, 'app-monitor', 'test', 'logs');
+		const logsDir = path.join(ctx.targetRoot, 'app-monitor', 'test-logs');
 		fs.mkdirSync(logsDir, { recursive: true });
 		const logFile = path.join(logsDir, 'report.json');
 		fs.writeFileSync(logFile, '{}');

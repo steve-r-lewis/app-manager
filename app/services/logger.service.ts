@@ -31,80 +31,94 @@ import pc from 'picocolors';
 export class LoggerService {
 	private logger: ConsolaInstance;
 	private root: string;
-	private sessionLogPath: string | null = null;
-	private errorLogPath: string | null = null;
+	
+	// Log Paths
+	private paths = {
+		error: '',
+		process: '',
+		session: ''
+	};
+	
+	// State Flags
+	private isProcessLogging = false;
 	
 	constructor() {
 		this.root = process.cwd();
 		this.logger = consola.create({});
 	}
 	
-	// NEW: Safe cleanup hook
-	close() {
-		this.sessionLogPath = null;
-		this.errorLogPath = null;
-	}
-	
 	init() {
-		const monitorDir = path.join(this.root, 'app-monitor');
-		const processDir = path.join(monitorDir, 'process-logs');
-		const sessionDir = path.join(monitorDir, 'session-logs');
-		const errorDir = path.join(monitorDir, 'error-logs');
-		const fixtureDir = path.join(monitorDir, 'test-fixtures');
-		const testDir = path.join(monitorDir, 'test-logs');
+		const monitorRoot = path.join(this.root, 'app-monitor');
 		
-		[monitorDir, sessionDir, errorDir].forEach(dir => {
+		// Define your new structure
+		this.paths.error = path.join(monitorRoot, 'error-logs');
+		this.paths.process = path.join(monitorRoot, 'process-logs');
+		this.paths.session = path.join(monitorRoot, 'session-logs');
+		
+		// Ensure all exist
+		[this.paths.error, this.paths.process, this.paths.session].forEach(dir => {
 			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 		});
 		
-		this.errorLogPath = path.join(errorDir, 'error.log');
-		if (!fs.existsSync(this.errorLogPath)) {
-			fs.writeFileSync(this.errorLogPath, '');
-		}
-		
+		// Add Reporter to hook into Consola calls
 		this.logger.addReporter({
 			log: (logObj) => {
-				if (logObj.type === 'error' || logObj.level === 0) {
-					this.writeToErrorLog(logObj.args);
-				}
-				if (this.sessionLogPath) {
-					this.writeToSessionLog(logObj);
-				}
+				this.handleLogDispatch(logObj);
 			}
 		});
 	}
 	
-	enableSessionLogging() {
-		const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-		this.sessionLogPath = path.join(this.root, 'app-monitor', 'session-logs', `session-${timestamp}.log`);
-		
-		// FIX: Eagerly create the file immediately so tests can see it
-		fs.writeFileSync(this.sessionLogPath, '');
-		
-		this.info(`Session logging enabled: ${this.sessionLogPath}`);
+	// Toggle for the "Process" logs (user flag)
+	enableProcessLogging() {
+		this.isProcessLogging = true;
+		this.process('Process logging enabled');
 	}
 	
-	private writeToErrorLog(args: any[]) {
-		if (!this.errorLogPath) return;
-		const message = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-		const entry = `[${new Date().toISOString()}] ERROR: ${message}\n`;
-		fs.appendFileSync(this.errorLogPath, entry);
-	}
-	
-	private writeToSessionLog(logObj: any) {
-		if (!this.sessionLogPath) return;
+	// Central Dispatcher
+	private handleLogDispatch(logObj: any) {
 		const args = logObj.args || [];
-		const message = args.map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-		const entry = `[${new Date().toISOString()}] ${logObj.type.toUpperCase()}: ${message}\n`;
-		fs.appendFileSync(this.sessionLogPath, entry);
+		const msg = args.map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+		const timestamp = new Date().toISOString();
+		const logLine = `[${timestamp}] [${logObj.type.toUpperCase()}] ${msg}\n`;
+		
+		// 1. Session Logs (Audit Trail - High Level)
+		// We log "info" and "success" types here automatically
+		if (['info', 'success', 'start'].includes(logObj.type)) {
+			const dateStr = timestamp.split('T')[0];
+			const file = path.join(this.paths.session, `session-${dateStr}.log`);
+			fs.appendFileSync(file, logLine);
+		}
+		
+		// 2. Error Logs (Catch blocks)
+		if (logObj.type === 'error' || logObj.level === 0) {
+			const file = path.join(this.paths.error, 'errors.log'); // Rotates or Appends
+			fs.appendFileSync(file, logLine);
+		}
+		
+		// 3. Process Logs (Verbose/Debug) - ONLY if enabled
+		if (this.isProcessLogging) {
+			const file = path.join(this.paths.process, 'process-debug.log');
+			fs.appendFileSync(file, logLine);
+		}
 	}
 	
+	// Public API
 	info(...args: any[]) { this.logger.info(...args); }
 	success(...args: any[]) { this.logger.success(...args); }
 	warn(...args: any[]) { this.logger.warn(...args); }
 	error(...args: any[]) { this.logger.error(...args); }
-	box(message: string) { this.logger.box(message); }
+	
+	// Explicit "Process" log that might not show in console but goes to file
+	process(...args: any[]) {
+		if (this.isProcessLogging) {
+			// Log to file via reporter
+			this.logger.debug(...args);
+		}
+	}
+	
+	close() {
+		// Cleanup if needed
+	}
 }
 
 export const logger = new LoggerService();
-// REMOVED: logger.init(); <-- This was causing issues by running on import
