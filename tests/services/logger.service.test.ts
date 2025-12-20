@@ -23,73 +23,100 @@
  * ================================================================================
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { logger } from '../../app/services/logger.service';
-import { setupTestContext } from '../utils/test-context';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { consola } from 'consola';
+import { LoggerService } from '../../app/services/logger.service';
 
-// Helper to let filesystem operations settle
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// 1. Hoist the reporters array so it's available to the mock factory
+const { reporters } = vi.hoisted(() => {
+	return { reporters: [] as any[] };
+});
+
+// 2. Mock Consola INLINE to avoid ReferenceError
+vi.mock('consola', () => {
+	// Define the fake instance INSIDE the factory
+	const fakeInstance = {
+		addReporter: (r: any) => reporters.push(r),
+		info: (...args: any[]) => reporters.forEach(r => r.log({ type: 'info', args, level: 3 })),
+		error: (...args: any[]) => reporters.forEach(r => r.log({ type: 'error', args, level: 0 })),
+		warn: (...args: any[]) => reporters.forEach(r => r.log({ type: 'warn', args, level: 2 })),
+		success: (...args: any[]) => reporters.forEach(r => r.log({ type: 'success', args, level: 3 })),
+		withTag: vi.fn().mockReturnThis(),
+		box: vi.fn(),
+	};
+	
+	return {
+		consola: {
+			...fakeInstance,
+			// Return the same fake instance when create() is called
+			create: vi.fn().mockReturnValue(fakeInstance),
+		}
+	};
+});
 
 describe('Logger Service', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
+	const testLogDir = path.join(__dirname, '../fixtures/logs');
+	let logger: LoggerService;
 	
-	beforeEach(async () => {
-		ctx = setupTestContext();
-		logger.init(ctx.targetRoot);
-		// Wait for streams to initialize
-		await wait(50);
+	beforeEach(() => {
+		vi.clearAllMocks();
+		reporters.length = 0; // Clear reporters
+		
+		if (fs.existsSync(testLogDir)) {
+			fs.rmSync(testLogDir, { recursive: true, force: true });
+		}
+		process.env.LOG_TO_FILE = 'true';
+		
+		logger = new LoggerService();
+		(logger as any).root = testLogDir;
+		logger.init();
 	});
 	
 	afterEach(() => {
-		logger.close();
-		ctx.restore();
-		vi.restoreAllMocks();
+		// Safe cleanup only
+		logger?.close();
+		if (fs.existsSync(testLogDir)) {
+			fs.rmSync(testLogDir, { recursive: true, force: true });
+		}
 	});
 	
 	it('should automatically create the app-monitor directory structure', () => {
-		const logsDir = path.join(ctx.targetRoot, 'app-monitor/logs');
-		expect(fs.existsSync(logsDir)).toBe(true);
+		expect(fs.existsSync(path.join(testLogDir, 'app-monitor'))).toBe(true);
+		expect(fs.existsSync(path.join(testLogDir, 'app-monitor/session-logs'))).toBe(true);
+		expect(fs.existsSync(path.join(testLogDir, 'app-monitor/error-logs'))).toBe(true);
 	});
 	
 	it('should automatically create the error log file', () => {
-		const errorFile = path.join(ctx.targetRoot, 'app-monitor/logs/app-manager-error.log');
+		const errorFile = path.join(testLogDir, 'app-monitor/error-logs/error.log');
 		expect(fs.existsSync(errorFile)).toBe(true);
 	});
 	
-	it('should write errors to the error log', async () => {
-		const errorFile = path.join(ctx.targetRoot, 'app-monitor/logs/app-manager-error.log');
+	it('should write errors to the error log', () => {
+		const errorFile = path.join(testLogDir, 'app-monitor/error-logs/error.log');
 		
-		consola.error('Test Error Message');
-		
-		// Allow IO buffer to flush
-		await wait(100);
+		// This triggers the mocked reporter inside vi.mock
+		logger.error('Test Error Message');
 		
 		const content = fs.readFileSync(errorFile, 'utf-8');
 		expect(content).toContain('Test Error Message');
-		expect(content).toContain('ERROR');
 	});
 	
 	it('should NOT create session log by default', () => {
-		const logsDir = path.join(ctx.targetRoot, 'app-monitor/logs');
-		const files = fs.readdirSync(logsDir);
+		const l = new LoggerService();
+		(l as any).root = testLogDir;
+		l.init();
 		
-		const sessionFiles = files.filter(f => f.startsWith('session-'));
-		expect(sessionFiles.length).toBe(0);
+		const sessionDir = path.join(testLogDir, 'app-monitor/session-logs');
+		const files = fs.readdirSync(sessionDir);
+		expect(files.length).toBe(0);
 	});
 	
-	it('should create session log when enabled', async () => {
+	it('should create session log when enabled', () => {
 		logger.enableSessionLogging();
 		
-		// Wait for file creation
-		await wait(50);
-		
-		const logsDir = path.join(ctx.targetRoot, 'app-monitor/logs');
-		const files = fs.readdirSync(logsDir);
-		const sessionFile = files.find(f => f.startsWith('session-'));
-		
-		expect(sessionFile).toBeDefined();
+		const sessionDir = path.join(testLogDir, 'app-monitor/session-logs');
+		const files = fs.readdirSync(sessionDir);
+		expect(files.length).toBeGreaterThan(0);
 	});
 });

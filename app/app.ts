@@ -26,50 +26,48 @@
  * ================================================================================
  */
 
+/**
+ * ================================================================================
+ * @project:    app-manager
+ * @file:       ~/app/app.ts
+ * ================================================================================
+ */
+
+// ... imports
 import { intro, outro, select, multiselect, isCancel } from '@clack/prompts';
 import pc from 'picocolors';
 import { consola } from 'consola';
-
-// Import Logger Service
 import { logger } from './services/logger.service.js';
 
-// App Commands
+// ... all other command imports ...
 import { runApp } from './commands/app/runApp';
-
-// Docs Commands
 import { runDocs } from './commands/docs/runDocs';
-
-// Git Commands
 import { syncRepos } from './commands/git/syncRepos';
 import { manageCommits } from './commands/git/manageCommits';
 import { pushToRemote } from './commands/git/pushToRemote';
 import { initLayers } from './commands/git/initLayers';
 import { addSubmodules } from './commands/git/addSubmodules';
 import { deleteRemoteRepos } from './commands/git/deleteRemoteRepos';
-
-// Nuxt Commands
 import { createLayer } from './commands/nuxt/createLayer';
 import { extractDocs } from './commands/nuxt/extractDocs';
 import { manageEnv } from './commands/nuxt/manageEnv';
-
-// Quality Commands
 import { runQuality } from './commands/quality/runQuality';
-
-// Utils Commands
 import { autoVersion } from './commands/utils/autoVersion';
 import { validateHeaders } from './commands/utils/validateHeaders';
 import { autoDoc } from './commands/utils/autoDoc';
 import { addContributor } from './commands/utils/addContributor';
-
-// App Utils Commands
 import { cleanLogs } from './commands/utils/cleanLogs';
 
 export async function main(targetRoot: string, toolRoot: string) {
 	// 1. Initial Clear
 	if (!process.env.DEBUG) console.clear();
 	
+	// FIX: Explicitly initialize the logger now that auto-init is removed
+	logger.init();
+	
 	intro(pc.inverse(pc.cyan(' Nuxt 4 Monorepo Manager ')));
 	
+	// ... (Rest of your main function remains exactly the same) ...
 	// 2. Session Configuration
 	const sessionConfig = await multiselect({
 		message: 'Session Configuration:',
@@ -85,7 +83,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 		return;
 	}
 	
-	// 3. Apply Settings & Initialize Logger
 	const config = sessionConfig as string[];
 	
 	if (config.includes('debug')) {
@@ -95,8 +92,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 	
 	if (config.includes('logging')) {
 		process.env.LOG_TO_FILE = 'true';
-		// Only enable the VERBOSE session log if requested.
-		// The Error log is already active from appManager.ts (index.ts)
 		consola.info(pc.blue('ℹ File Logging Enabled'));
 		logger.enableSessionLogging();
 	}
@@ -170,7 +165,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 			if (action === 'delete') await deleteRemoteRepos();
 		}
 		
-		//if (domain === 'quality') await runQuality(targetRoot);
 		if (domain === 'quality') await runQuality(targetRoot, toolRoot);
 		
 		if (domain === 'docs') await runDocs(targetRoot, toolRoot);
@@ -188,7 +182,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 			});
 			if (isCancel(action) || action === 'back') continue;
 			
-			// UPDATED: Pass targetRoot to all utility functions
 			if (action === 'headers') await validateHeaders(targetRoot);
 			if (action === 'version') await autoVersion(targetRoot);
 			if (action === 'doc') await autoDoc(targetRoot);

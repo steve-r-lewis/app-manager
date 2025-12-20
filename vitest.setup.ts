@@ -23,9 +23,9 @@
  * ================================================================================
  */
 
-import { vi, beforeAll, afterEach } from 'vitest';
+import { vi, afterEach } from 'vitest';
 
-// 1. Hoist the mock functions so they are available before imports
+// 1. Hoist Prompts
 const { mockConfirm, mockSelect, mockMultiselect, mockText, mockIsCancel } = vi.hoisted(() => {
 	return {
 		mockConfirm: vi.fn(),
@@ -46,28 +46,40 @@ vi.mock('@clack/prompts', async (importOriginal) => {
 		multiselect: mockMultiselect,
 		text: mockText,
 		isCancel: mockIsCancel,
-		// We mock intro/outro/spinner to keep test output clean
 		intro: vi.fn(),
 		outro: vi.fn(),
 		spinner: () => ({ start: vi.fn(), stop: vi.fn(), message: vi.fn() }),
-		log: {
-			message: vi.fn(),
-			info: vi.fn(),
-			success: vi.fn(),
-			warn: vi.fn(),
-			error: vi.fn()
+	};
+});
+
+// 3. Global Mock for Consola (The Fix for 'addReporter' crash)
+vi.mock('consola', () => {
+	const mockFn = vi.fn().mockReturnThis();
+	return {
+		consola: {
+			info: mockFn,
+			warn: mockFn,
+			error: mockFn,
+			success: mockFn,
+			start: mockFn,
+			ready: mockFn,
+			box: mockFn,
+			debug: mockFn,
+			trace: mockFn,
+			// Critical methods
+			addReporter: vi.fn(),
+			create: vi.fn().mockReturnThis(),
+			withTag: vi.fn().mockReturnThis(),
+			withDefaults: vi.fn().mockReturnThis(),
 		}
 	};
 });
 
-// 3. Reset mocks after each test to ensure isolation
-afterEach(() => {
-	vi.clearAllMocks();
-});
-
-// 4. Attach mocks to the global object so tests can control them
-// (Typescript might complain without a .d.ts, but this works for runtime)
 globalThis.mockConfirm = mockConfirm;
 globalThis.mockSelect = mockSelect;
 globalThis.mockMultiselect = mockMultiselect;
 globalThis.mockText = mockText;
+
+afterEach(() => {
+	vi.clearAllMocks();
+});

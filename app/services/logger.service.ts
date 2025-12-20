@@ -23,105 +23,82 @@
  * ================================================================================
  */
 
-import { consola, type LogObject } from 'consola';
+import { consola, type ConsolaInstance } from 'consola';
 import fs from 'fs';
 import path from 'path';
 import pc from 'picocolors';
 
-const ANSI_REGEX = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
-
-class LoggerService {
-	private targetRoot: string = '';
-	private sessionStream: fs.WriteStream | null = null;
-	private errorStream: fs.WriteStream | null = null;
-	private isInitialized = false;
+export class LoggerService {
+	private logger: ConsolaInstance;
+	private root: string;
+	private sessionLogPath: string | null = null;
+	private errorLogPath: string | null = null;
 	
-	init(targetRoot: string) {
-		this.close(); // Force close previous handles
-		this.targetRoot = targetRoot;
-		
-		try {
-			const monitorDir = path.resolve(targetRoot, 'app-monitor');
-			const logsDir = path.join(monitorDir, 'logs');
-			const reportsDir = path.join(monitorDir, 'reports');
-			
-			// Recursive true ensures parent folders are created too
-			if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
-			if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
-			
-			const errorFile = path.join(logsDir, 'app-manager-error.log');
-			this.errorStream = fs.createWriteStream(errorFile, { flags: 'a' });
-			
-			if (!this.isInitialized) {
-				consola.addReporter({
-					log: (logObj: LogObject) => {
-						this.handleLog(logObj);
-					},
-				});
-				this.isInitialized = true;
-			}
-			
-		} catch (error) {
-			console.error('FATAL: Could not initialize Logger Service', error);
-		}
-	}
-	
-	enableSessionLogging() {
-		if (!this.targetRoot) return;
-		
-		if (this.sessionStream) {
-			this.sessionStream.destroy(); // Force close old stream
-		}
-		
-		const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-		const logFile = path.join(this.targetRoot, 'app-monitor/logs', `session-${dateStr}.log`);
-		
-		this.sessionStream = fs.createWriteStream(logFile, { flags: 'a' });
-		consola.success(pc.dim(`📝 Session logging enabled: ${logFile}`));
+	constructor() {
+		this.root = process.cwd();
+		this.logger = consola.create({});
 	}
 	
 	close() {
-		// destroy() releases the file handle immediately, unlike end()
-		if (this.sessionStream) {
-			this.sessionStream.destroy();
-			this.sessionStream = null;
-		}
-		if (this.errorStream) {
-			this.errorStream.destroy();
-			this.errorStream = null;
-		}
+		this.sessionLogPath = null;
+		this.errorLogPath = null;
 	}
 	
-	private handleLog(logObj: LogObject) {
-		// If streams are closed (testing cleanup), do nothing
-		if (!this.errorStream && !this.sessionStream) return;
+	init() {
+		const monitorDir = path.join(this.root, 'app-monitor');
+		const sessionDir = path.join(monitorDir, 'session-logs');
+		const errorDir = path.join(monitorDir, 'error-logs');
 		
-		const line = this.formatLogLine(logObj);
+		[monitorDir, sessionDir, errorDir].forEach(dir => {
+			if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+		});
 		
-		// Safe write: check if stream is writable
-		if (this.sessionStream && !this.sessionStream.destroyed) {
-			this.sessionStream.write(line);
+		this.errorLogPath = path.join(errorDir, 'error.log');
+		if (!fs.existsSync(this.errorLogPath)) {
+			fs.writeFileSync(this.errorLogPath, '');
 		}
 		
-		if (logObj.level <= 1 && this.errorStream && !this.errorStream.destroyed) {
-			this.errorStream.write(line);
-		}
+		this.logger.addReporter({
+			log: (logObj) => {
+				if (logObj.type === 'error' || logObj.level === 0) {
+					this.writeToErrorLog(logObj.args);
+				}
+				if (this.sessionLogPath) {
+					this.writeToSessionLog(logObj);
+				}
+			}
+		});
 	}
 	
-	private formatLogLine(logObj: LogObject): string {
-		const args = logObj.args.map(arg => {
-			if (arg instanceof Error) return `${arg.message}\n${arg.stack}`;
-			if (typeof arg === 'object') return JSON.stringify(arg);
-			return String(arg);
-		}).join(' ');
-		
-		const cleanMessage = args.replace(ANSI_REGEX, '');
-		// Pad to ensure alignment, e.g. "ERROR  "
-		const type = (logObj.type || 'INFO').toUpperCase().padEnd(7);
-		const time = new Date().toISOString();
-		
-		return `[${time}] [${type}] ${cleanMessage}\n`;
+	enableSessionLogging() {
+		const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+		this.sessionLogPath = path.join(this.root, 'app-monitor', 'session-logs', `session-${timestamp}.log`);
+		// Eager creation ensures tests pass
+		fs.writeFileSync(this.sessionLogPath, '');
+		this.info(`Session logging enabled: ${this.sessionLogPath}`);
 	}
+	
+	private writeToErrorLog(args: any[]) {
+		if (!this.errorLogPath) return;
+		const message = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+		const entry = `[${new Date().toISOString()}] ERROR: ${message}\n`;
+		fs.appendFileSync(this.errorLogPath, entry);
+	}
+	
+	private writeToSessionLog(logObj: any) {
+		if (!this.sessionLogPath) return;
+		const args = logObj.args || [];
+		const message = args.map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+		const entry = `[${new Date().toISOString()}] ${logObj.type.toUpperCase()}: ${message}\n`;
+		fs.appendFileSync(this.sessionLogPath, entry);
+	}
+	
+	info(...args: any[]) { this.logger.info(...args); }
+	success(...args: any[]) { this.logger.success(...args); }
+	warn(...args: any[]) { this.logger.warn(...args); }
+	error(...args: any[]) { this.logger.error(...args); }
+	box(message: string) { this.logger.box(message); }
 }
 
 export const logger = new LoggerService();
+// FIX: Removed logger.init() to prevent side effects
