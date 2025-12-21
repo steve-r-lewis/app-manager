@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/nuxt/createLayer.ts
- * @version:    1.1.0
+ * @version:    1.2.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:27
  * @author:     Steve R Lewis
@@ -18,6 +18,9 @@
  *
  * @notes: Revision History
  *
+ * V1.2.0, 20251221-22:34
+ * Switched to '@clack/prompts' spinner to resolve missing logger method.
+ *
  * V1.1.0, 20251221-21:55
  * Added JSDoc word-wrapping and LICENSE generation to match PowerShell parity.
  *
@@ -27,7 +30,7 @@
  * ================================================================================
  */
 
-import { intro, outro, text, isCancel } from '@clack/prompts';
+import { intro, outro, text, isCancel, spinner } from '@clack/prompts';
 import { logger } from '../../services/logger.service.js';
 import { llm } from '../../services/llm.service.js';
 import fs from 'fs';
@@ -81,7 +84,10 @@ export async function createLayer(targetRoot: string, options: CreateLayerOption
 	}
 	
 	// 2. AI Generation
-	const loader = logger.loader('Generating Metadata via AI...');
+	// FIX: Use Clack spinner instead of logger.loader
+	const s = spinner();
+	s.start('Generating Metadata via AI...');
+	
 	let aiData = {
 		readme: `The @monorepo/${layerName} layer. Purpose: ${purpose}`,
 		jsdoc: `Configuration for ${layerName}.`,
@@ -101,20 +107,17 @@ export async function createLayer(targetRoot: string, options: CreateLayerOption
 		
 		const response = await llm.generate(prompt);
 		
-		// Extract JSON if wrapped in markdown blocks
 		const jsonMatch = response.match(/\{[\s\S]*\}/);
 		if (jsonMatch) {
 			const parsed = JSON.parse(jsonMatch[0]);
 			aiData = { ...aiData, ...parsed };
 		}
+		s.stop('Metadata Generated');
 	} catch (e) {
-		logger.warn('AI generation failed, using defaults.');
-	} finally {
-		loader.stop();
+		s.stop('AI generation failed, using defaults.');
 	}
 	
 	// 3. Formatting Logic (PowerShell Parity)
-	// Word Wrap JSDoc at 75 chars
 	const words = aiData.jsdoc.split(' ');
 	let jsDocBlock = '';
 	let line = ' *';
@@ -158,7 +161,7 @@ export async function createLayer(targetRoot: string, options: CreateLayerOption
 		fs.writeFileSync(path.join(targetDir, '.gitignore'), gitIgnore);
 		
 		// -- LICENSE --
-		const licenseContent = `Copyright ${year} Steve R Lewis\n\nPermission is hereby granted, free of charge... (Standard MIT/Proprietary Text)`;
+		const licenseContent = `MIT License\n\nCopyright ${year} Steve R Lewis\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.`;
 		fs.writeFileSync(path.join(targetDir, 'LICENSE'), licenseContent);
 		
 		// -- README.md --
