@@ -57,8 +57,7 @@ export async function main(targetRoot: string, toolRoot: string) {
 	if (!process.env.DEBUG) console.clear();
 	
 	// --- DEBUG: LOG ARGS TO FILE ---
-	// Only write this file if the specific ENV flag is set (used by E2E tests)
-	if (process.env.AM_DEBUG_ARGS) {
+	if (process.env.AM_DEBUG_ARGS === 'true') {
 		try {
 			const debugPath = path.join(targetRoot, 'debug_args.json');
 			const args = process.argv.slice(2);
@@ -75,7 +74,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 	logger.init();
 	
 	// 2. Parse CLI Arguments (Headless Mode)
-	// args[0] is node, args[1] is script, args[2] is domain, args[3] is command
 	const args = process.argv.slice(2);
 	const domainArg = args[0];
 	const commandArg = args[1];
@@ -86,14 +84,12 @@ export async function main(targetRoot: string, toolRoot: string) {
 		// --- Headless Routing ---
 		
 		// 1. Validate Headers
-		// usage: am utils headers
 		if (domainArg === 'utils' && commandArg === 'headers') {
 			await validateHeaders(targetRoot);
 			return;
 		}
 		
 		// 2. Add Contributor
-		// usage: am utils contributor "Name" "Email" "URL"
 		if (domainArg === 'utils' && commandArg === 'contributor') {
 			const name = args[2];
 			const email = args[3];
@@ -109,7 +105,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 		}
 		
 		// 3. Delete Remote Repo
-		// usage: am git delete "owner/repo" "DELETE"
 		if (domainArg === 'git' && commandArg === 'delete') {
 			const repo = args[2];
 			const confirm = args[3];
@@ -123,10 +118,25 @@ export async function main(targetRoot: string, toolRoot: string) {
 			return;
 		}
 		
-		// Future: Add other routings here...
+		// 4. Git Commit (Headless Manual)
+		// usage: am git commit "Message"
+		if (domainArg === 'git' && commandArg === 'commit') {
+			const message = args[2];
+			
+			// If no message provided, we fall through to interactive mode (Smart Commit)
+			// But if message IS provided, we run headless.
+			if (message) {
+				await manageCommits(targetRoot, { message });
+				return;
+			}
+			// If !message, do nothing here; let it hit the interactive block below.
+		}
 		
 		// If no match found, warn and fall through to interactive
-		consola.warn(`Command '${domainArg} ${commandArg}' not recognized. Starting interactive mode.`);
+		if (domainArg !== 'git' || commandArg !== 'commit') {
+			// Only warn if it wasn't a "git commit" without args (which is valid interactive)
+			consola.warn(`Command '${domainArg} ${commandArg}' not recognized. Starting interactive mode.`);
+		}
 	}
 	
 	// 3. Interactive Mode (Legacy)

@@ -23,83 +23,61 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { manageCommits } from '../../../../app/commands/git/manageCommits';
-import { setupTestContext } from '../../../utils/test-context';
-import { llm } from '../../../../app/services/llm.service';
-import * as prompts from '@clack/prompts';
+import child_process from 'child_process';
+import { text } from '@clack/prompts';
 
-// Mock simple-git
-const mockGit = {
-	checkIsRepo: vi.fn(),
-	status: vi.fn(),
-	add: vi.fn(),
-	diff: vi.fn(),
-	commit: vi.fn(),
-};
-
-vi.mock('simple-git', () => ({
-	simpleGit: () => mockGit
+// 1. Mock External Dependencies
+vi.mock('child_process');
+vi.mock('@clack/prompts');
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		info: vi.fn(),
+		success: vi.fn(),
+		error: vi.fn(),
+		warn: vi.fn(),
+		loader: vi.fn(() => ({ stop: vi.fn() }))
+	}
 }));
-
-// Mock Prompts
-vi.mock('@clack/prompts', async (importOriginal) => ({
-	...(await importOriginal<typeof import('@clack/prompts')>()),
-	select: vi.fn(),
-	multiselect: vi.fn(),
-	text: vi.fn(),
-	spinner: () => ({ start: vi.fn(), stop: vi.fn() })
-}));
-
-// Mock LLM
+// FIX: Mock 'llm' export to match service
 vi.mock('../../../../app/services/llm.service', () => ({
-	llm: { generate: vi.fn() }
+	llm: { generate: vi.fn().mockResolvedValue('feat: ai suggestion') }
 }));
 
-describe('Command: manageCommits', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
-	const mockSelect = prompts.select as unknown as ReturnType<typeof vi.fn>;
-	const mockMulti = prompts.multiselect as unknown as ReturnType<typeof vi.fn>;
+describe('Unit: manageCommits', () => {
+	const mockRoot = '/mock/root';
 	
 	beforeEach(() => {
-		ctx = setupTestContext();
 		vi.clearAllMocks();
-		mockGit.checkIsRepo.mockResolvedValue(true);
-		mockGit.status.mockResolvedValue({ files: [], staged: [] });
-		mockGit.diff.mockResolvedValue('mock diff');
-		(llm.generate as any).mockResolvedValue('feat: ai message');
-	});
-	
-	afterEach(() => {
-		ctx.restore();
-	});
-	
-	it('should stage files if none are staged', async () => {
-		mockGit.status.mockResolvedValue({
-			files: [{ path: 'file.txt', working_dir: 'M' }],
-			staged: []
+		vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+			const command = cmd.toString();
+			if (command.includes('status')) return 'M  file.txt';
+			if (command.includes('diff')) return 'diff content';
+			return '';
 		});
-		
-		mockMulti.mockResolvedValue(['file.txt']);
-		mockSelect.mockResolvedValue('commit');
-		
-		await manageCommits(ctx.targetRoot);
-		
-		expect(mockGit.add).toHaveBeenCalledWith(['file.txt']);
-		expect(mockGit.commit).toHaveBeenCalledWith('feat: ai message');
 	});
 	
-	it('should allow editing the message before committing', async () => {
-		mockGit.status.mockResolvedValue({ files: [{}], staged: ['file.txt'] });
-		
-		mockSelect
-			.mockResolvedValueOnce('edit')
-			.mockResolvedValueOnce('commit');
-		
-		(prompts.text as any).mockResolvedValue('chore: manual edit');
-		
-		await manageCommits(ctx.targetRoot);
-		
-		expect(mockGit.commit).toHaveBeenCalledWith('chore: manual edit');
+	it('should stage files and commit immediately if message is provided (Headless)', async () => {
+		await manageCommits(mockRoot, { message: 'feat: manual' });
+		expect(text).not.toHaveBeenCalled();
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git add'),
+			expect.anything()
+		);
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git commit -m "feat: manual"'),
+			expect.anything()
+		);
+	});
+	
+	it('should fallback to interactive mode if no message is provided', async () => {
+		vi.mocked(text).mockResolvedValueOnce('feat: user input');
+		await manageCommits(mockRoot, {});
+		expect(text).toHaveBeenCalled();
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git commit -m "feat: user input"'),
+			expect.anything()
+		);
 	});
 });

@@ -23,125 +23,101 @@
  * ================================================================================
  */
 
-import { simpleGit, SimpleGit } from 'simple-git';
-import { select, text, multiselect, isCancel, spinner } from '@clack/prompts';
-import { llm } from '../../services/llm.service';
-import { consola } from 'consola';
-import pc from 'picocolors';
+import { intro, outro, text, isCancel } from '@clack/prompts';
+import { logger } from '../../services/logger.service.js';
+// FIX: Using correct export 'llm'
+import { llm } from '../../services/llm.service.js';
+import { execSync } from 'child_process';
 
-function getSmartDiff(diff: string, maxLength = 3500): string {
-	if (diff.length <= maxLength) return diff;
-	return diff.substring(0, maxLength) + '\n...[Diff Truncated]...';
+export interface CommitOptions {
+	message?: string;
 }
 
-export async function manageCommits(targetRoot: string) {
-	const git: SimpleGit = simpleGit(targetRoot);
-	const s = spinner();
-	
-	// 1. Validation
-	const isRepo = await git.checkIsRepo();
-	if (!isRepo) {
-		consola.error(pc.red(`Not a git repository: ${targetRoot}`));
-		return;
-	}
-	
-	// 2. Status Check
-	const status = await git.status();
-	
-	if (status.files.length === 0) {
-		consola.info("Working tree clean. No changes to commit.");
-		return;
-	}
-	
-	// 3. Smart Staging
-	// If nothing is staged, force user to select files (Safety check)
-	if (status.staged.length === 0) {
-		const selectedFiles = await multiselect({
-			message: 'No files staged. Select files to commit:',
-			options: status.files.map(f => ({
-				value: f.path,
-				label: `${f.working_dir} ${f.path}`,
-			})),
-			required: false
-		});
-		
-		if (isCancel(selectedFiles)) return;
-		
-		if (selectedFiles.length > 0) {
-			s.start('Staging files...');
-			await git.add(selectedFiles as string[]);
-			s.stop('Files staged.');
-		} else {
-			consola.warn('No files selected. Aborting.');
+export async function manageCommits(targetRoot: string, options: CommitOptions = {}) {
+	// --- HEADLESS MODE ---
+	if (options.message) {
+		logger.info(`Headless Commit: "${options.message}"`);
+		try {
+			// 1. Stage All
+			// stdio: 'ignore' keeps the console clean
+			execSync('git add .', { cwd: targetRoot, stdio: 'ignore' });
+			
+			// 2. Commit
+			// Escape quotes to prevent shell errors
+			const safeMessage = options.message.replace(/"/g, '\\"');
+			execSync(`git commit -m "${safeMessage}"`, {
+				cwd: targetRoot,
+				stdio: 'inherit'
+			});
+			
+			logger.success('Commit created successfully.');
+			return;
+		} catch (error) {
+			logger.error('Failed to create commit. (Is the working tree clean?)');
 			return;
 		}
 	}
 	
-	// 4. Generate Diff for AI
-	const diff = await git.diff(['--staged']);
-	let commitMessage = '';
+	// --- INTERACTIVE MODE (Legacy) ---
+	intro('🤖  Smart Commit (AI Powered)');
 	
-	if (diff.trim()) {
-		s.start("AI is analyzing changes...");
-		try {
-			const smartDiff = getSmartDiff(diff);
-			const prompt = `
-You are a senior developer. Generate a concise, conventional commit message for this diff.
-Format: <type>(<scope>): <subject>
-Example: feat(auth): add login validation logic
-Diff:
-${smartDiff}
-            `.trim();
-			
-			commitMessage = await llm.generate(prompt);
-			s.stop("Analysis Complete");
-		} catch (error) {
-			s.stop("AI Analysis Failed");
-			consola.error("Could not generate message. Falling back to manual input.");
-		}
-	} else {
-		consola.warn("Staged changes are empty or binary.");
-	}
-	
-	// 5. Review Loop
-	let confirmed = false;
-	while (!confirmed) {
-		const action = await select({
-			message: `Commit Message: "${pc.cyan(commitMessage || 'Top secret changes')}"`,
-			options: [
-				{ value: 'commit', label: '✅ Commit' },
-				{ value: 'edit', label: '✏️ Edit Message' },
-				{ value: 'regenerate', label: '🔄 Regenerate (AI)' },
-				{ value: 'cancel', label: '❌ Cancel' }
-			]
-		});
-		
-		if (isCancel(action) || action === 'cancel') return;
-		
-		if (action === 'commit') {
-			confirmed = true;
-		} else if (action === 'edit') {
-			const userMsg = await text({
-				message: 'Enter commit message:',
-				initialValue: commitMessage
-			});
-			if (!isCancel(userMsg)) commitMessage = userMsg as string;
-		} else if (action === 'regenerate') {
-			s.start("Regenerating...");
-			try {
-				commitMessage = await llm.generate(`Retry: Generate a DIFFERENT, shorter commit message for:\n${getSmartDiff(diff)}`);
-				s.stop("Regenerated.");
-			} catch (err) {
-				s.stop("Failed.");
-			}
-		}
-	}
-	
-	// 6. Execution
+	// 1. Check Status
 	try {
-		await git.commit(commitMessage);
-		consola.success(pc.green(`Changes committed locally. Run "Push" to sync.`));
-	} catch (error: any) {
-		consola.error(`Commit Failed: ${error.message}`);
+		const status = execSync('git status --porcelain', { cwd: targetRoot }).toString();
+		if (!status.trim()) {
+			logger.warn('Working tree is clean. Nothing to commit.');
+			return;
+		}
+	} catch (e) {
+		logger.error('Not a git repository.');
+		return;
+	}
+	
+	// 2. Stage All
+	execSync('git add .', { cwd: targetRoot });
+	logger.info('Staged all changes.');
+	
+	// 3. Generate Message via AI
+	const diff = execSync('git diff --staged', { cwd: targetRoot }).toString();
+	if (!diff.trim()) {
+		logger.warn('No changes detected in staged files.');
+		return;
+	}
+	
+	const loader = logger.loader('Analyzing Diff & Generating Message...');
+	let suggestion = '';
+	
+	try {
+		const prompt = `Generate a conventional commit message for this diff:\n\n${diff.slice(0, 2000)}`;
+		suggestion = await llm.generate(prompt);
+		loader.stop();
+	} catch (error) {
+		loader.stop();
+		logger.error('AI Generation Failed. Fallback to manual.');
+	}
+	
+	// 4. Confirm or Edit
+	const message = await text({
+		message: 'Commit Message:',
+		initialValue: suggestion || '',
+		placeholder: 'feat: add new feature',
+		validate: (val) => !val ? 'Message is required' : undefined
+	});
+	
+	if (isCancel(message)) {
+		outro('Commit Cancelled');
+		return;
+	}
+	
+	// 5. Commit
+	try {
+		const safeMessage = (message as string).replace(/"/g, '\\"');
+		execSync(`git commit -m "${safeMessage}"`, {
+			cwd: targetRoot,
+			stdio: 'inherit'
+		});
+		logger.success('Commit created successfully.');
+	} catch (error) {
+		logger.error('Commit failed.');
 	}
 }
