@@ -26,8 +26,8 @@
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { consola } from 'consola';
 import pc from 'picocolors';
+import { logger } from './logger.service.js';
 import type { LLMRegistry, RepoRegistry } from '../types/index.js';
 
 class ConfigService {
@@ -42,36 +42,46 @@ class ConfigService {
 		this.validateEnvironment();
 	}
 	
+	// Helper to determine where to look for config files
+	private get configDir(): string {
+		// Allows tests to override the location of the config folder
+		return process.env.APP_CONFIG_DIR || path.resolve(this.toolRoot, 'config');
+	}
+	
 	private loadEnv() {
 		const envPath = path.resolve(this.toolRoot, '.env');
 		if (fs.existsSync(envPath)) {
 			dotenv.config({ path: envPath });
-			if (process.env.DEBUG) consola.success(pc.dim('Loaded .env configuration'));
+			if (process.env.DEBUG) logger.success(pc.dim('Loaded .env configuration'));
 		} else {
-			consola.warn(pc.yellow('No .env file found in tool root. AI features may fail.'));
+			logger.warn(pc.yellow('No .env file found in tool root. AI features may fail.'));
 		}
 	}
 	
 	private loadRegistries() {
 		try {
-			const llmPath = path.resolve(this.toolRoot, 'config/llmRegistry.json');
+			// Use the getter here
+			const llmPath = path.resolve(this.configDir, 'llmRegistry.json');
+			
 			if (fs.existsSync(llmPath)) {
 				this.llmConfig = JSON.parse(fs.readFileSync(llmPath, 'utf-8'));
-				if (process.env.DEBUG) consola.success(pc.dim(`Loaded ${this.llmConfig?.records.length} LLM providers`));
+				if (process.env.DEBUG) logger.success(pc.dim(`Loaded ${this.llmConfig?.records.length} LLM providers`));
 			} else {
-				consola.warn('llmRegistry.json not found.');
+				logger.warn('llmRegistry.json not found.');
 			}
 			
-			const repoPath = path.resolve(this.toolRoot, 'config/repositoryRegistry.json');
+			// Use the getter here
+			const repoPath = path.resolve(this.configDir, 'repositoryRegistry.json');
+			
 			if (fs.existsSync(repoPath)) {
 				this.repoConfig = JSON.parse(fs.readFileSync(repoPath, 'utf-8'));
-				if (process.env.DEBUG) consola.success(pc.dim(`Loaded ${this.repoConfig?.records.length} Repository configs`));
+				if (process.env.DEBUG) logger.success(pc.dim(`Loaded ${this.repoConfig?.records.length} Repository configs`));
 			} else {
-				consola.warn('repositoryRegistry.json not found.');
+				logger.warn('repositoryRegistry.json not found.');
 			}
 			
 		} catch (error) {
-			consola.error('Failed to parse Configuration Registries:', error);
+			logger.error('Failed to parse Configuration Registries:', error);
 			process.exit(1);
 		}
 	}
@@ -79,7 +89,7 @@ class ConfigService {
 	private validateEnvironment() {
 		const defaultProvider = process.env.LLM_PROVIDER || 'gemini';
 		if (process.env.DEBUG) {
-			consola.info(pc.dim(`Active LLM Provider: ${defaultProvider}`));
+			logger.info(pc.dim(`Active LLM Provider: ${defaultProvider}`));
 		}
 	}
 }

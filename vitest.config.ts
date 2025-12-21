@@ -30,7 +30,7 @@ const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 export default defineConfig({
 	test: {
 		setupFiles: ['./vitest.setup.ts'],
-		testTimeout: 30000,
+		testTimeout: 15000,
 		
 		// CRITICAL FIX: Use 'forks' for isolation.
 		// This creates a fresh Node process for each file, killing memory leaks.

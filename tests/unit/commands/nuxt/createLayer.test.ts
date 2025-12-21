@@ -125,4 +125,30 @@ describe('Command: createLayer', () => {
 		const readme = fs.readFileSync(path.join(targetDir, 'README.md'), 'utf-8');
 		expect(readme).toContain('Purpose: Purpose'); // Fallback used
 	});
+	
+	it('should enforce strict naming conventions (validation logic)', async () => {
+		// 1. Mock a successful run so the command completes
+		mockText
+			.mockResolvedValueOnce('valid-layer') // Name
+			.mockResolvedValueOnce('Purpose');    // Purpose
+		
+		await createLayer(ctx.targetRoot);
+		
+		// 2. Extract the validation function passed to the prompt
+		// mockText.mock.calls[0] is the arguments of the first call (Layer Name)
+		// [0] is the options object
+		const firstCallArgs = mockText.mock.calls[0][0] as any;
+		const validator = firstCallArgs.validate;
+		
+		// 3. Test Invalid Inputs
+		expect(validator('Has Spaces')).toBe('Use only lowercase letters, numbers, and hyphens.');
+		expect(validator('UpperCase')).toBe('Use only lowercase letters, numbers, and hyphens.');
+		expect(validator('sym@bols')).toBe('Use only lowercase letters, numbers, and hyphens.');
+		expect(validator('')).toBe('Layer name is required');
+		
+		// 4. Test Valid Inputs
+		expect(validator('valid-layer')).toBeUndefined();
+		expect(validator('layer123')).toBeUndefined();
+		expect(validator('z')).toBeUndefined();
+	});
 });

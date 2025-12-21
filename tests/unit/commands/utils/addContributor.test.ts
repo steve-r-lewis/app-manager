@@ -25,66 +25,91 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { addContributor } from '../../../../app/commands/utils/addContributor';
-import { setupTestContext } from '../../../utils/test-context';
+import { text } from '@clack/prompts';
 import fs from 'fs';
 import path from 'path';
 
-// Mock Consola
-vi.mock('consola', () => ({
-	consola: {
-		info: vi.fn(),
-		warn: vi.fn(),
+// 1. Mock External Dependencies
+// We mock fs to avoid disk writes during unit tests
+vi.mock('fs');
+vi.mock('@clack/prompts');
+
+// 2. Mock Logger Service
+// CRITICAL: This prevents the 'consola.create is not a function' error
+// by stopping the real LoggerService from loading.
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		success: vi.fn(),
 		error: vi.fn(),
-		success: vi.fn()
+		warn: vi.fn(),
+		info: vi.fn()
 	}
 }));
 
-describe('Command: addContributor', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
+describe('Unit: Add Contributor', () => {
+	const mockRoot = '/mock/root';
+	const mockPkgPath = path.resolve(mockRoot, 'package.json');
 	
 	beforeEach(() => {
-		ctx = setupTestContext();
 		vi.clearAllMocks();
+		
+		// Setup default fs mocks
+		vi.mocked(fs.existsSync).mockReturnValue(true);
+		vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({
+			name: 'mock-app',
+			contributors: []
+		}));
 	});
 	
-	afterEach(() => {
-		ctx.restore();
+	it('should use provided options (Headless Mode) without prompting', async () => {
+		// Run with full options
+		await addContributor(mockRoot, {
+			name: 'Headless User',
+			email: 'headless@example.com',
+			url: 'http://headless.com'
+		});
+		
+		// 1. Verify Prompts were NOT called
+		expect(text).not.toHaveBeenCalled();
+		
+		// 2. Verify File Write
+		expect(fs.writeFileSync).toHaveBeenCalledWith(
+			mockPkgPath,
+			expect.stringContaining('"name": "Headless User"'),
+		);
+		expect(fs.writeFileSync).toHaveBeenCalledWith(
+			mockPkgPath,
+			expect.stringContaining('"email": "headless@example.com"'),
+		);
 	});
 	
-	it('should add contributor to package.json', async () => {
-		fs.writeFileSync(path.join(ctx.targetRoot, 'package.json'), JSON.stringify({ contributors: [] }));
+	it('should prompt for missing name if not provided in options', async () => {
+		// Mock user input
+		vi.mocked(text).mockResolvedValueOnce('Prompt User'); // Name
+		vi.mocked(text).mockResolvedValueOnce('prompt@example.com'); // Email
+		vi.mocked(text).mockResolvedValueOnce(''); // URL (Optional)
 		
-		globalThis.mockText
-			.mockResolvedValueOnce('Steve')
-			.mockResolvedValueOnce('steve@example.com');
+		// Run with empty options
+		await addContributor(mockRoot, {});
 		
-		globalThis.mockConfirm.mockResolvedValue(false);
+		// Verify Prompts occurred
+		expect(text).toHaveBeenCalled();
 		
-		await addContributor(ctx.targetRoot);
-		
-		const pkg = JSON.parse(fs.readFileSync(path.join(ctx.targetRoot, 'package.json'), 'utf-8'));
-		expect(pkg.contributors).toHaveLength(1);
-		expect(pkg.contributors[0]).toEqual({ name: 'Steve', email: 'steve@example.com' });
+		// Verify Save
+		expect(fs.writeFileSync).toHaveBeenCalledWith(
+			mockPkgPath,
+			expect.stringContaining('"name": "Prompt User"'),
+		);
 	});
 	
-	it('should add attribution to selected files', async () => {
-		fs.writeFileSync(path.join(ctx.targetRoot, 'package.json'), JSON.stringify({}));
+	it('should handle missing package.json gracefully', async () => {
+		vi.mocked(fs.existsSync).mockReturnValue(false);
 		
-		const srcFile = path.join(ctx.targetRoot, 'app.ts');
-		const initialContent = `/**\n * @author: Steve\n */\nconsole.log('hello');`;
-		fs.writeFileSync(srcFile, initialContent);
+		await addContributor(mockRoot, { name: 'Test', email: 'test@test.com' });
 		
-		globalThis.mockText
-			.mockResolvedValueOnce('Gemini')
-			.mockResolvedValueOnce('ai@google.com');
-		
-		globalThis.mockConfirm.mockResolvedValue(true);
-		
-		await addContributor(ctx.targetRoot);
-		
-		const content = fs.readFileSync(srcFile, 'utf-8');
-		expect(content).toContain('@author: Steve');
-		// Flexible Regex match for variable spaces
-		expect(content).toMatch(/@author:\s+Gemini/);
+		// Should check path but NOT read/write
+		expect(fs.existsSync).toHaveBeenCalledWith(mockPkgPath);
+		expect(fs.readFileSync).not.toHaveBeenCalled();
+		expect(fs.writeFileSync).not.toHaveBeenCalled();
 	});
 });

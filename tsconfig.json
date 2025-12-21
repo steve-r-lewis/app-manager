@@ -34,5 +34,12 @@
     "layers/ui/components",
     "server",
     "shared"
-  ]
+  ],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"tests/fixtures",
+		"**/*.spec.ts",
+		"**/*.test.ts"
+	]
 }

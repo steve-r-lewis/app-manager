@@ -38,6 +38,7 @@
     "app-manager": "index.ts"
   },
   "scripts": {
+	  "build": "tsc",
     "vitest:run": "vitest run",
     "vitest:test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest run",
     "vitest:watch": "vitest",

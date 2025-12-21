@@ -23,62 +23,97 @@
  * ================================================================================
  */
 
-import { multiselect, select, isCancel, text, spinner } from '@clack/prompts';
-import { github } from '../../services/github.service';
-import { consola } from 'consola';
+import { intro, outro, select, text, isCancel } from '@clack/prompts';
+import { logger } from '../../services/logger.service.js';
+import { github } from '../../services/github.service.js';
 import pc from 'picocolors';
 
-export async function deleteRemoteRepos() {
-	const s = spinner();
+// Headless Interface
+export interface DeleteRepoOptions {
+	repo?: string;    // "owner/repo" or "repo"
+	confirm?: string; // The "DELETE" string
+}
+
+export async function deleteRemoteRepos(options: DeleteRepoOptions = {}) {
+	// If running interactively, show header
+	if (!options.repo) intro('🗑️  Delete Remote Repository');
 	
-	// 1. Fetch Candidates
-	s.start('Fetching remote repositories...');
-	let repos = [];
-	try {
-		repos = await github.listRepos();
-	} catch (e: any) {
-		s.stop('Fetch failed');
-		consola.error(e.message);
-		return;
-	}
-	s.stop(`Found ${repos.length} repositories.`);
+	let owner = process.env.GITHUB_ORG || 'steve-r-lewis';
+	let name = '';
 	
-	if (repos.length === 0) return;
-	
-	// 2. Selection
-	const selected = await multiselect({
-		message: '🚨 SELECT REPOS TO DELETE (Irreversible):',
-		options: repos.map(r => ({
-			value: r,
-			label: r.full_name,
-		})),
-		required: false
-	});
-	
-	if (isCancel(selected) || selected.length === 0) return;
-	
-	// 3. Safety Confirmation
-	const targets = selected as { name: string, full_name: string }[];
-	const confirmName = await text({
-		message: `Type "DELETE" to confirm destroying ${targets.length} repositories:`,
-		placeholder: 'DELETE'
-	});
-	
-	if (isCancel(confirmName) || confirmName !== 'DELETE') {
-		consola.info('Deletion cancelled.');
-		return;
-	}
-	
-	// 4. Execution
-	s.start('Deleting...');
-	for (const repo of targets) {
-		// Parse owner/name from full_name (e.g., "steve/repo")
-		const [owner, name] = repo.full_name.split('/');
-		try {
-			await github.deleteRepo(owner, name);
-		} catch (e: any) {
-			consola.error(pc.red(`Failed to delete ${repo.full_name}: ${e.message}`));
+	// 1. Determine Repo (Arg or Interactive)
+	if (options.repo) {
+		// Headless Mode: Parse "owner/name" string
+		if (options.repo.includes('/')) {
+			const parts = options.repo.split('/');
+			owner = parts[0];
+			name = parts[1];
+		} else {
+			name = options.repo;
+		}
+		logger.info(`Targeting repo: ${owner}/${name}`);
+	} else {
+		// Interactive Mode: Fetch & List
+		const repos = await github.listRepos();
+		if (repos.length === 0) {
+			logger.warn('No repositories found.');
+			return;
+		}
+		
+		const repoData = await select({
+			message: 'Select repository to DELETE (Irreversible):',
+			options: repos.map((r: any) => ({
+				value: r,
+				label: r.full_name || r.name,
+				hint: r.private ? 'Private' : 'Public'
+			}))
+		});
+		
+		if (isCancel(repoData)) {
+			outro('Operation Cancelled');
+			return;
+		}
+		
+		const repo = repoData as { name: string, owner?: { login: string }, full_name: string };
+		name = repo.name;
+		
+		if (repo.full_name && repo.full_name.includes('/')) {
+			const parts = repo.full_name.split('/');
+			owner = parts[0];
+			name = parts[1];
+		} else if (repo.owner?.login) {
+			owner = repo.owner.login;
 		}
 	}
-	s.stop('Cleanup complete.');
+	
+	// 2. Determine Confirmation (Arg or Interactive)
+	let confirmation = options.confirm;
+	
+	if (!confirmation) {
+		const input = await text({
+			message: pc.red(`Type "DELETE" to confirm destruction of ${owner}/${name}:`),
+			placeholder: 'DELETE',
+			validate: (value) => {
+				if (!value) return 'Confirmation is required.';
+				if (value.toUpperCase() !== 'DELETE') return 'You must type "DELETE" to confirm.';
+			}
+		});
+		
+		if (isCancel(input)) {
+			outro('Operation Cancelled');
+			return;
+		}
+		confirmation = input as string;
+	}
+	
+	// 3. Execution (With Safety Check)
+	if (confirmation?.toUpperCase() === 'DELETE') {
+		try {
+			await github.deleteRepo(owner, name);
+		} catch (error) {
+			logger.error(`Failed to delete ${owner}/${name}`);
+		}
+	} else {
+		logger.warn('Deletion cancelled: Confirmation mismatch.');
+	}
 }

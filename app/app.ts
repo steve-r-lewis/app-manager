@@ -26,49 +26,113 @@
  * ================================================================================
  */
 
-/**
- * ================================================================================
- * @project:    app-manager
- * @file:       ~/app/app.ts
- * ================================================================================
- */
-
-// ... imports
 import { intro, outro, select, multiselect, isCancel } from '@clack/prompts';
 import pc from 'picocolors';
 import { consola } from 'consola';
+import fs from 'fs';
+import path from 'path';
 import { logger } from './services/logger.service.js';
 
-// ... all other command imports ...
-import { runApp } from './commands/app/runApp';
-import { runDocs } from './commands/docs/runDocs';
-import { syncRepos } from './commands/git/syncRepos';
-import { manageCommits } from './commands/git/manageCommits';
-import { pushToRemote } from './commands/git/pushToRemote';
-import { initLayers } from './commands/git/initLayers';
-import { addSubmodules } from './commands/git/addSubmodules';
-import { deleteRemoteRepos } from './commands/git/deleteRemoteRepos';
-import { createLayer } from './commands/nuxt/createLayer';
-import { extractDocs } from './commands/nuxt/extractDocs';
-import { manageEnv } from './commands/nuxt/manageEnv';
-import { runQuality } from './commands/quality/runQuality';
-import { autoVersion } from './commands/utils/autoVersion';
-import { validateHeaders } from './commands/utils/validateHeaders';
-import { autoDoc } from './commands/utils/autoDoc';
-import { addContributor } from './commands/utils/addContributor';
-import { cleanLogs } from './commands/utils/cleanLogs';
+// Commands
+import { runApp } from './commands/app/runApp.js';
+import { runDocs } from './commands/docs/runDocs.js';
+import { syncRepos } from './commands/git/syncRepos.js';
+import { manageCommits } from './commands/git/manageCommits.js';
+import { pushToRemote } from './commands/git/pushToRemote.js';
+import { initLayers } from './commands/git/initLayers.js';
+import { addSubmodules } from './commands/git/addSubmodules.js';
+import { deleteRemoteRepos } from './commands/git/deleteRemoteRepos.js';
+import { createLayer } from './commands/nuxt/createLayer.js';
+import { extractDocs } from './commands/nuxt/extractDocs.js';
+import { manageEnv } from './commands/nuxt/manageEnv.js';
+import { runQuality } from './commands/quality/runQuality.js';
+import { autoVersion } from './commands/utils/autoVersion.js';
+import { validateHeaders } from './commands/utils/validateHeaders.js';
+import { autoDoc } from './commands/utils/autoDoc.js';
+import { addContributor } from './commands/utils/addContributor.js';
+import { cleanLogs } from './commands/utils/cleanLogs.js';
 
 export async function main(targetRoot: string, toolRoot: string) {
-	// 1. Initial Clear
+	// 1. Initialize Logger
 	if (!process.env.DEBUG) console.clear();
 	
-	// FIX: Explicitly initialize the logger now that auto-init is removed
+	// --- DEBUG: LOG ARGS TO FILE ---
+	// Only write this file if the specific ENV flag is set (used by E2E tests)
+	if (process.env.AM_DEBUG_ARGS) {
+		try {
+			const debugPath = path.join(targetRoot, 'debug_args.json');
+			const args = process.argv.slice(2);
+			fs.writeFileSync(debugPath, JSON.stringify({
+				fullArgv: process.argv,
+				receivedArgs: args,
+				domain: args[0],
+				command: args[1]
+			}, null, 2));
+		} catch (e) { /* ignore */ }
+	}
+	// -------------------------------
+	
 	logger.init();
 	
+	// 2. Parse CLI Arguments (Headless Mode)
+	// args[0] is node, args[1] is script, args[2] is domain, args[3] is command
+	const args = process.argv.slice(2);
+	const domainArg = args[0];
+	const commandArg = args[1];
+	
+	if (domainArg) {
+		if (process.env.DEBUG) consola.info(pc.dim(`CLI Mode: ${domainArg} ${commandArg || ''}`));
+		
+		// --- Headless Routing ---
+		
+		// 1. Validate Headers
+		// usage: am utils headers
+		if (domainArg === 'utils' && commandArg === 'headers') {
+			await validateHeaders(targetRoot);
+			return;
+		}
+		
+		// 2. Add Contributor
+		// usage: am utils contributor "Name" "Email" "URL"
+		if (domainArg === 'utils' && commandArg === 'contributor') {
+			const name = args[2];
+			const email = args[3];
+			const url = args[4];
+			
+			if (!name || !email) {
+				logger.error('Usage: utils contributor "Name" "Email" [URL]');
+				process.exit(1);
+			}
+			
+			await addContributor(targetRoot, { name, email, url });
+			return;
+		}
+		
+		// 3. Delete Remote Repo
+		// usage: am git delete "owner/repo" "DELETE"
+		if (domainArg === 'git' && commandArg === 'delete') {
+			const repo = args[2];
+			const confirm = args[3];
+			
+			if (!repo) {
+				logger.error('Usage: git delete "owner/repo" ["DELETE"]');
+				process.exit(1);
+			}
+			
+			await deleteRemoteRepos({ repo, confirm });
+			return;
+		}
+		
+		// Future: Add other routings here...
+		
+		// If no match found, warn and fall through to interactive
+		consola.warn(`Command '${domainArg} ${commandArg}' not recognized. Starting interactive mode.`);
+	}
+	
+	// 3. Interactive Mode (Legacy)
 	intro(pc.inverse(pc.cyan(' Nuxt 4 Monorepo Manager ')));
 	
-	// ... (Rest of your main function remains exactly the same) ...
-	// 2. Session Configuration
+	// Session Configuration
 	const sessionConfig = await multiselect({
 		message: 'Session Configuration:',
 		options: [
@@ -84,12 +148,10 @@ export async function main(targetRoot: string, toolRoot: string) {
 	}
 	
 	const config = sessionConfig as string[];
-	
 	if (config.includes('debug')) {
 		process.env.DEBUG = 'true';
 		consola.info(pc.blue('ℹ Debug Mode Enabled'));
 	}
-	
 	if (config.includes('logging')) {
 		process.env.LOG_TO_FILE = 'true';
 		consola.info(pc.blue('ℹ File Logging Enabled'));
@@ -100,7 +162,7 @@ export async function main(targetRoot: string, toolRoot: string) {
 		consola.info(pc.dim(`Context: Running in ${targetRoot}`));
 	}
 	
-	// 4. Main Domain Loop
+	// Main Loop
 	while (true) {
 		if (!process.env.DEBUG) console.clear();
 		
@@ -155,13 +217,13 @@ export async function main(targetRoot: string, toolRoot: string) {
 					{ value: 'back', label: 'Go Back' }
 				]
 			});
-			if (isCancel(action) || action === 'back') continue;
 			
+			if (isCancel(action) || action === 'back') continue;
 			if (action === 'commit') await manageCommits(targetRoot);
 			if (action === 'push') await pushToRemote(targetRoot);
 			if (action === 'sync') await syncRepos(targetRoot);
 			if (action === 'init') await initLayers(targetRoot);
-			if (action === 'Submodules') await addSubmodules(targetRoot);
+			if (action === 'submodules') await addSubmodules(targetRoot);
 			if (action === 'delete') await deleteRemoteRepos();
 		}
 		
@@ -180,14 +242,14 @@ export async function main(targetRoot: string, toolRoot: string) {
 					{ value: 'back', label: 'Go Back' }
 				]
 			});
-			if (isCancel(action) || action === 'back') continue;
 			
+			if (isCancel(action) || action === 'back') continue;
 			if (action === 'headers') await validateHeaders(targetRoot);
 			if (action === 'version') await autoVersion(targetRoot);
 			if (action === 'doc') await autoDoc(targetRoot);
 			if (action === 'contributor+') await addContributor(targetRoot);
 		}
 		
-		if (domain === 'clean') await cleanLogs(targetRoot );
+		if (domain === 'clean') await cleanLogs(targetRoot);
 	}
 }

@@ -26,41 +26,57 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
-import { validateHeaders } from '../../../../app/commands/utils/validateHeaders';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { setupTestContext } from '../../../utils/test-context';
 
-describe('E2E: Validate Headers', () => {
-	let tempDir: string;
+const execPromise = promisify(exec);
+// Point to the entry file
+const CLI_ENTRY = path.resolve(__dirname, '../../../../index.ts');
+
+describe('E2E: Validate Headers (Black Box)', () => {
+	let ctx: ReturnType<typeof setupTestContext>;
 	
 	beforeEach(() => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'am-e2e-headers-'));
+		ctx = setupTestContext();
 	});
 	
 	afterEach(() => {
-		try { fs.rmSync(tempDir, { recursive: true, force: true }); } catch {}
+		ctx.restore();
 	});
 	
-	it('should update existing headers in typescript files', async () => {
-		const filePath = path.join(tempDir, 'utils.ts');
+	it('should update headers when running "am utils headers"', async () => {
+		// 1. Setup Environment
+		const filePath = path.join(ctx.targetRoot, 'utils.ts');
 		
-		// FIX: Provide a partial header. The tool looks for @createTime to insert author.
+		// Fix: Add a WRONG @file tag so we can prove the tool fixes it
 		const initialContent = `/**
  * @project:    old-name
  * @file:       wrong/path.ts
- * @createTime: 2020-01-01
+ * @createTime: 2025-01-01
  */
 export const a = 1;`;
 		
 		fs.writeFileSync(filePath, initialContent);
 		
-		await validateHeaders(tempDir);
+		// 2. Run CLI via Child Process
+		await execPromise(`npx tsx ${CLI_ENTRY} utils headers`, {
+			cwd: ctx.targetRoot,
+			env: { ...process.env }
+		});
 		
+		// 3. Verify Artifacts
 		const content = fs.readFileSync(filePath, 'utf-8');
+		const rootName = path.basename(ctx.targetRoot);
 		
-		// 1. It should correct the file path to '~/utils.ts'
-		expect(content).toContain('@file:       ~/utils.ts');
+		// FIX: Use Regex to match "@project:" followed by ANY amount of whitespace
+		// This handles "@project: name" and "@project:    name" equally well.
+		expect(content).toMatch(new RegExp(`@project:\\s+${rootName}`));
 		
-		// 2. It should append the author because @createTime existed
-		expect(content).toContain('@author:');
+		// Check for File Path Update
+		expect(content).toMatch(/@file:\s+~\/utils.ts/);
+		
+		// Check for Author Insertion
+		expect(content).toMatch(/@author:/);
 	});
 });

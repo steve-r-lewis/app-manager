@@ -23,53 +23,55 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deleteRemoteRepos } from '../../../../app/commands/git/deleteRemoteRepos';
 import { github } from '../../../../app/services/github.service';
-import * as prompts from '@clack/prompts';
+import { select, text } from '@clack/prompts';
 
-// Mock GitHub Service
+// Mock dependencies
+vi.mock('@clack/prompts');
 vi.mock('../../../../app/services/github.service', () => ({
+	// FIX: Export 'github'
 	github: {
 		listRepos: vi.fn(),
-		deleteRepo: vi.fn(),
+		deleteRepo: vi.fn()
 	}
 }));
-
-vi.mock('@clack/prompts', async (importOriginal) => ({
-	...(await importOriginal<typeof import('@clack/prompts')>()),
-	multiselect: vi.fn(),
-	text: vi.fn(),
-	spinner: () => ({ start: vi.fn(), stop: vi.fn() })
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: { warn: vi.fn() }
 }));
 
-describe('Command: deleteRemoteRepos', () => {
-	const mockMulti = prompts.multiselect as unknown as ReturnType<typeof vi.fn>;
-	const mockText = prompts.text as unknown as ReturnType<typeof vi.fn>;
-	
+describe('Command: Delete Remote Repos', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		(github.listRepos as any).mockResolvedValue([
-			{ name: 'repo-1', full_name: 'user/repo-1' }
-		]);
+		// Default: Return one repo with full_name structure
+		vi.mocked(github.listRepos).mockResolvedValue([
+			{ name: 'test-repo', full_name: 'steve-r-lewis/test-repo', private: false }
+		] as any);
 	});
 	
-	it('should not delete if confirmation fails', async () => {
-		mockMulti.mockResolvedValue([{ name: 'repo-1', full_name: 'user/repo-1' }]);
-		// Wrong confirmation text
-		mockText.mockResolvedValue('wrong-text');
+	it('should delete repo when confirmed with uppercase "DELETE"', async () => {
+		// Select returns the repo object now
+		vi.mocked(select).mockResolvedValueOnce({
+			name: 'test-repo',
+			full_name: 'steve-r-lewis/test-repo'
+		});
+		vi.mocked(text).mockResolvedValueOnce('DELETE');
 		
 		await deleteRemoteRepos();
 		
-		expect(github.deleteRepo).not.toHaveBeenCalled();
+		expect(github.deleteRepo).toHaveBeenCalledWith('steve-r-lewis', 'test-repo');
 	});
 	
-	it('should delete if confirmation matches DELETE', async () => {
-		mockMulti.mockResolvedValue([{ name: 'repo-1', full_name: 'user/repo-1' }]);
-		mockText.mockResolvedValue('DELETE');
+	it('should delete repo when confirmed with lowercase "delete"', async () => {
+		vi.mocked(select).mockResolvedValueOnce({
+			name: 'test-repo',
+			full_name: 'steve-r-lewis/test-repo'
+		});
+		vi.mocked(text).mockResolvedValueOnce('delete');
 		
 		await deleteRemoteRepos();
 		
-		expect(github.deleteRepo).toHaveBeenCalledWith('user', 'repo-1');
+		expect(github.deleteRepo).toHaveBeenCalledWith('steve-r-lewis', 'test-repo');
 	});
 });

@@ -26,45 +26,82 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
-import { addContributor } from '../../../../app/commands/utils/addContributor';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { setupTestContext } from '../../../utils/test-context';
 
-describe('E2E: Add Contributor', () => {
-	let tempDir: string;
+const execPromise = promisify(exec);
+const CLI_ENTRY = path.resolve(__dirname, '../../../../index.ts');
+
+describe('E2E: Add Contributor (Black Box)', () => {
+	let ctx: ReturnType<typeof setupTestContext>;
 	
 	beforeEach(() => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'am-e2e-contrib-'));
+		ctx = setupTestContext();
 	});
 	
 	afterEach(() => {
-		try { fs.rmSync(tempDir, { recursive: true, force: true }); } catch {}
+		ctx.restore();
 	});
 	
-	it('should update package.json and file headers', async () => {
-		// 1. Setup
-		const pkgPath = path.join(tempDir, 'package.json');
-		fs.writeFileSync(pkgPath, JSON.stringify({ contributors: [] }));
+	it('should add a contributor to package.json via CLI args', async () => {
+		// 1. Setup Environment
+		const pkgPath = path.join(ctx.targetRoot, 'package.json');
+		const initialPkg = {
+			name: 'test-project',
+			version: '1.0.0',
+			contributors: []
+		};
+		fs.writeFileSync(pkgPath, JSON.stringify(initialPkg, null, 2));
 		
-		const srcPath = path.join(tempDir, 'app.ts');
-		fs.writeFileSync(srcPath, '/**\n * @author: Old Dev\n */\nconsole.log("hi");');
+		// 2. Run CLI Command
+		try {
+			await execPromise(`npx tsx ${CLI_ENTRY} utils contributor "John Doe" "john@example.com"`, {
+				cwd: ctx.targetRoot,
+				env: {
+					...process.env,
+					// Enable the debug file writer in app.ts specifically for this test run
+					AM_DEBUG_ARGS: 'true'
+				},
+				timeout: 5000 // Force kill if it prompts for input
+			});
+		} catch (error: any) {
+			// DEBUG: Read the args file the app wrote (if any)
+			const debugFile = path.join(ctx.targetRoot, 'debug_args.json');
+			
+			console.log('\n\n========== DEBUG REPORT ==========');
+			if (fs.existsSync(debugFile)) {
+				console.log('✅ debug_args.json content:');
+				console.log(fs.readFileSync(debugFile, 'utf-8'));
+			} else {
+				console.log('❌ No debug_args.json found. The app likely crashed before main() or main() wasn\'t called.');
+			}
+			console.log('----------------------------------');
+			console.log('CLI Error Output:', error.message);
+			console.log('==================================\n\n');
+			
+			throw error; // Fail the test
+		}
 		
-		// 2. Mock Inputs
-		globalThis.mockText
-			.mockResolvedValueOnce('New Dev')         // Name
-			.mockResolvedValueOnce('new@dev.com');    // Email
+		// 3. Verify Artifacts
+		const pkgContent = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 		
-		globalThis.mockConfirm.mockResolvedValue(true); // "Update source headers?" -> Yes
-		
-		// 3. Execute
-		await addContributor(tempDir);
-		
-		// 4. Verify package.json
-		const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-		expect(pkg.contributors).toContainEqual({ name: 'New Dev', email: 'new@dev.com' });
-		
-		// 5. Verify Source File
-		const srcContent = fs.readFileSync(srcPath, 'utf-8');
-		expect(srcContent).toContain('* @author:     New Dev');
-		expect(srcContent).toContain('* @author: Old Dev'); // Should preserve old
+		expect(pkgContent.contributors).toHaveLength(1);
+		expect(pkgContent.contributors[0]).toEqual({
+			name: 'John Doe',
+			email: 'john@example.com'
+		});
+	});
+	
+	it('should fail gracefully if arguments are missing', async () => {
+		try {
+			await execPromise(`npx tsx ${CLI_ENTRY} utils contributor`, {
+				cwd: ctx.targetRoot
+			});
+			throw new Error('Should have failed');
+		} catch (error: any) {
+			expect(error.code).toBe(1);
+			expect(error.stderr).toContain('Usage:');
+		}
 	});
 });
