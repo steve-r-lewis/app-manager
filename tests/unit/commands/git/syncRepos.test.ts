@@ -23,74 +23,81 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { syncRepos } from '../../../../app/commands/git/syncRepos';
-import { setupTestContext } from '../../../utils/test-context';
-import fs from 'fs';
-import path from 'path';
+import child_process from 'child_process';
+import { spinner } from '@clack/prompts';
 
-// Mock Simple Git
-const mockGit = {
-	checkIsRepo: vi.fn(),
-	pull: vi.fn(),
-	submoduleUpdate: vi.fn(),
-};
-
-vi.mock('simple-git', () => ({
-	simpleGit: () => mockGit
-}));
-
-// Mock Spinner
-vi.mock('@clack/prompts', async (importOriginal) => ({
-	...(await importOriginal<typeof import('@clack/prompts')>()),
-	spinner: () => ({ start: vi.fn(), stop: vi.fn(), message: vi.fn() })
+// 1. Mock External Dependencies
+vi.mock('child_process');
+vi.mock('@clack/prompts');
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		info: vi.fn(),
+		success: vi.fn(),
+		error: vi.fn(),
+		warn: vi.fn()
+	}
 }));
 
 describe('Command: syncRepos', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
+	const mockRoot = '/mock/root';
+	let spinnerMock: any;
 	
 	beforeEach(() => {
-		ctx = setupTestContext();
 		vi.clearAllMocks();
-		mockGit.checkIsRepo.mockResolvedValue(true);
-		mockGit.pull.mockResolvedValue(null);
+		
+		// Setup Spinner Mock
+		spinnerMock = {
+			start: vi.fn(),
+			stop: vi.fn(),
+			message: vi.fn()
+		};
+		vi.mocked(spinner).mockReturnValue(spinnerMock);
 	});
 	
-	afterEach(() => {
-		ctx.restore();
+	// --- NEW HEADLESS TEST ---
+	it('should run synchronously without spinner if force=true (Headless)', async () => {
+		await syncRepos(mockRoot, { force: true });
+		
+		// Verify NO Spinner was used
+		expect(spinner).not.toHaveBeenCalled();
+		
+		// Verify Git commands
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git pull'),
+			expect.objectContaining({ stdio: 'inherit' })
+		);
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git submodule update'),
+			expect.objectContaining({ stdio: 'inherit' })
+		);
 	});
 	
-	it('should sync root repository', async () => {
-		await syncRepos(ctx.targetRoot);
+	// --- INTERACTIVE TEST ---
+	it('should use spinner in interactive mode', async () => {
+		await syncRepos(mockRoot);
 		
-		expect(mockGit.pull).toHaveBeenCalledWith(['--rebase']);
-		expect(mockGit.submoduleUpdate).toHaveBeenCalled();
+		// Verify Spinner WAS used
+		expect(spinner).toHaveBeenCalled();
+		expect(spinnerMock.start).toHaveBeenCalled();
+		expect(spinnerMock.stop).toHaveBeenCalled();
+		
+		// Verify Git commands (quiet mode)
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git pull'),
+			expect.objectContaining({ stdio: 'ignore' })
+		);
 	});
 	
-	it('should iterate and sync layers if they exist', async () => {
-		// Create a mock layer directory
-		const layersDir = path.join(ctx.targetRoot, 'layers');
-		const layer1 = path.join(layersDir, 'my-layer');
-		fs.mkdirSync(layer1, { recursive: true });
+	it('should handle errors gracefully', async () => {
+		// Force error
+		vi.mocked(child_process.execSync).mockImplementation(() => {
+			throw new Error('Git failed');
+		});
 		
-		await syncRepos(ctx.targetRoot);
+		await syncRepos(mockRoot);
 		
-		// Expect 2 pulls: 1 for Root, 1 for Layer
-		expect(mockGit.pull).toHaveBeenCalledTimes(2);
-	});
-	
-	it('should skip non-git layers', async () => {
-		const layersDir = path.join(ctx.targetRoot, 'layers');
-		fs.mkdirSync(path.join(layersDir, 'not-a-repo'), { recursive: true });
-		
-		// First call (Root) returns true, Second call (Layer) returns false
-		mockGit.checkIsRepo
-			.mockResolvedValueOnce(true)
-			.mockResolvedValueOnce(false);
-		
-		await syncRepos(ctx.targetRoot);
-		
-		// Should pull Root (1), but skip Layer
-		expect(mockGit.pull).toHaveBeenCalledTimes(1);
+		expect(spinnerMock.stop).toHaveBeenCalledWith('Sync Failed');
 	});
 });

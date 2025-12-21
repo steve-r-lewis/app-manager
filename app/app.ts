@@ -138,6 +138,20 @@ export async function main(targetRoot: string, toolRoot: string) {
 					return;
 				}
 			}
+			
+			// 6. Git Sync (Headless)
+			// usage: am git sync
+			// Note: We treat "git sync" with NO extra args as an interactive command usually,
+			// but for Headless CI we might want a flag like "force" or just check if non-interactive?
+			// For simplicity, let's look for a flag argument or just enable it if the user passes "FORCE"
+			// actually, 'sync' usually doesn't need args.
+			// Let's assume: `am git sync FORCE` runs headless.
+			if (domainArg === 'git' && commandArg === 'sync') {
+				if (args[2] === 'FORCE') {
+					await syncRepos(targetRoot, { force: true });
+					return;
+				}
+			}
 		}
 		
 		// 4. Interactive Mode (Legacy)
