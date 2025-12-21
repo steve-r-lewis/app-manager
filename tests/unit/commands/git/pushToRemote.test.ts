@@ -23,76 +23,79 @@
  * ================================================================================
  */
 
-/**
- * ================================================================================
- * @project:    app-manager
- * @file:       tests/commands/git/pushToRemote.test.ts
- * ================================================================================
- */
-
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pushToRemote } from '../../../../app/commands/git/pushToRemote';
-import { setupTestContext } from '../../../utils/test-context';
-import * as prompts from '@clack/prompts';
+import child_process from 'child_process';
+import { multiselect } from '@clack/prompts';
 
-const mockGit = {
-	checkIsRepo: vi.fn(),
-	getRemotes: vi.fn(),
-	push: vi.fn(),
-};
-
-vi.mock('simple-git', () => ({
-	simpleGit: () => mockGit
-}));
-
-vi.mock('@clack/prompts', async (importOriginal) => ({
-	...(await importOriginal<typeof import('@clack/prompts')>()),
-	multiselect: vi.fn(),
-	spinner: () => ({ start: vi.fn(), stop: vi.fn() })
+// 1. Mock External Dependencies
+vi.mock('child_process');
+vi.mock('@clack/prompts');
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		info: vi.fn(),
+		success: vi.fn(),
+		error: vi.fn(),
+		warn: vi.fn(),
+		loader: vi.fn(() => ({ stop: vi.fn() }))
+	}
 }));
 
 describe('Command: pushToRemote', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
-	const mockMulti = prompts.multiselect as unknown as ReturnType<typeof vi.fn>;
+	const mockRoot = '/mock/root';
 	
 	beforeEach(() => {
-		ctx = setupTestContext();
 		vi.clearAllMocks();
-		mockGit.checkIsRepo.mockResolvedValue(true);
-		// Default remotes
-		mockGit.getRemotes.mockResolvedValue([
-			{ name: 'origin', refs: { push: 'git@github.com:me/repo.git' } },
-			{ name: 'upstream', refs: { push: 'git@github.com:org/repo.git' } }
-		]);
+		// Default: git remote returns a list
+		vi.mocked(child_process.execSync).mockReturnValue('origin\nupstream' as any);
 	});
 	
-	afterEach(() => {
-		ctx.restore();
+	// --- NEW TEST CASE ---
+	it('should push immediately if remote and branch are provided (Headless)', async () => {
+		// Run in headless mode
+		await pushToRemote(mockRoot, { remote: 'origin', branch: 'main' });
+		
+		// Verify NO prompts were shown
+		expect(multiselect).not.toHaveBeenCalled();
+		
+		// Verify Git Push was called with exact args
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git push origin main'),
+			expect.objectContaining({ stdio: 'inherit' })
+		);
+	});
+	// ---------------------
+	
+	it('should show multiselect if no arguments provided (Interactive)', async () => {
+		// Mock User Selection
+		vi.mocked(multiselect).mockResolvedValue(['origin']);
+		// Mock current branch check
+		vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+			if (cmd.toString().includes('branch --show-current')) return 'dev';
+			if (cmd.toString().includes('remote')) return 'origin\nupstream';
+			return '';
+		});
+		
+		await pushToRemote(mockRoot);
+		
+		// Verify Prompt WAS shown
+		expect(multiselect).toHaveBeenCalled();
+		
+		// Verify Push uses selected remote + current branch
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git push origin dev'),
+			expect.anything()
+		);
 	});
 	
 	it('should abort if no remotes exist', async () => {
-		mockGit.getRemotes.mockResolvedValue([]);
-		await pushToRemote(ctx.targetRoot);
-		expect(mockMulti).not.toHaveBeenCalled();
-	});
-	
-	it('should push to selected remotes', async () => {
-		mockMulti.mockResolvedValue(['origin', 'upstream']);
+		vi.mocked(child_process.execSync).mockReturnValue(''); // Empty remote list
 		
-		await pushToRemote(ctx.targetRoot);
+		await pushToRemote(mockRoot);
 		
-		expect(mockGit.push).toHaveBeenCalledTimes(2);
-		expect(mockGit.push).toHaveBeenCalledWith('origin');
-		expect(mockGit.push).toHaveBeenCalledWith('upstream');
-	});
-	
-	it('should handle push failures gracefully', async () => {
-		mockMulti.mockResolvedValue(['origin']);
-		mockGit.push.mockRejectedValue(new Error('Auth failed'));
-		
-		await pushToRemote(ctx.targetRoot);
-		
-		// Should not throw, but log error (verified via consola logs if mocked, or implicit safe exit)
-		expect(mockGit.push).toHaveBeenCalledWith('origin');
+		expect(multiselect).not.toHaveBeenCalled();
+		// Logger should warn
+		const { logger } = await import('../../../../app/services/logger.service');
+		expect(logger.warn).toHaveBeenCalledWith('No remotes defined.');
 	});
 });

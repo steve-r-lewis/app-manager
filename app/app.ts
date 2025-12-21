@@ -53,10 +53,10 @@ import { addContributor } from './commands/utils/addContributor.js';
 import { cleanLogs } from './commands/utils/cleanLogs.js';
 
 export async function main(targetRoot: string, toolRoot: string) {
-	// 1. Initialize Logger
+	// 1. Initialize Logger & Debugging
 	if (!process.env.DEBUG) console.clear();
 	
-	// --- DEBUG: LOG ARGS TO FILE ---
+	// Debug Args Dumper (Test Utility)
 	if (process.env.AM_DEBUG_ARGS === 'true') {
 		try {
 			const debugPath = path.join(targetRoot, 'debug_args.json');
@@ -69,197 +69,245 @@ export async function main(targetRoot: string, toolRoot: string) {
 			}, null, 2));
 		} catch (e) { /* ignore */ }
 	}
-	// -------------------------------
 	
 	logger.init();
 	
-	// 2. Parse CLI Arguments (Headless Mode)
-	const args = process.argv.slice(2);
-	const domainArg = args[0];
-	const commandArg = args[1];
-	
-	if (domainArg) {
-		if (process.env.DEBUG) consola.info(pc.dim(`CLI Mode: ${domainArg} ${commandArg || ''}`));
+	// 2. Global Error Trap
+	try {
+		// --- PRE-FLIGHT CHECKS ---
+		validateEnvironment();
+		// -------------------------
 		
-		// --- Headless Routing ---
+		// 3. Parse CLI Arguments (Headless Mode)
+		const args = process.argv.slice(2);
+		const domainArg = args[0];
+		const commandArg = args[1];
 		
-		// 1. Validate Headers
-		if (domainArg === 'utils' && commandArg === 'headers') {
-			await validateHeaders(targetRoot);
-			return;
-		}
-		
-		// 2. Add Contributor
-		if (domainArg === 'utils' && commandArg === 'contributor') {
-			const name = args[2];
-			const email = args[3];
-			const url = args[4];
+		if (domainArg) {
+			if (process.env.DEBUG) consola.info(pc.dim(`CLI Mode: ${domainArg} ${commandArg || ''}`));
 			
-			if (!name || !email) {
-				logger.error('Usage: utils contributor "Name" "Email" [URL]');
-				process.exit(1);
-			}
-			
-			await addContributor(targetRoot, { name, email, url });
-			return;
-		}
-		
-		// 3. Delete Remote Repo
-		if (domainArg === 'git' && commandArg === 'delete') {
-			const repo = args[2];
-			const confirm = args[3];
-			
-			if (!repo) {
-				logger.error('Usage: git delete "owner/repo" ["DELETE"]');
-				process.exit(1);
-			}
-			
-			await deleteRemoteRepos({ repo, confirm });
-			return;
-		}
-		
-		// 4. Git Commit (Headless Manual)
-		// usage: am git commit "Message"
-		if (domainArg === 'git' && commandArg === 'commit') {
-			const message = args[2];
-			
-			// If no message provided, we fall through to interactive mode (Smart Commit)
-			// But if message IS provided, we run headless.
-			if (message) {
-				await manageCommits(targetRoot, { message });
+			// --- Headless Routing ---
+			if (domainArg === 'utils' && commandArg === 'headers') {
+				await validateHeaders(targetRoot);
 				return;
 			}
-			// If !message, do nothing here; let it hit the interactive block below.
+			
+			if (domainArg === 'utils' && commandArg === 'contributor') {
+				const name = args[2];
+				const email = args[3];
+				const url = args[4];
+				if (!name || !email) {
+					logger.error('Usage: utils contributor "Name" "Email" [URL]');
+					process.exit(1);
+				}
+				await addContributor(targetRoot, { name, email, url });
+				return;
+			}
+			
+			if (domainArg === 'git' && commandArg === 'delete') {
+				const repo = args[2];
+				const confirm = args[3];
+				if (!repo) {
+					logger.error('Usage: git delete "owner/repo" ["DELETE"]');
+					process.exit(1);
+				}
+				await deleteRemoteRepos({ repo, confirm });
+				return;
+			}
+			
+			if (domainArg === 'git' && commandArg === 'commit') {
+				const message = args[2];
+				if (message) {
+					await manageCommits(targetRoot, { message });
+					return;
+				}
+			}
+			
+			if (domainArg !== 'git' || commandArg !== 'commit') {
+				consola.warn(`Command '${domainArg} ${commandArg}' not recognized. Starting interactive mode.`);
+			}
+			
+			// 5. Git Push (Headless)
+			// usage: am git push origin main
+			if (domainArg === 'git' && commandArg === 'push') {
+				const remote = args[2];
+				const branch = args[3];
+				
+				if (remote && branch) {
+					await pushToRemote(targetRoot, { remote, branch });
+					return;
+				}
+			}
 		}
 		
-		// If no match found, warn and fall through to interactive
-		if (domainArg !== 'git' || commandArg !== 'commit') {
-			// Only warn if it wasn't a "git commit" without args (which is valid interactive)
-			consola.warn(`Command '${domainArg} ${commandArg}' not recognized. Starting interactive mode.`);
-		}
-	}
-	
-	// 3. Interactive Mode (Legacy)
-	intro(pc.inverse(pc.cyan(' Nuxt 4 Monorepo Manager ')));
-	
-	// Session Configuration
-	const sessionConfig = await multiselect({
-		message: 'Session Configuration:',
-		options: [
-			{ value: 'debug', label: 'Enable Debug Mode', hint: 'Show verbose logs & API outputs' },
-			{ value: 'logging', label: 'Enable File Logging', hint: 'Write transcripts to logs/' }
-		],
-		required: false
-	});
-	
-	if (isCancel(sessionConfig)) {
-		outro('Operation Cancelled');
-		return;
-	}
-	
-	const config = sessionConfig as string[];
-	if (config.includes('debug')) {
-		process.env.DEBUG = 'true';
-		consola.info(pc.blue('ℹ Debug Mode Enabled'));
-	}
-	if (config.includes('logging')) {
-		process.env.LOG_TO_FILE = 'true';
-		consola.info(pc.blue('ℹ File Logging Enabled'));
-		logger.enableSessionLogging();
-	}
-	
-	if (process.env.DEBUG) {
-		consola.info(pc.dim(`Context: Running in ${targetRoot}`));
-	}
-	
-	// Main Loop
-	while (true) {
-		if (!process.env.DEBUG) console.clear();
+		// 4. Interactive Mode (Legacy)
+		intro(pc.inverse(pc.cyan(' Nuxt 4 Monorepo Manager ')));
 		
-		const domain = await select({
-			message: 'Select Domain:',
+		const sessionConfig = await multiselect({
+			message: 'Session Configuration:',
 			options: [
-				{ value: 'app', label: 'App', hint: 'Dev, Build, Generate' },
-				{ value: 'nuxt', label: 'Nuxt Operations', hint: 'Layers, Docs, Env' },
-				{ value: 'git', label: 'Git Operations', hint: 'Sync, Commits' },
-				{ value: 'docs', label: 'Documentation', hint: 'Vitepress' },
-				{ value: 'utils', label: 'Utilities', hint: 'Validation, Auto-Doc, Auto-Version' },
-				{ value: 'quality', label: 'Quality', hint: 'Lint, Test, Typecheck' },
-				{ value: 'clean', label: 'Clean Logs', hint: 'Remove all fixtures and logs from appManager' },
-				{ value: 'exit', label: 'Exit' }
-			]
+				{ value: 'debug', label: 'Enable Debug Mode', hint: 'Show verbose logs & API outputs' },
+				{ value: 'logging', label: 'Enable File Logging', hint: 'Write transcripts to logs/' }
+			],
+			required: false
 		});
 		
-		if (isCancel(domain) || domain === 'exit') {
-			outro('Goodbye!');
+		if (isCancel(sessionConfig)) {
+			outro('Operation Cancelled');
 			return;
 		}
 		
-		if (domain === 'app') await runApp(targetRoot);
+		const config = sessionConfig as string[];
+		if (config.includes('debug')) {
+			process.env.DEBUG = 'true';
+			consola.info(pc.blue('ℹ Debug Mode Enabled'));
+		}
+		if (config.includes('logging')) {
+			process.env.LOG_TO_FILE = 'true';
+			consola.info(pc.blue('ℹ File Logging Enabled'));
+			logger.enableSessionLogging();
+		}
 		
-		if (domain === 'nuxt') {
-			const action = await select({
-				message: 'Nuxt Action:',
+		if (process.env.DEBUG) {
+			consola.info(pc.dim(`Context: Running in ${targetRoot}`));
+		}
+		
+		// Main Loop
+		while (true) {
+			if (!process.env.DEBUG) console.clear();
+			
+			const domain = await select({
+				message: 'Select Domain:',
 				options: [
-					{ value: 'env', label: 'Manage Env', hint: 'Clean, Reset' },
-					{ value: 'create', label: 'Create Layer', hint: 'Scaffold new' },
-					{ value: 'docs', label: 'Extract Report', hint: 'Generate Markdown' },
-					{ value: 'back', label: 'Go Back' }
+					{ value: 'app', label: 'App', hint: 'Dev, Build, Generate' },
+					{ value: 'nuxt', label: 'Nuxt Operations', hint: 'Layers, Docs, Env' },
+					{ value: 'git', label: 'Git Operations', hint: 'Sync, Commits' },
+					{ value: 'docs', label: 'Documentation', hint: 'Vitepress' },
+					{ value: 'utils', label: 'Utilities', hint: 'Validation, Auto-Doc, Auto-Version' },
+					{ value: 'quality', label: 'Quality', hint: 'Lint, Test, Typecheck' },
+					{ value: 'clean', label: 'Clean Logs', hint: 'Remove all fixtures and logs from appManager' },
+					{ value: 'exit', label: 'Exit' }
 				]
 			});
 			
-			if (isCancel(action) || action === 'back') continue;
-			if (action === 'env') await manageEnv(targetRoot);
-			if (action === 'create') await createLayer(targetRoot);
-			if (action === 'docs') await extractDocs(targetRoot);
-		}
-		
-		if (domain === 'git') {
-			const action = await select({
-				message: 'Git Action:',
-				options: [
-					{ value: 'commit', label: 'Smart Commit (AI)', hint: 'Stage & Commit' },
-					{ value: 'push', label: 'Push to Remote', hint: 'Select Remotes' },
-					{ value: 'sync', label: 'Sync Repos', hint: 'Pull & Update Submodules' },
-					{ value: 'init', label: 'Init Layers', hint: 'Initialize new git repos' },
-					{ value: 'submodules', label: 'Add Submodules', hint: 'Add layers to Root' },
-					{ value: 'delete', label: 'Delete Remote Repo', hint: '⚠️ Destructive' },
-					{ value: 'back', label: 'Go Back' }
-				]
-			});
+			if (isCancel(domain) || domain === 'exit') {
+				outro('Goodbye!');
+				return;
+			}
 			
-			if (isCancel(action) || action === 'back') continue;
-			if (action === 'commit') await manageCommits(targetRoot);
-			if (action === 'push') await pushToRemote(targetRoot);
-			if (action === 'sync') await syncRepos(targetRoot);
-			if (action === 'init') await initLayers(targetRoot);
-			if (action === 'submodules') await addSubmodules(targetRoot);
-			if (action === 'delete') await deleteRemoteRepos();
-		}
-		
-		if (domain === 'quality') await runQuality(targetRoot, toolRoot);
-		
-		if (domain === 'docs') await runDocs(targetRoot, toolRoot);
-		
-		if (domain === 'utils') {
-			const action = await select({
-				message: 'Utility Action:',
-				options: [
-					{ value: 'headers', label: 'Validate Headers' },
-					{ value: 'version', label: 'Auto Version' },
-					{ value: 'doc', label: 'Auto Document Code' },
-					{ value: 'contributor+', label: '👥  Add Contributor', hint: 'Add author to package.json & headers' },
-					{ value: 'back', label: 'Go Back' }
-				]
-			});
+			if (domain === 'app') await runApp(targetRoot);
 			
-			if (isCancel(action) || action === 'back') continue;
-			if (action === 'headers') await validateHeaders(targetRoot);
-			if (action === 'version') await autoVersion(targetRoot);
-			if (action === 'doc') await autoDoc(targetRoot);
-			if (action === 'contributor+') await addContributor(targetRoot);
+			if (domain === 'nuxt') {
+				const action = await select({
+					message: 'Nuxt Action:',
+					options: [
+						{ value: 'env', label: 'Manage Env', hint: 'Clean, Reset' },
+						{ value: 'create', label: 'Create Layer', hint: 'Scaffold new' },
+						{ value: 'docs', label: 'Extract Report', hint: 'Generate Markdown' },
+						{ value: 'back', label: 'Go Back' }
+					]
+				});
+				
+				if (isCancel(action) || action === 'back') continue;
+				if (action === 'env') await manageEnv(targetRoot);
+				if (action === 'create') await createLayer(targetRoot);
+				if (action === 'docs') await extractDocs(targetRoot);
+			}
+			
+			if (domain === 'git') {
+				const action = await select({
+					message: 'Git Action:',
+					options: [
+						{ value: 'commit', label: 'Smart Commit (AI)', hint: 'Stage & Commit' },
+						{ value: 'push', label: 'Push to Remote', hint: 'Select Remotes' },
+						{ value: 'sync', label: 'Sync Repos', hint: 'Pull & Update Submodules' },
+						{ value: 'init', label: 'Init Layers', hint: 'Initialize new git repos' },
+						{ value: 'submodules', label: 'Add Submodules', hint: 'Add layers to Root' },
+						{ value: 'delete', label: 'Delete Remote Repo', hint: '⚠️ Destructive' },
+						{ value: 'back', label: 'Go Back' }
+					]
+				});
+				
+				if (isCancel(action) || action === 'back') continue;
+				if (action === 'commit') await manageCommits(targetRoot);
+				if (action === 'push') await pushToRemote(targetRoot);
+				if (action === 'sync') await syncRepos(targetRoot);
+				if (action === 'init') await initLayers(targetRoot);
+				if (action === 'submodules') await addSubmodules(targetRoot);
+				if (action === 'delete') await deleteRemoteRepos();
+			}
+			
+			if (domain === 'quality') await runQuality(targetRoot, toolRoot);
+			
+			if (domain === 'docs') await runDocs(targetRoot, toolRoot);
+			
+			if (domain === 'utils') {
+				const action = await select({
+					message: 'Utility Action:',
+					options: [
+						{ value: 'headers', label: 'Validate Headers' },
+						{ value: 'version', label: 'Auto Version' },
+						{ value: 'doc', label: 'Auto Document Code' },
+						{ value: 'contributor+', label: '👥  Add Contributor', hint: 'Add author to package.json & headers' },
+						{ value: 'back', label: 'Go Back' }
+					]
+				});
+				
+				if (isCancel(action) || action === 'back') continue;
+				if (action === 'headers') await validateHeaders(targetRoot);
+				if (action === 'version') await autoVersion(targetRoot);
+				if (action === 'doc') await autoDoc(targetRoot);
+				if (action === 'contributor+') await addContributor(targetRoot);
+			}
+			
+			if (domain === 'clean') await cleanLogs(targetRoot);
 		}
 		
-		if (domain === 'clean') await cleanLogs(targetRoot);
+	} catch (error: any) {
+		// --- GLOBAL ERROR HANDLER ---
+		consola.fatal(pc.red('CRITICAL ERROR: Application Crashed'));
+		consola.error(error.message);
+		
+		// Write to error log
+		try {
+			const logDir = path.join(targetRoot, 'app-monitor', 'error-logs');
+			if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+			
+			const logFile = path.join(logDir, 'error.log');
+			const timestamp = new Date().toISOString();
+			const logEntry = `[${timestamp}] CRITICAL: ${error.stack || error.message}\n`;
+			
+			fs.appendFileSync(logFile, logEntry);
+			consola.info(pc.dim(`Error details written to ${logFile}`));
+		} catch (writeErr) {
+			consola.error('Failed to write to error log');
+		}
+		
+		process.exit(1);
+	}
+}
+
+/**
+ * Pre-Flight Checks
+ * Warns if critical environment variables are missing.
+ */
+function validateEnvironment() {
+	const warnings: string[] = [];
+	
+	// Check for Git/GitHub Config
+	if (!process.env.GITHUB_TOKEN) {
+		warnings.push('GITHUB_TOKEN is missing. Git operations (list/delete repos) may fail.');
+	}
+	
+	// Check for AI Config (Optional but good to warn)
+	if (!process.env.NUXT_HUB_AI_API_KEY && !process.env.OPENAI_API_KEY) {
+		// Just a gentle warning since manual commits work fine without AI
+		// warnings.push('AI Keys missing. Smart Commit features will be disabled.');
+	}
+	
+	if (warnings.length > 0) {
+		consola.warn(pc.yellow('⚠️  Environment Warnings:'));
+		warnings.forEach(w => consola.warn(pc.dim(`  - ${w}`)));
+		// We don't exit; just warn.
 	}
 }

@@ -23,68 +23,79 @@
  * ================================================================================
  */
 
-import { simpleGit, SimpleGit } from 'simple-git';
-import { multiselect, isCancel, spinner } from '@clack/prompts';
-import { consola } from 'consola';
+import { intro, outro, multiselect, isCancel } from '@clack/prompts';
+import { logger } from '../../services/logger.service.js';
+import { execSync } from 'child_process';
 import pc from 'picocolors';
 
-export async function pushToRemote(targetRoot: string) {
-	const git: SimpleGit = simpleGit(targetRoot);
-	const s = spinner();
-	
-	// 1. Validation
-	const isRepo = await git.checkIsRepo();
-	if (!isRepo) {
-		consola.error(pc.red(`Not a git repository: ${targetRoot}`));
+export interface PushOptions {
+	remote?: string;
+	branch?: string;
+}
+
+export async function pushToRemote(targetRoot: string, options: PushOptions = {}) {
+	// --- HEADLESS MODE ---
+	if (options.remote && options.branch) {
+		const { remote, branch } = options;
+		logger.info(`Headless Push: ${remote} -> ${branch}`);
+		
+		try {
+			execSync(`git push ${remote} ${branch}`, {
+				cwd: targetRoot,
+				stdio: 'inherit'
+			});
+			logger.success('Push completed successfully.');
+		} catch (error) {
+			logger.error(`Failed to push to ${remote}/${branch}`);
+		}
 		return;
 	}
 	
-	// 2. Discovery
-	const remotes = await git.getRemotes(true); // true = verbose
+	// --- INTERACTIVE MODE ---
+	intro('🚀  Push to Remote');
+	
+	// 1. Get Remotes
+	let remotes: string[] = [];
+	try {
+		const output = execSync('git remote', { cwd: targetRoot }).toString();
+		remotes = output.split('\n').filter(r => r.trim());
+	} catch (error) {
+		logger.error('Not a git repository or no remotes found.');
+		return;
+	}
+	
 	if (remotes.length === 0) {
-		consola.warn("No remotes configured.");
+		logger.warn('No remotes defined.');
 		return;
 	}
 	
-	// Dedup remotes by name
-	const uniqueRemotes = Array.from(new Set(remotes.map(r => r.name)));
-	
-	// 3. Selection
-	const selected = await multiselect({
-		message: 'Select remotes to push to:',
-		options: uniqueRemotes.map(name => ({
-			value: name,
-			label: name,
-			hint: remotes.find(r => r.name === name)?.refs.push
-		})),
-		initialValues: ['origin'], // Default to origin
+	// 2. Select Remotes
+	const selectedRemotes = await multiselect({
+		message: 'Select remote(s) to push to:',
+		options: remotes.map(r => ({ value: r, label: r })),
 		required: true
 	});
 	
-	if (isCancel(selected)) return;
-	
-	// 4. Execution
-	const targets = selected as string[];
-	s.start(`Pushing to ${targets.join(', ')}...`);
-	
-	const results = [];
-	for (const remote of targets) {
-		try {
-			await git.push(remote);
-			results.push({ remote, status: 'success' });
-		} catch (error: any) {
-			results.push({ remote, status: 'error', msg: error.message });
-		}
+	if (isCancel(selectedRemotes)) {
+		outro('Push Cancelled');
+		return;
 	}
 	
-	s.stop('Push operation completed.');
+	// 3. Get Current Branch
+	const currentBranch = execSync('git branch --show-current', { cwd: targetRoot }).toString().trim();
 	
-	// 5. Report
-	results.forEach(res => {
-		if (res.status === 'success') {
-			consola.success(pc.green(`✅ Pushed to ${res.remote}`));
-		} else {
-			consola.error(pc.red(`❌ Failed to push to ${res.remote}: ${res.msg}`));
+	// 4. Push
+	(selectedRemotes as string[]).forEach(remote => {
+		const loader = logger.loader(`Pushing to ${remote}...`);
+		try {
+			execSync(`git push ${remote} ${currentBranch}`, { cwd: targetRoot, stdio: 'ignore' });
+			loader.stop();
+			logger.success(`Pushed to ${pc.bold(remote)}`);
+		} catch (error) {
+			loader.stop();
+			logger.error(`Failed to push to ${remote}`);
 		}
 	});
+	
+	outro('Done');
 }

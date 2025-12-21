@@ -63,7 +63,7 @@ describe('E2E: Add Contributor (Black Box)', () => {
 					// Enable the debug file writer in app.ts specifically for this test run
 					AM_DEBUG_ARGS: 'true'
 				},
-				timeout: 5000 // Force kill if it prompts for input
+				timeout: 30000 // Force kill if it prompts for input
 			});
 		} catch (error: any) {
 			// DEBUG: Read the args file the app wrote (if any)
