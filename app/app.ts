@@ -152,6 +152,15 @@ export async function main(targetRoot: string, toolRoot: string) {
 					return;
 				}
 			}
+			
+			// 7. Git Init Layers (Headless)
+			// usage: am git init FORCE
+			if (domainArg === 'git' && commandArg === 'init') {
+				if (args[2] === 'FORCE') {
+					await initLayers(targetRoot, { force: true });
+					return;
+				}
+			}
 		}
 		
 		// 4. Interactive Mode (Legacy)

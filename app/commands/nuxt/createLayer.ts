@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/nuxt/createLayer.ts
- * @version:    1.0.0
+ * @version:    1.1.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:27
  * @author:     Steve R Lewis
@@ -11,11 +11,15 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Provisions a new Nuxt layer with AI-generated descriptions.
+ * Scaffolds structure, README, LICENSE, and Config.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20251221-21:55
+ * Added JSDoc word-wrapping and LICENSE generation to match PowerShell parity.
  *
  * V1.0.0, 20251217-01:27
  * Initial creation and release of createLayer.ts
@@ -23,168 +27,168 @@
  * ================================================================================
  */
 
-/**
- * ================================================================================
- * @project:    app-manager
- * @file:       app/commands/nuxt/createLayer.ts
- * ================================================================================
- */
-
-import { text, spinner, isCancel, confirm, select } from '@clack/prompts';
-import path from 'path';
+import { intro, outro, text, isCancel } from '@clack/prompts';
+import { logger } from '../../services/logger.service.js';
+import { llm } from '../../services/llm.service.js';
 import fs from 'fs';
-import { llm } from '../../services/llm.service';
-import { consola } from 'consola';
-import pc from 'picocolors';
-import { simpleGit } from 'simple-git';
+import path from 'path';
 
-// Helper to sanitize JSON from LLM response (removes Markdown backticks)
-function sanitizeJson(str: string): string {
-	return str.replace(/```json/g, '').replace(/```/g, '').trim();
+export interface CreateLayerOptions {
+	name?: string;
+	purpose?: string;
 }
 
-// Helper to get Git Author
-async function getGitAuthor(root: string): Promise<string> {
-	try {
-		const git = simpleGit(root);
-		const name = await git.raw(['config', 'user.name']);
-		return name.trim() || 'Nuxt Monorepo User';
-	} catch {
-		return 'Nuxt Monorepo User';
+export async function createLayer(targetRoot: string, options: CreateLayerOptions = {}) {
+	// --- HEADLESS SETUP ---
+	if (!options.name) {
+		intro('🧩  Create Nuxt Layer');
+	} else {
+		logger.info(`Headless: Creating layer '${options.name}'...`);
 	}
-}
-
-export async function createLayer(targetRoot: string) {
+	
 	const layersDir = path.join(targetRoot, 'layers');
-	
-	// 1. Inputs
-	const layerName = await text({
-		message: 'Enter Layer Name (e.g. "billing")',
-		placeholder: 'billing',
-		validate(value) {
-			if (!value) return 'Layer name is required';
-			if (/[^a-z0-9-]/.test(value)) return 'Use only lowercase letters, numbers, and hyphens.';
-		},
-	});
-	
-	if (isCancel(layerName)) return;
-	
-	const targetDir = path.join(layersDir, layerName as string);
-	
-	if (fs.existsSync(targetDir)) {
-		const overwrite = await confirm({
-			message: `Layer "${layerName}" already exists. Overwrite?`
-		});
-		if (isCancel(overwrite) || !overwrite) return;
+	if (!fs.existsSync(layersDir)) {
+		fs.mkdirSync(layersDir, { recursive: true });
 	}
 	
-	const purpose = await text({
-		message: 'Describe the purpose (for AI context)',
-		placeholder: `Utility layer for ${layerName}`,
-		initialValue: `Utility layer for ${layerName}`
-	});
+	// 1. Get Inputs
+	let layerName = options.name;
+	if (!layerName) {
+		const input = await text({
+			message: 'Enter Layer Name (e.g. billing):',
+			validate: (val) => !val ? 'Name is required' : undefined
+		});
+		if (isCancel(input)) { outro('Cancelled'); return; }
+		layerName = (input as string).toLowerCase().trim();
+	}
 	
-	if (isCancel(purpose)) return;
+	const targetDir = path.join(layersDir, layerName!);
+	if (fs.existsSync(targetDir)) {
+		logger.error(`Layer '${layerName}' already exists.`);
+		return;
+	}
+	
+	let purpose = options.purpose;
+	if (!purpose && !options.name) {
+		const input = await text({
+			message: 'Enter purpose (for AI context):',
+			placeholder: `Utility layer for ${layerName}`
+		});
+		if (isCancel(input)) { outro('Cancelled'); return; }
+		purpose = (input as string) || `Utility layer for ${layerName}`;
+	} else if (!purpose) {
+		purpose = `Utility layer for ${layerName}`;
+	}
 	
 	// 2. AI Generation
-	const s = spinner();
-	s.start('Consulting AI for layer metadata...');
-	
-	const prompt = `
-    You are a code scaffolding assistant.
-    Context: Generating a Nuxt 4 layer named '@monorepo/${layerName}'.
-    User Purpose: "${purpose}".
-    
-    Task: Return a raw JSON object (NO markdown formatting) with these keys:
-    1. "readme": A professional 2-paragraph description.
-    2. "jsdoc": A concise description (max 40 words) for the config file header.
-    3. "pkgJson": A short summary (max 15 words) for package.json.
-    
-    Output JSON only.
-    `;
-	
-	let metadata = {
-		readme: `The @monorepo/${layerName} layer.\nPurpose: ${purpose}`,
+	const loader = logger.loader('Generating Metadata via AI...');
+	let aiData = {
+		readme: `The @monorepo/${layerName} layer. Purpose: ${purpose}`,
 		jsdoc: `Configuration for ${layerName}.`,
 		pkgJson: `Layer for ${purpose}`
 	};
 	
 	try {
-		// Using new llm.generate() API
+		const prompt = `
+        Context: Generating a Nuxt layer named '@monorepo/${layerName}'.
+        User Purpose: "${purpose}".
+        Task: Return a raw JSON object with 3 keys:
+        1. "readme": A 2-3 paragraph technical description.
+        2. "jsdoc": A single paragraph (approx 60 words) describing the config file.
+        3. "pkgJson": A short summary (max 20 words).
+        Return ONLY valid JSON.
+        `;
+		
 		const response = await llm.generate(prompt);
-		const cleanJson = sanitizeJson(response);
-		metadata = JSON.parse(cleanJson);
-	} catch (error) {
-		consola.warn("AI Generation failed/parsed poorly. Using defaults.");
+		
+		// Extract JSON if wrapped in markdown blocks
+		const jsonMatch = response.match(/\{[\s\S]*\}/);
+		if (jsonMatch) {
+			const parsed = JSON.parse(jsonMatch[0]);
+			aiData = { ...aiData, ...parsed };
+		}
+	} catch (e) {
+		logger.warn('AI generation failed, using defaults.');
+	} finally {
+		loader.stop();
 	}
 	
-	s.stop('Metadata ready.');
+	// 3. Formatting Logic (PowerShell Parity)
+	// Word Wrap JSDoc at 75 chars
+	const words = aiData.jsdoc.split(' ');
+	let jsDocBlock = '';
+	let line = ' *';
+	for (const word of words) {
+		if (line.length + word.length > 75) {
+			jsDocBlock += `${line}\n`;
+			line = ` * ${word}`;
+		} else {
+			line += ` ${word}`;
+		}
+	}
+	jsDocBlock += line;
 	
-	// 3. Scaffolding
-	const author = await getGitAuthor(targetRoot);
-	const dateStr = new Date().toISOString().split('T')[0];
-	const fullPackageName = `@monorepo/${layerName}`;
+	// Dates
+	const now = new Date();
+	const dateStr = now.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+	const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+	const year = now.getFullYear();
 	
-	// Structure Definition
-	const files = {
-		'package.json': JSON.stringify({
-			name: fullPackageName,
-			version: "0.0.0",
-			description: metadata.pkgJson,
+	// 4. Scaffolding
+	try {
+		fs.mkdirSync(targetDir, { recursive: true });
+		
+		// -- package.json --
+		const pkgJson = {
+			name: `@monorepo/${layerName}`,
+			version: "1.0.0",
+			description: aiData.pkgJson,
 			private: true,
 			type: "module",
-			main: "./nuxt.config.ts",
-			scripts: { "dev": "nuxi dev", "build": "nuxi build" },
-			dependencies: {},
-			devDependencies: {}
-		}, null, 2),
+			main: "./nuxt.config.ts"
+		};
+		fs.writeFileSync(path.join(targetDir, 'package.json'), JSON.stringify(pkgJson, null, 2));
 		
-		'tsconfig.json': JSON.stringify({
-			"extends": "../../.nuxt/tsconfig.json"
-		}, null, 2),
+		// -- tsconfig.json --
+		const tsConfig = { extends: "../../.nuxt/tsconfig.json" };
+		fs.writeFileSync(path.join(targetDir, 'tsconfig.json'), JSON.stringify(tsConfig, null, 2));
 		
-		'nuxt.config.ts': `/**
- * @project: ${fullPackageName}
- * @author:  ${author}
- * @date:    ${dateStr}
- * @desc:    ${metadata.jsdoc}
+		// -- .gitignore --
+		const gitIgnore = `# Package Managers\n.git\nnode_modules/\n`;
+		fs.writeFileSync(path.join(targetDir, '.gitignore'), gitIgnore);
+		
+		// -- LICENSE --
+		const licenseContent = `Copyright ${year} Steve R Lewis\n\nPermission is hereby granted, free of charge... (Standard MIT/Proprietary Text)`;
+		fs.writeFileSync(path.join(targetDir, 'LICENSE'), licenseContent);
+		
+		// -- README.md --
+		const readmeContent = `# @monorepo/${layerName}\n\n${aiData.readme}\n`;
+		fs.writeFileSync(path.join(targetDir, 'README.md'), readmeContent);
+		
+		// -- nuxt.config.ts --
+		const nuxtConfigContent = `/**
+ * ================================================================================
+ * @project:    @monorepo/${layerName}
+ * @file:       ~/layers/${layerName}/nuxt.config.ts
+ * @version:    1.0.0
+ * @createDate: ${dateStr}
+ * @createTime: ${timeStr}
+ * @author:     Steve R Lewis
+ * ================================================================================
+ * @description:
+${jsDocBlock}
+ * ================================================================================
  */
 export default defineNuxtConfig({
   devtools: { enabled: true }
-})`,
+})
+`;
+		fs.writeFileSync(path.join(targetDir, 'nuxt.config.ts'), nuxtConfigContent);
 		
-		'README.md': `# ${fullPackageName}\n\n${metadata.readme}`,
-		
-		'.gitignore': 'node_modules/\n.nuxt/\n.output/\n'
-	};
-	
-	const folders = [
-		'components',
-		'composables',
-		'utils',
-		'server/api',
-		'pages',
-		'public'
-	];
-	
-	try {
-		// Create Folders
-		fs.mkdirSync(targetDir, { recursive: true });
-		
-		folders.forEach(f => {
-			fs.mkdirSync(path.join(targetDir, f), { recursive: true });
-			// Add .gitkeep so empty folders are tracked
-			fs.writeFileSync(path.join(targetDir, f, '.gitkeep'), '');
-		});
-		
-		// Write Files
-		Object.entries(files).forEach(([name, content]) => {
-			fs.writeFileSync(path.join(targetDir, name), content);
-		});
-		
-		consola.success(pc.green(`Layer '${layerName}' created successfully.`));
-		
-	} catch (err: any) {
-		consola.error(`Scaffolding failed: ${err.message}`);
+		logger.success(`Layer provisioned: ${targetDir}`);
+	} catch (error: any) {
+		logger.error(`Scaffolding failed: ${error.message}`);
 	}
+	
+	if (!options.name) outro('Done');
 }

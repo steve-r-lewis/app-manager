@@ -11,11 +11,15 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Unit tests for initLayers logic, covering file system discovery,
+ * user interaction, and headless execution.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.0.1, 20251221-19:40
+ * Updated to use new test context utility.
  *
  * V1.0.0, 20251218-23:49
  * Initial creation and release of initLayers.test.ts
@@ -23,68 +27,89 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { initLayers } from '../../../../app/commands/git/initLayers';
-import { setupTestContext } from '../../../utils/test-context';
+import child_process from 'child_process';
 import fs from 'fs';
+import { confirm } from '@clack/prompts';
 import path from 'path';
-import * as prompts from '@clack/prompts';
 
-const mockGit = {
-	checkIsRepo: vi.fn(),
-	init: vi.fn(),
-	add: vi.fn(),
-	commit: vi.fn(),
-};
-
-vi.mock('simple-git', () => ({
-	simpleGit: () => mockGit
+// 1. Mock Dependencies
+vi.mock('child_process');
+vi.mock('@clack/prompts');
+vi.mock('fs');
+// Mock logger
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		info: vi.fn(),
+		success: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn()
+	}
 }));
 
-vi.mock('@clack/prompts', async (importOriginal) => ({
-	...(await importOriginal<typeof import('@clack/prompts')>()),
-	multiselect: vi.fn(),
-	spinner: () => ({ start: vi.fn(), stop: vi.fn() })
-}));
-
-describe('Command: initLayers', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
-	const mockMulti = prompts.multiselect as unknown as ReturnType<typeof vi.fn>;
+describe('Unit: initLayers', () => {
+	const mockRoot = '/mock/root';
 	
 	beforeEach(() => {
-		ctx = setupTestContext();
 		vi.clearAllMocks();
-		mockGit.checkIsRepo.mockResolvedValue(false); // Default: Not a repo
+		// Default: Layers directory exists
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			if (p.toString().includes('layers')) return true;
+			return false;
+		});
+		// Default: isDirectory returns true
+		vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
 	});
 	
-	afterEach(() => {
-		ctx.restore();
+	it('should warn and exit if "layers" directory does not exist', async () => {
+		vi.mocked(fs.existsSync).mockReturnValue(false); // No layers dir
+		
+		await initLayers(mockRoot);
+		
+		expect(child_process.execSync).not.toHaveBeenCalled();
+		const { logger } = await import('../../../../app/services/logger.service');
+		expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('No "layers" directory'));
 	});
 	
-	it('should find non-repo layers and initialize them', async () => {
-		// Setup: Create a layer folder
-		const layersDir = path.join(ctx.targetRoot, 'layers');
-		const layer1 = path.join(layersDir, 'new-layer');
-		fs.mkdirSync(layer1, { recursive: true });
+	it('should prompt user and init if uninitialized layers found (Interactive)', async () => {
+		// Setup: One layer found
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		// Setup: .git does NOT exist inside 'layer1'
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			if (p.toString().endsWith('layers')) return true;
+			if (p.toString().endsWith('.git')) return false;
+			return true;
+		});
+		// User confirms
+		vi.mocked(confirm).mockResolvedValue(true);
 		
-		// User selects it
-		mockMulti.mockResolvedValue(['new-layer']);
+		await initLayers(mockRoot);
 		
-		await initLayers(ctx.targetRoot);
-		
-		expect(mockGit.init).toHaveBeenCalled();
-		expect(mockGit.commit).toHaveBeenCalledWith('Initial commit');
+		expect(confirm).toHaveBeenCalled();
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git init'),
+			expect.anything()
+		);
 	});
 	
-	it('should skip existing repos', async () => {
-		const layersDir = path.join(ctx.targetRoot, 'layers');
-		fs.mkdirSync(path.join(layersDir, 'existing-repo'), { recursive: true });
+	it('should skip prompt and init immediately if force=true (Headless)', async () => {
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			if (p.toString().endsWith('layers')) return true;
+			if (p.toString().endsWith('.git')) return false;
+			return true;
+		});
 		
-		mockGit.checkIsRepo.mockResolvedValue(true); // Is a repo
+		await initLayers(mockRoot, { force: true });
 		
-		await initLayers(ctx.targetRoot);
+		// Verify NO prompt
+		expect(confirm).not.toHaveBeenCalled();
 		
-		// Should exit early without prompting
-		expect(mockMulti).not.toHaveBeenCalled();
+		// Verify Init happened
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git init'),
+			expect.anything()
+		);
 	});
 });

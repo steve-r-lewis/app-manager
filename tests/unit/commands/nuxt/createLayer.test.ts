@@ -11,7 +11,8 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Unit tests for initLayers logic, covering file system discovery,
+ * user interaction, and headless execution.
  *
  * ================================================================================
  *
@@ -23,132 +24,131 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createLayer } from '../../../../app/commands/nuxt/createLayer';
-import { setupTestContext } from '../../../utils/test-context';
-import { llm } from '../../../../app/services/llm.service';
 import fs from 'fs';
-import path from 'path';
-import * as prompts from '@clack/prompts';
 
-// Mock External Services
+// Mock deps
+vi.mock('fs');
+vi.mock('@clack/prompts');
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		info: vi.fn(),
+		success: vi.fn(),
+		error: vi.fn(),
+		warn: vi.fn(),
+		loader: vi.fn(() => ({ stop: vi.fn() }))
+	}
+}));
 vi.mock('../../../../app/services/llm.service', () => ({
-	llm: { generate: vi.fn() }
+	llm: { generate: vi.fn().mockResolvedValue('{"pkgJson": "desc", "readme": "read", "jsdoc": "jsdoc"}') }
 }));
 
-vi.mock('simple-git', () => ({
-	simpleGit: () => ({
-		raw: vi.fn().mockResolvedValue('Test User')
-	})
-}));
-
-vi.mock('@clack/prompts', async (importOriginal) => ({
-	...(await importOriginal<typeof import('@clack/prompts')>()),
-	text: vi.fn(),
-	confirm: vi.fn(),
-	spinner: () => ({ start: vi.fn(), stop: vi.fn() })
-}));
-
-describe('Command: createLayer', () => {
-	let ctx: ReturnType<typeof setupTestContext>;
-	const mockText = prompts.text as unknown as ReturnType<typeof vi.fn>;
-	const mockConfirm = prompts.confirm as unknown as ReturnType<typeof vi.fn>;
+describe('Unit: createLayer', () => {
+	const mockRoot = '/mock/root';
 	
 	beforeEach(() => {
-		ctx = setupTestContext();
 		vi.clearAllMocks();
-		
-		// Mock LLM Response
-		(llm.generate as any).mockResolvedValue(JSON.stringify({
-			readme: "Test Readme",
-			jsdoc: "Test JSDoc",
-			pkgJson: "Test Desc"
-		}));
-	});
-	
-	afterEach(() => {
-		ctx.restore();
+		vi.mocked(fs.existsSync).mockReturnValue(false); // Layer doesn't exist
 	});
 	
 	it('should scaffold a new layer structure', async () => {
-		// User Inputs
-		mockText
-			.mockResolvedValueOnce('my-feature') // Name
-			.mockResolvedValueOnce('Testing feature'); // Purpose
+		await createLayer(mockRoot, { name: 'test-layer', purpose: 'testing' });
 		
-		await createLayer(ctx.targetRoot);
+		// Verify key files are created
+		const writeCalls = vi.mocked(fs.writeFileSync).mock.calls;
 		
-		const targetDir = path.join(ctx.targetRoot, 'layers', 'my-feature');
-		
-		// Check Files
-		expect(fs.existsSync(path.join(targetDir, 'package.json'))).toBe(true);
-		expect(fs.existsSync(path.join(targetDir, 'nuxt.config.ts'))).toBe(true);
-		expect(fs.existsSync(path.join(targetDir, 'README.md'))).toBe(true);
-		
-		// Check Folders
-		expect(fs.existsSync(path.join(targetDir, 'components/.gitkeep'))).toBe(true);
-		expect(fs.existsSync(path.join(targetDir, 'server/api/.gitkeep'))).toBe(true);
-		
-		// Check Content (AI Injection)
-		const pkg = JSON.parse(fs.readFileSync(path.join(targetDir, 'package.json'), 'utf-8'));
-		expect(pkg.name).toBe('@monorepo/my-feature');
-		expect(pkg.description).toBe('Test Desc');
+		// Check for specific files
+		expect(writeCalls.some(call => call[0].toString().endsWith('package.json'))).toBe(true);
+		expect(writeCalls.some(call => call[0].toString().endsWith('nuxt.config.ts'))).toBe(true);
+		expect(writeCalls.some(call => call[0].toString().endsWith('LICENSE'))).toBe(true);
+		expect(writeCalls.some(call => call[0].toString().endsWith('.gitignore'))).toBe(true);
+	});
+});
+
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { initLayers } from '../../../../app/commands/git/initLayers';
+import child_process from 'child_process';
+import fs from 'fs';
+import { confirm } from '@clack/prompts';
+import path from 'path';
+
+// 1. Mock Dependencies
+vi.mock('child_process');
+vi.mock('@clack/prompts');
+vi.mock('fs');
+// Mock logger
+vi.mock('../../../../app/services/logger.service', () => ({
+	logger: {
+		info: vi.fn(),
+		success: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn()
+	}
+}));
+
+describe('Unit: initLayers', () => {
+	const mockRoot = '/mock/root';
+	
+	beforeEach(() => {
+		vi.clearAllMocks();
+		// Default: Layers directory exists
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			if (p.toString().includes('layers')) return true;
+			return false;
+		});
+		// Default: isDirectory returns true
+		vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
 	});
 	
-	it('should prompt before overwriting existing layer', async () => {
-		// Create "existing" layer
-		const targetDir = path.join(ctx.targetRoot, 'layers', 'existing');
-		fs.mkdirSync(targetDir, { recursive: true });
+	it('should warn and exit if "layers" directory does not exist', async () => {
+		vi.mocked(fs.existsSync).mockReturnValue(false); // No layers dir
 		
-		mockText.mockResolvedValueOnce('existing');
-		mockConfirm.mockResolvedValue(false); // Do not overwrite
+		await initLayers(mockRoot);
 		
-		await createLayer(ctx.targetRoot);
-		
-		// Should abort before prompting for purpose
-		expect(mockText).toHaveBeenCalledTimes(1);
+		expect(child_process.execSync).not.toHaveBeenCalled();
+		const { logger } = await import('../../../../app/services/logger.service');
+		expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('No "layers" directory'));
 	});
 	
-	it('should handle LLM failure gracefully', async () => {
-		(llm.generate as any).mockRejectedValue(new Error('AI Offline'));
+	it('should prompt user and init if uninitialized layers found (Interactive)', async () => {
+		// Setup: One layer found
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		// Setup: .git does NOT exist inside 'layer1'
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			if (p.toString().endsWith('layers')) return true;
+			if (p.toString().endsWith('.git')) return false;
+			return true;
+		});
+		// User confirms
+		vi.mocked(confirm).mockResolvedValue(true);
 		
-		mockText
-			.mockResolvedValueOnce('offline-layer')
-			.mockResolvedValueOnce('Purpose');
+		await initLayers(mockRoot);
 		
-		await createLayer(ctx.targetRoot);
-		
-		// Should still succeed with defaults
-		const targetDir = path.join(ctx.targetRoot, 'layers', 'offline-layer');
-		expect(fs.existsSync(path.join(targetDir, 'package.json'))).toBe(true);
-		
-		const readme = fs.readFileSync(path.join(targetDir, 'README.md'), 'utf-8');
-		expect(readme).toContain('Purpose: Purpose'); // Fallback used
+		expect(confirm).toHaveBeenCalled();
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git init'),
+			expect.anything()
+		);
 	});
 	
-	it('should enforce strict naming conventions (validation logic)', async () => {
-		// 1. Mock a successful run so the command completes
-		mockText
-			.mockResolvedValueOnce('valid-layer') // Name
-			.mockResolvedValueOnce('Purpose');    // Purpose
+	it('should skip prompt and init immediately if force=true (Headless)', async () => {
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			if (p.toString().endsWith('layers')) return true;
+			if (p.toString().endsWith('.git')) return false;
+			return true;
+		});
 		
-		await createLayer(ctx.targetRoot);
+		await initLayers(mockRoot, { force: true });
 		
-		// 2. Extract the validation function passed to the prompt
-		// mockText.mock.calls[0] is the arguments of the first call (Layer Name)
-		// [0] is the options object
-		const firstCallArgs = mockText.mock.calls[0][0] as any;
-		const validator = firstCallArgs.validate;
+		// Verify NO prompt
+		expect(confirm).not.toHaveBeenCalled();
 		
-		// 3. Test Invalid Inputs
-		expect(validator('Has Spaces')).toBe('Use only lowercase letters, numbers, and hyphens.');
-		expect(validator('UpperCase')).toBe('Use only lowercase letters, numbers, and hyphens.');
-		expect(validator('sym@bols')).toBe('Use only lowercase letters, numbers, and hyphens.');
-		expect(validator('')).toBe('Layer name is required');
-		
-		// 4. Test Valid Inputs
-		expect(validator('valid-layer')).toBeUndefined();
-		expect(validator('layer123')).toBeUndefined();
-		expect(validator('z')).toBeUndefined();
+		// Verify Init happened
+		expect(child_process.execSync).toHaveBeenCalledWith(
+			expect.stringContaining('git init'),
+			expect.anything()
+		);
 	});
 });

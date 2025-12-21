@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/git/initLayers.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 23:43
  * @author:     Steve R Lewis
@@ -11,11 +11,15 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Scans the 'layers' directory for sub-projects that are not yet Git repositories
+ * and initializes them.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.0.1, 20251221-19:35
+ * Added 'force' option for Headless/CI operations.
  *
  * V1.0.0, 20251218-23:43
  * Initial creation and release of initLayers.ts
@@ -23,76 +27,65 @@
  * ================================================================================
  */
 
-import { simpleGit } from 'simple-git';
-import { multiselect, isCancel, spinner } from '@clack/prompts';
-import { consola } from 'consola';
-import pc from 'picocolors';
+import { intro, outro, confirm } from '@clack/prompts';
+import { logger } from '../../services/logger.service.js';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-export async function initLayers(targetRoot: string) {
-	const s = spinner();
+export interface InitOptions {
+	force?: boolean;
+}
+
+export async function initLayers(targetRoot: string, options: InitOptions = {}) {
+	// --- HEADLESS LOGIC START ---
+	// If headless, we skip the intro/outro to keep logs clean
+	if (!options.force) {
+		intro('📂  Initialize Layers');
+	}
+	
 	const layersDir = path.join(targetRoot, 'layers');
-	
-	// 1. Validation
 	if (!fs.existsSync(layersDir)) {
-		consola.warn("No 'layers' directory found.");
+		logger.warn('No "layers" directory found.');
 		return;
 	}
 	
-	// 2. Discovery
-	s.start('Scanning layers...');
-	const entries = fs.readdirSync(layersDir, { withFileTypes: true });
-	const candidates = [];
-	
-	for (const entry of entries) {
-		if (entry.isDirectory()) {
-			const layerPath = path.join(layersDir, entry.name);
-			const git = simpleGit(layerPath);
-			const isRepo = await git.checkIsRepo();
-			
-			if (!isRepo) {
-				candidates.push({
-					value: entry.name,
-					label: entry.name,
-					path: layerPath
-				});
-			}
-		}
-	}
-	s.stop('Scan complete.');
-	
-	if (candidates.length === 0) {
-		consola.info(pc.green("All layers are already initialized git repositories."));
-		return;
-	}
-	
-	// 3. Selection
-	const selected = await multiselect({
-		message: 'Select layers to initialize as Git repositories:',
-		options: candidates,
-		required: false
+	// 1. Find candidates
+	const layers = fs.readdirSync(layersDir).filter(dir => {
+		const fullPath = path.join(layersDir, dir);
+		return fs.statSync(fullPath).isDirectory() && !fs.existsSync(path.join(fullPath, '.git'));
 	});
 	
-	if (isCancel(selected) || selected.length === 0) return;
-	
-	// 4. Execution
-	const targets = selected as string[];
-	s.start(`Initializing ${targets.length} layers...`);
-	
-	for (const name of targets) {
-		const layerPath = path.join(layersDir, name);
-		const git = simpleGit(layerPath);
-		
-		try {
-			await git.init();
-			// Optional: Initial commit to make it a valid repo immediately
-			await git.add('.');
-			await git.commit('Initial commit');
-			consola.success(pc.green(`Initialized ${name}`));
-		} catch (error: any) {
-			consola.error(pc.red(`Failed to init ${name}: ${error.message}`));
-		}
+	if (layers.length === 0) {
+		if (!options.force) logger.success('All layers are already initialized.');
+		return;
 	}
-	s.stop('Initialization complete.');
+	
+	// --- INTERACTIVE CONFIRMATION ---
+	if (!options.force) {
+		logger.info(`Found ${layers.length} uninitialized layers: ${layers.join(', ')}`);
+		const shouldInit = await confirm({
+			message: 'Initialize git in these layers?'
+		});
+		
+		if (!shouldInit) {
+			outro('Operation Cancelled');
+			return;
+		}
+	} else {
+		logger.info(`Headless: Initializing ${layers.length} layers...`);
+	}
+	
+	// 2. Initialize
+	layers.forEach(layer => {
+		const layerPath = path.join(layersDir, layer);
+		try {
+			execSync('git init', { cwd: layerPath, stdio: 'ignore' });
+			logger.success(`Initialized: ${layer}`);
+		} catch (error) {
+			logger.error(`Failed to init ${layer}`);
+		}
+	});
+	
+	if (!options.force) outro('Done');
 }
