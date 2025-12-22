@@ -11,7 +11,28 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * This module orchestrates documentation workflows, specifically designed for
+ * Vitepress integration. It serves a dual purpose: managing the internal
+ * documentation for the App Manager tool itself and providing an interface to
+ * build, serve, or preview documentation for the target Nuxt monorepo.
+ *
+ * Key Functionality:
+ * Context Awareness:
+ * It distinguishes between the "Tool Root" (this CLI) and the "Target Root"
+ * (the user's project). It scans the target's package.json to verify if
+ * 'vitepress' is installed before offering project-specific options.
+ *
+ * Package Manager Abstraction:
+ * It independently detects the package manager (pnpm, Bun, Yarn, or npm)
+ * for both the tool and the target project. This ensures that commands like
+ * 'vitepress dev' are executed using the correct binary context (e.g.,
+ * using 'npx' fallback where appropriate).
+ *
+ * Lifecycle Management:
+ * Provides interactive menu options for the standard Vitepress workflow:
+ * - Dev: Starts the hot-reloading development server.
+ * - Build: Generates the static production site.
+ * - Preview: Serves the built production site locally.
  *
  * ================================================================================
  *

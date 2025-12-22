@@ -47,7 +47,7 @@
  */
 
 import { spawn } from 'child_process';
-import { logger } from '../../services/logger.service.js';
+import { logger } from '../../services/loggerService';
 import fs from 'fs';
 import path from 'path';
 import pc from 'picocolors';

@@ -24,9 +24,9 @@
  */
 
 import { intro, outro, text, isCancel } from '@clack/prompts';
-import { logger } from '../../services/logger.service.js';
+import { logger } from '../../services/loggerService';
 // FIX: Using correct export 'llm'
-import { llm } from '../../services/llm.service.js';
+import { llm } from '../../services/llmService';
 import { execSync } from 'child_process';
 
 export interface CommitOptions {

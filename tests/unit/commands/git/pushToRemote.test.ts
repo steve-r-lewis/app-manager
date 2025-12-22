@@ -31,7 +31,7 @@ import { multiselect } from '@clack/prompts';
 // 1. Mock External Dependencies
 vi.mock('child_process');
 vi.mock('@clack/prompts');
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		info: vi.fn(),
 		success: vi.fn(),
@@ -95,7 +95,7 @@ describe('Command: pushToRemote', () => {
 		
 		expect(multiselect).not.toHaveBeenCalled();
 		// Logger should warn
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		expect(logger.warn).toHaveBeenCalledWith('No remotes defined.');
 	});
 });

@@ -28,7 +28,7 @@ import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 
 const execPromise = promisify(exec);
 // Point to the entry file

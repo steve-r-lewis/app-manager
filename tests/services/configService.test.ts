@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/services/config.service.test.ts
+ * @file:       ~/tests/services/configService.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 18
  * @createTime: 18:01
@@ -18,20 +18,20 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251218-18:01
- * Initial creation and release of config.service.test.ts
+ * Initial creation and release of configService.test.ts
  *
  * ================================================================================
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { configService } from '../../app/services/config.service';
-import { logger } from '../../app/services/logger.service';
-import { setupTestContext } from '../utils/test-context';
+import { configService } from '../../app/services/configService';
+import { logger } from '../../app/services/loggerService';
+import { setupTestContext } from '../helpers/testContext';
 import path from 'path';
 import fs from 'fs';
 
 // 1. Mock Logger to prevent disk writes during Unit Tests
-vi.mock('../../app/services/logger.service', () => ({
+vi.mock('../../app/services/loggerService', () => ({
 	logger: {
 		init: vi.fn(),
 		error: vi.fn(),

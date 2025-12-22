@@ -11,10 +11,10 @@ The application follows a **Domain-Driven Design (DDD)** pattern, wrapped in a C
 app/
 ├── commands/           # Business logic grouped by Domain (Git, Nuxt, Quality...)
 ├── services/           # Singleton Infrastructure Services
-│   ├── config.service.ts   # Env & Registry management
-│   ├── llm.service.ts      # AI Interface (Gemini)
-│   ├── logger.service.ts   # Consola wrapper
-│   └── github.service.ts   # Octokit/Git wrapper
+│   ├── configService.ts   # Env & Registry management
+│   ├── llmService.ts      # AI Interface (Gemini)
+│   ├── loggerService.ts   # Consola wrapper
+│   └── githubService.ts   # Octokit/Git wrapper
 ├── index.ts            # Entry Point & Menu Router
 └── app.ts              # Main Application Logic
 

@@ -31,8 +31,8 @@
  */
 
 import { intro, outro, text, isCancel, spinner } from '@clack/prompts';
-import { logger } from '../../services/logger.service.js';
-import { llm } from '../../services/llm.service.js';
+import { logger } from '../../services/loggerService';
+import { llm } from '../../services/llmService';
 import fs from 'fs';
 import path from 'path';
 

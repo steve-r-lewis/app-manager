@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/e2e/cli/startup.test.ts
+ * @file:       ~/tests/e2e/system/startup.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 20
  * @createTime: 17:37
@@ -11,7 +11,23 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * System-level End-to-End (E2E) test suite responsible for verifying the
+ * application's startup integrity and resilience mechanisms.
+ *
+ * Key Validation Areas:
+ * 1. Pre-Flight Checks:
+ * Ensures the CLI correctly identifies and warns about missing critical
+ * environment variables (e.g. GITHUB_TOKEN) before execution proceeds.
+ *
+ * 2. Process Resilience:
+ * Verifies the Global Error Trap implementation by ensuring that fatal
+ * crashes are caught, handled gracefully (exit code 1), and that diagnostic
+ * information is successfully written to the persistent 'error.log' file.
+ *
+ * 3. Binary Integrity:
+ * Acts as a "Smoke Test" by executing the compiled CLI entry point (via tsx)
+ * in a child process, confirming that the tool boots successfully without
+ * syntax errors or resolution failures.
  *
  * ================================================================================
  *
@@ -27,7 +43,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { setupTestContext } from '../../utils/test-context';
+import { setupTestContext } from '../../helpers/testContext';
 
 const execPromise = promisify(exec);
 // FIX: Ensure path is resolved correctly (3 levels up from tests/e2e/cli)

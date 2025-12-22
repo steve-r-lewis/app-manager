@@ -25,8 +25,8 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { autoVersion } from '../../../../app/commands/utils/autoVersion';
-import { setupTestContext } from '../../../utils/test-context';
-import { llm } from '../../../../app/services/llm.service';
+import { setupTestContext } from '../../../helpers/testContext';
+import { llm } from '../../../../app/services/llmService';
 import fs from 'fs';
 import path from 'path';
 import * as prompts from '@clack/prompts';
@@ -40,7 +40,7 @@ vi.mock('simple-git', () => ({
 	simpleGit: () => mockGit
 }));
 
-vi.mock('../../../../app/services/llm.service', () => ({
+vi.mock('../../../../app/services/llmService', () => ({
 	llm: { generate: vi.fn() }
 }));
 

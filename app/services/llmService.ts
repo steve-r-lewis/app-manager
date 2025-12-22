@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/services/llm.service.ts
+ * @file:       ~/app/services/llmService.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:19
@@ -18,17 +18,17 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251217-01:19
- * Initial creation and release of llm.service.ts
+ * Initial creation and release of llmService.ts
  *
  * ================================================================================
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { consola } from 'consola';
-import { configService } from './config.service.js';
+import { configService } from './configService';
 import type { LLMProviderConfig } from '../types/index.js';
 
-class LLMService {
+class LlmService {
 	private _client: GoogleGenerativeAI | null = null;
 	
 	private get providerConfig(): LLMProviderConfig {
@@ -78,4 +78,4 @@ class LLMService {
 	}
 }
 
-export const llm = new LLMService();
+export const llm = new LlmService();

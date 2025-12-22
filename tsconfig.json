@@ -15,25 +15,10 @@
     }
   },
   "include": [
-    "**/*.css",
-    "**/*.ts",
-    "**/*.vue",
-    "index.ts",
-    ".nuxt/nuxt.d.ts",
-    ".nuxt/tsconfig.json",
-    "app/assets",
-    "app/composables",
-    "app/layouts",
-    "app/middleware",
-    "app/pages",
-    "app/plugins",
-    "app/types",
-    "app/utils",
-    "content",
-    "layers/*",
-    "layers/ui/components",
-    "server",
-    "shared"
+	  "index.ts",
+	  "app/**/*",
+	  "tests/**/*",
+    "**/*.ts"
   ],
 	"exclude": [
 		"node_modules",

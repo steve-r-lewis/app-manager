@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/services/config.service.ts
+ * @file:       ~/app/services/configService.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 18
  * @createTime: 16:20
@@ -18,7 +18,7 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251218-16:20
- * Initial creation and release of config.service.ts
+ * Initial creation and release of configService.ts
  *
  * ================================================================================
  */
@@ -27,7 +27,7 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 import pc from 'picocolors';
-import { logger } from './logger.service.js';
+import { logger } from './loggerService';
 import type { LLMRegistry, RepoRegistry } from '../types/index.js';
 
 class ConfigService {

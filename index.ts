@@ -37,8 +37,8 @@ import { main } from './app/app.js';
 import { consola } from 'consola';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { configService } from './app/services/config.service.js';
-import { logger } from './app/services/logger.service.js'; // Import Logger
+import { configService } from './app/services/configService';
+import { logger } from './app/services/loggerService'; // Import Logger
 
 // 1. Resolve Paths
 const __filename = fileURLToPath(import.meta.url);
@@ -62,7 +62,7 @@ configService.init(toolRoot);
 		}
 		await main(targetRoot, toolRoot);
 	} catch (error) {
-		// This will now be caught by our logger.service hook and written to error.log
+		// This will now be caught by our loggerService hook and written to error.log
 		consola.error("Fatal Application Error:", error);
 		process.exit(1);
 	}

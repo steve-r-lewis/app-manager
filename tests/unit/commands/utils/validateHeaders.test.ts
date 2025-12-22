@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/utils/validateHeaders.test.ts
+ * @file:       ~/tests/unit/commands/helpers/validateHeaders.test.ts
  * @version:    2.0.0
  * @createDate: 2025 Dec 19
  * @createTime: 01:06
@@ -28,7 +28,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { validateHeaders } from '../../../../app/commands/utils/validateHeaders';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 import fs from 'fs';
 import path from 'path';
 

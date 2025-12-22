@@ -23,5 +23,5 @@
  * ================================================================================
  */
 
-export * from './llm.types.js';
-export * from './github.types.js';
+export * from './llm.types.ts';
+export * from './github.types.ts';

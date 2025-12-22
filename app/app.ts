@@ -60,7 +60,7 @@ import pc from 'picocolors';
 import { consola } from 'consola';
 import fs from 'fs';
 import path from 'path';
-import { logger } from './services/logger.service.js';
+import { logger } from './services/loggerService';
 
 // Commands
 import { runApp } from './commands/app/runApp.js';

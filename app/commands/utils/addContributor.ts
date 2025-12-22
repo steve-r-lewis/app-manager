@@ -26,7 +26,7 @@
 import { text, isCancel } from '@clack/prompts';
 import fs from 'fs';
 import path from 'path';
-import { logger } from '../../services/logger.service.js';
+import { logger } from '../../services/loggerService';
 
 // Define the interface for Headless usage
 export interface ContributorOptions {

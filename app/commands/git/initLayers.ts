@@ -48,7 +48,7 @@
  */
 
 import { intro, outro, confirm } from '@clack/prompts';
-import { logger } from '../../services/logger.service.js';
+import { logger } from '../../services/loggerService';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';

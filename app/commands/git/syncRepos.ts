@@ -24,7 +24,7 @@
  */
 
 import { intro, outro, spinner } from '@clack/prompts';
-import { logger } from '../../services/logger.service.js';
+import { logger } from '../../services/loggerService';
 import { execSync } from 'child_process';
 import pc from 'picocolors';
 

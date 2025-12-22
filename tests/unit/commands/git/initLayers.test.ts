@@ -61,7 +61,7 @@ vi.mock('child_process');
 vi.mock('@clack/prompts');
 vi.mock('fs');
 // Mock logger
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		info: vi.fn(),
 		success: vi.fn(),
@@ -90,7 +90,7 @@ describe('Unit: initLayers', () => {
 		await initLayers(mockRoot);
 		
 		expect(child_process.execSync).not.toHaveBeenCalled();
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('No "layers" directory'));
 	});
 	
@@ -168,7 +168,7 @@ describe('Unit: initLayers', () => {
 		
 		await initLayers(mockRoot);
 		
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		expect(logger.success).toHaveBeenCalledWith('All layers are already initialized.');
 		expect(child_process.execSync).not.toHaveBeenCalled();
 	});
@@ -187,7 +187,7 @@ describe('Unit: initLayers', () => {
 		
 		await initLayers(mockRoot);
 		
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Failed to init layer1'));
 	});
 });

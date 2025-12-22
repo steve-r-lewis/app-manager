@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/services/logger.service.ts
+ * @file:       ~/app/services/loggerService.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 18
  * @createTime: 17:57
@@ -18,7 +18,7 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251218-17:57
- * Initial creation and release of logger.service.ts
+ * Initial creation and release of loggerService.ts
  *
  * ================================================================================
  */

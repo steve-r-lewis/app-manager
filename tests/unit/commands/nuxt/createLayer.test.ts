@@ -35,7 +35,7 @@ import { spinner } from '@clack/prompts';
 // Mock deps
 vi.mock('fs');
 vi.mock('@clack/prompts');
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		info: vi.fn(),
 		success: vi.fn(),
@@ -43,7 +43,7 @@ vi.mock('../../../../app/services/logger.service', () => ({
 		warn: vi.fn()
 	}
 }));
-vi.mock('../../../../app/services/llm.service', () => ({
+vi.mock('../../../../app/services/llmService', () => ({
 	llm: { generate: vi.fn().mockResolvedValue('{"pkgJson": "desc", "readme": "read", "jsdoc": "jsdoc"}') }
 }));
 

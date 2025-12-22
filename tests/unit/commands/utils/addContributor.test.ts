@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/utils/addContributor.test.ts
+ * @file:       ~/tests/unit/commands/helpers/addContributor.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 19
  * @createTime: 19:30
@@ -37,7 +37,7 @@ vi.mock('@clack/prompts');
 // 2. Mock Logger Service
 // CRITICAL: This prevents the 'consola.create is not a function' error
 // by stopping the real LoggerService from loading.
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		success: vi.fn(),
 		error: vi.fn(),

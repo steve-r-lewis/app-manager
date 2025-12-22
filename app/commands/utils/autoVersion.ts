@@ -27,7 +27,7 @@ import { simpleGit } from 'simple-git';
 import fs from 'fs';
 import path from 'path'; // Import path
 import { spinner, confirm, isCancel } from '@clack/prompts';
-import { llm } from '../../services/llm.service';
+import { llm } from '../../services/llmService';
 import { consola } from 'consola';
 import pc from 'picocolors';
 

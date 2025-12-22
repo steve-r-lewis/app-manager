@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/services/github.service.ts
+ * @file:       ~/app/services/githubService.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:21
@@ -18,15 +18,15 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251217-01:21
- * Initial creation and release of github.service.ts
+ * Initial creation and release of githubService.ts
  *
  * ================================================================================
  */
 
 import { consola } from 'consola';
-import { configService } from './config.service.js';
+import { configService } from './configService';
 
-export class GitHubService {
+export class GithubService {
 	
 	/**
 	 * Tries to find specific config for a repo in the registry,
@@ -140,4 +140,4 @@ export class GitHubService {
 	}
 }
 
-export const github = new GitHubService();
+export const github = new GithubService();

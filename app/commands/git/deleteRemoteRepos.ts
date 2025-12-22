@@ -24,8 +24,8 @@
  */
 
 import { intro, outro, select, text, isCancel } from '@clack/prompts';
-import { logger } from '../../services/logger.service.js';
-import { github } from '../../services/github.service.js';
+import { logger } from '../../services/loggerService';
+import { github } from '../../services/githubService';
 import pc from 'picocolors';
 
 // Headless Interface

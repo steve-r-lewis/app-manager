@@ -25,7 +25,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { runDocs } from '../../../../app/commands/docs/runDocs';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 import fs from 'fs';
 import path from 'path';
 import * as prompts from '@clack/prompts';

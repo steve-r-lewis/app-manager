@@ -28,7 +28,7 @@ import path from 'path';
 import { multiselect, spinner, isCancel } from '@clack/prompts';
 import { consola } from 'consola';
 import pc from 'picocolors';
-import { llm } from '../../services/llm.service';
+import { llm } from '../../services/llmService';
 
 // --- Types ---
 interface FileResult {

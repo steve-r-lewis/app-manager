@@ -31,7 +31,7 @@ import { text } from '@clack/prompts';
 // 1. Mock External Dependencies
 vi.mock('child_process');
 vi.mock('@clack/prompts');
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		info: vi.fn(),
 		success: vi.fn(),
@@ -41,7 +41,7 @@ vi.mock('../../../../app/services/logger.service', () => ({
 	}
 }));
 // FIX: Mock 'llm' export to match service
-vi.mock('../../../../app/services/llm.service', () => ({
+vi.mock('../../../../app/services/llmService', () => ({
 	llm: { generate: vi.fn().mockResolvedValue('feat: ai suggestion') }
 }));
 

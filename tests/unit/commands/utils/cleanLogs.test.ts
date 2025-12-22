@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/utils/cleanLogs.test.ts
+ * @file:       ~/tests/unit/commands/helpers/cleanLogs.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 19
  * @createTime: 20:19
@@ -25,7 +25,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanLogs } from '../../../../app/commands/utils/cleanLogs';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 import fs from 'fs';
 import path from 'path';
 import * as prompts from '@clack/prompts';

@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/utils/autoDoc.test.ts
+ * @file:       ~/tests/unit/commands/helpers/autoDoc.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 19
  * @createTime: 01:19
@@ -25,14 +25,14 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { autoDoc } from '../../../../app/commands/utils/autoDoc';
-import { setupTestContext } from '../../../utils/test-context';
-import { llm } from '../../../../app/services/llm.service';
+import { setupTestContext } from '../../../helpers/testContext';
+import { llm } from '../../../../app/services/llmService';
 import fs from 'fs';
 import path from 'path';
 import * as prompts from '@clack/prompts';
 
 // Mock Dependencies
-vi.mock('../../../../app/services/llm.service', () => ({
+vi.mock('../../../../app/services/llmService', () => ({
 	llm: { generate: vi.fn() }
 }));
 
@@ -59,7 +59,7 @@ describe('Command: autoDoc', () => {
 	});
 	
 	it('should find undocumented functions and add JSDoc', async () => {
-		const filePath = path.join(ctx.targetRoot, 'utils.ts');
+		const filePath = path.join(ctx.targetRoot, 'helpers.ts');
 		const content = `
 import fs from 'fs';
 

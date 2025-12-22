@@ -39,7 +39,7 @@ import path from 'path';
 import fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 
 const execPromise = promisify(exec);
 // Resolve path to the CLI entry point

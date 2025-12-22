@@ -25,14 +25,14 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { extractDocs } from '../../../../app/commands/nuxt/extractDocs';
-import { setupTestContext } from '../../../utils/test-context';
-import { llm } from '../../../../app/services/llm.service';
+import { setupTestContext } from '../../../helpers/testContext';
+import { llm } from '../../../../app/services/llmService';
 import fs from 'fs';
 import path from 'path';
 import * as prompts from '@clack/prompts';
 
 // Mock Dependencies
-vi.mock('../../../../app/services/llm.service', () => ({
+vi.mock('../../../../app/services/llmService', () => ({
 	llm: { generate: vi.fn() }
 }));
 
@@ -68,7 +68,7 @@ describe('Command: extractDocs', () => {
 		// README.md
 		fs.writeFileSync(path.join(layerPath, 'README.md'), "# Billing Docs\nInfo.");
 		// Code file
-		fs.writeFileSync(path.join(layerPath, 'utils.ts'), "export const tax = () => 10;");
+		fs.writeFileSync(path.join(layerPath, 'helpers.ts'), "export const tax = () => 10;");
 		
 		// 2. Mock User Input
 		mockMulti.mockResolvedValue(['package.json', 'README.md', '.ts']);

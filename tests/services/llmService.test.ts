@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/services/llm.service.test.ts
+ * @file:       ~/tests/services/llmService.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 18
  * @createTime: 21:40
@@ -18,14 +18,14 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251218-21:40
- * Initial creation and release of llm.service.test.ts
+ * Initial creation and release of llmService.test.ts
  *
  * ================================================================================
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { llm } from '../../app/services/llm.service';
-import { configService } from '../../app/services/config.service';
+import { llm } from '../../app/services/llmService';
+import { configService } from '../../app/services/configService';
 
 // 1. Mock the External Library
 const mockGenerateContent = vi.fn();

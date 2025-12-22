@@ -30,7 +30,7 @@ To migrate a command to Headless Mode, follow these two steps.
 Modify the command signature to accept an optional `options` object.
 
 ```typescript
-// app/commands/utils/exampleCommand.ts
+// app/commands/helpers/exampleCommand.ts
 
 export interface ExampleOptions {
     name?: string; // Define arguments here
@@ -60,11 +60,11 @@ Update the `main()` function in `app/app.ts` to parse raw arguments and pass the
 
     // ... inside Headless Routing block ...
 
-    if (domainArg === 'utils' && commandArg === 'example') {
+    if (domainArg === 'helpers' && commandArg === 'example') {
         const name = args[2]; // Map args by index
 
         if (!name) {
-            logger.error('Usage: utils example "Name"');
+            logger.error('Usage: helpers example "Name"');
             process.exit(1);
         }
 
@@ -90,7 +90,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 
 const execPromise = promisify(exec);
 const CLI_ENTRY = path.resolve(__dirname, '../../../../index.ts');

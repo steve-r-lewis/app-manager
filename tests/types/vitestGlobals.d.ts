@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/global.d.ts
+ * @file:       ~/tests/types/vitestGlobals.d.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 19
  * @createTime: 23:26
@@ -11,14 +11,15 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Defines global mock objects used specifically in the test environment (Vitest).
+ * These match the implementations in vitest.setup.ts.
  *
  * ================================================================================
  *
  * @notes: Revision History
  *
  * V1.0.0, 20251219-23:26
- * Initial creation and release of global.d.ts
+ * Initial creation and release of vitestGlobals.d.ts
  *
  * ================================================================================
  */

@@ -31,7 +31,7 @@ import { spinner } from '@clack/prompts';
 // 1. Mock External Dependencies
 vi.mock('child_process');
 vi.mock('@clack/prompts');
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		info: vi.fn(),
 		success: vi.fn(),

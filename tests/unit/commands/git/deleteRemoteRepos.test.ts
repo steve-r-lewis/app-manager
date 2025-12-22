@@ -25,19 +25,19 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deleteRemoteRepos } from '../../../../app/commands/git/deleteRemoteRepos';
-import { github } from '../../../../app/services/github.service';
+import { github } from '../../../../app/services/githubService';
 import { select, text } from '@clack/prompts';
 
 // Mock dependencies
 vi.mock('@clack/prompts');
-vi.mock('../../../../app/services/github.service', () => ({
+vi.mock('../../../../app/services/githubService', () => ({
 	// FIX: Export 'github'
 	github: {
 		listRepos: vi.fn(),
 		deleteRepo: vi.fn()
 	}
 }));
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: { warn: vi.fn() }
 }));
 

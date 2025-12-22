@@ -47,7 +47,7 @@ import path from 'path';
 // Mock dependencies
 vi.mock('child_process');
 vi.mock('fs');
-vi.mock('../../../../app/services/logger.service', () => ({
+vi.mock('../../../../app/services/loggerService', () => ({
 	logger: {
 		info: vi.fn(),
 		success: vi.fn(),
@@ -130,13 +130,13 @@ describe('Command: Run App', () => {
 		// assigning it to a variable, but we can rely on coverage or
 		// import the mocked module. For now, we assume if it runs without throw, it handled it.
 		// Or strictly:
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('code 1'));
 	});
 	
 	it('should log success if process exits with 0', async () => {
 		await runApp(mockRoot);
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		expect(logger.success).toHaveBeenCalledWith('App stopped.');
 	});
 	
@@ -162,7 +162,7 @@ describe('Command: Run App', () => {
 		await runApp(mockRoot);
 		
 		// Import logger to verify expectations
-		const { logger } = await import('../../../../app/services/logger.service');
+		const { logger } = await import('../../../../app/services/loggerService');
 		
 		// Verify strict start-up logs
 		expect(logger.info).toHaveBeenCalledWith(expect.stringContaining(`Starting App in ${mockRoot}`));

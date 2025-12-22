@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/services/logger.service.test.ts
+ * @file:       ~/tests/services/loggerService.test.ts
  * @version:    1.0.0
  * @createDate: 2025 Dec 18
  * @createTime: 19:55
@@ -18,7 +18,7 @@
  * @notes: Revision History
  *
  * V1.0.0, 20251218-19:55
- * Initial creation and release of logger.service.test.ts
+ * Initial creation and release of loggerService.test.ts
  *
  * ================================================================================
  */
@@ -26,7 +26,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { LoggerService } from '../../app/services/logger.service';
+import { LoggerService } from '../../app/services/loggerService';
 
 // 1. Hoist reporters
 const { reporters } = vi.hoisted(() => {

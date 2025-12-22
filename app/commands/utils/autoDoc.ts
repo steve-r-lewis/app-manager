@@ -28,7 +28,7 @@ import path from 'path';
 import { spinner, confirm, isCancel } from '@clack/prompts';
 import { consola } from 'consola';
 import pc from 'picocolors';
-import { llm } from '../../services/llm.service';
+import { llm } from '../../services/llmService';
 
 // --- Configuration ---
 const SKIP_DIRS = new Set(['node_modules', '.git', '.nuxt', '.output', 'dist', 'coverage']);

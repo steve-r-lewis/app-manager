@@ -28,7 +28,7 @@ import path from 'path';
 import fs from 'fs';
 import { exec, execSync } from 'child_process';
 import { promisify } from 'util';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 
 const execPromise = promisify(exec);
 const CLI_ENTRY = path.resolve(__dirname, '../../../../index.ts');

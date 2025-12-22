@@ -25,7 +25,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { manageEnv } from '../../../../app/commands/nuxt/manageEnv';
-import { setupTestContext } from '../../../utils/test-context';
+import { setupTestContext } from '../../../helpers/testContext';
 import fs from 'fs';
 import path from 'path';
 
