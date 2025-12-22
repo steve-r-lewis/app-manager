@@ -33,6 +33,11 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { github } from '../../../app/services/githubService';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// FIX: Explicitly load .env from project root before checking for the token
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 // Skip suite if no credentials are present
 const hasToken = !!process.env.GITHUB_TOKEN;

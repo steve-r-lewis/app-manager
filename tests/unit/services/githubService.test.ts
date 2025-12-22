@@ -102,7 +102,6 @@ describe('Unit: GitHub Service (Logic)', () => {
 		
 		await github.ensureRepoExists('new-repo');
 		
-		// FIX: Expect request to 'user/repos' (Default behavior)
 		expect(global.fetch).toHaveBeenLastCalledWith(
 			expect.stringContaining('/user/repos'),
 			expect.objectContaining({
@@ -122,11 +121,12 @@ describe('Unit: GitHub Service (Logic)', () => {
 		
 		expect(repos).toHaveLength(2);
 		expect(global.fetch).toHaveBeenCalledWith(
-			// FIX: Expect request to 'user/repos' (Default behavior)
+			// Expect request to include sort parameters
 			expect.stringMatching(/\/user\/repos\?.*sort=updated/),
 			expect.objectContaining({
 				method: 'GET',
-				headers: expect.objectContaining({ 'Authorization': 'token fake-token' })
+				// Fix: Matches the 'Bearer' scheme used in githubService.ts source 1407
+				headers: expect.objectContaining({ 'Authorization': 'Bearer fake-token' })
 			})
 		);
 	});
