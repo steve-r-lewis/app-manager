@@ -11,11 +11,34 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * This module serves as the execution engine for running target application scripts
+ * (such as 'dev', 'build', or 'generate') within the monorepo context.
+ *
+ * Key Functionality:
+ * Package Manager Abstraction:
+ * Automatically detects the underlying package manager (Bun, pnpm, Yarn, or npm)
+ * active in the target project by analyzing lockfiles (e.g., bun.lockb,
+ * pnpm-lock.yaml). This ensures commands are executed using the correct binary
+ * without requiring user configuration.
+ *
+ * Interactive Process Spawning:
+ * It utilizes Node.js 'spawn' with inherited stdio. This allows the target
+ * application (e.g., a Nuxt development server) to output logs directly to the
+ * console and accept interactive input (Ctrl+C), while keeping the App Manager
+ * process alive in the background until the child process terminates.
+ *
+ * Cross-Platform Compatibility:
+ * Enables shell execution mode to ensure consistent behavior across Windows
+ * and POSIX systems.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20251222-01:30
+ * Refactored return type to Promise<number> to expose process exit codes.
+ * Enhanced error handling to resolve with non-zero codes on failure, enabling
+ * reliable status reporting for upstream callers.
  *
  * V1.0.0, 20251217-10:42
  * Initial creation and release of runApp.ts
@@ -29,37 +52,39 @@ import fs from 'fs';
 import path from 'path';
 import pc from 'picocolors';
 
-export async function runApp(targetRoot: string, script: string = 'dev') {
+// Return Promise<number> so the caller knows the exit code
+export async function runApp(targetRoot: string, script: string = 'dev'): Promise<number> {
 	logger.info(`Starting App in ${targetRoot}...`);
 	
 	const pm = detectPackageManager(targetRoot);
-	const command = pm === 'npm' ? 'npm' : pm; // npm requires 'run' but others often imply it, though 'bun run' is standard.
-	
-	// Construct arguments: e.g. "run dev"
+	const command = pm === 'npm' ? 'npm' : pm;
 	const args = ['run', script];
 	
 	logger.info(pc.dim(`> ${command} ${args.join(' ')}`));
 	
-	// Spawn the process
 	const child = spawn(command, args, {
 		cwd: targetRoot,
-		stdio: 'inherit', // Pipe output directly to console
-		shell: true       // Required for Windows compatibility
+		stdio: 'inherit',
+		shell: true
 	});
 	
-	// Handle Exit
-	child.on('close', (code) => {
-		if (code !== 0) {
-			logger.error(`App exited with code ${code}`);
-		} else {
-			logger.success('App stopped.');
-		}
-	});
-	
-	// Return a promise that never resolves (keeps process alive until user kills it)
-	// or resolves on close if you prefer. For a "dev" server, we usually await completion.
-	return new Promise<void>((resolve) => {
-		child.on('close', () => resolve());
+	return new Promise<number>((resolve) => {
+		child.on('close', (code) => {
+			if (code !== 0) {
+				logger.error(`App exited with code ${code}`);
+				// Resolve with the error code
+				resolve(code || 1);
+			} else {
+				logger.success('App stopped.');
+				resolve(0);
+			}
+		});
+		
+		// Handle spawn errors (e.g. command not found)
+		child.on('error', (err) => {
+			logger.error(`Failed to start subprocess: ${err.message}`);
+			resolve(1);
+		});
 	});
 }
 

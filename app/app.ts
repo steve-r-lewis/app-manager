@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/app.ts
- * @version:    1.0.1
+ * @version:    1.1.0
  * @createDate: 2025 Dec 17
  * @createTime: 01:25
  * @author:     Steve R Lewis
@@ -40,6 +40,11 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20251222-01:30
+ * Added headless routing for the 'app' domain (e.g., 'am app dev') to support
+ * CI/CD automation. Implemented exit code propagation to ensure the CLI process
+ * terminates with the correct status code upon child process failure.
  *
  * V1.0.1, 20251219-2045
  * Updated utility commands to accept targetRoot argument.
@@ -109,6 +114,17 @@ export async function main(targetRoot: string, toolRoot: string) {
 		
 		if (domainArg) {
 			if (process.env.DEBUG) consola.info(pc.dim(`CLI Mode: ${domainArg} ${commandArg || ''}`));
+			
+			// --- NEW: App Domain Headless Routing ---
+			// Usage: am app [dev|build|generate]
+			if (domainArg === 'app') {
+				const script = commandArg || 'dev'; // Default to 'dev' if arg missing
+				const exitCode = await runApp(targetRoot, script);
+				
+				// Critical: Exit with the actual code from the app
+				if (exitCode !== 0) process.exit(exitCode);
+				return;
+			}
 			
 			// --- Headless Routing ---
 			if (domainArg === 'utils' && commandArg === 'headers') {

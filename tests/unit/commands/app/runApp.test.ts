@@ -11,7 +11,22 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Unit test suite for the 'runApp' command, responsible for validating the
+ * abstraction logic between the CLI and the target project's script execution.
+ *
+ * Key Validation Areas:
+ * 1. Package Manager Detection:
+ * Mocks file system checks (fs.existsSync) to ensure the logic correctly
+ * identifies Bun, pnpm, Yarn, or npm based on the presence of specific
+ * lockfiles (e.g., bun.lockb, pnpm-lock.yaml).
+ *
+ * 2. Process Execution:
+ * Verifies that 'child_process.spawn' is invoked with the correct arguments,
+ * command structures (e.g., ['run', 'dev']), and exit handling logic.
+ *
+ * 3. Resilience & Feedback:
+ * Ensures that process exit codes (0 vs non-zero) are correctly interpreted
+ * and routed to the appropriate Logger Service method (success vs error).
  *
  * ================================================================================
  *
@@ -123,5 +138,37 @@ describe('Command: Run App', () => {
 		await runApp(mockRoot);
 		const { logger } = await import('../../../../app/services/logger.service');
 		expect(logger.success).toHaveBeenCalledWith('App stopped.');
+	});
+	
+	it('should spawn with correct CWD, Stdio, and Shell options', async () => {
+		// Mock FS to default to npm
+		vi.mocked(fs.existsSync).mockReturnValue(false);
+		
+		await runApp(mockRoot, 'dev');
+		
+		// Strictly verify the options object (3rd argument)
+		expect(child_process.spawn).toHaveBeenCalledWith(
+			'npm',
+			['run', 'dev'],
+			expect.objectContaining({
+				cwd: mockRoot,
+				stdio: 'inherit',
+				shell: true
+			})
+		);
+	});
+	
+	it('should log startup information and the command being executed', async () => {
+		await runApp(mockRoot);
+		
+		// Import logger to verify expectations
+		const { logger } = await import('../../../../app/services/logger.service');
+		
+		// Verify strict start-up logs
+		expect(logger.info).toHaveBeenCalledWith(expect.stringContaining(`Starting App in ${mockRoot}`));
+		
+		// Verify command echo (e.g. "> npm run dev")
+		// Note: We use stringContaining because the actual log might contain color codes from picocolors
+		expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('npm run dev'));
 	});
 });
