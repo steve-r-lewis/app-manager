@@ -1,0 +1,47 @@
+/**
+ * ================================================================================
+ *
+ * @project:    app-manager
+ * @file:       ~/docs/.vitepress/theme/styles/code.css
+ * @version:    1.0.0
+ * @createDate: 2025 Dec 22
+ * @createTime: 16:48
+ * @author:     Steve R Lewis
+ *
+ * ================================================================================
+ *
+ * @description:
+ * TODO: Create description here
+ *
+ * ================================================================================
+ *
+ * @notes: Revision History
+ *
+ * V1.0.0, 20251222-16:48
+ * Initial creation and release of code.css
+ *
+ * ================================================================================
+ */
+
+.vp-code-block {
+	/* Deep Blue Terminal Background */
+	background: #0b1120 !important;
+	
+	/* Subtle Blue Border */
+	border: 1px solid #1e293b;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+code {
+	font-family: var(--vp-font-family-mono);
+	font-size: 0.9rem;
+}
+
+/* Inline code styling to pop against dark bg */
+:not(pre) > code {
+	color: var(--vp-c-brand-1);
+	background-color: var(--vp-c-bg-mute);
+	padding: 3px 6px;
+	border-radius: 4px;
+}

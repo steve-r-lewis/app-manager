@@ -1,0 +1,63 @@
+/**
+ * ================================================================================
+ *
+ * @project:    app-manager
+ * @file:       ~/docs/.vitepress/theme/styles/base.css
+ * @version:    1.0.0
+ * @createDate: 2025 Dec 22
+ * @createTime: 16:48
+ * @author:     Steve R Lewis
+ *
+ * ================================================================================
+ *
+ * @description:
+ * TODO: Create description here
+ *
+ * ================================================================================
+ *
+ * @notes: Revision History
+ *
+ * V1.0.0, 20251222-16:48
+ * Initial creation and release of base.css
+ *
+ * ================================================================================
+ */
+
+.VPNav {
+	border-bottom: 1px solid var(--vp-c-bg-mute);
+	/* Glass effect for the Nav */
+	background-color: rgba(2, 6, 23, 0.8) !important;
+	backdrop-filter: blur(8px);
+}
+
+.VPContent {
+	padding-top: 2rem;
+}
+
+h1, h2, h3 {
+	letter-spacing: -0.02em;
+	color: var(--vp-c-text-1);
+}
+
+h1 {
+	font-weight: 800;
+	background: -webkit-linear-gradient(120deg, var(--vp-c-brand-1), var(--vp-c-brand-2));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+h2 {
+	margin-top: 3rem;
+	border-bottom: 1px solid var(--vp-c-bg-mute);
+	padding-bottom: 0.5rem;
+}
+
+a {
+	color: var(--vp-c-brand-1);
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+a:hover {
+	color: var(--vp-c-brand-2);
+}

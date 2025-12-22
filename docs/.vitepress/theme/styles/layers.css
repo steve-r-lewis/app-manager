@@ -1,0 +1,45 @@
+/**
+ * ================================================================================
+ *
+ * @project:    app-manager
+ * @file:       ~/docs/.vitepress/theme/styles/layers.css
+ * @version:    1.0.0
+ * @createDate: 2025 Dec 22
+ * @createTime: 16:48
+ * @author:     Steve R Lewis
+ *
+ * ================================================================================
+ *
+ * @description:
+ * TODO: Create description here
+ *
+ * ================================================================================
+ *
+ * @notes: Revision History
+ *
+ * V1.0.0, 20251222-16:48
+ * Initial creation and release of layers.css
+ *
+ * ================================================================================
+ */
+
+.layer-callout {
+	/* Electric Cyan Accent */
+	border-left: 4px solid var(--vp-c-brand-1);
+	
+	/* Subtle Gradient Fade (Right to Left) */
+	background: linear-gradient(
+			90deg,
+			rgba(34, 211, 238, 0.1) 0%,
+			rgba(15, 23, 42, 0.5) 100%
+	);
+	
+	border-radius: 0 4px 4px 0;
+	padding: 1rem;
+	margin: 1.5rem 0;
+}
+
+.layer-callout strong {
+	color: var(--vp-c-brand-1);
+	font-family: var(--vp-font-family-mono);
+}

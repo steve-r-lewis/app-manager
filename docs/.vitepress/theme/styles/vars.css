@@ -1,0 +1,49 @@
+/**
+ * ================================================================================
+ *
+ * @project:    app-manager
+ * @file:       ~/docs/.vitepress/theme/styles/vars.css
+ * @version:    1.0.0
+ * @createDate: 2025 Dec 22
+ * @createTime: 16:47
+ * @author:     Steve R Lewis
+ *
+ * ================================================================================
+ *
+ * @description:
+ * Updated color tokens to match the "Orchestrator" logo design.
+ * Theme: Electric Cyan & Deep Blue on Midnight Terminal.
+ *
+ * ================================================================================
+ *
+ * @notes: Revision History
+ *
+ * V1.0.0, 20251222-16:47
+ * Initial creation and release of vars.css
+ *
+ * ================================================================================
+ */
+
+:root {
+	/* Logo Palette: Electric Cyan to Deep Blue */
+	--vp-c-brand-1: #22d3ee; /* Cyan 400 - The "Spark" */
+	--vp-c-brand-2: #3b82f6; /* Blue 500 - The "Core" */
+	
+	/* Midnight Terminal Backgrounds */
+	--vp-c-bg: #020617;      /* Deepest Navy/Black */
+	--vp-c-bg-soft: #0f172a; /* Soft Navy */
+	--vp-c-bg-mute: #1e293b; /* Muted Blue-Grey */
+	
+	/* High Contrast Text for CLI readability */
+	--vp-c-text-1: #f8fafc; /* White/Slate 50 */
+	--vp-c-text-2: #cbd5e1; /* Slate 300 */
+	--vp-c-text-3: #64748b; /* Slate 500 */
+	
+	/* Borders */
+	--vp-c-divider: #1e293b;
+	--vp-c-gutter: #0f172a;
+	
+	/* Fonts */
+	--vp-font-family-base: 'Inter', system-ui, sans-serif;
+	--vp-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
