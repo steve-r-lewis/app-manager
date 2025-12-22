@@ -41,7 +41,6 @@ vi.mock('../../../../app/services/logger.service', () => ({
 		success: vi.fn(),
 		error: vi.fn(),
 		warn: vi.fn()
-		// No loader needed here anymore
 	}
 }));
 vi.mock('../../../../app/services/llm.service', () => ({
@@ -68,11 +67,15 @@ describe('Unit: createLayer', () => {
 		
 		const writeCalls = vi.mocked(fs.writeFileSync).mock.calls;
 		
-		// Check for specific files
-		expect(writeCalls.some(call => call[0].toString().endsWith('package.json'))).toBe(true);
-		expect(writeCalls.some(call => call[0].toString().endsWith('nuxt.config.ts'))).toBe(true);
-		expect(writeCalls.some(call => call[0].toString().endsWith('LICENSE'))).toBe(true);
-		expect(writeCalls.some(call => call[0].toString().endsWith('.gitignore'))).toBe(true);
+		// Verify ALL generated files
+		const filesCreated = writeCalls.map(call => call[0].toString());
+		
+		expect(filesCreated.some(f => f.endsWith('package.json'))).toBe(true);
+		expect(filesCreated.some(f => f.endsWith('nuxt.config.ts'))).toBe(true);
+		expect(filesCreated.some(f => f.endsWith('LICENSE'))).toBe(true);
+		expect(filesCreated.some(f => f.endsWith('.gitignore'))).toBe(true);
+		expect(filesCreated.some(f => f.endsWith('tsconfig.json'))).toBe(true);
+		expect(filesCreated.some(f => f.endsWith('README.md'))).toBe(true);
 		
 		// Verify spinner was used
 		expect(spinner).toHaveBeenCalled();

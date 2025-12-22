@@ -39,9 +39,11 @@
   },
   "scripts": {
 	  "build": "tsc",
-    "vitest:run": "vitest run",
-    "vitest:test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest run",
-    "vitest:watch": "vitest",
+	  "vitest:run": "vitest run",
+	  "vitest:unit": "vitest run tests/unit",
+	  "vitest:e2e": "vitest run tests/e2e --test-timeout=30000",
+	  "vitest:watchUnit": "vitest tests/unit",
+	  "vitest:watchAll": "vitest",
     "vitest:coverage": "vitest run --coverage",
     "vitest:ui": "vitest --ui"
   },

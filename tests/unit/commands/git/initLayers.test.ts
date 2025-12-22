@@ -11,8 +11,30 @@
  * ================================================================================
  *
  * @description:
- * Unit tests for initLayers logic, covering file system discovery,
- * user interaction, and headless execution.
+ * This file defines the Unit Tests for the initLayers command logic. Unlike the
+ * E2E test (which tests the full CLI process on a real file system), this test
+ * suite imports the specific initLayers function directly and isolates it from
+ * external dependencies. It uses extensive mocking (via Vitest's vi utility) to
+ * simulate various file system states and user interactions.
+ *
+ * Key Functionality:
+ * Dependency Mocking: It replaces real system modules (fs, child_process) and UI
+ * libraries (@clack/prompts) with mocks. This ensures tests run fast and do not
+ * modify the actual hard drive or execute real Git commands.
+ *
+ *   Path Verification:
+ *   Missing Directory: Verifies that if the "layers" directory is missing, the
+ *   function logs a warning and exits gracefully without crashing or attempting
+ *   to run commands.
+ *
+ *   Logic Branching:
+ *   Interactive Mode: Simulates a user session where uninitialized layers are
+ *   found. It mocks the user clicking "Yes" on the confirmation prompt and
+ *   asserts that git init is subsequently called.
+ *
+ * Headless/CI Mode: Verifies that passing the { force: true } option completely
+ * bypasses the user prompt (asserting confirm is not called) but still executes
+ * the necessary git init command.
  *
  * ================================================================================
  *
@@ -111,5 +133,61 @@ describe('Unit: initLayers', () => {
 			expect.stringContaining('git init'),
 			expect.anything()
 		);
+	});
+	
+	// --- GAP 1: User Cancellation ---
+	it('should cancel operation if user declines prompt (Interactive)', async () => {
+		// Setup: Candidates exist
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		vi.mocked(fs.existsSync).mockReturnValue(true); // layers dir exists
+		// Specific mock for the candidate check
+		vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+		// Force the .git check to fail so it looks like a valid candidate
+		vi.mocked(fs.existsSync).mockImplementation((p) => {
+			return !p.toString().endsWith('.git');
+		});
+		
+		// Setup: User says NO
+		vi.mocked(confirm).mockResolvedValue(false);
+		
+		await initLayers(mockRoot);
+		
+		expect(confirm).toHaveBeenCalled();
+		expect(child_process.execSync).not.toHaveBeenCalled();
+		
+		const { outro } = await import('@clack/prompts');
+		expect(outro).toHaveBeenCalledWith('Operation Cancelled');
+	});
+	
+	// --- GAP 2: No Candidates (Already Initialized) ---
+	it('should log success if all layers are already initialized', async () => {
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		
+		// Setup: .git DOES exist
+		vi.mocked(fs.existsSync).mockReturnValue(true);
+		
+		await initLayers(mockRoot);
+		
+		const { logger } = await import('../../../../app/services/logger.service');
+		expect(logger.success).toHaveBeenCalledWith('All layers are already initialized.');
+		expect(child_process.execSync).not.toHaveBeenCalled();
+	});
+	
+	// --- GAP 3: Git Init Failure ---
+	it('should handle git init failure gracefully', async () => {
+		// Setup: Valid candidate
+		vi.mocked(fs.readdirSync).mockReturnValue(['layer1'] as any);
+		vi.mocked(fs.existsSync).mockImplementation((p) => !p.toString().endsWith('.git'));
+		vi.mocked(confirm).mockResolvedValue(true);
+		
+		// Setup: Exec throws error
+		vi.mocked(child_process.execSync).mockImplementation(() => {
+			throw new Error('Git not found');
+		});
+		
+		await initLayers(mockRoot);
+		
+		const { logger } = await import('../../../../app/services/logger.service');
+		expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Failed to init layer1'));
 	});
 });

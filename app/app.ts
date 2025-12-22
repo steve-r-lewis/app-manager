@@ -11,7 +11,31 @@
  * ================================================================================
  *
  * @description:
- * Main application router and menu system.
+ * This is the main entry point and router for the app-manager CLI application. It
+ * orchestrates the flow of the application, handling both automated headless
+ * commands and an interactive menu-driven interface.
+ *
+ * Key Functionality:
+ *
+ *   Routing Logic:
+ *     Headless Mode: It parses process.argv to detect specific command arguments
+ *     (e.g., git init FORCE, utils headers). If matches are found, it executes the
+ *     corresponding function immediately and exits, bypassing the UI.
+ *
+ *     Interactive Mode: If no specific headless arguments are matched, it launches
+ *     a while(true) loop that presents a categorized menu system (App, Nuxt, Git,
+ *     Docs, etc.) using @clack/prompts.
+ *
+ *   Session Configuration: Allows the user to toggle "Debug Mode" (verbose logs)
+ *   and "File Logging" (writing transcripts to disk) at the start of an
+ *   interactive session.
+ *
+ *   Error Handling: Implements a global try/catch block that traps critical crashes,
+ *   logs the stack trace to a file in app-monitor/error-logs, and prevents the
+ *   application from failing silently.
+ *
+ *   Pre-flight Checks: Runs validation on startup to warn the user about missing
+ *   environment variables, such as GITHUB_TOKEN.
  *
  * ================================================================================
  *

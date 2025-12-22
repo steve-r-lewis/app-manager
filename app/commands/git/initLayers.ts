@@ -11,8 +11,28 @@
  * ================================================================================
  *
  * @description:
- * Scans the 'layers' directory for sub-projects that are not yet Git repositories
- * and initializes them.
+ * This file defines a specific Git operation command designed to scan a project's
+ * layers directory and initialize Git repositories for any sub-projects that do
+ * not currently have them. It serves as a utility to automate the setup of modular
+ * architectures (specifically Nuxt layers) within a monorepo structure.
+ *
+ * Key Functionality:
+ *   Directory Scanning: It checks for the existence of a layers directory and
+ *   iterates through its sub-directories.
+ *
+ *   Repo Validation: It filters the directories to identify candidates that are
+ *   not yet Git repositories by checking for the absence of a .git folder.
+ *
+ *     Dual Operation Modes:
+ *       Interactive: By default, it presents a user confirmation prompt via
+ *       @clack/prompts listing the uninitialized layers before proceeding.
+ *
+ *       Headless/CI: It accepts a force option (via InitOptions) to bypass user
+ *       prompts, allowing for automated execution in Continuous Integration
+ *       environments.
+ *
+ *   Execution: It uses execSync to run the standard git init command within the
+ *   target directory context.
  *
  * ================================================================================
  *
