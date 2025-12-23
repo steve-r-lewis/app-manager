@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/app/runApp.test.ts
- * @version:    1.0.0
+ * @version:    1.1.0
  * @createDate: 2025 Dec 18
  * @createTime: 22:37
  * @author:     Steve R Lewis
@@ -32,6 +32,12 @@
  *
  * @notes: Revision History
  *
+ * V1.1.0, 20251223-00:07
+ * Unit Tests for runApp command.
+ * Verifies:
+ * - Package Manager detection (Bun, PNPM, Yarn, NPM).
+ * - Strict Error Handling.
+ *
  * V1.0.0, 20251218-22:37
  * Initial creation and release of runApp.test.ts
  *
@@ -40,135 +46,116 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { runApp } from '../../../../app/commands/app/runApp';
-import child_process from 'child_process';
+import { logger } from '../../../../app/services/loggerService';
 import fs from 'fs';
-import path from 'path';
+import { execSync } from 'child_process';
 
-// Mock dependencies
-vi.mock('child_process');
+// --- Mocks ---
 vi.mock('fs');
-vi.mock('../../../../app/services/loggerService', () => ({
-	logger: {
-		info: vi.fn(),
-		success: vi.fn(),
-		error: vi.fn()
-	}
-}));
+vi.mock('child_process');
+vi.mock('../../../../app/services/loggerService');
 
 describe('Command: Run App', () => {
-	const mockRoot = '/mock/root';
-	let spawnMock: any;
-	let exitCallback: (code: number) => void;
+	const targetRoot = '/mock/root';
 	
 	beforeEach(() => {
 		vi.clearAllMocks();
 		
-		// Setup sophisticated Spawn Mock
-		exitCallback = () => {};
-		spawnMock = {
-			on: vi.fn((event, cb) => {
-				if (event === 'close') {
-					// Capture the callback so we can trigger it manually in tests if needed
-					// or let it run immediately for simple cases
-					exitCallback = cb;
-					cb(0);
-				}
-			}),
-			stdout: { on: vi.fn() },
-			stderr: { on: vi.fn() }
-		};
-		vi.mocked(child_process.spawn).mockReturnValue(spawnMock as any);
+		// Default Mock Behavior
+		// 1. execSync does nothing
+		(execSync as any).mockImplementation(() => {});
+		
+		// 2. fs.readFileSync returns a valid package.json with 'dev' and 'build' scripts
+		(fs.readFileSync as any).mockReturnValue(JSON.stringify({
+			scripts: { dev: 'vite', build: 'vite build' }
+		}));
+		
+		// 3. fs.existsSync defaults to TRUE for package.json, FALSE for others
+		// This is crucial for the new validation logic.
+		(fs.existsSync as any).mockImplementation((p: string) => {
+			if (p.endsWith('package.json')) return true;
+			return false;
+		});
 	});
 	
-	// --- Package Manager Detection Tests ---
-	
 	it('should detect BUN and use "bun run dev"', async () => {
-		vi.mocked(fs.existsSync).mockImplementation((p) => (p as string).endsWith('bun.lockb'));
-		await runApp(mockRoot);
-		expect(child_process.spawn).toHaveBeenCalledWith('bun', ['run', 'dev'], expect.anything());
+		// Setup: Bun lockfile exists
+		(fs.existsSync as any).mockImplementation((p: string) => {
+			if (p.endsWith('package.json')) return true;
+			if (p.endsWith('bun.lockb')) return true;
+			return false;
+		});
+		
+		await runApp(targetRoot, 'dev');
+		
+		expect(execSync).toHaveBeenCalledWith('bun run dev', expect.anything());
+		expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('bun run dev'));
 	});
 	
 	it('should detect PNPM and use "pnpm run dev"', async () => {
-		vi.mocked(fs.existsSync).mockImplementation((p) => (p as string).endsWith('pnpm-lock.yaml'));
-		await runApp(mockRoot);
-		expect(child_process.spawn).toHaveBeenCalledWith('pnpm', ['run', 'dev'], expect.anything());
+		// Setup: PNPM lockfile exists
+		(fs.existsSync as any).mockImplementation((p: string) => {
+			if (p.endsWith('package.json')) return true;
+			if (p.endsWith('pnpm-lock.yaml')) return true;
+			return false;
+		});
+		
+		await runApp(targetRoot, 'dev');
+		
+		expect(execSync).toHaveBeenCalledWith('pnpm run dev', expect.anything());
 	});
 	
 	it('should detect YARN and use "yarn run dev"', async () => {
-		vi.mocked(fs.existsSync).mockImplementation((p) => (p as string).endsWith('yarn.lock'));
-		await runApp(mockRoot);
-		expect(child_process.spawn).toHaveBeenCalledWith('yarn', ['run', 'dev'], expect.anything());
+		(fs.existsSync as any).mockImplementation((p: string) => {
+			if (p.endsWith('package.json')) return true;
+			if (p.endsWith('yarn.lock')) return true;
+			return false;
+		});
+		
+		await runApp(targetRoot, 'dev');
+		expect(execSync).toHaveBeenCalledWith('yarn run dev', expect.anything());
 	});
 	
 	it('should default to NPM if no lockfile found', async () => {
-		vi.mocked(fs.existsSync).mockReturnValue(false);
-		await runApp(mockRoot);
-		expect(child_process.spawn).toHaveBeenCalledWith('npm', ['run', 'dev'], expect.anything());
+		// Default mock (only package.json exists)
+		await runApp(targetRoot, 'dev');
+		expect(execSync).toHaveBeenCalledWith('npm run dev', expect.anything());
 	});
-	
-	// --- Functionality Tests ---
 	
 	it('should run custom scripts (e.g. "build")', async () => {
-		vi.mocked(fs.existsSync).mockReturnValue(false); // Default npm
-		await runApp(mockRoot, 'build');
-		expect(child_process.spawn).toHaveBeenCalledWith(
-			'npm',
-			['run', 'build'],
-			expect.anything()
-		);
+		await runApp(targetRoot, 'build');
+		expect(execSync).toHaveBeenCalledWith('npm run build', expect.anything());
 	});
 	
-	it('should log error if process exits with non-zero code', async () => {
-		// Override default mock to fail
-		spawnMock.on = vi.fn((event, cb) => {
-			if (event === 'close') cb(1); // Exit code 1
-		});
+	it('should throw error if process exits with non-zero code', async () => {
+		(execSync as any).mockImplementation(() => { throw new Error('Failed'); });
 		
-		await runApp(mockRoot);
-		
-		// We can't easily import the logger mock here to check expectation without
-		// assigning it to a variable, but we can rely on coverage or
-		// import the mocked module. For now, we assume if it runs without throw, it handled it.
-		// Or strictly:
-		const { logger } = await import('../../../../app/services/loggerService');
-		expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('code 1'));
+		await expect(runApp(targetRoot, 'dev')).rejects.toThrow('Script "dev" failed execution');
 	});
 	
-	it('should log success if process exits with 0', async () => {
-		await runApp(mockRoot);
-		const { logger } = await import('../../../../app/services/loggerService');
-		expect(logger.success).toHaveBeenCalledWith('App stopped.');
+	it('should throw error if package.json is missing', async () => {
+		// Force package.json missing
+		(fs.existsSync as any).mockReturnValue(false);
+		
+		await expect(runApp(targetRoot, 'dev')).rejects.toThrow('package.json not found');
+	});
+	
+	it('should throw error if script is missing in package.json', async () => {
+		// Return pkg without 'missing-script'
+		(fs.readFileSync as any).mockReturnValue(JSON.stringify({ scripts: { dev: 'vite' } }));
+		
+		await expect(runApp(targetRoot, 'missing-script')).rejects.toThrow('Missing script: "missing-script"');
 	});
 	
 	it('should spawn with correct CWD, Stdio, and Shell options', async () => {
-		// Mock FS to default to npm
-		vi.mocked(fs.existsSync).mockReturnValue(false);
+		await runApp(targetRoot, 'dev');
 		
-		await runApp(mockRoot, 'dev');
-		
-		// Strictly verify the options object (3rd argument)
-		expect(child_process.spawn).toHaveBeenCalledWith(
-			'npm',
-			['run', 'dev'],
+		expect(execSync).toHaveBeenCalledWith(
+			expect.stringContaining('npm run dev'),
 			expect.objectContaining({
-				cwd: mockRoot,
-				stdio: 'inherit',
-				shell: true
+				cwd: targetRoot,
+				stdio: 'inherit'
 			})
 		);
-	});
-	
-	it('should log startup information and the command being executed', async () => {
-		await runApp(mockRoot);
-		
-		// Import logger to verify expectations
-		const { logger } = await import('../../../../app/services/loggerService');
-		
-		// Verify strict start-up logs
-		expect(logger.info).toHaveBeenCalledWith(expect.stringContaining(`Starting App in ${mockRoot}`));
-		
-		// Verify command echo (e.g. "> npm run dev")
-		// Note: We use stringContaining because the actual log might contain color codes from picocolors
-		expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('npm run dev'));
 	});
 });

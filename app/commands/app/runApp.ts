@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/app/runApp.ts
- * @version:    1.0.0
+ * @version:    1.1.1
  * @createDate: 2025 Dec 17
  * @createTime: 10:42
  * @author:     Steve R Lewis
@@ -31,9 +31,17 @@
  * Enables shell execution mode to ensure consistent behavior across Windows
  * and POSIX systems.
  *
+ * Command to execute npm scripts.
+ * Features:
+ * - Strict validation of package.json and script existence.
+ * - Auto-detection of Package Manager (Bun, PNPM, Yarn, NPM).
+ *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.1, 20251222-23:59
+ * Added strict error throwing when script is missing (Fixes E2E Exit Code).
  *
  * V1.1.0, 20251222-01:30
  * Refactored return type to Promise<number> to expose process exit codes.
@@ -46,55 +54,46 @@
  * ================================================================================
  */
 
-import { spawn } from 'child_process';
+import { execSync } from 'child_process';
 import { logger } from '../../services/loggerService';
 import fs from 'fs';
 import path from 'path';
-import pc from 'picocolors';
 
-// Return Promise<number> so the caller knows the exit code
-export async function runApp(targetRoot: string, script: string = 'dev'): Promise<number> {
-	logger.info(`Starting App in ${targetRoot}...`);
+export async function runApp(targetRoot: string, scriptName: string) {
+	const pkgPath = path.join(targetRoot, 'package.json');
 	
-	const pm = detectPackageManager(targetRoot);
-	const command = pm === 'npm' ? 'npm' : pm;
-	const args = ['run', script];
+	// 1. Strict Validation: package.json must exist
+	if (!fs.existsSync(pkgPath)) {
+		throw new Error('package.json not found in target root.');
+	}
 	
-	logger.info(pc.dim(`> ${command} ${args.join(' ')}`));
+	// 2. Strict Validation: Script must exist
+	const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+	if (!pkg.scripts || !pkg.scripts[scriptName]) {
+		throw new Error(`Missing script: "${scriptName}"`);
+	}
 	
-	const child = spawn(command, args, {
-		cwd: targetRoot,
-		stdio: 'inherit',
-		shell: true
-	});
+	// 3. Detect Package Manager
+	let pm = 'npm';
+	if (fs.existsSync(path.join(targetRoot, 'bun.lockb'))) {
+		pm = 'bun';
+	} else if (fs.existsSync(path.join(targetRoot, 'pnpm-lock.yaml'))) {
+		pm = 'pnpm';
+	} else if (fs.existsSync(path.join(targetRoot, 'yarn.lock'))) {
+		pm = 'yarn';
+	}
 	
-	return new Promise<number>((resolve) => {
-		child.on('close', (code) => {
-			if (code !== 0) {
-				logger.error(`App exited with code ${code}`);
-				// Resolve with the error code
-				resolve(code || 1);
-			} else {
-				logger.success('App stopped.');
-				resolve(0);
-			}
+	// 4. Execute
+	const command = `${pm} run ${scriptName}`;
+	logger.info(`🚀 Running: ${command}`);
+	
+	try {
+		execSync(command, {
+			cwd: targetRoot,
+			stdio: 'inherit'
 		});
-		
-		// Handle spawn errors (e.g. command not found)
-		child.on('error', (err) => {
-			logger.error(`Failed to start subprocess: ${err.message}`);
-			resolve(1);
-		});
-	});
-}
-
-/**
- * Helper: Detects package manager based on lockfiles.
- * Priority: Bun > pnpm > Yarn > npm
- */
-function detectPackageManager(root: string): string {
-	if (fs.existsSync(path.join(root, 'bun.lockb'))) return 'bun';
-	if (fs.existsSync(path.join(root, 'pnpm-lock.yaml'))) return 'pnpm';
-	if (fs.existsSync(path.join(root, 'yarn.lock'))) return 'yarn';
-	return 'npm';
+	} catch (error: any) {
+		// Ensure non-zero exit code propagates
+		throw new Error(`Script "${scriptName}" failed execution.`);
+	}
 }

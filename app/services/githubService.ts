@@ -11,11 +11,15 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Service to interact with the GitHub API.
+ * Handles repository creation, deletion, listing, and user management.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.0.1, 20251223-01:00
+ * Fixed JSON parsing crash on 204 No Content responses (DELETE operations).
  *
  * V1.0.0, 20251217-01:21
  * Initial creation and release of githubService.ts
@@ -41,7 +45,6 @@ export class GithubService {
 			const record = configService.repoConfig.records.find(r => r.repositoryName === repoName);
 			if (record) {
 				if (record.githubOrg) org = record.githubOrg;
-				// Future: If records have specific tokens, load them here
 			}
 		}
 		
@@ -79,6 +82,12 @@ export class GithubService {
 			const errText = await res.text();
 			throw new Error(`GitHub API Error [${res.status}]: ${res.statusText} - ${errText}`);
 		}
+		
+		// --- FIX: Handle 204 No Content (DELETE operations) ---
+		if (res.status === 204) {
+			return null;
+		}
+		
 		return res.json();
 	}
 	

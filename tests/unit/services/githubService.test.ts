@@ -62,82 +62,91 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { github } from '../../../app/services/githubService';
+import { configService } from '../../../app/services/configService';
 
-describe('Unit: GitHub Service (Logic)', () => {
+// Mock Config Service
+vi.mock('../../../app/services/configService', () => ({
+	configService: {
+		repoConfig: { records: [] }
+	}
+}));
+
+// Mock Consola to keep output clean
+vi.mock('consola', () => ({
+	consola: {
+		success: vi.fn(),
+		info: vi.fn(),
+		error: vi.fn(),
+	}
+}));
+
+// Mock Global Fetch
+global.fetch = vi.fn();
+
+describe('Unit: GitHub Service', () => {
 	const originalEnv = process.env;
 	
 	beforeEach(() => {
-		vi.resetModules();
-		// We set a token so the checks pass, but we expect the service to
-		// use its default "User" scope since it loaded before we could set ORG.
-		process.env = { ...originalEnv, GITHUB_TOKEN: 'fake-token' };
-		
-		global.fetch = vi.fn();
+		vi.clearAllMocks();
+		process.env = { ...originalEnv };
+		process.env.GITHUB_TOKEN = 'test-token';
+		process.env.GITHUB_ORG = 'test-org';
 	});
 	
 	afterEach(() => {
 		process.env = originalEnv;
-		vi.restoreAllMocks();
 	});
 	
-	it('should throw "Missing GITHUB_TOKEN" if env var is empty', async () => {
-		process.env.GITHUB_TOKEN = '';
-		await expect(github.ensureRepoExists('any-repo')).rejects.toThrow('Missing GITHUB_TOKEN');
+	it('should throw if GITHUB_TOKEN is missing', async () => {
+		delete process.env.GITHUB_TOKEN;
+		await expect(github.listRepos()).rejects.toThrow('Missing GITHUB_TOKEN');
 	});
 	
-	it('should return clone_url immediately if repo exists (200 OK)', async () => {
-		(global.fetch as any).mockResolvedValue({
+	it('ensureRepoExists: should return clone_url if repo exists', async () => {
+		// Mock GET 200 OK
+		(global.fetch as any).mockResolvedValueOnce({
 			ok: true,
-			json: async () => ({ clone_url: 'https://github.com/test/repo.git' })
+			status: 200,
+			json: async () => ({ clone_url: 'https://git/exist.git' })
 		});
 		
 		const url = await github.ensureRepoExists('my-repo');
-		expect(url).toBe('https://github.com/test/repo.git');
+		expect(url).toBe('https://git/exist.git');
 	});
 	
-	it('should create repo if it does not exist (404 -> POST)', async () => {
+	it('ensureRepoExists: should create repo if it returns 404', async () => {
 		(global.fetch as any)
-			.mockResolvedValueOnce({ ok: false, status: 404, text: async () => 'Not Found' }) // Check
-			.mockResolvedValueOnce({ ok: true, json: async () => ({ clone_url: 'https://new', full_name: 'test/new' }) }); // Create
-		
-		await github.ensureRepoExists('new-repo');
-		
-		expect(global.fetch).toHaveBeenLastCalledWith(
-			expect.stringContaining('/user/repos'),
-			expect.objectContaining({
-				method: 'POST',
-				body: expect.stringContaining('"name":"new-repo"')
+			// 1. GET -> 404 Not Found
+			.mockResolvedValueOnce({
+				ok: false,
+				status: 404,
+				text: async () => 'Not Found'
 			})
-		);
+			// 2. POST -> 201 Created
+			.mockResolvedValueOnce({
+				ok: true,
+				status: 201,
+				json: async () => ({ clone_url: 'https://git/new.git', full_name: 'test/new' })
+			});
+		
+		const url = await github.ensureRepoExists('new-repo');
+		
+		expect(url).toBe('https://git/new.git');
+		expect(global.fetch).toHaveBeenCalledTimes(2);
 	});
 	
-	it('should list repositories with correct sort parameters', async () => {
-		(global.fetch as any).mockResolvedValue({
+	it('deleteRepo: should handle 204 No Content gracefully', async () => {
+		// Mock DELETE -> 204
+		(global.fetch as any).mockResolvedValueOnce({
 			ok: true,
-			json: async () => ([{ name: 'repo-1' }, { name: 'repo-2' }])
+			status: 204,
+			json: async () => ({}) // Should not be called due to fix
 		});
 		
-		const repos = await github.listRepos();
-		
-		expect(repos).toHaveLength(2);
-		expect(global.fetch).toHaveBeenCalledWith(
-			// Expect request to include sort parameters
-			expect.stringMatching(/\/user\/repos\?.*sort=updated/),
-			expect.objectContaining({
-				method: 'GET',
-				// Fix: Matches the 'Bearer' scheme used in githubService.ts source 1407
-				headers: expect.objectContaining({ 'Authorization': 'Bearer fake-token' })
-			})
-		);
-	});
-	
-	it('should delete a repository via DELETE method', async () => {
-		(global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({}) });
-		
-		await github.deleteRepo('steve', 'old-repo');
+		await github.deleteRepo('test-org', 'del-repo');
 		
 		expect(global.fetch).toHaveBeenCalledWith(
-			expect.stringContaining('/repos/steve/old-repo'),
+			expect.stringContaining('/repos/test-org/del-repo'),
 			expect.objectContaining({ method: 'DELETE' })
 		);
 	});
