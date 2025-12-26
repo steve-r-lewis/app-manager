@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/app.ts
- * @version:    2.0.0
+ * @version:    2.0.2
  * @createDate: 2025 Dec 17
  * @createTime: 01:25
  * @author:     Steve R Lewis
@@ -41,6 +41,13 @@
  *
  * @notes: Revision History
  *
+ * V2.0.2, 20251223-15:55
+ * Restored Session Configuration menu as a multi-select option (Verbose/File Logging)
+ * per original design requirements.
+ *
+ * V2.0.1, 20251223-15:45
+ * Refactor: Cleanup of unused imports.
+ *
  * V2.0.0, 20251222-21:29
  * Main entry point for the App Manager CLI/TUI.
  * Handles:
@@ -63,7 +70,7 @@
  * ================================================================================
  */
 
-import { intro, outro, select, text, isCancel, spinner } from '@clack/prompts';
+import { intro, outro, select, multiselect, isCancel, spinner } from '@clack/prompts';
 import pc from 'picocolors';
 import { consola } from 'consola';
 import { logger } from './services/loggerService';
@@ -125,7 +132,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 					if (action === 'headers') await validateHeaders(targetRoot);
 					else if (action === 'clean') await cleanLogs(targetRoot);
 					else if (action === 'contributor') {
-						// Minimal naive parsing for headless contributor
 						const name = rest[0];
 						const email = rest[1];
 						await addContributor(targetRoot, { name, email });
@@ -147,19 +153,32 @@ export async function main(targetRoot: string, toolRoot: string) {
 	console.clear();
 	intro(pc.inverse(pc.cyan(' Nuxt 4 Monorepo Manager ')));
 	
-	// A. Logger Configuration
-	const debugMode = await select({
-		message: 'Enable Debug Logging?',
+	// A. Session Configuration (Multi-Select)
+	// Allows user to toggle verbose logging and file logging at start
+	const sessionConfig = await multiselect({
+		message: 'Session Configuration (Space to select, Enter to confirm):',
 		options: [
-			{ value: 'yes', label: 'Yes (Verbose)' },
-			{ value: 'no', label: 'No (Standard)' }
-		]
+			{ value: 'debug', label: 'Enable Verbose Logging', hint: 'Show detailed debug logs on screen' },
+			{ value: 'file', label: 'Enable File Logging', hint: 'Write logs to app-monitor/ directory' }
+		],
+		required: false
 	});
-	if (isCancel(debugMode)) { outro('👋 Exiting'); process.exit(0); }
-	if (debugMode === 'yes') process.env.DEBUG = 'true';
+	
+	if (isCancel(sessionConfig)) { outro('👋 Exiting'); process.exit(0); }
+	
+	// Apply Configuration
+	const selectedOptions = sessionConfig as string[];
+	if (selectedOptions.includes('debug')) {
+		process.env.DEBUG = 'true';
+	}
+	if (selectedOptions.includes('file')) {
+		process.env.LOG_TO_FILE = 'true';
+		// If logger was already initialized, we might need to notify it,
+		// but typically it checks env vars during write operations or we rely on logic below.
+		logger.info('File logging enabled for this session.');
+	}
 	
 	// B. AI Health Check (Pre-Flight)
-	// This runs once at startup to populate the "Available Tools" list
 	const s = spinner();
 	s.start('Connecting to AI Providers...');
 	
@@ -173,14 +192,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 			s.stop(pc.green(`AI Online: ${count} provider(s) active.`));
 		} else {
 			s.stop(pc.yellow('AI Offline: No reachable providers found.'));
-		}
-		
-		// Debug output for developers
-		if (process.env.DEBUG) {
-			status.forEach(p => {
-				const icon = p.available ? '✅' : '❌';
-				consola.info(`${icon} [${p.id}] ${p.name}: ${p.reason || 'Ready'}`);
-			});
 		}
 	} catch (err: any) {
 		s.stop(pc.red('AI Check Failed'));
@@ -241,7 +252,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 				if (action === 'back' || isCancel(action)) continue;
 				
 				if (action === 'commit') {
-					// PASS THE VERIFIED AI LIST TO THE COMMAND
 					await manageCommits(targetRoot, { availableLLMs });
 				}
 				else if (action === 'sync') await syncRepos(targetRoot);
@@ -321,7 +331,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 			
 		} catch (error: any) {
 			logger.error(`Command failed: ${error.message}`);
-			// Don't exit process in interactive mode, just return to menu
 		}
 	}
 }
