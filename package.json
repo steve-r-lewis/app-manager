@@ -11,7 +11,7 @@
     "application code manager",
     "typescript"
   ],
-  "packageManager": "pnpm@10.26.1",
+  "packageManager": "pnpm@10.26.2",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
@@ -38,12 +38,12 @@
     "app-manager": "index.ts"
   },
   "scripts": {
-	  "build": "tsc",
-	  "vitest:run": "vitest run",
-	  "vitest:unit": "vitest run tests/unit",
-	  "vitest:e2e": "vitest run tests/e2e --test-timeout=30000",
-	  "vitest:watchUnit": "vitest tests/unit",
-	  "vitest:watchAll": "vitest",
+    "build": "tsc",
+    "vitest:run": "vitest run",
+    "vitest:unit": "vitest run tests/unit",
+    "vitest:e2e": "vitest run tests/e2e --test-timeout=30000",
+    "vitest:watchUnit": "vitest tests/unit",
+    "vitest:watchAll": "vitest",
     "vitest:coverage": "vitest run --coverage",
     "vitest:ui": "vitest --ui"
   },
