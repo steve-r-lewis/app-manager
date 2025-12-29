@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/git/deleteRemoteRepos.test.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 23:53
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Added author field.
  *
  * V1.0.0, 20251218-23:53
  * Initial creation and release of deleteRemoteRepos.test.ts

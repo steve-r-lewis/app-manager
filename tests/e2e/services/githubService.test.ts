@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/services/githubService.test.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 22
  * @createTime: 14:24
  * @author:     Steve R Lewis
@@ -24,6 +24,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Updated author info.
  *
  * - 2.0.1: Added polling (vi.waitUntil) to handle GitHub API eventual consistency.
  * - 2.0.0: Fixed env path resolution.

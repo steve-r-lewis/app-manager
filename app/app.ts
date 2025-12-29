@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/app.ts
- * @version:    2.0.2
+ * @version:    2.0.3
  * @createDate: 2025 Dec 17
  * @createTime: 01:25
  * @author:     Steve R Lewis
@@ -40,6 +40,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.3, 20251226-1912
+ * Refactored logic.
  *
  * V2.0.2, 20251223-15:55
  * Restored Session Configuration menu as a multi-select option (Verbose/File Logging)
@@ -72,15 +74,16 @@
 
 import { intro, outro, select, multiselect, isCancel, spinner } from '@clack/prompts';
 import pc from 'picocolors';
-import { consola } from 'consola';
 import { logger } from './services/loggerService';
 import { configService } from './services/configService';
-import { llm, type LLMProviderStatus } from './services/llmService';
+import { llm } from './services/llmService';
 
 // --- Command Imports ---
 import { runApp } from './commands/app/runApp';
+import { setupApp } from './commands/app/setupApp';
+
+// Docs
 import { runDocs } from './commands/docs/runDocs';
-import { runQuality } from './commands/quality/runQuality';
 
 // Git
 import { manageCommits } from './commands/git/manageCommits';
@@ -89,6 +92,10 @@ import { pushToRemote } from './commands/git/pushToRemote';
 import { initLayers } from './commands/git/initLayers';
 import { deleteRemoteRepos } from './commands/git/deleteRemoteRepos';
 import { addSubmodules } from './commands/git/addSubmodules';
+import { pushAll } from './commands/git/pushAll';
+
+// Quality
+import { runQuality } from './commands/quality/runQuality';
 
 // Nuxt
 import { createLayer } from './commands/nuxt/createLayer';
@@ -101,6 +108,8 @@ import { validateHeaders } from './commands/utils/validateHeaders';
 import { autoVersion } from './commands/utils/autoVersion';
 import { autoDoc } from './commands/utils/autoDoc';
 import { addContributor } from './commands/utils/addContributor';
+
+import type { LLMProviderStatus } from './types/llm.types';
 
 export async function main(targetRoot: string, toolRoot: string) {
 	// 1. Initialize System Services
@@ -118,6 +127,7 @@ export async function main(targetRoot: string, toolRoot: string) {
 			switch (domain) {
 				case 'app':
 					if (action === 'dev' || action === 'build') await runApp(targetRoot, action);
+					else if (action === 'setup') await setupApp(targetRoot); // <--- ADD THIS
 					else logger.error(`Unknown app action: ${action}`);
 					break;
 				case 'git':
@@ -127,6 +137,24 @@ export async function main(targetRoot: string, toolRoot: string) {
 					else if (action === 'init') await initLayers(targetRoot, { force: rest.includes('FORCE') });
 					else if (action === 'delete') await deleteRemoteRepos(targetRoot, rest[0]);
 					else logger.error(`Unknown git action: ${action}`);
+					break;
+				case 'nuxt':
+					// Matches nuxtManager.ps1 capabilities
+					if (action === 'clean') {
+						// am nuxt clean
+						await manageEnv(targetRoot, { clean: true, force: true });
+					}
+					else if (action === 'reinstall') {
+						// am nuxt reinstall
+						await manageEnv(targetRoot, { reinstall: true, force: true });
+					}
+					else if (action === 'reset') {
+						// am nuxt reset (Clean + Reinstall)
+						await manageEnv(targetRoot, { clean: true, reinstall: true, force: true });
+					}
+					else {
+						logger.error(`Unknown nuxt action: ${action}`);
+					}
 					break;
 				case 'utils':
 					if (action === 'headers') await validateHeaders(targetRoot);
@@ -181,7 +209,6 @@ export async function main(targetRoot: string, toolRoot: string) {
 	// B. AI Health Check (Pre-Flight)
 	const s = spinner();
 	s.start('Connecting to AI Providers...');
-	
 	let availableLLMs: LLMProviderStatus[] = [];
 	try {
 		const status = await llm.checkAvailability();
@@ -223,7 +250,9 @@ export async function main(targetRoot: string, toolRoot: string) {
 			if (domain === 'app') {
 				const action = await select({
 					message: 'App Action:',
+					// Inside options array:
 					options: [
+						{ value: 'setup', label: '🚀 Provision Project (Zero-to-Hero)' }, // <--- ADD THIS
 						{ value: 'dev', label: 'Start Dev Server' },
 						{ value: 'build', label: 'Build Production' },
 						{ value: 'back', label: '⬅️ Back' }
@@ -231,6 +260,7 @@ export async function main(targetRoot: string, toolRoot: string) {
 				});
 				
 				if (action === 'back' || isCancel(action)) continue;
+				if (action === 'setup') await setupApp(targetRoot); // <--- ADD THIS
 				await runApp(targetRoot, action as 'dev' | 'build');
 			}
 			
@@ -239,9 +269,11 @@ export async function main(targetRoot: string, toolRoot: string) {
 				const action = await select({
 					message: 'Git Action:',
 					options: [
+						{ value: 'status', label: '📊 View Status' },
 						{ value: 'commit', label: '📝 Smart Commit (AI)' },
-						{ value: 'sync', label: '🔄 Sync All Repos' },
-						{ value: 'push', label: '⬆️  Push to Remote' },
+						{ value: 'push', label: '⬆️  Push Current Repo' },
+						{ value: 'push-all', label: '🚀 Mass Push (Root + Layers)' }, // <--- NEW
+						{ value: 'sync', label: '🔄 Sync All Repos (Pull)' },
 						{ value: 'init', label: '📦 Init Layers' },
 						{ value: 'submodules', label: '🔗 Add Submodules' },
 						{ value: 'delete', label: '🔥 Delete Remote Repo' },
@@ -251,11 +283,10 @@ export async function main(targetRoot: string, toolRoot: string) {
 				
 				if (action === 'back' || isCancel(action)) continue;
 				
-				if (action === 'commit') {
-					await manageCommits(targetRoot, { availableLLMs });
-				}
-				else if (action === 'sync') await syncRepos(targetRoot);
+				if (action === 'commit') await manageCommits(targetRoot, { availableLLMs });
 				else if (action === 'push') await pushToRemote(targetRoot);
+				else if (action === 'push-all') await pushAll(targetRoot); // <--- NEW
+				else if (action === 'sync') await syncRepos(targetRoot);
 				else if (action === 'init') await initLayers(targetRoot);
 				else if (action === 'submodules') await addSubmodules(targetRoot);
 				else if (action === 'delete') await deleteRemoteRepos(targetRoot);

@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/quality/runQuality.test.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 00:46
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Added author attribution.
  *
  * V1.0.0, 20251219-00:46
  * Initial creation and release of runQuality.test.ts

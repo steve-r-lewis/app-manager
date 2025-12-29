@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/services/githubService.ts
- * @version:    1.0.0
+ * @version:    1.0.2
  * @createDate: 2025 Dec 17
  * @createTime: 01:21
  * @author:     Steve R Lewis
@@ -17,6 +17,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.2, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.1, 20251223-01:00
  * Fixed JSON parsing crash on 204 No Content responses (DELETE operations).
@@ -149,4 +151,7 @@ export class GithubService {
 	}
 }
 
+/**
+ * Returns a GitHub service instance.
+ */
 export const github = new GithubService();

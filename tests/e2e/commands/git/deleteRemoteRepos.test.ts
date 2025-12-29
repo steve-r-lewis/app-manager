@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/commands/git/deleteRemoteRepos.test.ts
- * @version:    2.0.3
+ * @version:    2.0.8
  * @createDate: 2025 Dec 21
  * @createTime: 00:03
  * @author:     Steve R Lewis
@@ -18,6 +18,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.8, 20251226-1913
+ * Refactored logic.
  *
  * V2.0.7, 20251223-00:36
  * Fixed select mock to return Object (not string) and mocked GITHUB_OWNER.

@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/helpers/autoDoc.test.ts
- * @version:    1.0.0
+ * @file:       ~/tests/unit/commands/utils/autoDoc.test.ts
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 01:19
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.0, 20251219-01:19
  * Initial creation and release of autoDoc.test.ts
@@ -103,8 +105,14 @@ export function sub(a, b) { return a - b; }
 		const filePath = path.join(ctx.targetRoot, 'multi.ts');
 		// Two undocumented functions
 		const content = `
+/**
+* Returns the first value in a sequence. This is a Bottom-Up processing approach, where 'second' is encountered before 'first'.
+*/
 export const first = 1;
 
+/**
+ * Returns the integer value 2.
+ */
 export const second = 2;
         `.trim();
 		fs.writeFileSync(filePath, content);
@@ -119,13 +127,15 @@ export const second = 2;
 		
 		const updated = fs.readFileSync(filePath, 'utf-8');
 		
-		expect(updated).toContain('/** First */\nexport const first');
+		expect(updated).toContain('/** First */\n/** Generates first export. */
+export const first');
 		expect(updated).toContain('/** Second */\nexport const second');
 	});
 	
 	it('should handle AI failures gracefully', async () => {
 		const filePath = path.join(ctx.targetRoot, 'broken.ts');
-		fs.writeFileSync(filePath, 'export class MyClass {}');
+		fs.writeFileSync(filePath, '/** Generates a concise JSDoc comment for this TypeScript/JS export. */
+export class MyClass {}');
 		
 		(llm.generate as any).mockRejectedValue(new Error('AI Error'));
 		
@@ -133,6 +143,9 @@ export const second = 2;
 		
 		// File should not be modified if AI fails
 		const updated = fs.readFileSync(filePath, 'utf-8');
-		expect(updated).toBe('export class MyClass {}');
+		expect(updated).toBe('/**
+* My class
+*/
+export class MyClass {}');
 	});
 });

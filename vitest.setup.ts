@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/vitest.setup.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 23:22
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Authorship update.
  *
  * V1.0.0, 20251219-23:22
  * Initial creation and release of vitest.setup.ts

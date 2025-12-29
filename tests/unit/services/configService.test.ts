@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/services/configService.test.ts
- * @version:    1.0.1
+ * @version:    1.0.2
  * @createDate: 2025 Dec 22
  * @createTime: 16:26
  * @author:     Steve R Lewis
@@ -35,6 +35,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.2, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.1, 20251222-16:45
  * Refactored to use static imports instead of 'require' to fix ESM module

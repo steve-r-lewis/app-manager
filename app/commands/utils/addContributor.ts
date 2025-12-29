@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/commands/utils/addContributor.ts
- * @version:    1.0.0
+ * @file:       ~/app/commands/utils/addContributor.ts
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 19:28
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1912
+ * Refactored logic.
  *
  * V1.0.0, 20251219-19:28
  * Initial creation and release of addContributor.ts
@@ -27,13 +29,8 @@ import { text, isCancel } from '@clack/prompts';
 import fs from 'fs';
 import path from 'path';
 import { logger } from '../../services/loggerService';
-
-// Define the interface for Headless usage
-export interface ContributorOptions {
-	name?: string;
-	email?: string;
-	url?: string;
-}
+// Import Type
+import type { ContributorOptions } from '../../types/utils.types';
 
 export async function addContributor(targetRoot: string, options: ContributorOptions = {}) {
 	// 🔍 DEBUG LOG: Proof of Life

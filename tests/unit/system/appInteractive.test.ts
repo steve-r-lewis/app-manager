@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/system/appInteractive.test.ts
- * @version:    2.0.1
+ * @version:    2.0.2
  * @createDate: 2025 Dec 20
  * @createTime: 16:40
  * @author:     Steve R Lewis
@@ -27,6 +27,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.2, 20251226-1913
+ * Refactored logic.
  *
  * V2.0.1, 20251222-23:28
  * - Added safety net to prevent infinite loops (Heap Out of Memory).

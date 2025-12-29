@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/app/runApp.ts
- * @version:    1.1.1
+ * @version:    1.1.2
  * @createDate: 2025 Dec 17
  * @createTime: 10:42
  * @author:     Steve R Lewis
@@ -39,6 +39,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.1.2, 20251226-1912
+ * Refactored logic.
  *
  * V1.1.1, 20251222-23:59
  * Added strict error throwing when script is missing (Fixes E2E Exit Code).

@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/services/loggerService.ts
- * @version:    1.0.0
+ * @file:       ~/app/services/loggerService.test.ts
+ * @version:    1.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 17:57
  * @author:     Steve R Lewis
@@ -16,9 +16,11 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.0, 20251218-17:57
- * Initial creation and release of loggerService.ts
+ * Initial creation and release of loggerService.test.ts
  *
  * ================================================================================
  */
@@ -28,6 +30,12 @@ import fs from 'fs';
 import path from 'path';
 import pc from 'picocolors';
 
+/**
+ * A service for logging purposes. Provides methods for logging errors, processes, and sessions.
+ *
+ * @author [Your Name]
+ */
+*/
 export class LoggerService {
 	private logger: ConsolaInstance;
 	private root: string;
@@ -136,5 +144,8 @@ export class LoggerService {
 	}
 }
 
+/**
+ * The logging service.
+ */
 export const logger = new LoggerService();
 // No init() here!

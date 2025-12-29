@@ -3,10 +3,11 @@
 *
 * @project:    app-manager
 * @file:       ~/docs/.vitepress/theme/Layout.vue
-* @version:    1.0.0
+* @version:    1.0.1
 * @createDate: 2025 Dec 22
 * @createTime: 16:46
 * @author:     Steve R Lewis
+@author:     steve-r-lewis
 *
 * ================================================================================
 *
@@ -16,6 +17,8 @@
 * ================================================================================
 *
 * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
 *
 * V1.0.0, 20251222-16:46
 * Initial creation and release of Layout.vue

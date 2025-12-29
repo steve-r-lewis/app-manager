@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/commands/app/runApp.test.ts
- * @version:    1.1.4
+ * @version:    1.1.6
  * @createDate: 2025 Dec 22
  * @createTime: 01:14
  * @author:     Steve R Lewis
@@ -19,6 +19,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.1.6, 20251226-1913
+ * Refactored logic.
  *
  * V1.1.5, 20251223-00:02
  * Verified against fixed runApp.ts logic.

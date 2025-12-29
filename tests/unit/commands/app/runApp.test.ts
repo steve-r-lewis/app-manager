@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/app/runApp.test.ts
- * @version:    1.1.0
+ * @version:    1.1.1
  * @createDate: 2025 Dec 18
  * @createTime: 22:37
  * @author:     Steve R Lewis
@@ -31,6 +31,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.1.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.1.0, 20251223-00:07
  * Unit Tests for runApp command.

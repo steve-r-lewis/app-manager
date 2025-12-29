@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/helpers/validateHeaders.test.ts
- * @version:    2.0.0
+ * @file:       ~/tests/unit/commands/utils/validateHeaders.test.ts
+ * @version:    2.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 01:06
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.1, 20251226-1913
+ * Added author metadata.
  *
  * V2.0.0, 20251219-19:11
  * Added support for multi-author headers.
@@ -93,6 +95,7 @@ describe('Command: validateHeaders', () => {
 		const updated = fs.readFileSync(filePath, 'utf-8');
 		// Count occurrences
 		const matches = updated.match(/@author:\s+New Contributor/g);
+@author:steve-r-lewis
 		expect(matches?.length).toBe(1);
 	});
 	

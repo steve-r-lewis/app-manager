@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/git/initLayers.test.ts
- * @version:    1.0.0
+ * @version:    1.0.2
  * @createDate: 2025 Dec 18
  * @createTime: 23:49
  * @author:     Steve R Lewis
@@ -39,6 +39,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.2, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.1, 20251221-19:40
  * Updated to use new test context utility.

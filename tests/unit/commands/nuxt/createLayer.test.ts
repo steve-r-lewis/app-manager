@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/nuxt/createLayer.test.ts
- * @version:    1.1.0
+ * @version:    1.1.1
  * @createDate: 2025 Dec 19
  * @createTime: 00:21
  * @author:     Steve R Lewis
@@ -17,6 +17,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.1.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.1.0, 20251221-22:35
  * Updated mocks to support spinner instead of logger.loader.

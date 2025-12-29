@@ -5,7 +5,7 @@
  *
  * @project:    app-manager
  * @file:       ~/index.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 17
  * @createTime: 16:56
  * @author:     Steve R Lewis
@@ -18,6 +18,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.0, 20251217-16:56
  * Initial creation and release of initEnv.ts

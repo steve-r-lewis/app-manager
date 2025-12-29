@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/commands/git/manageCommits.test.ts
- * @version:    2.0.0
+ * @version:    2.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 23:20
  * @author:     Steve R Lewis
@@ -20,6 +20,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V2.0.0, 20251222-22:53
  * - Added tests for AI provider selection and fallback

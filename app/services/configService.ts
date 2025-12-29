@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/services/configService.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 16:20
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1912
+ * Refactored logic.
  *
  * V1.0.0, 20251218-16:20
  * Initial creation and release of configService.ts
@@ -94,4 +96,8 @@ class ConfigService {
 	}
 }
 
+/**
+ * Returns an instance of the ConfigService.
+ * @return {ConfigService}
+ */
 export const configService = new ConfigService();

@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/commands/utils/addContributor.test.ts
- * @version:    1.0.0
+ * @version:    1.0.2
  * @createDate: 2025 Dec 19
  * @createTime: 23:44
  * @author:     Steve R Lewis
@@ -17,6 +17,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.2, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.1, 20251222-23:45
  * Fixed typo in error message assertion.

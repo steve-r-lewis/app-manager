@@ -38,14 +38,15 @@
     "app-manager": "index.ts"
   },
   "scripts": {
-    "build": "tsc",
     "vitest:run": "vitest run",
     "vitest:unit": "vitest run tests/unit",
     "vitest:e2e": "vitest run tests/e2e --test-timeout=30000",
     "vitest:watchUnit": "vitest tests/unit",
     "vitest:watchAll": "vitest",
     "vitest:coverage": "vitest run --coverage",
-    "vitest:ui": "vitest --ui"
+    "vitest:ui": "vitest --ui",
+	  "build": "tsc",
+	  "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
@@ -64,5 +65,11 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitepress": "2.0.0-alpha.15",
     "vitest": "^4.0.15"
-  }
+  },
+  "contributors": [
+    {
+      "name": "Gemini Pro",
+      "email": "donotreply@gmail.com"
+    }
+  ]
 }

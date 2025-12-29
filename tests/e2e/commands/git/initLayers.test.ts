@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/commands/git/initLayers.test.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 21
  * @createTime: 19:39
  * @author:     Steve R Lewis
@@ -29,6 +29,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Added author metadata.
  *
  * V1.0.0, 20251221-19:39
  * Initial creation and release of initLayers.test.ts

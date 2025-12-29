@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/docs/runDocs.ts
- * @version:    1.1.0
+ * @version:    1.1.1
  * @createDate: 2025 Dec 17
  * @createTime: 10:47
  * @author:     Steve R Lewis
@@ -37,6 +37,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.1.1, 20251226-1912
+ * Refactored logic.
  *
  * V1.1.0, 20251219-21:08
  * - Added support for vitepress docs in target project in addition to tool docs.

@@ -1,9 +1,9 @@
 /**
  * ================================================================================
  *
- * @project:    nuxt4-data-generator
- * @file:       ~/scripts/tui/commands/quality/runQuality.ts
- * @version:    1.0.0
+ * @project:    app-manager
+ * @file:       ~/app/commands/quality/runQuality.ts
+ * @version:    1.0.1
  * @createDate: 2025 Dec 17
  * @createTime: 10:40
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1912
+ * Refactored logic.
  *
  * V1.0.0, 20251217-10:40
  * Initial creation and release of runQuality.ts

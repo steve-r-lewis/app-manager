@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/services/configService.test.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 22
  * @createTime: 16:27
  * @author:     Steve R Lewis
@@ -32,6 +32,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.0, 20251222-16:27
  * Initial creation and release of configService.test.ts

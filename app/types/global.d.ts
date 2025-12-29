@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/types/global.d.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 22
  * @createTime: 02:56
  * @author:     Steve R Lewis
@@ -18,6 +18,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Added author credit.
  *
  * V1.0.0, 20251222-02:56
  * Initial creation and release of global.d.ts

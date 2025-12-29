@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/services/githubService.test.ts
- * @version:    1.0.4
+ * @version:    1.0.6
  * @createDate: 2025 Dec 22
  * @createTime: 14:22
  * @author:     Steve R Lewis
@@ -31,6 +31,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.6, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.5, 20251222-14:45
  * Aligned test expectations with the Service's default "User Scope"

@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/commands/helpers/addContributor.test.ts
- * @version:    1.0.0
+ * @file:       ~/tests/unit/commands/utils/addContributor.test.ts
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 19:30
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.0, 20251219-19:30
  * Initial creation and release of addContributor.test.ts

@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/system/startup.test.ts
- * @version:    2.0.1
+ * @version:    2.0.2
  * @createDate: 2025 Dec 20
  * @createTime: 17:37
  * @author:     Steve R Lewis
@@ -32,6 +32,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.2, 20251226-1913
+ * Authorship update.
  *
  * V2.0.1, 20251222-22:30
  * Added 4. HEADLESS Mode routing.

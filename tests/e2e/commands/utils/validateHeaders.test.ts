@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/commands/utils/validateHeaders.test.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 23:45
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Added author annotation.
  *
  * V1.0.0, 20251219-23:45
  * Initial creation and release of validateHeaders.test.ts
@@ -78,5 +80,6 @@ export const a = 1;`;
 		
 		// Check for Author Insertion
 		expect(content).toMatch(/@author:/);
+@author:steve-r-lewis
 	});
 });

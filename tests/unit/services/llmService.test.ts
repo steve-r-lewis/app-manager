@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/services/llmService.test.ts
- * @version:    2.0.1
+ * @version:    2.0.2
  * @createDate: 2025 Dec 22
  * @createTime: 17:31
  * @author:     Steve R Lewis
@@ -18,6 +18,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V2.0.2, 20251226-1913
+ * Updated author metadata.
  *
  * V2.0.1, 20251222-23:16
  * Fixed assertion for offline provider reason (expect 'Unreachable').

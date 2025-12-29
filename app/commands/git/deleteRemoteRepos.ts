@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/git/deleteRemoteRepos.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 23:48
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1912
+ * Added author metadata.
  *
  * V1.0.0, 20251218-23:48
  * Initial creation and release of deleteRemoteRepos.ts
@@ -27,12 +29,8 @@ import { intro, outro, select, text, isCancel } from '@clack/prompts';
 import { logger } from '../../services/loggerService';
 import { github } from '../../services/githubService';
 import pc from 'picocolors';
-
-// Headless Interface
-export interface DeleteRepoOptions {
-	repo?: string;    // "owner/repo" or "repo"
-	confirm?: string; // The "DELETE" string
-}
+// Import Type
+import type { DeleteRepoOptions } from '../../types/git.types';
 
 export async function deleteRemoteRepos(options: DeleteRepoOptions = {}) {
 	// If running interactively, show header

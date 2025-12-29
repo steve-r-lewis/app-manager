@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/e2e/commands/git/pushToRemote.test.ts
- * @version:    1.0.0
+ * @version:    1.0.3
  * @createDate: 2025 Dec 21
  * @createTime: 18:31
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.3, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.2, 20251223-00:04
  * Fixed Git setup to ensure 'outgoing changes' detection works.

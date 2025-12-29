@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/utils/cleanLogs.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 19
  * @createTime: 20:18
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1912
+ * Refactored logic.
  *
  * V1.0.0, 20251219-20:18
  * Initial creation and release of cleanLogs.ts

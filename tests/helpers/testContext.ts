@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/helpers/testContext.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2025 Dec 18
  * @createTime: 17:59
  * @author:     Steve R Lewis
@@ -18,6 +18,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.0.1, 20251226-1913
+ * Refactored logic.
  *
  * V1.0.0, 20251218-17:59
  * Initial creation and release of testContext.ts
@@ -31,10 +33,19 @@ import crypto from 'crypto';
 import { vi } from 'vitest';
 
 // Define paths relative to this helper file
+/**
+ * The base path for fixtures.
+ *
+ * @type {string}
+ */
+*/
 export const BASE_FIXTURE_PATH = path.resolve(__dirname, '../fixtures');
 // Tool root is 3 levels up from tests/helpers (tests -> helpers -> file)
 export const REAL_TOOL_ROOT = path.resolve(__dirname, '../../');
 
+/**
+ * Cleans up old mock directories older than 5 minutes to prevent disk clutter from aborted tests.
+ */
 export interface TestContext {
 	targetRoot: string;
 	toolRoot: string;
@@ -65,6 +76,11 @@ function cleanupOldFixtures() {
 	});
 }
 
+/**
+ * Sets up a test context for tests.
+ *
+ * @returns {TestContext} The set up test context.
+ */
 export function setupTestContext(): TestContext {
 	cleanupOldFixtures();
 	

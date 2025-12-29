@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/commands/utils/autoVersion.test.ts
- * @version:    1.0.0
+ * @file:       ~/tests/unit/commands/utils/autoVersion.test.ts
+ * @version:    1.2.0
  * @createDate: 2025 Dec 19
  * @createTime: 01:12
  * @author:     Steve R Lewis
@@ -16,6 +16,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.2.0, 20251226-1913
+ * Updated test file version.
  *
  * V1.0.0, 20251219-01:12
  * Initial creation and release of autoVersion.test.ts

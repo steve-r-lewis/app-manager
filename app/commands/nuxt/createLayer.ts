@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/commands/nuxt/createLayer.ts
- * @version:    1.2.0
+ * @version:    1.2.1
  * @createDate: 2025 Dec 17
  * @createTime: 01:27
  * @author:     Steve R Lewis
@@ -17,6 +17,8 @@
  * ================================================================================
  *
  * @notes: Revision History
+ * V1.2.1, 20251226-1912
+ * Refactored logic.
  *
  * V1.2.0, 20251221-22:34
  * Switched to '@clack/prompts' spinner to resolve missing logger method.
@@ -36,10 +38,8 @@ import { llm } from '../../services/llmService';
 import fs from 'fs';
 import path from 'path';
 
-export interface CreateLayerOptions {
-	name?: string;
-	purpose?: string;
-}
+// Import Type
+import type { CreateLayerOptions } from '../../types/nuxt.types';
 
 export async function createLayer(targetRoot: string, options: CreateLayerOptions = {}) {
 	// --- HEADLESS SETUP ---
