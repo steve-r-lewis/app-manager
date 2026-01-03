@@ -1,10 +1,15 @@
 {
   "metadataEntity": {
-    "description": "List of AI Models and Hubs API keys",
+    "description": "List of AI Models and Hubs API keys with response mapping strategies",
     "targetFile": "~/config/llmRegistry.json",
-    "currentVersion": "1.0.0",
+    "currentVersion": "2.0.0",
     "createdAt": "2025-12-17T15:15:00Z",
     "revisionHistory": [
+      {
+        "schemaVersion": "2.0.0",
+        "archivedAt": "2026-01-03T12:35:00Z",
+        "revisionNote": "Added 'mapping' field for generic response parsing and standardized Ollama to v1 endpoint."
+      },
       {
         "schemaVersion": "1.0.0",
         "archivedAt": "2025-12-17T15:15:00Z",
@@ -15,13 +20,16 @@
   "records": [
     {
       "id": "claude",
-      "label": null,
-      "type": null,
-      "model": null,
-      "baseUrl": null,
+      "label": "Anthropic Claude",
+      "type": "openai-compatible",
+      "model": "claude-3-opus-20240229",
+      "baseUrl": "https://api.anthropic.com/v1",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_CLAUDE"
-
+      "apiKeyEnv": "API_KEY_CLAUDE",
+      "mapping": {
+        "content": "content.0.text",
+        "tokens": "usage.input_tokens"
+      }
     },
     {
       "id": "deepseek",
@@ -30,26 +38,37 @@
       "model": "deepseek-chat",
       "baseUrl": "https://api.deepseek.com",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_DEEPSEEK"
+      "apiKeyEnv": "API_KEY_DEEPSEEK",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "gemini",
       "label": "Gemini 2.0 Flash",
-      "type": "gemini",
+      "type": "openai-compatible",
       "model": "gemini-2.0-flash",
-      "baseUrl": null,
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_GEMINI"
+      "apiKeyEnv": "API_KEY_GEMINI",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "grok",
-      "label": null,
-      "type": null,
-      "model": null,
-      "baseUrl": null,
+      "label": "Grok Beta",
+      "type": "openai-compatible",
+      "model": "grok-beta",
+      "baseUrl": "https://api.x.ai/v1",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_GROK"
-
+      "apiKeyEnv": "API_KEY_GROK",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "kimi",
@@ -58,43 +77,63 @@
       "model": "moonshot-v1-8k",
       "baseUrl": "https://api.moonshot.cn/v1",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_KIMI"
+      "apiKeyEnv": "API_KEY_KIMI",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "meta",
-      "label": null,
-      "type": null,
-      "model": null,
-      "baseUrl": null,
+      "label": "Meta Llama (via Provider)",
+      "type": "openai-compatible",
+      "model": "llama-3-70b-instruct",
+      "baseUrl": "https://api.meta.ai/v1",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_META"
+      "apiKeyEnv": "API_KEY_META",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "ollama",
       "label": "Ollama (Local)",
-      "type": "ollama",
+      "type": "openai-compatible",
       "model": "llama3:8b",
-      "baseUrl": "http://localhost:11434",
+      "baseUrl": "http://localhost:11434/v1",
       "timeOut": 200,
-      "apiKeyEnv": "API_KEY_OLLAMA"
+      "apiKeyEnv": "API_KEY_OLLAMA",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "openrouter",
-      "label": null,
-      "type": null,
-      "model": null,
-      "baseUrl": null,
+      "label": "OpenRouter",
+      "type": "openai-compatible",
+      "model": "openai/gpt-4-turbo",
+      "baseUrl": "https://openrouter.ai/api/v1",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_OPENROUTER"
+      "apiKeyEnv": "API_KEY_OPENROUTER",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     },
     {
       "id": "huggingface",
-      "label": null,
-      "type": null,
-      "model": null,
-      "baseUrl": null,
+      "label": "HuggingFace Inference",
+      "type": "openai-compatible",
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "baseUrl": "https://api-inference.huggingface.co/v1",
       "timeOut": null,
-      "apiKeyEnv": "API_KEY_HUGGINGFACE"
+      "apiKeyEnv": "API_KEY_HUGGINGFACE",
+      "mapping": {
+        "content": "choices.0.message.content",
+        "tokens": "usage.total_tokens"
+      }
     }
   ]
 }
