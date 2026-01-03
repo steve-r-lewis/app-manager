@@ -11,7 +11,7 @@
     "application code manager",
     "typescript"
   ],
-  "packageManager": "pnpm@10.26.2",
+  "packageManager": "pnpm@10.27.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
@@ -45,8 +45,8 @@
     "vitest:watchAll": "vitest",
     "vitest:coverage": "vitest run --coverage",
     "vitest:ui": "vitest --ui",
-	  "build": "tsc",
-	  "typecheck": "tsc --noEmit"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",

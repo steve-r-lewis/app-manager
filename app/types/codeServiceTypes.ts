@@ -11,7 +11,11 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Type definitions for the Code Intelligence Domain.
+ *
+ * These interfaces define the contract for "understanding" source code files,
+ * enabling the extraction of metadata (headers) and the identification of
+ * code blocks (functions/methods) for automated documentation generation.
  *
  * ================================================================================
  *
@@ -23,27 +27,54 @@
  * ================================================================================
  */
 
+/**
+ * Represents the high-level metadata extracted from a file header or package configuration.
+ */
 export interface CodeFileMetadata {
 	version?: string;
 	description?: string;
 	author?: string;
 	createdDate?: string;
-	notes?: string[];
+	notes?: string[]; // Array of history notes/changelogs
 }
 
+/**
+ * Represents a specific unit of code (function, class, method) found within a file.
+ */
 export interface CodeBlock {
-	name: string;
+	name: string;       // e.g. "initApp"
 	type: 'function' | 'method' | 'class';
 	startLine: number;
 	endLine: number;
-	signature: string;
-	hasDoc: boolean;
-	content: string;
+	signature: string;  // e.g. "initApp(root: string)"
+	hasDoc: boolean;    // true if JSDoc/Comment exists above it
+	content: string;    // The actual code of the function/block
 }
 
+/**
+ * The Strategy Contract.
+ * Any service attempting to parse a specific language (TS, JSON, Vue) must implement this.
+ */
 export interface ICodeStrategy {
+	/**
+	 * Extracts top-level metadata (Header comments or JSON fields).
+	 */
 	parseMetadata(content: string): CodeFileMetadata;
+	
+	/**
+	 * Updates specific metadata fields safely without destroying the rest of the file.
+	 * Returns the full new file content string.
+	 */
 	updateMetadata(content: string, metadata: Partial<CodeFileMetadata>): string;
+	
+	/**
+	 * Scans the code to find documentable entities (functions/classes).
+	 */
 	findDocumentableBlocks(content: string): CodeBlock[];
+	
+	/**
+	 * Injects a docblock string above a specific function.
+	 * Returns the full new file content string.
+	 */
 	injectFunctionDoc(content: string, functionName: string, docBlock: string): string;
 }
