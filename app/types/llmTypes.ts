@@ -21,6 +21,9 @@
  *
  * @notes: Revision History
  *
+ * V1.1.0, 20260102-01:07
+ * Added support for custom API endpoints and timeouts.
+ *
  * V1.0.1, 20251231-01:43
  * Refactored comments and ensured consistent property documentation.
  *
@@ -31,8 +34,8 @@
  */
 
 export interface LLMResponseMapping {
-	content: string; // Path to the actual text (e.g. "choices.0.message.content")
-	tokens?: string; // Path to token usage (e.g. "usage.total_tokens")
+	content: string; // Path to text (e.g. "choices.0.message.content")
+	tokens?: string; // Path to usage (e.g. "usage.total_tokens")
 }
 
 /**
@@ -64,6 +67,14 @@ export interface LLMProviderConfig {
 	mapping?: LLMResponseMapping;
 }
 
+// Define the shape of the config the service expects at runtime
+export interface LLMServiceConfig {
+	provider: string;
+	apiKey: string;
+	model: string;
+	baseUrl?: string;
+}
+
 /**
  * Structure of the JSON file used to store AI provider configurations.
  */
@@ -89,21 +100,27 @@ export interface LLMProviderStatus {
 	reason?: string;
 }
 
-interface ChatOptions {
+/**
+ * Options for the chat request.
+ */
+export interface ChatOptions {
 	jsonMode?: boolean;
 }
 
-interface LLMResponse {
+/**
+ * Standardized response format returned to the application.
+ */
+export interface LLMResponse {
 	content: string;
 	usage?: {
 		totalTokens: number;
 	};
 }
 
-// Define the shape of the config the service expects at runtime
-interface LLMServiceConfig {
-	provider: string;
-	apiKey: string;
-	model: string;
-	baseUrl?: string;
+/**
+ * Standard OpenAI-compatible message format.
+ */
+export interface LLMMessage {
+	role: 'system' | 'user' | 'assistant';
+	content: string;
 }
