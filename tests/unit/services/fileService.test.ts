@@ -27,6 +27,9 @@
  *
  * @notes: Revision History
  *
+ * V1.1.0, 20260105-01:26
+ * Extended the test suite coverage to test all file types.
+ *
  * V1.0.1, 20260101-01:30
  * Added comprehensive documentation and inline comments.
  *
@@ -40,6 +43,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { fileService } from '../../../app/services/fileService';
 import fs from 'fs';
 import path from 'path';
+import { consola } from 'consola'; // Import consola to spy on it
 
 // --------------------------------------------------------------------------------
 // 1. Mocks & Stubs
@@ -74,6 +78,8 @@ describe('FileService', () => {
 	afterEach(() => {
 		vi.clearAllMocks();
 	});
+	
+	// ... [Previous read/write tests remain unchanged] ...
 	
 	describe('read()', () => {
 		it('should return null if file does not exist', () => {
@@ -112,6 +118,17 @@ describe('FileService', () => {
 			
 			// Assert no parsing happened
 			expect(result).toBe('KEY=VALUE');
+		});
+		
+		it('should fallback to Text Handler for unknown extensions', () => {
+			const mockPath = '/app/unknown.xyz';
+			const mockContent = 'raw data';
+			
+			vi.mocked(fs.existsSync).mockReturnValue(true);
+			vi.mocked(fs.readFileSync).mockReturnValue(mockContent);
+			
+			const result = fileService.read(mockPath);
+			expect(result).toBe('raw data');
 		});
 	});
 	
@@ -189,6 +206,24 @@ describe('FileService', () => {
 			
 			// Should do nothing because .env is already there
 			expect(fs.writeFileSync).not.toHaveBeenCalled();
+		});
+		
+		it('should warn and fall back to overwrite for Code files (Unsupported Update)', () => {
+			const mockPath = '/app/script.ts'; // .ts uses FileHandlerCode (no update method)
+			const content = 'console.log("overwrite");';
+			
+			// Mock file existence
+			vi.mocked(fs.existsSync).mockReturnValue(true);
+			
+			fileService.update(mockPath, content);
+			
+			// 1. Verify Warning was logged
+			expect(consola.warn).toHaveBeenCalledWith(
+				expect.stringContaining('Update not supported for script.ts')
+			);
+			
+			// 2. Verify it fell back to Overwrite (Safety Net)
+			expect(fs.writeFileSync).toHaveBeenCalledWith(mockPath, content);
 		});
 	});
 });

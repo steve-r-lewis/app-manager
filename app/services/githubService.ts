@@ -26,6 +26,8 @@
  *
  * @notes: Revision History
  *
+ * V1.1.0, 2026005-23:47
+ *
  * V1.0.0, 20260102-01:08
  * Initial creation and release of githubService.ts
  * Initial migration from legacy codebase.
@@ -34,82 +36,167 @@
  * ================================================================================
  */
 
-import { processService } from './processService';
+import { simpleGit, SimpleGit, CleanOptions } from 'simple-git';
 import { logger } from './loggerService';
-import type { GitInitOptions, GitSubmoduleOptions } from '../types/index';
+import type {
+	GitInitOptions,
+	GitSubmoduleOptions,
+	GitStatusResult,
+	GitCommitOptions
+} from '../types/index';
 
 class GithubService {
 	
+	// --- Helper: Get Git Instance for a specific path ---
+	private git(cwd: string): SimpleGit {
+		return simpleGit(cwd);
+	}
+	
+	// ============================================================================
+	// Local Git Operations (via simple-git)
+	// ============================================================================
+	
 	/**
-	 * Initializes a new Git repository in the specified directory.
-	 * Optionally configures the local user identity for this specific repo.
-	 * * @param options Configuration options (cwd, branch, user details)
+	 * Initializes a new Git repository.
 	 */
 	public async initRepo(options: GitInitOptions): Promise<void> {
 		const { cwd, defaultBranch = 'main', userName, userEmail } = options;
+		const git = this.git(cwd);
 		
-		logger.info(`Initializing Git repository in: ${cwd}`);
+		await git.init();
 		
-		// 1. Initialize
-		await processService.execute('git init', { cwd });
-		
-		// 2. Rename default branch (modern standard is 'main')
-		if (defaultBranch) {
-			await processService.execute(`git branch -M ${defaultBranch}`, { cwd });
+		// Rename branch if needed
+		const branches = await git.branchLocal();
+		if (branches.current !== defaultBranch) {
+			await git.branch(['-M', defaultBranch]);
 		}
 		
-		// 3. Configure local user identity if provided
-		// This is crucial for CI/CD or scaffolding tools where global config might be missing
-		if (userName) {
-			await processService.execute(`git config user.name "${userName}"`, { cwd });
-		}
-		if (userEmail) {
-			await processService.execute(`git config user.email "${userEmail}"`, { cwd });
+		// Configure User (Local Scope)
+		if (userName) await git.addConfig('user.name', userName);
+		if (userEmail) await git.addConfig('user.email', userEmail);
+	}
+	
+	/**
+	 * Checks status of the repository.
+	 * Returns a structured object useful for AI prompts and UI.
+	 */
+	public async getStatus(cwd: string): Promise<GitStatusResult> {
+		const status = await this.git(cwd).status();
+		
+		return {
+			branch: status.current || 'HEAD',
+			isDirty: !status.isClean(),
+			modified: status.modified,
+			staged: status.staged,
+			ahead: status.ahead,
+			behind: status.behind
+		};
+	}
+	
+	/**
+	 * Stages files and commits them.
+	 */
+	public async createCommit(cwd: string, message: string, files: string[] = ['.']): Promise<void> {
+		const git = this.git(cwd);
+		await git.add(files);
+		await git.commit(message);
+	}
+	
+	/**
+	 * Pushes to remote.
+	 */
+	public async push(cwd: string, remote: string = 'origin', branch?: string): Promise<void> {
+		const git = this.git(cwd);
+		if (branch) {
+			await git.push(remote, branch);
+		} else {
+			await git.push(remote);
 		}
 	}
 	
 	/**
-	 * Adds a git submodule to the repository.
-	 * Used for adding Layers to the Monorepo.
-	 * * @param options Submodule details (url, path)
+	 * Syncs repository (Pull + Submodule Update).
+	 */
+	public async sync(cwd: string): Promise<void> {
+		const git = this.git(cwd);
+		await git.pull();
+		await git.submoduleUpdate(['--init', '--recursive']);
+	}
+	
+	/**
+	 * Adds a submodule.
 	 */
 	public async addSubmodule(options: GitSubmoduleOptions): Promise<void> {
 		const { cwd, url, path, branch } = options;
+		const args = ['add'];
 		
-		logger.info(`Adding submodule: ${path}`);
+		if (branch) args.push('-b', branch);
+		args.push(url, path);
 		
-		let command = `git submodule add`;
-		if (branch) {
-			command += ` -b ${branch}`;
-		}
-		command += ` ${url} ${path}`;
+		await this.git(cwd).submodule(args);
+	}
+	
+	/**
+	 * Gets list of remotes.
+	 */
+	public async getRemotes(cwd: string): Promise<any[]> {
+		return await this.git(cwd).getRemotes(true);
+	}
+	
+	/**
+	 * Gets the raw diff of staged changes (for LLM context).
+	 */
+	public async getStagedDiff(cwd: string): Promise<string> {
+		return await this.git(cwd).diff(['--cached']);
+	}
+	
+	// ============================================================================
+	// Remote GitHub API Operations (via fetch)
+	// ============================================================================
+	
+	private getAuthHeader() {
+		const token = process.env.GITHUB_TOKEN;
+		if (!token) throw new Error('Missing GITHUB_TOKEN');
+		return {
+			'Authorization': `Bearer ${token}`,
+			'Accept': 'application/vnd.github.v3+json',
+			'Content-Type': 'application/json'
+		};
+	}
+	
+	/**
+	 * Deletes a repository from GitHub.
+	 * WARNING: Destructive.
+	 */
+	public async deleteRemoteRepo(owner: string, repo: string): Promise<void> {
+		const url = `https://api.github.com/repos/${owner}/${repo}`;
 		
-		const result = await processService.execute(command, { cwd });
+		const response = await fetch(url, {
+			method: 'DELETE',
+			headers: this.getAuthHeader()
+		});
 		
-		if (result.exitCode !== 0) {
-			logger.error(`Failed to add submodule ${path}`);
-			throw new Error(result.stderr || 'Git submodule add failed');
+		if (!response.ok) {
+			throw new Error(`Failed to delete repo ${owner}/${repo}: ${response.statusText}`);
 		}
 	}
 	
 	/**
-	 * Stages all changes and commits them with a message.
-	 * Useful for initial scaffolding commits.
-	 * * @param cwd The repository root
-	 * @param message The commit message
+	 * Lists repositories for the authenticated user/org.
 	 */
-	public async stageAndCommit(cwd: string, message: string): Promise<void> {
-		// 1. Stage all files
-		await processService.execute('git add .', { cwd });
+	public async listRemoteRepos(org?: string): Promise<any[]> {
+		const url = org
+			? `https://api.github.com/orgs/${org}/repos`
+			: `https://api.github.com/user/repos`;
 		
-		// 2. Commit
-		// We use safe quotes around the message to prevent shell injection issues
-		const safeMessage = message.replace(/"/g, '\\"');
-		await processService.execute(`git commit -m "${safeMessage}"`, { cwd });
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: this.getAuthHeader()
+		});
 		
-		logger.success('Git commit created successfully');
+		if (!response.ok) return [];
+		return await response.json();
 	}
 }
 
-// Export as Singleton
 export const githubService = new GithubService();

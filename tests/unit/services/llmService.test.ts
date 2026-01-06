@@ -73,6 +73,17 @@ describe('LLMService', () => {
 	// Group 1: Configuration & Availability
 	// --------------------------------------------------------------------------
 	describe('Configuration & Availability', () => {
+		it('should handle case-insensitive provider IDs in ENV (Robust Initialization)', () => {
+			// 1. Set Env to Uppercase (Registry expects 'ollama')
+			process.env.API_MODEL_DEFAULT = 'OLLAMA';
+			
+			// 2. Force re-initialization (Accessing private method for testing)
+			// This simulates the app starting up with the new env var
+			(llmService as any).initializeDefault();
+			
+			// 3. Verify it found the correct config despite the casing mismatch
+			expect((llmService as any).activeConfig.id).toBe('ollama');
+		});
 		
 		it('should throw error if configuring a non-existent provider', () => {
 			expect(() => llmService.configure('invalid-provider-id'))
@@ -157,6 +168,14 @@ describe('LLMService', () => {
 	// Group 3: Utilities (New Features)
 	// --------------------------------------------------------------------------
 	describe('Utilities', () => {
+		it('sanitizeContext should safely handle empty or null inputs', () => {
+			// @ts-ignore - Simulating runtime dirty data
+			expect(llmService.sanitizeContext(null)).toBe('');
+			// @ts-ignore
+			expect(llmService.sanitizeContext(undefined)).toBe('');
+			expect(llmService.sanitizeContext('')).toBe('');
+		});
+		
 		it('sanitizeContext should truncate excessively long input', () => {
 			const longInput = 'A'.repeat(100);
 			const sanitized = llmService.sanitizeContext(longInput, 10);

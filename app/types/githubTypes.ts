@@ -31,6 +31,22 @@
  */
 
 /**
+ * ================================================================================
+ * @file:       ~/app/types/gitTypes.ts
+ * ================================================================================
+ */
+
+export interface GitStatusResult {
+	branch: string;
+	isDirty: boolean;
+	modified: string[];
+	staged: string[];
+	// Add these for pushAll command logic:
+	ahead?: number;
+	behind?: number;
+}
+
+/**
  * Configuration object representing a single repository entry in the registry.
  * Maps to an entry in `repositoryRegistry.json`.
  */

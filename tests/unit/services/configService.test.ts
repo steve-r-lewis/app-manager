@@ -49,6 +49,33 @@ describe('ConfigService', () => {
 		});
 	});
 	
+	describe('State Integrity', () => {
+		it('should return a copy of the config to prevent direct mutation', () => {
+			const config1 = configService.getConfig();
+			
+			// Attempt to mutate the returned object
+			// @ts-ignore
+			config1.cwd = '/hacked/path';
+			
+			// Verify the internal service state remains unchanged
+			const config2 = configService.getConfig();
+			expect(config2.cwd).not.toBe('/hacked/path');
+			expect(config2.cwd).toBe(process.cwd());
+		});
+		
+		it('should reset state to defaults', () => {
+			// 1. Change state
+			configService.setFlag('verbose', true);
+			expect(configService.getConfig().flags.verbose).toBe(true);
+			
+			// 2. Reset
+			configService.reset();
+			
+			// 3. Verify return to default
+			expect(configService.getConfig().flags.verbose).toBe(false);
+		});
+	});
+	
 	describe('Git User Configuration', () => {
 		it('should allow setting and retrieving git user info', () => {
 			const mockUser = { name: 'Test User', email: 'test@example.com' };

@@ -32,34 +32,19 @@ import type { ILogger } from '../types/index';
 
 class LoggerService implements ILogger {
 	
-	/**
-	 * Standard informational messages.
-	 */
 	public info(message: string, ...args: any[]): void {
 		console.log(message, ...args);
 	}
 	
-	/**
-	 * Success messages (Operations completed).
-	 */
 	public success(message: string, ...args: any[]): void {
-		// Future: Add green color formatting here
 		console.log(`✔ ${message}`, ...args);
 	}
 	
-	/**
-	 * Warning messages (Non-fatal issues).
-	 */
 	public warn(message: string, ...args: any[]): void {
-		// Future: Add yellow color formatting here
 		console.warn(`⚠ ${message}`, ...args);
 	}
 	
-	/**
-	 * Error messages (Fatal or logic errors).
-	 */
 	public error(message: string | Error, ...args: any[]): void {
-		// Future: Add red color formatting here
 		if (message instanceof Error) {
 			console.error(`✖ ${message.message}`);
 			if (message.stack) {
@@ -70,18 +55,13 @@ class LoggerService implements ILogger {
 		}
 	}
 	
-	/**
-	 * Debug messages (Verbose output).
-	 */
 	public debug(message: string, ...args: any[]): void {
-		// We could check ConfigService.flags.verbose here if we wanted strictly coupled logic,
-		// but typically the caller decides when to call debug.
 		console.debug(`[DEBUG] ${message}`, ...args);
 	}
 	
 	/**
 	 * Renders a visual box around a message.
-	 * Useful for section headers or major announcements.
+	 * Enforces symmetrical padding (2 spaces) on both sides.
 	 */
 	public box(message: string): void {
 		const lines = message.split('\n');
@@ -94,12 +74,14 @@ class LoggerService implements ILogger {
 		
 		console.log(top);
 		lines.forEach(line => {
-			const spaces = ' '.repeat(width - line.length - padding);
-			console.log(`│ ${line}${spaces} │`);
+			// Explicitly calculate Left Padding to ensure symmetry
+			const leftPad = ' '.repeat(padding);
+			const rightPad = ' '.repeat(width - line.length - padding);
+			
+			console.log(`│${leftPad}${line}${rightPad}│`);
 		});
 		console.log(bottom);
 	}
 }
 
-// Export as Singleton
 export const logger = new LoggerService();

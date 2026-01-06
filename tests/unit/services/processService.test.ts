@@ -28,13 +28,14 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-// @ts-ignore - Module does not exist yet
+// @ts-ignore
 import { processService } from '../../../app/services/processService';
 import * as child_process from 'child_process';
 
-// Mock the child_process module
+// Mock child_process
 vi.mock('child_process', () => ({
-	exec: vi.fn()
+	exec: vi.fn(),
+	spawn: vi.fn()
 }));
 
 describe('ProcessService', () => {
@@ -47,52 +48,92 @@ describe('ProcessService', () => {
 		vi.restoreAllMocks();
 	});
 	
-	it('should execute a command and return stdout + exitCode 0', async () => {
-		// Mock exec to simulate success
-		(child_process.exec as any).mockImplementation((cmd: string, opts: any, callback: any) => {
-			// callback signature: (error, stdout, stderr)
-			callback(null, 'Success Output\n', '');
+	// ... [Group: execute] ...
+	describe('execute()', () => {
+		
+		it('should execute a command and return stdout + exitCode 0', async () => {
+			// Mock exec to simulate success
+			(child_process.exec as any).mockImplementation((cmd: string, opts: any, callback: any) => {
+				// callback signature: (error, stdout, stderr)
+				callback(null, 'Success Output\n', '');
+			});
+			
+			const result = await processService.execute('echo "test"');
+			
+			expect(result.exitCode).toBe(0);
+			expect(result.stdout).toBe('Success Output'); // Service should trim
+			expect(child_process.exec).toHaveBeenCalledWith(
+				'echo "test"',
+				expect.objectContaining({ cwd: expect.any(String) }),
+				expect.any(Function)
+			);
 		});
 		
-		const result = await processService.execute('echo "test"');
+		it('should handle execution errors (non-zero exit code)', async () => {
+			// Mock exec to simulate failure (e.g., command not found)
+			(child_process.exec as any).mockImplementation((cmd: string, opts: any, callback: any) => {
+				const err: any = new Error('Command Failed');
+				err.code = 127; // Standard "command not found" code
+				callback(err, '', 'Error Output\n');
+			});
+			
+			const result = await processService.execute('bad-command');
+			
+			expect(result.exitCode).toBe(127);
+			expect(result.stderr).toBe('Error Output');
+		});
 		
-		expect(result.exitCode).toBe(0);
-		expect(result.stdout).toBe('Success Output'); // Service should trim
-		expect(child_process.exec).toHaveBeenCalledWith(
-			'echo "test"',
-			expect.objectContaining({ cwd: expect.any(String) }),
-			expect.any(Function)
-		);
+		it('should pass environment variables when provided', async () => {
+			(child_process.exec as any).mockImplementation((cmd: string, opts: any, callback: any) => {
+				callback(null, 'ok', '');
+			});
+			
+			const customEnv = { NODE_ENV: 'production' };
+			await processService.execute('build', { env: customEnv });
+			
+			expect(child_process.exec).toHaveBeenCalledWith(
+				expect.any(String),
+				expect.objectContaining({
+					env: expect.objectContaining({ NODE_ENV: 'production' })
+				}),
+				expect.any(Function)
+			);
+		});
 	});
 	
-	it('should handle execution errors (non-zero exit code)', async () => {
-		// Mock exec to simulate failure (e.g., command not found)
-		(child_process.exec as any).mockImplementation((cmd: string, opts: any, callback: any) => {
-			const err: any = new Error('Command Failed');
-			err.code = 127; // Standard "command not found" code
-			callback(err, '', 'Error Output\n');
+	// ... [Group: spawn] ...
+	describe('spawn()', () => {
+		it('should spawn a child process with inherited stdio', async () => {
+			// Mock the ChildProcess event emitter
+			const mockChild = {
+				on: vi.fn((event, cb) => {
+					if (event === 'close') cb(0); // Simulate immediate success
+				})
+			};
+			(child_process.spawn as any).mockReturnValue(mockChild);
+			
+			const exitCode = await processService.spawn('npm', ['install']);
+			
+			expect(exitCode).toBe(0);
+			expect(child_process.spawn).toHaveBeenCalledWith(
+				'npm',
+				['install'],
+				expect.objectContaining({
+					stdio: 'inherit',
+					shell: true
+				})
+			);
 		});
 		
-		const result = await processService.execute('bad-command');
-		
-		expect(result.exitCode).toBe(127);
-		expect(result.stderr).toBe('Error Output');
-	});
-	
-	it('should pass environment variables when provided', async () => {
-		(child_process.exec as any).mockImplementation((cmd: string, opts: any, callback: any) => {
-			callback(null, 'ok', '');
+		it('should propagate spawn errors', async () => {
+			const mockChild = {
+				on: vi.fn((event, cb) => {
+					if (event === 'error') cb(new Error('Spawn Failed'));
+				})
+			};
+			(child_process.spawn as any).mockReturnValue(mockChild);
+			
+			await expect(processService.spawn('bad', [])).rejects.toThrow('Spawn Failed');
 		});
-		
-		const customEnv = { NODE_ENV: 'production' };
-		await processService.execute('build', { env: customEnv });
-		
-		expect(child_process.exec).toHaveBeenCalledWith(
-			expect.any(String),
-			expect.objectContaining({
-				env: expect.objectContaining({ NODE_ENV: 'production' })
-			}),
-			expect.any(Function)
-		);
 	});
 });

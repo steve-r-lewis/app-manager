@@ -33,20 +33,17 @@
  * ================================================================================
  */
 
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import type { ProcessExecuteOptions, ProcessResult } from '../types/index';
 import { logger } from './loggerService';
 
 class ProcessService {
 	/**
-	 * Executes a shell command asynchronously.
-	 * * @param command The shell command to run (e.g., 'git status')
-	 * @param options Configuration for execution (cwd, env, silent)
-	 * @returns Promise<ProcessResult> containing stdout, stderr, and exitCode
+	 * Executes a shell command and buffers output.
+	 * Best for short-lived commands where you need to parse the result (e.g., git status).
 	 */
 	public async execute(command: string, options: ProcessExecuteOptions = {}): Promise<ProcessResult> {
 		const cwd = options.cwd || process.cwd();
-		// Merge process.env with provided env to ensure system paths are preserved
 		const env = options.env ? { ...process.env, ...options.env } : process.env;
 		const timeout = options.timeout || 0;
 		
@@ -56,33 +53,51 @@ class ProcessService {
 		
 		return new Promise((resolve) => {
 			exec(command, { cwd, env, timeout }, (error, stdout, stderr) => {
-				// Normalize output
 				const outStr = stdout ? stdout.toString().trim() : '';
 				const errStr = stderr ? stderr.toString().trim() : '';
 				
-				// Calculate strict exit code
 				let exitCode = 0;
 				if (error) {
-					// Node's error.code can be a string (e.g., 'ENOENT') or number.
-					// Our interface requires a number.
-					if (typeof error.code === 'number') {
-						exitCode = error.code;
-					} else {
-						exitCode = 1; // Default fallback for generic failures
-					}
+					exitCode = typeof error.code === 'number' ? error.code : 1;
 				}
 				
-				const result: ProcessResult = {
+				resolve({
 					stdout: outStr,
 					stderr: errStr,
 					exitCode: exitCode
-				};
-				
-				resolve(result);
+				});
+			});
+		});
+	}
+	
+	/**
+	 * Spawns a shell command and streams output directly to the terminal.
+	 * Best for long-running processes (e.g., nuxt dev, npm install) or interactive tools.
+	 * * @returns Promise<number> The exit code.
+	 */
+	public async spawn(command: string, args: string[], options: ProcessExecuteOptions = {}): Promise<number> {
+		const cwd = options.cwd || process.cwd();
+		const env = options.env ? { ...process.env, ...options.env } : process.env;
+		
+		if (!options.silent) {
+			logger.debug(`Spawning: "${command} ${args.join(' ')}" in ${cwd}`);
+		}
+		
+		return new Promise((resolve, reject) => {
+			const child = spawn(command, args, {
+				cwd,
+				env,
+				stdio: 'inherit', // CRITICAL: Pipes output directly to parent terminal
+				shell: true       // CRITICAL: Allows cross-platform commands (cmd/bash)
+			});
+			
+			child.on('error', (err) => reject(err));
+			
+			child.on('close', (code) => {
+				resolve(code ?? 0);
 			});
 		});
 	}
 }
 
-// Export as Singleton
 export const processService = new ProcessService();

@@ -36,21 +36,17 @@ import { logger } from '../../../app/services/loggerService';
 
 describe('LoggerService', () => {
 	
-	// Declare spies types (inferred mostly, but kept loose for simplicity)
 	let logSpy: any;
 	let warnSpy: any;
 	let errorSpy: any;
 	
 	beforeEach(() => {
-		// Initialize spies BEFORE every test runs.
-		// .mockImplementation(() => {}) silences the console output during tests
 		logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 	});
 	
 	afterEach(() => {
-		// Restore original console methods so other tests aren't affected
 		vi.restoreAllMocks();
 	});
 	
@@ -61,7 +57,6 @@ describe('LoggerService', () => {
 	
 	it('should log success messages', () => {
 		logger.success('Operation Successful');
-		// Success uses console.log under the hood
 		expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Operation Successful'));
 	});
 	
@@ -78,8 +73,23 @@ describe('LoggerService', () => {
 	it('should handle Error objects in error logs', () => {
 		const err = new Error('Fatal System Error');
 		logger.error(err);
-		// We verify that console.error was called.
-		// Depending on implementation, it might be called with the message or the stack.
 		expect(errorSpy).toHaveBeenCalled();
+	});
+	
+	describe('Visual Formatting', () => {
+		it('should render a box with symmetrical padding', () => {
+			const message = 'Hello\nWorld';
+			logger.box(message);
+			
+			// Logic Check:
+			// "Hello" (5 chars) + 2 padding left + 2 padding right = 9 chars width.
+			// Box Width: 9.
+			// Expectation: │  Hello  │
+			
+			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('┌─────────┐'));
+			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('│  Hello  │'));
+			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('│  World  │')); // Aligned Left
+			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('└─────────┘'));
+		});
 	});
 });

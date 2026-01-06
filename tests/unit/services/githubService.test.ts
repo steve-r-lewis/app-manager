@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/services/githubService.test.ts
- * @version:    1.0.2
+ * @version:    1.2.0
  * @createDate: 2026 Jan 02
  * @createTime: 01:08
  * @author:     Steve R Lewis
@@ -11,11 +11,21 @@
  * ================================================================================
  *
  * @description:
- * Unit Test Suite for the GitHub Service.
+ * Full Unit Test Suite for the GitHub Service.
+ *
+ * Coverage:
+ * 1. Initialization (initRepo)
+ * 2. Status & Diffs (getStatus, getStagedDiff)
+ * 3. Commits & Pushes (createCommit, push)
+ * 4. Sync & Submodules (sync, addSubmodule, getRemotes)
+ * 5. Remote API (deleteRemoteRepo, listRemoteRepos)
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.2.0, 20260106-00:06
+ * Provided a complete test suite for the GitHub Service.
  *
  * V1.0.2, 20260102-02:20
  * - Changed from vi.spyOn to vi.mock (Module Mocking).
@@ -33,125 +43,196 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { githubService } from '../../../app/services/githubService';
-import { processService } from '../../../app/services/processService';
 
-// HOSTED MOCK: Replaces the real processService module completely.
-// This ensures that when githubService imports it, it gets this mock object.
-vi.mock('../../../app/services/processService', () => ({
-	processService: {
-		execute: vi.fn()
-	}
+// ----------------------------------------------------------------------------
+// 1. Mock simple-git
+// ----------------------------------------------------------------------------
+const mockGit = {
+	init: vi.fn(),
+	branchLocal: vi.fn().mockResolvedValue({ current: 'master' }),
+	branch: vi.fn(),
+	addConfig: vi.fn(),
+	status: vi.fn(),
+	add: vi.fn(),
+	commit: vi.fn(),
+	push: vi.fn(),
+	pull: vi.fn(),
+	submoduleUpdate: vi.fn(),
+	submodule: vi.fn(),
+	getRemotes: vi.fn(),
+	diff: vi.fn()
+};
+
+// Factory function to return our mock instance
+vi.mock('simple-git', () => ({
+	simpleGit: () => mockGit
 }));
+
+// ----------------------------------------------------------------------------
+// 2. Mock Fetch (for Remote API)
+// ----------------------------------------------------------------------------
+const fetchMock = vi.fn();
 
 describe('GithubService', () => {
 	
 	beforeEach(() => {
-		// Clear call history before each test, but keep the implementation
 		vi.clearAllMocks();
+		vi.stubGlobal('fetch', fetchMock);
+		process.env.GITHUB_TOKEN = 'mock-token';
 	});
 	
-	describe('initRepo', () => {
-		it('should initialize a new repository and rename branch', async () => {
-			// Setup Mock
-			const executeMock = vi.mocked(processService.execute);
-			executeMock.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
-			
-			const options = { cwd: '/tmp/test', defaultBranch: 'main' };
-			await githubService.initRepo(options);
-			
-			// 1. Verify 'git init'
-			expect(executeMock).toHaveBeenCalledWith(
-				'git init',
-				expect.objectContaining({ cwd: '/tmp/test' })
-			);
-			
-			// 2. Verify branch rename
-			expect(executeMock).toHaveBeenCalledWith(
-				'git branch -M main',
-				expect.objectContaining({ cwd: '/tmp/test' })
-			);
-		});
-		
-		it('should configure local git user if provided', async () => {
-			const executeMock = vi.mocked(processService.execute);
-			executeMock.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
-			
-			const options = {
-				cwd: '/tmp/test',
-				userName: 'TestUser',
-				userEmail: 'test@example.com'
-			};
-			
-			await githubService.initRepo(options);
-			
-			expect(executeMock).toHaveBeenCalledWith(
-				'git config user.name "TestUser"',
-				expect.objectContaining({ cwd: '/tmp/test' })
-			);
-			expect(executeMock).toHaveBeenCalledWith(
-				'git config user.email "test@example.com"',
-				expect.objectContaining({ cwd: '/tmp/test' })
-			);
-		});
+	afterEach(() => {
+		vi.unstubAllGlobals();
 	});
 	
-	describe('addSubmodule', () => {
-		it('should add a submodule with the correct path construction', async () => {
-			const executeMock = vi.mocked(processService.execute);
-			executeMock.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
-			
-			const options = {
-				cwd: '/root',
-				url: 'https://github.com/org/repo.git',
-				path: 'layers/repo'
-			};
-			
-			await githubService.addSubmodule(options);
-			
-			expect(executeMock).toHaveBeenCalledWith(
-				'git submodule add https://github.com/org/repo.git layers/repo',
-				expect.objectContaining({ cwd: '/root' })
-			);
-		});
-		
-		it('should throw an error if git submodule fails', async () => {
-			const executeMock = vi.mocked(processService.execute);
-			executeMock.mockResolvedValue({
-				exitCode: 1,
-				stdout: '',
-				stderr: 'fatal: path already exists'
+	// ========================================================================
+	// Group 1: Repository Lifecycle (Init, Config)
+	// ========================================================================
+	describe('Initialization', () => {
+		it('initRepo should initialize, rename branch, and set config', async () => {
+			await githubService.initRepo({
+				cwd: '/test',
+				userName: 'Steve',
+				userEmail: 'steve@example.com'
 			});
 			
-			const options = {
-				cwd: '/root',
-				url: 'https://github.com/org/repo.git',
-				path: 'layers/repo'
-			};
-			
-			await expect(githubService.addSubmodule(options)).rejects.toThrow('fatal: path already exists');
+			expect(mockGit.init).toHaveBeenCalled();
+			expect(mockGit.branch).toHaveBeenCalledWith(['-M', 'main']); // Renamed master -> main
+			expect(mockGit.addConfig).toHaveBeenCalledWith('user.name', 'Steve');
+			expect(mockGit.addConfig).toHaveBeenCalledWith('user.email', 'steve@example.com');
 		});
 	});
 	
-	describe('stageAndCommit', () => {
-		it('should stage all files and commit with safe message', async () => {
-			const executeMock = vi.mocked(processService.execute);
-			executeMock.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
+	// ========================================================================
+	// Group 2: Status & Information
+	// ========================================================================
+	describe('Status & Info', () => {
+		it('getStatus should parse complex git status', async () => {
+			mockGit.status.mockResolvedValue({
+				current: 'feat/login',
+				isClean: () => false,
+				modified: ['app.ts'],
+				staged: ['index.ts'],
+				ahead: 2,
+				behind: 0
+			});
 			
-			await githubService.stageAndCommit('/root', 'Initial "Commit"');
+			const status = await githubService.getStatus('/test');
 			
-			// Verify add
-			expect(executeMock).toHaveBeenCalledWith(
-				'git add .',
-				expect.objectContaining({ cwd: '/root' })
+			expect(status.branch).toBe('feat/login');
+			expect(status.isDirty).toBe(true);
+			expect(status.modified).toContain('app.ts');
+			expect(status.ahead).toBe(2);
+		});
+		
+		it('getStagedDiff should request cached diffs', async () => {
+			mockGit.diff.mockResolvedValue('diff --git a/file.ts...');
+			
+			const diff = await githubService.getStagedDiff('/test');
+			
+			expect(mockGit.diff).toHaveBeenCalledWith(['--cached']);
+			expect(diff).toContain('diff --git');
+		});
+		
+		it('getRemotes should return remote list', async () => {
+			mockGit.getRemotes.mockResolvedValue([{ name: 'origin', refs: {} }]);
+			
+			const remotes = await githubService.getRemotes('/test');
+			
+			expect(mockGit.getRemotes).toHaveBeenCalledWith(true);
+			expect(remotes[0].name).toBe('origin');
+		});
+	});
+	
+	// ========================================================================
+	// Group 3: Core Workflow (Stage, Commit, Push, Sync)
+	// ========================================================================
+	describe('Workflow', () => {
+		it('createCommit should stage specific files and commit', async () => {
+			await githubService.createCommit('/test', 'chore: wip', ['.']);
+			
+			expect(mockGit.add).toHaveBeenCalledWith(['.']);
+			expect(mockGit.commit).toHaveBeenCalledWith('chore: wip');
+		});
+		
+		it('push should handle default and explicit branches', async () => {
+			// Case 1: Default
+			await githubService.push('/test');
+			expect(mockGit.push).toHaveBeenCalledWith('origin');
+			
+			// Case 2: Explicit
+			await githubService.push('/test', 'upstream', 'develop');
+			expect(mockGit.push).toHaveBeenCalledWith('upstream', 'develop');
+		});
+		
+		it('sync should pull and recursively update submodules', async () => {
+			await githubService.sync('/test');
+			
+			expect(mockGit.pull).toHaveBeenCalled();
+			expect(mockGit.submoduleUpdate).toHaveBeenCalledWith(['--init', '--recursive']);
+		});
+		
+		it('addSubmodule should construct correct submodule command', async () => {
+			await githubService.addSubmodule({
+				cwd: '/test',
+				url: 'https://github.com/a/b.git',
+				path: 'layers/b',
+				branch: 'dev'
+			});
+			
+			// args: add -b dev <url> <path>
+			expect(mockGit.submodule).toHaveBeenCalledWith([
+				'add', '-b', 'dev', 'https://github.com/a/b.git', 'layers/b'
+			]);
+		});
+	});
+	
+	// ========================================================================
+	// Group 4: Remote API (GitHub)
+	// ========================================================================
+	describe('Remote API', () => {
+		it('deleteRemoteRepo should send DELETE request', async () => {
+			fetchMock.mockResolvedValue({ ok: true });
+			
+			await githubService.deleteRemoteRepo('user', 'repo');
+			
+			expect(fetchMock).toHaveBeenCalledWith(
+				'https://api.github.com/repos/user/repo',
+				expect.objectContaining({
+					method: 'DELETE',
+					headers: expect.objectContaining({ 'Authorization': 'Bearer mock-token' })
+				})
 			);
+		});
+		
+		it('listRemoteRepos should return JSON list', async () => {
+			fetchMock.mockResolvedValue({
+				ok: true,
+				json: async () => [{ name: 'repo-1' }]
+			});
 			
-			// Verify commit with escaped quotes
-			expect(executeMock).toHaveBeenCalledWith(
-				'git commit -m "Initial \\"Commit\\""',
-				expect.objectContaining({ cwd: '/root' })
+			// Case 1: User repos
+			const userRepos = await githubService.listRemoteRepos();
+			expect(fetchMock).toHaveBeenCalledWith(
+				'https://api.github.com/user/repos',
+				expect.any(Object)
 			);
+			expect(userRepos).toHaveLength(1);
+			
+			// Case 2: Org repos
+			await githubService.listRemoteRepos('my-org');
+			expect(fetchMock).toHaveBeenCalledWith(
+				'https://api.github.com/orgs/my-org/repos',
+				expect.any(Object)
+			);
+		});
+		
+		it('should throw error if GITHUB_TOKEN is missing', async () => {
+			delete process.env.GITHUB_TOKEN;
+			await expect(githubService.deleteRemoteRepo('u', 'r'))
+				.rejects.toThrow('Missing GITHUB_TOKEN');
 		});
 	});
 });
