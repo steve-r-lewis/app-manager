@@ -32,7 +32,8 @@
 
 /**
  * ================================================================================
- * @file:       ~/app/types/gitTypes.ts
+ * @file:        ~/app/types/gitTypes.ts
+ * @description: Represents the status of a repository (e.g. for prompt display).
  * ================================================================================
  */
 

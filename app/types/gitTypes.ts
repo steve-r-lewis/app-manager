@@ -75,13 +75,3 @@ export interface GitRemoteConfig {
 	name: string;
 	url: string;
 }
-
-/**
- * Represents the status of a repository (e.g. for prompt display).
- */
-export interface GitStatusResult {
-	branch: string;
-	isDirty: boolean;
-	modified: string[];
-	staged: string[];
-}

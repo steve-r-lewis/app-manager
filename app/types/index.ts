@@ -35,6 +35,7 @@
  * ================================================================================
  */
 
+export * from './baseCommandTypes';   // --- Infrastructure Domains ---
 export * from './codeServiceTypes';   // --- Infrastructure Domains ---
 export * from './configTypes';        // --- Core ---
 export * from './fileServiceTypes';   // --- Infrastructure Domains ---
