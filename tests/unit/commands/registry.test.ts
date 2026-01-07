@@ -23,19 +23,24 @@
  * ================================================================================
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { registry } from '../../../app/commands/registry';
 import { BaseCommand } from '../../../app/commands/baseCommand';
+import { logger } from '../../../app/services/loggerService';
 
-// Concrete implementation for testing
+// Mock the logger to verify warnings
+vi.mock('../../../app/services/loggerService');
+
+// Concrete implementations for testing
 class MockCommand extends BaseCommand {
-	constructor() {
+	constructor(id: string, domain: string, hidden: boolean = false) {
 		super({
-			id: 'test.mock',
-			domain: 'test',
-			name: 'mock',
-			label: 'Mock Command',
-			description: 'A test command'
+			id,
+			domain,
+			name: id.split('.')[1], // derive name from id for simplicity
+			label: `Label for ${id}`,
+			description: 'Test Description',
+			hidden
 		});
 	}
 	async execute() {}
@@ -43,43 +48,68 @@ class MockCommand extends BaseCommand {
 
 describe('CommandRegistry', () => {
 	beforeEach(() => {
-		// Clear registry before each test to ensure isolation
 		(registry as any).commands.clear();
+		vi.clearAllMocks();
 	});
 	
-	it('should register and retrieve a command', () => {
-		const cmd = new MockCommand();
+	// ========================================================================
+	// Core Functionality
+	// ========================================================================
+	it('should register and retrieve a command by domain/name', () => {
+		const cmd = new MockCommand('test.run', 'test');
 		registry.register(cmd);
 		
-		// Test Lookup
-		const found = registry.get('test', 'mock');
+		const found = registry.get('test', 'run');
 		expect(found).toBeDefined();
-		expect(found?.metadata.label).toBe('Mock Command');
+		expect(found?.metadata.id).toBe('test.run');
 	});
 	
-	it('should retrieve commands by domain (for TUI menus)', () => {
-		registry.register(new MockCommand());
-		
-		const list = registry.getByDomain('test');
-		expect(list).toHaveLength(1);
-		expect(list[0].metadata.id).toBe('test.mock');
-	});
-	
-	it('should list all available domains', () => {
-		registry.register(new MockCommand());
+	it('should list all available domains sorted', () => {
+		registry.register(new MockCommand('a.cmd', 'app'));
+		registry.register(new MockCommand('z.cmd', 'zebra'));
+		registry.register(new MockCommand('b.cmd', 'app')); // Duplicate domain
 		
 		const domains = registry.getDomains();
-		expect(domains).toContain('test');
+		expect(domains).toEqual(['app', 'zebra']);
 	});
 	
-	it('should prevent duplicates or warn (implementation detail)', () => {
-		const cmd1 = new MockCommand();
-		const cmd2 = new MockCommand();
+	it('should return all registered commands via getAll()', () => {
+		registry.register(new MockCommand('a.1', 'a'));
+		registry.register(new MockCommand('b.1', 'b'));
+		
+		expect(registry.getAll()).toHaveLength(2);
+	});
+	
+	// ========================================================================
+	// Logic & Edge Cases (The Missing Tests)
+	// ========================================================================
+	it('should filter out HIDDEN commands from domain lists (TUI Mode)', () => {
+		registry.register(new MockCommand('visible.cmd', 'git', false));
+		registry.register(new MockCommand('hidden.cmd', 'git', true));
+		
+		const list = registry.getByDomain('git');
+		
+		// Should only return the visible one
+		expect(list).toHaveLength(1);
+		expect(list[0].metadata.id).toBe('visible.cmd');
+		
+		// However, direct lookup (CLI Mode) should still work for hidden commands
+		expect(registry.get('git', 'hidden.cmd')).toBeDefined();
+	});
+	
+	it('should log a WARNING when overwriting a registered command', () => {
+		const cmd1 = new MockCommand('test.duplicate', 'test');
+		const cmd2 = new MockCommand('test.duplicate', 'test'); // Same ID
 		
 		registry.register(cmd1);
-		registry.register(cmd2); // Overwrite
+		registry.register(cmd2);
 		
-		const list = registry.getByDomain('test');
-		expect(list).toHaveLength(1); // Should still only be 1
+		// 1. Verify State: Length is still 1 (Overwrite)
+		expect(registry.getAll()).toHaveLength(1);
+		
+		// 2. Verify Side Effect: Logger was warned
+		expect(logger.warn).toHaveBeenCalledWith(
+			expect.stringContaining('Overwriting command: test.duplicate')
+		);
 	});
 });
