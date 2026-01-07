@@ -209,3 +209,8 @@ export interface GitModulesContext extends BaseTemplateContext {
 		url: string;  // e.g., "https://github.com/..."
 	}[];
 }
+
+export interface VueComponentContext extends BaseTemplateContext {
+	name: string; // e.g., "UserProfile"
+	description?: string;
+}

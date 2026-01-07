@@ -35,6 +35,7 @@ export interface CodeFileMetadata {
 	description?: string;
 	author?: string;
 	createdDate?: string;
+	createTime?: string;
 	notes?: string[]; // Array of history notes/changelogs
 }
 
@@ -43,8 +44,8 @@ export interface CodeFileMetadata {
  */
 export interface CodeBlock {
 	name: string;       // e.g. "initApp"
-	type: 'function' | 'method' | 'class';
-	startLine: number;
+	type: 'function' | 'method' | 'class' | 'interface' | 'variable';
+	startLine: number;  // 0-based index
 	endLine: number;
 	signature: string;  // e.g. "initApp(root: string)"
 	hasDoc: boolean;    // true if JSDoc/Comment exists above it
@@ -58,23 +59,31 @@ export interface CodeBlock {
 export interface ICodeStrategy {
 	/**
 	 * Extracts top-level metadata (Header comments or JSON fields).
+	 *
+	 * Reads header comments like @author, @version
 	 */
 	parseMetadata(content: string): CodeFileMetadata;
 	
 	/**
 	 * Updates specific metadata fields safely without destroying the rest of the file.
 	 * Returns the full new file content string.
+	 *
+	 * Updates header comments safely
 	 */
 	updateMetadata(content: string, metadata: Partial<CodeFileMetadata>): string;
 	
 	/**
 	 * Scans the code to find documentable entities (functions/classes).
+	 *
+	 * Returns a list of functions/classes and their line numbers
 	 */
 	findDocumentableBlocks(content: string): CodeBlock[];
 	
 	/**
 	 * Injects a docblock string above a specific function.
 	 * Returns the full new file content string.
+	 *
+	 * Inserts a docstring above a specific function signature
 	 */
 	injectFunctionDoc(content: string, functionName: string, docBlock: string): string;
 }
