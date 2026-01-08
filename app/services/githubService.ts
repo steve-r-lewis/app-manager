@@ -36,7 +36,7 @@
  * ================================================================================
  */
 
-import { simpleGit, SimpleGit, CleanOptions } from 'simple-git';
+import { simpleGit, SimpleGit } from 'simple-git';
 import { logger } from './loggerService';
 import type {
 	GitInitOptions,
@@ -116,10 +116,24 @@ class GithubService {
 	
 	/**
 	 * Syncs repository (Pull + Submodule Update).
+	 * * @param cwd - The repository root
+	 * @param silent - If false, pipes output to stdout/stderr (Headless mode requirement)
 	 */
-	public async sync(cwd: string): Promise<void> {
+	public async syncRepo(cwd: string, silent: boolean = true): Promise<void> {
 		const git = this.git(cwd);
+		
+		// In headless mode, we want to see the raw git output
+		if (!silent) {
+			git.outputHandler((command, stdout, stderr) => {
+				stdout.pipe(process.stdout);
+				stderr.pipe(process.stderr);
+			});
+		}
+		
+		// 1. Pull Root
 		await git.pull();
+		
+		// 2. Update Submodules (--init --recursive)
 		await git.submoduleUpdate(['--init', '--recursive']);
 	}
 	
@@ -200,3 +214,4 @@ class GithubService {
 }
 
 export const githubService = new GithubService();
+

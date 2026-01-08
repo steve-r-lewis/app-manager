@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/types/gitTypes.ts
- * @version:    1.0.1
+ * @version:    1.0.2
  * @createDate: 2025 Dec 31
  * @createTime: 01:04
  * @author:     Steve R Lewis
@@ -18,6 +18,9 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.0.2, 20250108-22:55
+ * Updated project details.
  *
  * V1.0.1, 20251231-01:33
  * Refactored to namespaced types (GitPrefix) for clarity.
@@ -42,7 +45,21 @@ export interface GitDeleteRepoOptions {
  * Options for the "git init" command.
  */
 export interface GitInitOptions {
+	cwd: string;
+	defaultBranch?: string;
+	userName?: string;
+	userEmail?: string;
 	force?: boolean; // Re-initialize existing repositories if true
+}
+
+/**
+ * Options for the "git submodules" command.
+ */
+export interface GitSubmoduleOptions {
+	cwd: string;
+	url: string;
+	path: string;
+	branch?: string;
 }
 
 /**
@@ -65,7 +82,7 @@ export interface GitPushOptions {
  * Options for the "git sync" command.
  */
 export interface GitSyncOptions {
-	force?: boolean; // Bypass safety checks in headless mode
+	force?: boolean; // Headless mode: Skips UI prompts/intro
 }
 
 /**
