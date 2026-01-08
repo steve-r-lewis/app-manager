@@ -23,6 +23,16 @@
  *
  * @notes: Revision History
  *
+ * V1.0.3, 20260108-23:58
+ * Changed mocking strategy from Module Mocking to vi.spyOn() for Singletons.
+ * This fixes the issue where the real simple-git instance was executing.
+ *
+ * V1.0.2, 20260108-23:52
+ * Added test coverage for error handling in headless mode.
+ *
+ * V1.0.1, 20260108-23:43
+ * Added test coverage for interactive mode.
+ *
  * V1.0.0, 20260108-23:43
  * Initial creation and release of syncCommand.test.ts
  *
@@ -30,53 +40,56 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { SyncCommand } from '../../../app/commands/git/syncCommand';
-import { githubService } from '../../../app/services/githubService';
-import { logger } from '../../../app/services/loggerService';
+import { SyncCommand } from '../../../../app/commands/git/syncCommand';
+import { githubService } from '../../../../app/services/githubService';
+import { logger } from '../../../../app/services/loggerService';
 import * as clack from '@clack/prompts';
 
 // ----------------------------------------------------------------------------
-// Mocks
+// Mocks (UI Module)
 // ----------------------------------------------------------------------------
 
-// 1. Mock GithubService
-vi.mock('../../../app/services/githubService', () => ({
-	githubService: {
-		syncRepo: vi.fn()
-	}
-}));
-
-// 2. Mock Logger
-vi.mock('../../../app/services/loggerService', () => ({
-	logger: {
-		success: vi.fn(),
-		error: vi.fn()
-	}
-}));
-
-// 3. Mock Clack Prompts (UI)
-// We need to construct a factory for the spinner to track its methods
+// Mock Object for Spinner
 const mockSpinner = {
 	start: vi.fn(),
 	stop: vi.fn(),
 	message: vi.fn()
 };
 
-vi.mock('@clack/prompts', async () => {
-	return {
-		intro: vi.fn(),
-		outro: vi.fn(),
-		spinner: vi.fn(() => mockSpinner)
-	};
-});
+// Module Mock for @clack/prompts
+vi.mock('@clack/prompts', () => ({
+	intro: vi.fn(),
+	outro: vi.fn(),
+	spinner: vi.fn(() => mockSpinner)
+}));
 
 describe('SyncCommand', () => {
 	let command: SyncCommand;
 	const mockTargetRoot = '/mock/root';
 	
 	beforeEach(() => {
+		// ------------------------------------------------------------------------
+		// Spy on Singletons
+		// ------------------------------------------------------------------------
+		// We use spyOn because githubService is a Singleton Object exported by value.
+		// This ensures we intercept the exact same object instance used by SyncCommand.
+		
+		// 1. Spy on githubService.syncRepo and prevent actual execution
+		vi.spyOn(githubService, 'syncRepo').mockResolvedValue(undefined);
+		
+		// 2. Spy on logger to prevent console noise and verify calls
+		vi.spyOn(logger, 'success').mockImplementation(() => {});
+		vi.spyOn(logger, 'error').mockImplementation(() => {});
+		
+		// 3. Clear call history before each test
 		vi.clearAllMocks();
+		
 		command = new SyncCommand();
+	});
+	
+	afterEach(() => {
+		// Restore original implementations to avoid polluting other tests
+		vi.restoreAllMocks();
 	});
 	
 	// ========================================================================
@@ -115,6 +128,7 @@ describe('SyncCommand', () => {
 		
 		it('should handle service errors gracefully', async () => {
 			const errorMsg = 'Network Error';
+			// Mock a failure for this specific test
 			vi.mocked(githubService.syncRepo).mockRejectedValueOnce(new Error(errorMsg));
 			
 			await command.execute(mockTargetRoot, {});
