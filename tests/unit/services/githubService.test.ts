@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/tests/unit/services/githubService.test.ts
- * @version:    1.2.0
+ * @version:    1.2.1
  * @createDate: 2026 Jan 02
  * @createTime: 01:08
  * @author:     Steve R Lewis
@@ -17,12 +17,16 @@
  * 1. Initialization (initRepo)
  * 2. Status & Diffs (getStatus, getStagedDiff)
  * 3. Commits & Pushes (createCommit, push)
- * 4. Sync & Submodules (sync, addSubmodule, getRemotes)
+ * 4. Sync & Submodules (syncRepo, addSubmodule, getRemotes)
  * 5. Remote API (deleteRemoteRepo, listRemoteRepos)
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.2.1, 20260108-23:10
+ * Updated 'sync' tests to 'syncRepo'.
+ * Added coverage for Headless mode (silent=false) via outputHandler mock.
  *
  * V1.2.0, 20260106-00:06
  * Provided a complete test suite for the GitHub Service.
@@ -62,7 +66,8 @@ const mockGit = {
 	submoduleUpdate: vi.fn(),
 	submodule: vi.fn(),
 	getRemotes: vi.fn(),
-	diff: vi.fn()
+	diff: vi.fn(),
+	outputHandler: vi.fn() // Added for Headless Sync support
 };
 
 // Factory function to return our mock instance
@@ -167,11 +172,29 @@ describe('GithubService', () => {
 			expect(mockGit.push).toHaveBeenCalledWith('upstream', 'develop');
 		});
 		
-		it('sync should pull and recursively update submodules', async () => {
-			await githubService.sync('/test');
+		describe('syncRepo', () => {
+			it('should pull and recursively update submodules (Interactive Default)', async () => {
+				// Default silent = true
+				await githubService.syncRepo('/test');
+				
+				// Verify standard sync ops
+				expect(mockGit.pull).toHaveBeenCalled();
+				expect(mockGit.submoduleUpdate).toHaveBeenCalledWith(['--init', '--recursive']);
+				
+				// Verify outputHandler is NOT called (Interactive/Silent mode)
+				expect(mockGit.outputHandler).not.toHaveBeenCalled();
+			});
 			
-			expect(mockGit.pull).toHaveBeenCalled();
-			expect(mockGit.submoduleUpdate).toHaveBeenCalledWith(['--init', '--recursive']);
+			it('should attach outputHandler in Headless mode (silent=false)', async () => {
+				await githubService.syncRepo('/test', false);
+				
+				// Verify output handler is attached for stdout streaming
+				expect(mockGit.outputHandler).toHaveBeenCalled();
+				
+				// Verify sync ops still run
+				expect(mockGit.pull).toHaveBeenCalled();
+				expect(mockGit.submoduleUpdate).toHaveBeenCalledWith(['--init', '--recursive']);
+			});
 		});
 		
 		it('addSubmodule should construct correct submodule command', async () => {
