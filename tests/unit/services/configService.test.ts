@@ -29,31 +29,72 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-// @ts-ignore - Module does not exist yet
 import { configService } from '../../../app/services/configService';
 
 describe('ConfigService', () => {
 	
 	beforeEach(() => {
-		// Reset config if necessary between tests (method to be implemented)
-		if (configService.reset) configService.reset();
+		// Reset state ensures isolation between tests
+		configService.reset();
 	});
 	
-	describe('Initialization', () => {
-		it('should initialize with default defaults', () => {
+	// ========================================================================
+	// 1. New Functionality (Infrastructure)
+	// ========================================================================
+	describe('Infrastructure', () => {
+		it('should initialize with tool root', () => {
+			configService.init('/my/tool/path');
+			expect(configService.toolRoot).toBe('/my/tool/path');
+		});
+		
+		it('should correctly report verbose mode via helper', () => {
+			expect(configService.isVerbose()).toBe(false);
+			
+			configService.setFlag('verbose', true);
+			expect(configService.isVerbose()).toBe(true);
+		});
+	});
+	
+	// ========================================================================
+	// 2. Legacy Functionality (Configuration Management)
+	// ========================================================================
+	describe('Configuration Management', () => {
+		it('should provide default configuration', () => {
 			const config = configService.getConfig();
 			
 			expect(config.cwd).toBeDefined();
 			expect(config.flags.verbose).toBe(false);
 			expect(config.flags.dryRun).toBe(false);
+			expect(config.gitUser.name).toBe('');
+		});
+		
+		it('should update git user configuration', () => {
+			configService.setGitUser({ name: 'Test User', email: 'test@example.com' });
+			
+			const config = configService.getConfig();
+			expect(config.gitUser.name).toBe('Test User');
+			expect(config.gitUser.email).toBe('test@example.com');
+		});
+		
+		it('should update feature flags independently', () => {
+			// Test Verbose
+			configService.setFlag('verbose', true);
+			expect(configService.getConfig().flags.verbose).toBe(true);
+			
+			// Test Dry Run (ensure no cross-contamination)
+			configService.setFlag('dryRun', true);
+			expect(configService.getConfig().flags.dryRun).toBe(true);
 		});
 	});
 	
+	// ========================================================================
+	// 3. State Integrity (Restored from Legacy)
+	// ========================================================================
 	describe('State Integrity', () => {
 		it('should return a copy of the config to prevent direct mutation', () => {
 			const config1 = configService.getConfig();
 			
-			// Attempt to mutate the returned object
+			// Attempt to mutate the returned object property directly
 			// @ts-ignore
 			config1.cwd = '/hacked/path';
 			
@@ -63,40 +104,18 @@ describe('ConfigService', () => {
 			expect(config2.cwd).toBe(process.cwd());
 		});
 		
-		it('should reset state to defaults', () => {
-			// 1. Change state
+		it('should reset state completely to defaults', () => {
+			// 1. Change State
+			configService.init('/dirty/path');
 			configService.setFlag('verbose', true);
-			expect(configService.getConfig().flags.verbose).toBe(true);
 			
 			// 2. Reset
 			configService.reset();
 			
-			// 3. Verify return to default
+			// 3. Verify Clean Slate
+			expect(configService.toolRoot).toBe('');
+			expect(configService.isVerbose()).toBe(false);
 			expect(configService.getConfig().flags.verbose).toBe(false);
-		});
-	});
-	
-	describe('Git User Configuration', () => {
-		it('should allow setting and retrieving git user info', () => {
-			const mockUser = { name: 'Test User', email: 'test@example.com' };
-			
-			configService.setGitUser(mockUser);
-			const config = configService.getConfig();
-			
-			expect(config.gitUser.name).toBe('Test User');
-			expect(config.gitUser.email).toBe('test@example.com');
-		});
-	});
-	
-	describe('Feature Flags', () => {
-		it('should update verbosity flags', () => {
-			configService.setFlag('verbose', true);
-			expect(configService.getConfig().flags.verbose).toBe(true);
-		});
-		
-		it('should update dry-run flags', () => {
-			configService.setFlag('dryRun', true);
-			expect(configService.getConfig().flags.dryRun).toBe(true);
 		});
 	});
 });

@@ -37,7 +37,8 @@ class MockCommand extends BaseCommand {
 		super({
 			id,
 			domain,
-			name: id.split('.')[1], // derive name from id for simplicity
+			// LOGIC: 'git.commit' -> name: 'commit'
+			name: id.split('.')[1],
 			label: `Label for ${id}`,
 			description: 'Test Description',
 			hidden
@@ -81,20 +82,24 @@ describe('CommandRegistry', () => {
 	});
 	
 	// ========================================================================
-	// Logic & Edge Cases (The Missing Tests)
+	// Logic & Edge Cases
 	// ========================================================================
 	it('should filter out HIDDEN commands from domain lists (TUI Mode)', () => {
-		registry.register(new MockCommand('visible.cmd', 'git', false));
-		registry.register(new MockCommand('hidden.cmd', 'git', true));
+		// Setup: Use distinct IDs that derive to distinct names
+		// 'git.visible' -> name: 'visible'
+		// 'git.hidden'  -> name: 'hidden'
+		registry.register(new MockCommand('git.visible', 'git', false));
+		registry.register(new MockCommand('git.hidden', 'git', true));
 		
 		const list = registry.getByDomain('git');
 		
-		// Should only return the visible one
+		// 1. TUI Mode: Should only return the visible one
 		expect(list).toHaveLength(1);
-		expect(list[0].metadata.id).toBe('visible.cmd');
+		expect(list[0].metadata.id).toBe('git.visible');
 		
-		// However, direct lookup (CLI Mode) should still work for hidden commands
-		expect(registry.get('git', 'hidden.cmd')).toBeDefined();
+		// 2. CLI Mode: Direct lookup should still work for hidden commands
+		// We look up by DOMAIN ('git') and NAME ('hidden'), NOT ID ('git.hidden')
+		expect(registry.get('git', 'hidden')).toBeDefined();
 	});
 	
 	it('should log a WARNING when overwriting a registered command', () => {

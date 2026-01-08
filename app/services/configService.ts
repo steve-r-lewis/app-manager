@@ -25,6 +25,9 @@
  *
  * @notes: Revision History
  *
+ * V2.0.0, 20260107-22:43
+ * Refactored to include init method.
+ *
  * V1.0.0, 20260102-00:20
  * Initial creation and release of configService.ts
  * Initial migration and strict typing implementation.
@@ -33,13 +36,26 @@
  * ================================================================================
  */
 
-import type { AppConfig, GitUserConfig } from '../types/configTypes';
+import type { AppConfig, GitUserConfig } from '../types/index';
 
 class ConfigService {
 	private config: AppConfig;
+	private _toolRoot: string = '';
 	
 	constructor() {
 		this.config = this.getDefaults();
+	}
+	
+	/**
+	 * Initializes the configuration service with the CLI tool's root path.
+	 * @param toolRoot - The directory where the CLI tool code resides.
+	 */
+	public init(toolRoot: string) {
+		this._toolRoot = toolRoot;
+	}
+	
+	public get toolRoot(): string {
+		return this._toolRoot;
 	}
 	
 	/**
@@ -48,6 +64,7 @@ class ConfigService {
 	 */
 	public reset(): void {
 		this.config = this.getDefaults();
+		this._toolRoot = '';
 	}
 	
 	/**
@@ -90,6 +107,13 @@ class ConfigService {
 	 */
 	public setFlag(key: keyof AppConfig['flags'], value: boolean): void {
 		this.config.flags[key] = value;
+	}
+	
+	/**
+	 * Helper to check verbose status (used by Logger)
+	 */
+	public isVerbose(): boolean {
+		return this.config.flags.verbose;
 	}
 }
 

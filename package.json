@@ -35,7 +35,7 @@
     "url": "patreon.com/TheModuleFactory"
   },
   "bin": {
-    "app-manager": "index.ts"
+    "app-manager": "app/index.ts"
   },
   "scripts": {
     "vitest:run": "vitest run",
