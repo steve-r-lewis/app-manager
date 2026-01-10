@@ -1,134 +1,134 @@
-Here is the comprehensive Technical Specification and Test Strategy based on the provided source code.
+# Technical Specification Document
 
----
-
-# Technical Specification: GitHub Service
-
-**Document Version:** 1.0
+**Subject:** GitHub Service (`githubService.ts`)
+**Version:** 1.4.0
 **Date:** January 10, 2026
-**Source:** `app/services/githubService.ts`
-**Author:** Analysis based on code by Steve R Lewis
+**Author:** Analysis based on source code by Steve R Lewis
 
 ## Part 1: Operational & Design Specification
 
 ### 1. Component Overview
 
-* **Purpose:** The `GithubService` acts as a facade layer, providing a high-level abstraction for Version Control System (VCS) operations. It unifies local Git CLI command execution (via `simple-git`) and remote GitHub API interactions (via `fetch`) into a single service class.
-* **Role in System:** This is an **Infrastructure/Utility Service**. It bridges the application's business logic with the underlying file system (for `.git` management) and external HTTP services (GitHub API).
+* **Purpose:**
+  The `GithubService` acts as a **Facade** and **Adapter** layer for the application's Version Control System (VCS). It standardizes interactions with the local file system (via the `simple-git` CLI wrapper) and the remote GitHub REST API (via `fetch`). It encapsulates complex Git command arguments and authentication logic into a unified, high-level API.
+* **Role in System:**
+  It serves as a core **Infrastructure Service**. It connects the application's business logic (Command Controllers) to the underlying operational resources (Git binary and GitHub Cloud), providing a simplified interface for tasks like "sync," "clone," or "delete repo."
+
 
 ### 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Singleton:** The class is instantiated once and exported as `githubService`, ensuring a single entry point for imports.
-* **Facade:** It hides the complexity of `simple-git` configuration and the raw `fetch` API implementation details from the consumer.
-* **Factory Method (Internal):** The private `git(cwd)` method acts as a factory to generate fresh `SimpleGit` instances scoped to specific directories.
-
+* **Singleton:** The class is instantiated once (`new GithubService()`) and exported directly, ensuring a single global entry point.
+* **Facade:** It hides the complexity of `simple-git` configuration, output stream management, and raw HTTP fetch headers behind semantic methods like `syncRepo` or `listRemoteRepos`.
+* **Factory Method (Internal):** The private `git(cwd)` method acts as a transient factory, generating fresh `SimpleGit` instances scoped to specific directories on demand.
 
 * **State Management:**
-* **Stateless:** The service itself holds no internal state variables (properties). Every method call generates a new Git instance based on the passed `cwd` (Current Working Directory). This makes the service thread-safe and suitable for concurrent operations across different repositories.
+* **Stateless:** The service is designed to be **stateless**. It does not retain repository paths or configuration between calls. Every public method requires context (like `cwd`) to be passed in, ensuring thread safety and support for managing multiple repositories simultaneously.
 
-
-* **Complexity Assessment:** **Low-Medium**.
-* Most logic delegates directly to `simple-git`.
-* Complexity arises in the `syncRepo` method (handling output streams) and the API methods (manual header/error handling).
-* **Discrepancy Note:** The JSDoc claims usage of `ProcessService`, but the implementation uses `simple-git` directly. This indicates documentation drift.
-
+* **Complexity Assessment:**
+* **Rating:** **Medium**.
+* **Justification:** While individual Git commands are simple, the service handles mixed concerns:
+* **Hybrid Operations:** Combines CLI execution with HTTP API calls.
+* **Stream Management:** The `syncRepo` method manually pipes child process streams (`stdout`/`stderr`) to the main process in verbose modes.
+* **Conditionals:** `initRepo` contains branching logic for renaming default branches and conditional user config.
 
 
 ### 3. Dependency Graph
 
 * **Internal Dependencies:**
-* `./loggerService` (Imported, but **Dead Code**: variable `logger` is never used within the class).
-* `../types/index`: `GitInitOptions`, `GitSubmoduleOptions`, `GitStatusResult`, `GitCommitOptions`.
+* `./loggerService`: Used for structured logging (Info/Debug/Error/Warn).
+* `../types/index`: Imports shared DTOs (`GitInitOptions`, `GitCloneOptions`, `GitStatusResult`, `GithubRepo`, etc.).
 
 
 * **External Dependencies:**
-* `simple-git`: Core library for Git CLI interactions.
-* `process.env`: Relies on `GITHUB_TOKEN` for API authentication.
-* `fetch`: Uses the global Node.js fetch API.
+* `simple-git`: The core engine for local Git operations.
+* `global.fetch`: Native Node.js fetch API for remote GitHub interactions.
+* `process.env`: Implicit dependency on `GITHUB_TOKEN` for authentication.
+* `process.stdout` / `process.stderr`: Accessed directly during `syncRepo`.
 
 
 * **Coupling Analysis:**
-* **Tightly Coupled:** To the `simple-git` library. Replacing this library would require rewriting every local operation method.
-* **Loosely Coupled:** To the consumer, via the exported `githubService` instance.
-
+* **High (Implementation):** Tightly coupled to `simple-git` and the specific structure of GitHub API responses.
+* **Low (Interface):** Loosely coupled to consumers. Consumers interact with strict TypeScript interfaces (`GitInitOptions`) rather than raw command strings.
 
 
 ### 4. Data Types & Interfaces
 
 **Key Interfaces (Imported):**
 
-* `GitInitOptions`: `{ cwd, defaultBranch, userName, userEmail }`
-* `GitSubmoduleOptions`: `{ cwd, url, path, branch }`
-* `GitStatusResult`: Standardized status object.
+* `GitInitOptions`, `GitCloneOptions`, `GitSubmoduleOptions`, `GitCommitOptions`
+* `GitStatusResult`
+* `GithubRepo`, `GitRemote`
 
-**Method Return Types:**
+**Public Method Signatures & Return Types:**
 
-| Method | Return Type | Warning |
-| --- | --- | --- |
-| `initRepo` | `Promise<void>` |  |
-| `getStatus` | `Promise<GitStatusResult>` |  |
-| `createCommit` | `Promise<void>` |  |
-| `push` | `Promise<void>` |  |
-| `syncRepo` | `Promise<void>` |  |
-| `addSubmodule` | `Promise<void>` |  |
-| `getRemotes` | `Promise<any[]>` | **Critical:** Returns `any`. Should be typed. |
-| `getStagedDiff` | `Promise<string>` |  |
-| `deleteRemoteRepo` | `Promise<void>` |  |
-| `listRemoteRepos` | `Promise<any[]>` | **Critical:** Returns `any`. Should be typed. |
+| Method | Signature | Return Type | Notes |
+| --- | --- | --- | --- |
+| **initRepo** | `(options: GitInitOptions)` | `Promise<void>` |  |
+| **cloneRepo** | `(options: GitCloneOptions)` | `Promise<void>` | **New in V1.4.0** |
+| **getStatus** | `(cwd: string)` | `Promise<GitStatusResult>` | Maps raw status to structured object. |
+| **createCommit** | `(cwd: string, message: string, files?: string[])` | `Promise<void>` | Defaults to adding `.` |
+| **push** | `(cwd: string, remote?: string, branch?: string)` | `Promise<void>` |  |
+| **syncRepo** | `(cwd: string, silent?: boolean)` | `Promise<void>` | Handles stream piping. |
+| **addSubmodule** | `(options: GitSubmoduleOptions)` | `Promise<void>` |  |
+| **getRemotes** | `(cwd: string)` | `Promise<GitRemote[]>` |  |
+| **getStagedDiff** | `(cwd: string)` | `Promise<string>` | Used for LLM context. |
+| **deleteRemoteRepo** | `(owner: string, repo: string)` | `Promise<void>` | **Destructive** |
+| **listRemoteRepos** | `(org?: string)` | `Promise<GithubRepo[]>` |  |
 
 ### 5. Functional Logic Specification
 
-#### A. Local Git Operations
+#### 5.1 Local Git Operations
 
-**1. `initRepo(options: GitInitOptions): Promise<void>**`
+**`initRepo(options)`**
 
-* **Logic:**
-1. Initializes git in `cwd`.
-2. Checks current branch name. If it differs from `defaultBranch`, renames it using `-M`.
-3. If `userName` or `userEmail` are provided, sets them in local config (`.git/config`).
+* **Logic:** Initializes a repo at `cwd`. Checks if the current branch matches `defaultBranch` (default 'main'); if not, renames it (`-M`). Conditionally sets `user.name` and `user.email` if provided in options.
+* **Logging:** Logs operation start and configuration changes.
 
+**`cloneRepo(options)`**
 
-* **Side Effects:** Creates `.git` directory; modifies `.git/config`.
+* **Logic:** Uses a global `simpleGit()` instance (not bound to CWD) to clone `url` to `destination`.
+* **Arguments:** Constructs a dynamic args array to handle optional `--branch` and `--depth`.
+* **Error Handling:** Catches failures, logs them as errors, and re-throws with a descriptive message.
 
-**2. `getStatus(cwd: string): Promise<GitStatusResult>**`
+**`getStatus(cwd)`**
 
-* **Logic:** Retrieves status and maps `simple-git` response to a simplified object including `branch`, `isDirty`, `modified`, `staged`, `ahead`, and `behind` counts.
+* **Logic:** Runs `git status`. Maps the result to `GitStatusResult`.
+* **Specifics:** Determines `isDirty` by checking `!status.isClean()`. Extracts `ahead`/`behind` counts.
+* **Logging:** distinct `debug` level logging to prevent noise during polling.
 
-**3. `syncRepo(cwd: string, silent: boolean): Promise<void>**`
-
-* **Logic:**
-1. Instantiates git.
-2. **Stream Handling:** If `silent` is `false`, attaches an output handler to pipe `stdout` and `stderr` to the parent process.
-3. Executes `git pull`.
-4. Executes `git submodule update --init --recursive` to ensure monorepo layers are synced.
-
-
-
-**4. `addSubmodule(options: GitSubmoduleOptions): Promise<void>**`
-
-* **Logic:** Constructs a raw argument array. Adds `-b <branch>` if specified, followed by `url` and `path`. Executes `git submodule add`.
-
-#### B. Remote API Operations
-
-**5. `getAuthHeader(): object` (Private)**
-
-* **Logic:** Reads `process.env.GITHUB_TOKEN`.
-* **Error Handling:** Throws generic `Error('Missing GITHUB_TOKEN')` if undefined.
-
-**6. `deleteRemoteRepo(owner: string, repo: string): Promise<void>**`
-
-* **Logic:** Sends HTTP DELETE to `https://api.github.com/repos/${owner}/${repo}`.
-* **Error Handling:** Throws Error if response status is not OK (200-299).
-
-**7. `listRemoteRepos(org?: string): Promise<any[]>**`
+**`syncRepo(cwd, silent)`**
 
 * **Logic:**
-* If `org` provided: GET `.../orgs/${org}/repos`.
-* If no `org`: GET `.../user/repos` (Personal repos).
+1. Configures `simple-git` output handler. If `!silent`, pipes `stdout` and `stderr` to the parent process.
+2. Executes `git pull`.
+3. Executes `git submodule update --init --recursive`.
 
 
-* **Return:** Returns JSON array on success, or empty array `[]` on failure (swallows errors).
+* **Side Effects:** Modifies local disk (pull/update). visible console output if not silent.
+
+**`getRemotes(cwd)`**
+
+* **Logic:** calls `getRemotes(true)` to retrieve full fetch/push URLs.
+* **Return:** Returns typed `GitRemote[]`.
+
+#### 5.2 Remote API Operations
+
+**`getAuthHeader()` (Private)**
+
+* **Logic:** Retrieves `GITHUB_TOKEN`. Throws Error if missing. Returns headers object with Bearer token and Accept definition.
+
+**`deleteRemoteRepo(owner, repo)`**
+
+* **Logic:** Sends `DELETE` request to GitHub API.
+* **Safety:** Logs a specific warning before execution.
+* **Error Handling:** Throws if response status is not OK.
+
+**`listRemoteRepos(org?)`**
+
+* **Logic:** Determines endpoint: `orgs/${org}/repos` vs `user/repos`. Sends `GET` request.
+* **Return:** Returns array of `GithubRepo`.
+* **Error Handling:** Throws on non-200 responses.
 
 ---
 
@@ -136,82 +136,80 @@ Here is the comprehensive Technical Specification and Test Strategy based on the
 
 ### 1. Mocking Strategy
 
-To achieve 100% unit test coverage, the following must be mocked:
+To unit test `githubService.ts`, we must intercept calls to the file system (via `simple-git`) and the network (via `fetch`).
 
-* **`simple-git` Library:**
-* **Challenge:** The service calls `simpleGit(cwd)` inside every method.
-* **Strategy:** Mock the default export of `simple-git` to return a "Mock Git Instance" object containing spies for `init`, `branchLocal`, `branch`, `addConfig`, `status`, `add`, `commit`, `push`, `pull`, `submoduleUpdate`, `submodule`, `getRemotes`, and `diff`.
-
-
-* **`global.fetch`:**
-* Must be mocked to intercept calls to `api.github.com`.
-* Needs to simulate 204 (Success/Delete), 200 (Success/List), and 400/403 (Failures).
+* **Mock `simple-git`:**
+* The module exports a factory function. We must mock this factory to return a **Mock Git Instance**.
+* **Mock Instance Methods:** `init`, `branchLocal`, `branch`, `addConfig`, `clone`, `status`, `add`, `commit`, `push`, `pull`, `submoduleUpdate`, `submodule`, `getRemotes`, `diff`.
+* **Special Handling:** `outputHandler` needs to be mocked to capture callbacks for `syncRepo` tests.
 
 
-* **`process.env`:**
-* Inject `GITHUB_TOKEN` for positive tests.
-* Unset `GITHUB_TOKEN` to test `getAuthHeader` validation.
+* **Mock `global.fetch`:**
+* Must be mocked to simulate GitHub API responses.
+* **Response Objects:** Must provide `.ok` (boolean), `.status` (number), `.statusText` (string), and `.json()` (Promise).
+
+
+* **Mock `loggerService`:**
+* Mock `logger.info`, `logger.debug`, `logger.error`, `logger.warn` to verify log output without cluttering test results.
 
 
 
 ### 2. Test Scenarios
 
-| Category | ID | Scenario | Setup / Input | Expected Outcome |
-| --- | --- | --- | --- | --- |
-| **Init** | T1.1 | Happy Path: Init & Rename | `defaultBranch: 'main'`, current is `master` | Calls `git.init`, `git.branch(['-M', 'main'])`. |
-|  | T1.2 | Config Setup | `userName` & `userEmail` provided | Calls `git.addConfig` twice. |
-| **Status** | T2.1 | Dirty State | Mock `status()` returns `files` array | Returns `isDirty: true`, correct `modified` count. |
-| **Sync** | T3.1 | Headless Mode | `silent: true` | `outputHandler` is **NOT** attached. |
-|  | T3.2 | Interactive Mode | `silent: false` | `outputHandler` is attached to pipe output. |
-| **Remote** | T4.1 | Delete Repo (Success) | Valid Token, Valid Repo | `fetch` called with DELETE; resolves void. |
-|  | T4.2 | Delete Repo (Fail) | API returns 404 | Throws Error: "Failed to delete repo..." |
-| **Auth** | T5.1 | Missing Token | `process.env.GITHUB_TOKEN = undefined` | `deleteRemoteRepo` throws "Missing GITHUB_TOKEN". |
+| ID | Scenario | Input / Setup | Expected Behavior |
+| --- | --- | --- | --- |
+| **TS-01** | **Init Repo (Standard)** | `GitInitOptions` with `cwd` only. | Calls `init`. Checks branch (if not 'main', calls `branch -M main`). |
+| **TS-02** | **Init Repo (Config)** | `GitInitOptions` with `userName`. | Calls `addConfig('user.name', ...)` |
+| **TS-03** | **Clone Repo (Success)** | `GitCloneOptions` { url, dest, branch }. | Calls `clone(url, dest, ['--branch', ...])`. |
+| **TS-04** | **Clone Repo (Fail)** | `simpleGit.clone` throws error. | Service catches, logs error, re-throws wrapped Error. |
+| **TS-05** | **Get Status** | `simpleGit.status` returns dirty state. | Returns object with `isDirty: true`, maps `modified` files. |
+| **TS-06** | **Sync Repo (Verbose)** | `syncRepo(cwd, false)` | Calls `outputHandler` to attach pipes. Calls `pull` and `submoduleUpdate`. |
+| **TS-07** | **Remote List (User)** | `listRemoteRepos(undefined)` | Fetch calls `.../user/repos`. Returns JSON list. |
+| **TS-08** | **Remote List (Org)** | `listRemoteRepos("my-org")` | Fetch calls `.../orgs/my-org/repos`. |
+| **TS-09** | **Remote Auth Fail** | `process.env.GITHUB_TOKEN` is null. | API methods throw "Missing GITHUB_TOKEN" immediately. |
+| **TS-10** | **Delete Remote** | `deleteRemoteRepo("user", "repo")` | Fetch calls `DELETE`. Throws if response `!ok`. |
 
 ### 3. Test Data Requirements
 
-**A. Mock Git Status Object (`simple-git` response)**
+**A. Mock Simple-Git Status Response**
 
 ```json
 {
-  "current": "feature/login",
-  "files": [
-    { "path": "src/index.ts", "index": "M", "working_dir": " " }
-  ],
-  "isClean": () => false,
-  "modified": ["src/index.ts"],
+  "current": "feature/dev",
+  "isClean": false, // Mock function returning false
+  "modified": ["src/app.ts"],
   "staged": [],
-  "ahead": 1,
-  "behind": 0
+  "ahead": 2,
+  "behind": 0,
+  "conflicted": []
 }
 
 ```
 
-**B. Git Init Options**
-
-```json
-{
-  "cwd": "/tmp/test-repo",
-  "defaultBranch": "main",
-  "userName": "Test User",
-  "userEmail": "test@example.com"
-}
-
-```
-
-**C. Remote API Response (List Repos)**
+**B. Mock GitHub API Repository List**
 
 ```json
 [
   {
-    "id": 12345,
-    "name": "app-manager",
-    "full_name": "steve-lewis/app-manager",
-    "private": true
+    "id": 101,
+    "name": "project-alpha",
+    "full_name": "org/project-alpha",
+    "private": true,
+    "html_url": "https://github.com/org/project-alpha",
+    "owner": { "login": "org" }
   }
 ]
 
 ```
 
-### Next Step for User
+**C. Mock Clone Options**
 
-Would you like me to generate the **Jest unit test file** (`githubService.test.ts`) utilizing the mocking strategy described above?
+```json
+{
+  "url": "https://github.com/test/repo.git",
+  "destination": "./workspace/repo",
+  "branch": "develop",
+  "depth": 1
+}
+
+```

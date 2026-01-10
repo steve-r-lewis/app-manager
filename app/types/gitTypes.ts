@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/types/gitTypes.ts
- * @version:    1.0.2
+ * @version:    1.2.0
  * @createDate: 2025 Dec 31
  * @createTime: 01:04
  * @author:     Steve R Lewis
@@ -18,6 +18,12 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.2.0, 20260110-21:15
+ * Added GitCloneOptions to support repository bootstrapping.
+ *
+ * V1.0.3, 20260110-19:17
+ * Added GitRemote interface to replace inline type definitions.
  *
  * V1.0.2, 20250108-22:55
  * Updated project details.
@@ -91,4 +97,35 @@ export interface GitSyncOptions {
 export interface GitRemoteConfig {
 	name: string;
 	url: string;
+}
+
+export interface GitStatusResult {
+	branch: string;
+	isDirty: boolean;
+	modified: string[];
+	staged: string[];
+	ahead?: number;
+	behind?: number;
+}
+
+/**
+ * Represents a remote repository configuration.
+ * Returned by simple-git's getRemotes(true).
+ */
+export interface GitRemote {
+	name: string;
+	refs: {
+		fetch: string;
+		push: string;
+	};
+}
+
+/**
+ * Configuration options for cloning a repository.
+ */
+export interface GitCloneOptions {
+	url: string;          // The remote repository URL
+	destination: string;  // Local path to clone into
+	branch?: string;      // Optional: Specific branch/tag to checkout
+	depth?: number;       // Optional: Shallow clone depth (e.g. 1 for CI/CD)
 }

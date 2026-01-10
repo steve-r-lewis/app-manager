@@ -1,170 +1,177 @@
-Based on the analysis of the provided source file `gitTypes.ts`, here is the Technical Specification Document and Test Strategy Appendix.
-
----
-
 # Technical Specification Document
 
 **Subject:** Git Operations Domain Type Definitions (`gitTypes.ts`)
-**Version:** 1.0.2
-**Date:** January 9, 2026
+**Version:** 1.2.0
+**Date:** 2026-01-10
 
 ## Part 1: Operational & Design Specification
 
 ### 1. Component Overview
 
-* **Purpose:**
-This file serves as the centralized **Type Definition** layer for the application's Git Operations Domain. It defines the data structures (interfaces) required to execute core version control commands such as deleting repositories, initializing projects, managing submodules, committing, pushing, and syncing.
+* **Purpose:** This component serves as the **Data Contract Layer** for the application's Git Domain. It does not contain runtime logic but defines the strict structures (TypeScript Interfaces) required for input arguments (Options) and output payloads (Results) for version control operations.
 * **Role in System:**
-It acts as a **Contract/Schema Definition** layer. It does not contain runtime logic but enforces strict typing for the arguments passed to the Git Service (likely a `GitService` class consuming these types). It ensures type safety between the UI/CLI inputs and the underlying `git` command execution.
+* **Shared Definitions:** Acts as the central source of truth for data shapes passed between the UI/Controller layer and the underlying Git Service layer.
+* **Type Safety Enforcer:** Ensures that commands like `init`, `commit`, `push`, and `clone` receive correctly typed arguments, specifically facilitating features like AI-assisted commits and repository bootstrapping.
+
+
 
 ### 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Data Transfer Object (DTO) Pattern:** The interfaces (e.g., `GitInitOptions`, `GitCommitOptions`) act as DTOs, encapsulating multiple parameters into single objects to prevent "parameter soup" in method signatures.
-* **Declarative Typing:** The component uses TypeScript interfaces to enforce structural typing.
+* **Data Transfer Object (DTO) Definitions:** The interfaces (e.g., `GitCommitOptions`, `GitStatusResult`) effectively function as DTO definitions, strictly defining how data moves across system boundaries.
+* **Interface Segregation:** Each Git command has a specific, decoupled configuration interface (e.g., `GitDeleteRepoOptions` is distinct from `GitInitOptions`), preventing "god objects" for configuration.
 
 
-* **State Management:**
-* **Stateless:** This component is purely declarative and holds no runtime state.
-
-
-* **Complexity Assessment:**
-* **Rating:** **Low**.
-* **Justification:** The file contains no control flow, loops, or conditional logic. It consists entirely of interface definitions and imports.
-
-
+* **State Management:** **Stateless**. This file contains only type definitions and no runtime state storage.
+* **Complexity Assessment:** **Low**. The file contains no control flow, logic, or algorithmic complexity. It is purely declarative.
 
 ### 3. Dependency Graph
 
 * **Internal Dependencies:**
-* `LLMProviderStatus` from `./llmTypes`: Used within `GitCommitOptions` to allow AI-assisted commit message generation.
+* `LLMProviderStatus` (imported from `./llmTypes`): Used to define the availability of AI providers within `GitCommitOptions`.
 
 
 * **External Dependencies:**
-* None. (The file relies on standard TypeScript primitives).
+* **Implicit:** While no runtime libraries are imported, the data shapes `GitStatusResult` and `GitRemote` match the return structures commonly associated with the `simple-git` library, suggesting a strict typing wrapper around that external dependency.
 
 
-* **Coupling Analysis:**
-* **Loosely Coupled:** The file is highly portable. It has a slight coupling to the `llmTypes` module, indicating that the Git domain is aware of the AI/LLM domain for feature-specific functionality (AI Commits).
-
-
+* **Coupling Analysis:** **Loosely Coupled**. This module is a dependency *provider*. It does not depend on logic from other parts of the system, only on one other type definition file (`llmTypes`).
 
 ### 4. Data Types & Interfaces
 
-The following interfaces define the public contracts for the Git domain.
+The file defines the following key interfaces. Note that strictly speaking, there are no "methods" or "return types" in this file, only property definitions.
 
-| Interface Name | Description | Key Fields |
-| --- | --- | --- |
-| **GitDeleteRepoOptions** | Arguments for deleting a repository. | `repo` (string), `confirm` (string) |
-| **GitInitOptions** | Configuration for `git init`. | `cwd` (string), `defaultBranch`, `userName`, `userEmail`, `force` (boolean) |
-| **GitSubmoduleOptions** | Configuration for adding submodules. | `cwd` (string), `url` (string), `path` (string), `branch` |
-| **GitCommitOptions** | Arguments for staging/committing. | `message` (string), `availableLLMs` (Array) |
-| **GitPushOptions** | Arguments for pushing to remote. | `remote` (string), `branch` (string) |
-| **GitSyncOptions** | Arguments for syncing (pull/push). | `force` (boolean) |
-| **GitRemoteConfig** | Structure of a remote configuration. | `name` (string), `url` (string) |
+* **Command Option Interfaces (Inputs):**
+* `GitDeleteRepoOptions`: Requires `repo` (string) and `confirm` (string).
+* `GitInitOptions`: Defines project initialization including `cwd`, `defaultBranch`, `userName`, `userEmail`, and `force` (boolean).
+* `GitSubmoduleOptions`: configurations for `cwd`, `url`, `path`, and `branch`.
+* `GitCommitOptions`: Configures commit messages and AI provider status (`availableLLMs`).
+* `GitPushOptions`: Configures remote targets (`remote`, `branch`).
+* `GitSyncOptions`: Configures sync behavior, specifically `force` (headless mode).
+* `GitCloneOptions`: **(New in V1.2.0)** Configures cloning via `url`, `destination`, `branch`, and `depth`.
 
-**Type Safety Warnings:**
 
-* **Implicit Types:** None found. All fields are explicitly typed as `string`, `boolean`, or imported types.
-* **Optional Chaining:** Extensive use of optional properties (`?`) in `GitInitOptions` and `GitCommitOptions`. Consumers of these interfaces must handle `undefined` checks.
+* **Data Model Interfaces (Outputs/Structures):**
+* `GitRemoteConfig`: Simple name/url pair.
+* `GitRemote`: Detailed remote structure with `refs` (fetch/push URLs).
+* `GitStatusResult`: Comprehensive status object (`branch`, `isDirty`, `modified`, `staged`, `ahead`, `behind`).
+
+
 
 ### 5. Functional Logic Specification
 
-*Note: As this is a Type Definition file, it contains no executable methods. The "Logic" below describes the **implied behavior** enforced by these contracts upon the consuming services.*
+*Note: As this is a Type Definition file, it contains no executable methods. The following analyzes the logical intent enforced by these types.*
 
-#### 5.1 Interface: `GitDeleteRepoOptions`
+**A. Logic: Repository Initialization (`GitInitOptions`)**
 
-* **Logic Implication:** Enforces that a deletion request *may* specify a repo path, but explicitly includes a `confirm` string.
-* **Safety Mechanism:** The existence of `confirm` suggests the consuming service validates a specific string (likely "DELETE") before execution.
+* **Intent:** Defines the parameters required to bootstrap a new git repository.
+* **Logic Implication:** The presence of `force?: boolean` implies logic elsewhere that checks for existing `.git` directories and conditionally overwrites them. The `userName` and `userEmail` fields imply logic that configures local git config specifically for this repo.
 
-#### 5.2 Interface: `GitInitOptions`
+**B. Logic: AI-Assisted Commits (`GitCommitOptions`)**
 
-* **Logic Implication:**
-* `cwd` is mandatory, ensuring operations never run in an undefined directory context.
-* `force` (boolean) implies a logic path exists to overwrite or re-initialize existing `.git` folders.
+* **Intent:** Facilitates manual or AI-generated commit messages.
+* **Logic Implication:** The `message?: string` is optional. If missing, the consuming service is expected to use the `availableLLMs` array to trigger an AI generation flow. If present, the AI flow is bypassed.
 
+**C. Logic: Shallow Cloning (`GitCloneOptions`)**
 
+* **Intent:** optimizing bandwidth/storage for CI/CD or bootstrap scenarios.
+* **Logic Implication:** The inclusion of `depth?: number` indicates support for "shallow clones" (e.g., `--depth 1`), useful for environments where full history is unnecessary.
 
-#### 5.3 Interface: `GitCommitOptions`
+**D. Logic: Safety Mechanisms (`GitDeleteRepoOptions`)**
 
-* **Logic Implication:**
-* **Dual Mode:** The interface supports two logic paths:
-1. **Manual:** `message` is provided.
-2. **AI Assisted:** `message` is undefined, but `availableLLMs` is provided, triggering a prompt generation flow.
-
-
-
-
+* **Intent:** Prevention of accidental data loss.
+* **Logic Implication:** The `confirm?: string` field suggests a "Safety Valve" pattern where the backend logic must verify this string matches a specific constant (e.g., "DELETE") before executing the destruction logic.
 
 ---
 
 ## Part 2: Appendix - Testing Reference
 
+Since this is a types file, "testing" it directly is not applicable. However, these types strictly define the **Test Data** and **Mock Objects** required for testing the *Git Service* that consumes them.
+
 ### 1. Mocking Strategy
 
-Since this file contains interfaces, it cannot be "mocked" directly. However, these interfaces define **how to mock data** for the services that use them (e.g., `GitService.ts`).
+When unit testing the `GitService` or `GitController`, the following mock structures must be created based on `gitTypes.ts`:
 
-* **Target:** Unit tests for `GitService` or `CommandController`.
-* **Data Factories:** We must create immutable objects matching these interfaces to test the logic handles.
+* **Service:** `GitStatusService` (Hypothetical consumer)
+* **Mock Behavior:** When `getStatus()` is called, it must return a standard `GitStatusResult` object.
+* **Type Enforcement:** The mock return value must strictly adhere to the `GitStatusResult` interface defined in this file.
 
-#### Mock Object Definitions
 
-* **`mockInitOptions`**: Should provide valid paths for `cwd`.
-* **`mockCommitOptions`**: Should vary between providing a `message` (simple commit) and providing `availableLLMs` (AI flow).
+* **Service:** `GitInitService` (Hypothetical consumer)
+* **Mock Behavior:** Input validation tests must use `GitInitOptions`.
+* **Scenario:** Mocking a "re-init" scenario requires passing an object matching `GitInitOptions` with `{ force: true }`.
 
-### 2. Test Scenarios
 
-The following scenarios apply to the **consumers** of these types, ensuring they respect the contract defined in `gitTypes.ts`.
 
-| ID | Scenario | Input Data (based on interface) | Expected Behavior |
+### 2. Test Scenarios (For Consuming Services)
+
+The following scenarios are derived from the capabilities exposed by the types:
+
+| Scenario ID | Type Context | Scenario Description | Expected Data / State |
 | --- | --- | --- | --- |
-| **TS-01** | **Git Init (Happy Path)** | `GitInitOptions` with `cwd: "/tmp/test"` and `force: false` | Service initializes repo in `/tmp/test`. |
-| **TS-02** | **Git Init (Re-init Force)** | `GitInitOptions` with `force: true` | Service re-initializes existing repo without error. |
-| **TS-03** | **Commit (Manual)** | `GitCommitOptions` with `message: "chore: update"` | Service commits using the provided string. |
-| **TS-04** | **Commit (AI Flow)** | `GitCommitOptions` with `message: undefined`, `availableLLMs: [...]` | Service detects missing message and triggers LLM generation. |
-| **TS-05** | **Delete (Safety Check)** | `GitDeleteRepoOptions` with `confirm: "wrong_text"` | Service throws error/aborts due to mismatch validation. |
-| **TS-06** | **Submodule Add** | `GitSubmoduleOptions` with valid `url` and `path` | Service executes `git submodule add`. |
+| **TS-GIT-01** | `GitInitOptions` | **Happy Path:** Initialize new repo with user config. | Input: `{ cwd: '/app', userName: 'Bot', userEmail: 'bot@test.com' }` |
+| **TS-GIT-02** | `GitInitOptions` | **Edge Case:** Force re-init of existing repo. | Input: `{ cwd: '/app', force: true }` |
+| **TS-GIT-03** | `GitDeleteRepo` | **Error State:** Delete without confirmation string. | Input: `{ repo: 'owner/repo' }` <br>
+
+<br> **Result:** Error/Rejection. |
+| **TS-GIT-04** | `GitDeleteRepo` | **Happy Path:** Delete with valid confirmation. | Input: `{ repo: 'owner/repo', confirm: 'DELETE' }` |
+| **TS-GIT-05** | `GitCloneOptions` | **Happy Path:** Shallow clone (CI mode). | Input: `{ url: '...', destination: './src', depth: 1 }` |
+| **TS-GIT-06** | `GitCommitOptions` | **Edge Case:** Manual message overrides AI. | Input: `{ message: 'WIP', availableLLMs: [...] }` <br>
+
+<br> **Logic:** AI generation skipped. |
 
 ### 3. Test Data Requirements
 
-Use the following JSON structures to generate test payloads that strictly adhere to the `gitTypes.ts` definitions.
+Below are JSON snippets representing valid objects based on the interfaces in `gitTypes.ts`. These should be used as fixtures in the test suite.
 
-**A. Standard Initialization Payload**
+**A. Mock Status Result (`GitStatusResult`)**
 
 ```json
 {
-  "cwd": "./projects/my-app",
+  "branch": "feature/upgrade-types",
+  "isDirty": true,
+  "modified": ["src/types/gitTypes.ts"],
+  "staged": [],
+  "ahead": 0,
+  "behind": 2
+}
+
+```
+
+**B. Mock Remote Config (`GitRemote`)**
+
+```json
+{
+  "name": "origin",
+  "refs": {
+    "fetch": "https://github.com/org/app-manager.git",
+    "push": "https://github.com/org/app-manager.git"
+  }
+}
+
+```
+
+**C. Mock Clone Payload (`GitCloneOptions`)**
+
+```json
+{
+  "url": "git@github.com:user/repo.git",
+  "destination": "/var/www/project",
+  "branch": "develop",
+  "depth": 1
+}
+
+```
+
+**D. Mock Init Options (`GitInitOptions`)**
+
+```json
+{
+  "cwd": "./new-project",
   "defaultBranch": "main",
-  "userName": "TestUser",
+  "userName": "Test User",
   "userEmail": "test@example.com",
   "force": false
 }
 
 ```
-
-**B. AI Commit Payload**
-
-```json
-{
-  "message": undefined,
-  "availableLLMs": [
-    {
-      "provider": "openai",
-      "status": "connected",
-      "model": "gpt-4"
-    }
-  ]
-}
-
-```
-
-**C. Sync Payload (Headless)**
-
-```json
-{
-  "force": true
-}
-
-```
-
-**Next Step:** Would you like me to generate the corresponding `GitService` class skeleton that implements these interfaces, or generate the Zod schemas to validate these types at runtime?
