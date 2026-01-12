@@ -11,13 +11,20 @@
  * ================================================================================
  *
  * @description:
- * Central type definitions for the Git Operations Domain.
- * These interfaces define the command arguments and return structures for
- * core version control tasks, including syncing, pushing, and AI-assisted commits.
+ * Central type definitions for Local Git Operations.
+ *
+ * This file contains interfaces for interacting with the Git CLI via 'simple-git'.
+ * It covers:
+ * - Repository Status & State
+ * - Command Options (Init, Clone, Commit, Push, Sync)
+ * - Remote Configuration (Local references)
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.3.0, 20260110-22:16
+ * Cleaned up the file to ensure stricter TypeScript rules.
  *
  * V1.2.0, 20260110-21:15
  * Added GitCloneOptions to support repository bootstrapping.
@@ -37,68 +44,27 @@
  * ================================================================================
  */
 
-import type { LLMProviderStatus } from './llmTypes';
+/**
+ * GitStatusResult
+ * GitRemote
+ * GitInitOptions
+ * GitCloneOptions
+ * GitSubmoduleOptions
+ * GitCommitOptions
+ * GitPushOptions
+ * GitSyncOptions
+ */
+
+import { LLMProviderStatus } from './llmTypes';
+
+// ============================================================================
+// Core State Types
+// ============================================================================
 
 /**
- * Options for the "git delete" command.
+ * Represents the current status of a local repository.
+ * Vital for context generation and UI feedback.
  */
-export interface GitDeleteRepoOptions {
-	repo?: string;    // "owner/repo" or "repo"
-	confirm?: string; // The specific confirmation string required to execute. The "DELETE" string
-}
-
-/**
- * Options for the "git init" command.
- */
-export interface GitInitOptions {
-	cwd: string;
-	defaultBranch?: string;
-	userName?: string;
-	userEmail?: string;
-	force?: boolean; // Re-initialize existing repositories if true
-}
-
-/**
- * Options for the "git submodules" command.
- */
-export interface GitSubmoduleOptions {
-	cwd: string;
-	url: string;
-	path: string;
-	branch?: string;
-}
-
-/**
- * Options for the "git commit" command.
- */
-export interface GitCommitOptions {
-	message?: string; // Manual message string (bypasses AI generation)
-	availableLLMs?: LLMProviderStatus[]; // Passed from app health check for the AI selection menu
-}
-
-/**
- * Options for the "git push" command.
- */
-export interface GitPushOptions {
-	remote?: string;
-	branch?: string;
-}
-
-/**
- * Options for the "git sync" command.
- */
-export interface GitSyncOptions {
-	force?: boolean; // Headless mode: Skips UI prompts/intro
-}
-
-/**
- * Represents a configured remote upstream.
- */
-export interface GitRemoteConfig {
-	name: string;
-	url: string;
-}
-
 export interface GitStatusResult {
 	branch: string;
 	isDirty: boolean;
@@ -109,7 +75,7 @@ export interface GitStatusResult {
 }
 
 /**
- * Represents a remote repository configuration.
+ * Represents a remote repository reference configured locally.
  * Returned by simple-git's getRemotes(true).
  */
 export interface GitRemote {
@@ -120,12 +86,59 @@ export interface GitRemote {
 	};
 }
 
+// ============================================================================
+// Command Option Types
+// ============================================================================
+
 /**
- * Configuration options for cloning a repository.
+ * Options for initializing a new repository.
+ */
+export interface GitInitOptions {
+	cwd: string;
+	defaultBranch?: string; // default: 'main'
+	userName?: string;
+	userEmail?: string;
+}
+
+/**
+ * Options for cloning a repository (Bootstrapping).
  */
 export interface GitCloneOptions {
-	url: string;          // The remote repository URL
-	destination: string;  // Local path to clone into
-	branch?: string;      // Optional: Specific branch/tag to checkout
-	depth?: number;       // Optional: Shallow clone depth (e.g. 1 for CI/CD)
+	url: string;          // Remote URL
+	destination: string;  // Local path
+	branch?: string;      // Specific branch/tag
+	depth?: number;       // Shallow clone depth
+}
+
+/**
+ * Options for adding a submodule.
+ */
+export interface GitSubmoduleOptions {
+	cwd: string;
+	url: string;
+	path: string;
+	branch?: string;
+}
+
+/**
+ * Options for the commit workflow.
+ */
+export interface GitCommitOptions {
+	message?: string; // Manual message (bypasses AI)
+	availableLLMs?: LLMProviderStatus[]; // For the selection menu
+}
+
+/**
+ * Options for pushing changes.
+ */
+export interface GitPushOptions {
+	remote?: string;
+	branch?: string;
+}
+
+/**
+ * Options for the sync workflow.
+ */
+export interface GitSyncOptions {
+	force?: boolean; // Headless: Skip UI prompts
 }

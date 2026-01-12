@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/types/githubTypes.ts
- * @version:    1.1.0
+ * @version:    1.2.0
  * @createDate: 2025 Dec 31
  * @createTime: 01:08
  * @author:     Steve R Lewis
@@ -11,15 +11,18 @@
  * ================================================================================
  *
  * @description:
- * Central type definitions for the GitHub Domain.
+ * Central type definitions for the Remote GitHub Domain.
  *
- * Includes:
- * 1. Configuration types (for repositoryRegistry.json).
- * 2. API Response types (for GitHub REST API interactions).
+ * This file contains interfaces for:
+ * 1. GitHub REST API Responses (Snake_Case to match API).
+ * 2. Repository Registry Configuration (JSON file structure).
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.2.0, 20260101-22:26
+ * Added GitStatusResult interface for pushAll command logic.
  *
  * V1.1.0, 20251231-01:30
  * Refactored to namespaced types (GithubPrefix) for clarity.
@@ -31,67 +34,65 @@
  */
 
 /**
- * ================================================================================
- * @file:        ~/app/types/gitTypes.ts
- * @description: Represents the status of a repository (e.g. for prompt display).
- * ================================================================================
+ * GithubRepositoryConfig {
+ * GithubRegistry {
+ * GithubUser {
+ * GithubRepo {
+ * GithubOrg {
+ * GithubApiError {
  */
 
-export interface GitStatusResult {
-	branch: string;
-	isDirty: boolean;
-	modified: string[];
-	staged: string[];
-	// Add these for pushAll command logic:
-	ahead?: number;
-	behind?: number;
-}
-
 /**
- * Configuration object representing a single repository entry in the registry.
- * Maps to an entry in `repositoryRegistry.json`.
+ * Configuration object for a single repository in the registry.
  */
 export interface GithubRepositoryConfig {
 	repositoryName: string;
 	githubToken: string;
-	githubOrg?: string; // Required to match repositoryRegistry.json and githubService usage
+	githubOrg?: string; // Optional: Overrides default user scope
 }
 
 /**
- * Structure of the JSON file used to store repository configurations.
+ * The Root structure of the registry file.
  */
 export interface GithubRegistry {
 	records: GithubRepositoryConfig[];
 }
 
-// --- API Response Types (Used by GithubService) ---
+// --- GitHub REST API Contracts (Snake Case matches API) ---
 
 /**
- * Represents a GitHub User object returned from the API.
+ * Represents a GitHub User or Organization owner.
  */
 export interface GithubUser {
 	login: string;
 	id: number;
 	avatar_url: string;
 	html_url: string;
+	type: 'User' | 'Organization';
 }
 
 /**
  * Represents a GitHub Repository object returned from the API.
+ * Properties are kept in snake_case to match the raw API response strictly.
  */
 export interface GithubRepo {
 	id: number;
+	node_id: string;
 	name: string;
 	full_name: string;
 	private: boolean;
+	owner: GithubUser;
 	html_url: string;
 	description: string | null;
 	fork: boolean;
+	url: string;
 	created_at: string;
 	updated_at: string;
+	pushed_at: string;
+	git_url: string;
+	ssh_url: string;
+	clone_url: string;
 	default_branch: string;
-	clone_url?: string;
-	owner?: GithubUser;
 }
 
 /**
@@ -102,4 +103,13 @@ export interface GithubOrg {
 	id: number;
 	url: string;
 	repos_url: string;
+}
+
+/**
+ * Standardized Error Object for API failures.
+ */
+export interface GithubApiError {
+	message: string;
+	documentation_url?: string;
+	status?: string;
 }

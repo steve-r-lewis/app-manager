@@ -8,121 +8,132 @@
 
 ### 1. Component Overview
 
-* **Purpose:** This component serves as the **Data Contract Layer** for the application's Git Domain. It does not contain runtime logic but defines the strict structures (TypeScript Interfaces) required for input arguments (Options) and output payloads (Results) for version control operations.
+* **Purpose:** This component functions as the **Data Contract Layer** for the application's Git Domain. It serves as the central source of truth for data shapes exchanged between the UI/Controller layer and the underlying Git Service layer.
 * **Role in System:**
-* **Shared Definitions:** Acts as the central source of truth for data shapes passed between the UI/Controller layer and the underlying Git Service layer.
-* **Type Safety Enforcer:** Ensures that commands like `init`, `commit`, `push`, and `clone` receive correctly typed arguments, specifically facilitating features like AI-assisted commits and repository bootstrapping.
+* **Type Safety Enforcer:** It ensures strict typing for version control operations (e.g., `init`, `commit`, `push`, `clone`), facilitating features like AI-assisted commits and repository bootstrapping.
+* **Dependency Provider:** It acts as a shared definition provider that does not contain runtime logic but defines input arguments (Options) and output payloads (Results).
 
 
 
 ### 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Data Transfer Object (DTO) Definitions:** The interfaces (e.g., `GitCommitOptions`, `GitStatusResult`) effectively function as DTO definitions, strictly defining how data moves across system boundaries.
-* **Interface Segregation:** Each Git command has a specific, decoupled configuration interface (e.g., `GitDeleteRepoOptions` is distinct from `GitInitOptions`), preventing "god objects" for configuration.
+* **Data Transfer Object (DTO) Definitions:** The interfaces (e.g., `GitCommitOptions`, `GitStatusResult`) are designed as DTOs to strictly define how data moves across system boundaries.
+* **Interface Segregation:** Each Git command utilizes a specific, decoupled configuration interface (e.g., `GitDeleteRepoOptions` is distinct from `GitInitOptions`) to avoid "god objects".
 
 
 * **State Management:** **Stateless**. This file contains only type definitions and no runtime state storage.
-* **Complexity Assessment:** **Low**. The file contains no control flow, logic, or algorithmic complexity. It is purely declarative.
+* **Complexity Assessment:** **Low**. The file is purely declarative with no control flow, logic, or algorithmic complexity.
 
 ### 3. Dependency Graph
 
 * **Internal Dependencies:**
-* `LLMProviderStatus` (imported from `./llmTypes`): Used to define the availability of AI providers within `GitCommitOptions`.
+* `LLMProviderStatus` (imported from `./llmTypes`): Used within `GitCommitOptions` to define the availability of AI providers.
 
 
 * **External Dependencies:**
-* **Implicit:** While no runtime libraries are imported, the data shapes `GitStatusResult` and `GitRemote` match the return structures commonly associated with the `simple-git` library, suggesting a strict typing wrapper around that external dependency.
+* **Implicit:** The data shapes `GitStatusResult` and `GitRemote` correspond to return structures associated with the `simple-git` library, acting as a strict typing wrapper around this external dependency.
 
 
-* **Coupling Analysis:** **Loosely Coupled**. This module is a dependency *provider*. It does not depend on logic from other parts of the system, only on one other type definition file (`llmTypes`).
+* **Coupling Analysis:** **Loosely Coupled**. This module is a dependency *provider*. It depends only on one other type definition file (`llmTypes`) and does not rely on logic from other parts of the system.
 
 ### 4. Data Types & Interfaces
 
-The file defines the following key interfaces. Note that strictly speaking, there are no "methods" or "return types" in this file, only property definitions.
+The component defines the following primary public interfaces. **Note:** As a type definition file, there are no methods or return types, only property definitions.
 
-* **Command Option Interfaces (Inputs):**
-* `GitDeleteRepoOptions`: Requires `repo` (string) and `confirm` (string).
-* `GitInitOptions`: Defines project initialization including `cwd`, `defaultBranch`, `userName`, `userEmail`, and `force` (boolean).
-* `GitSubmoduleOptions`: configurations for `cwd`, `url`, `path`, and `branch`.
-* `GitCommitOptions`: Configures commit messages and AI provider status (`availableLLMs`).
-* `GitPushOptions`: Configures remote targets (`remote`, `branch`).
-* `GitSyncOptions`: Configures sync behavior, specifically `force` (headless mode).
-* `GitCloneOptions`: **(New in V1.2.0)** Configures cloning via `url`, `destination`, `branch`, and `depth`.
+* **Key Interfaces (Command Inputs):**
+* `GitDeleteRepoOptions`: Configuration for repository deletion.
+* `GitInitOptions`: Configuration for project bootstrapping.
+* `GitSubmoduleOptions`: Configuration for submodule management.
+* `GitCommitOptions`: Configuration for commit messages and AI generation.
+* `GitPushOptions`: Configuration for remote targets.
+* `GitSyncOptions`: Configuration for synchronization behavior.
+* `GitCloneOptions`: Configuration for cloning operations.
 
 
-* **Data Model Interfaces (Outputs/Structures):**
-* `GitRemoteConfig`: Simple name/url pair.
-* `GitRemote`: Detailed remote structure with `refs` (fetch/push URLs).
-* `GitStatusResult`: Comprehensive status object (`branch`, `isDirty`, `modified`, `staged`, `ahead`, `behind`).
+* **Data Model Interfaces (Outputs):**
+* `GitRemoteConfig`: Defines a simple name/URL pair.
+* `GitRemote`: Defines detailed remote structures including fetch/push URLs.
+* `GitStatusResult`: Defines comprehensive repository status (modified, staged, ahead/behind counts).
 
 
 
 ### 5. Functional Logic Specification
 
-*Note: As this is a Type Definition file, it contains no executable methods. The following analyzes the logical intent enforced by these types.*
+*Note: This file contains no executable methods. The following specification details the logical intent and constraints enforced by the defined types.*
 
-**A. Logic: Repository Initialization (`GitInitOptions`)**
+**A. Logic: Repository Initialization**
 
-* **Intent:** Defines the parameters required to bootstrap a new git repository.
-* **Logic Implication:** The presence of `force?: boolean` implies logic elsewhere that checks for existing `.git` directories and conditionally overwrites them. The `userName` and `userEmail` fields imply logic that configures local git config specifically for this repo.
+* **Interface:** `GitInitOptions`
+* **Logic Implication:**
+* **Overwrite Safety:** The presence of `force?: boolean` implies logic elsewhere that checks for existing `.git` directories and conditionally overwrites them.
+* **User Config:** Fields `userName` and `userEmail` imply logic that configures local git config specifically for the new repository.
 
-**B. Logic: AI-Assisted Commits (`GitCommitOptions`)**
 
-* **Intent:** Facilitates manual or AI-generated commit messages.
-* **Logic Implication:** The `message?: string` is optional. If missing, the consuming service is expected to use the `availableLLMs` array to trigger an AI generation flow. If present, the AI flow is bypassed.
 
-**C. Logic: Shallow Cloning (`GitCloneOptions`)**
+**B. Logic: AI-Assisted Commits**
 
-* **Intent:** optimizing bandwidth/storage for CI/CD or bootstrap scenarios.
-* **Logic Implication:** The inclusion of `depth?: number` indicates support for "shallow clones" (e.g., `--depth 1`), useful for environments where full history is unnecessary.
+* **Interface:** `GitCommitOptions`
+* **Logic Implication:**
+* **Conditional Generation:** The `message?: string` is optional. Logic dictates that if this is missing, the consuming service must use `availableLLMs` to trigger an AI generation flow. If present, the AI flow is bypassed.
 
-**D. Logic: Safety Mechanisms (`GitDeleteRepoOptions`)**
 
-* **Intent:** Prevention of accidental data loss.
-* **Logic Implication:** The `confirm?: string` field suggests a "Safety Valve" pattern where the backend logic must verify this string matches a specific constant (e.g., "DELETE") before executing the destruction logic.
+
+**C. Logic: Shallow Cloning**
+
+* **Interface:** `GitCloneOptions`
+* **Logic Implication:**
+* **Optimization:** The inclusion of `depth?: number` enforces support for "shallow clones" (e.g., `--depth 1`), intended for bandwidth optimization in CI/CD or bootstrap scenarios.
+
+
+
+**D. Logic: Deletion Safety**
+
+* **Interface:** `GitDeleteRepoOptions`
+* **Logic Implication:**
+* **Safety Valve:** The `confirm?: string` field supports a pattern where backend logic verifies this string matches a specific constant (e.g., "DELETE") before executing destruction logic.
+
+
 
 ---
 
 ## Part 2: Appendix - Testing Reference
 
-Since this is a types file, "testing" it directly is not applicable. However, these types strictly define the **Test Data** and **Mock Objects** required for testing the *Git Service* that consumes them.
-
 ### 1. Mocking Strategy
 
-When unit testing the `GitService` or `GitController`, the following mock structures must be created based on `gitTypes.ts`:
+Since `gitTypes.ts` contains only definitions, the following strategy applies to the **consuming services** (e.g., `GitService`) that implement these types.
 
-* **Service:** `GitStatusService` (Hypothetical consumer)
-* **Mock Behavior:** When `getStatus()` is called, it must return a standard `GitStatusResult` object.
-* **Type Enforcement:** The mock return value must strictly adhere to the `GitStatusResult` interface defined in this file.
-
-
-* **Service:** `GitInitService` (Hypothetical consumer)
-* **Mock Behavior:** Input validation tests must use `GitInitOptions`.
-* **Scenario:** Mocking a "re-init" scenario requires passing an object matching `GitInitOptions` with `{ force: true }`.
+* **Services to Mock:**
+* **`GitStatusService` (Hypothetical):** Responsible for retrieving repo status.
+* **`GitInitService` (Hypothetical):** Responsible for repo initialization.
 
 
+* **Mock Behaviour:**
+* **Status Retrieval:** When `getStatus()` is called, the mock must return a valid `GitStatusResult` object.
+* **Initialization Validation:** Input validation tests must accept objects matching `GitInitOptions`. To mock a "re-init" scenario, the mock must handle inputs where `{ force: true }`.
 
-### 2. Test Scenarios (For Consuming Services)
 
-The following scenarios are derived from the capabilities exposed by the types:
+
+### 2. Test Scenarios
+
+The following scenarios validate the logic paths enforced by the types:
 
 | Scenario ID | Type Context | Scenario Description | Expected Data / State |
 | --- | --- | --- | --- |
-| **TS-GIT-01** | `GitInitOptions` | **Happy Path:** Initialize new repo with user config. | Input: `{ cwd: '/app', userName: 'Bot', userEmail: 'bot@test.com' }` |
-| **TS-GIT-02** | `GitInitOptions` | **Edge Case:** Force re-init of existing repo. | Input: `{ cwd: '/app', force: true }` |
-| **TS-GIT-03** | `GitDeleteRepo` | **Error State:** Delete without confirmation string. | Input: `{ repo: 'owner/repo' }` <br>
+| **TS-GIT-01** | `GitInitOptions` | **Happy Path:** Initialize new repo with user config. | **Input:** `{ cwd: '/app', userName: 'Bot', userEmail: 'bot@test.com' }` |
+| **TS-GIT-02** | `GitInitOptions` | **Edge Case:** Force re-init of existing repo. | **Input:** `{ cwd: '/app', force: true }` |
+| **TS-GIT-03** | `GitDeleteRepo` | **Error State:** Delete without confirmation string. | **Input:** `{ repo: 'owner/repo' }`<br>
 
-<br> **Result:** Error/Rejection. |
-| **TS-GIT-04** | `GitDeleteRepo` | **Happy Path:** Delete with valid confirmation. | Input: `{ repo: 'owner/repo', confirm: 'DELETE' }` |
-| **TS-GIT-05** | `GitCloneOptions` | **Happy Path:** Shallow clone (CI mode). | Input: `{ url: '...', destination: './src', depth: 1 }` |
-| **TS-GIT-06** | `GitCommitOptions` | **Edge Case:** Manual message overrides AI. | Input: `{ message: 'WIP', availableLLMs: [...] }` <br>
+<br>**Result:** Error/Rejection. |
+| **TS-GIT-04** | `GitDeleteRepo` | **Happy Path:** Delete with valid confirmation. | **Input:** `{ repo: 'owner/repo', confirm: 'DELETE' }` |
+| **TS-GIT-05** | `GitCloneOptions` | **Happy Path:** Shallow clone (CI mode). | **Input:** `{ url: '...', destination: './src', depth: 1 }` |
+| **TS-GIT-06** | `GitCommitOptions` | **Edge Case:** Manual message overrides AI. | **Input:** `{ message: 'WIP', availableLLMs: [...] }`<br>
 
-<br> **Logic:** AI generation skipped. |
+<br>**Logic:** AI generation skipped. |
 
 ### 3. Test Data Requirements
 
-Below are JSON snippets representing valid objects based on the interfaces in `gitTypes.ts`. These should be used as fixtures in the test suite.
+The following JSON structures represent valid fixtures based on `gitTypes.ts`.
 
 **A. Mock Status Result (`GitStatusResult`)**
 
@@ -175,3 +186,5 @@ Below are JSON snippets representing valid objects based on the interfaces in `g
 }
 
 ```
+
+---

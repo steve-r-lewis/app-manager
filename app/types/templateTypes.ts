@@ -214,3 +214,14 @@ export interface VueComponentContext extends BaseTemplateContext {
 	name: string; // e.g., "UserProfile"
 	description?: string;
 }
+
+// Add to app/types/index.ts
+export interface JsonTemplateContext extends BaseTemplateContext {
+	targetFile?: string;
+	environment?: string;
+	dataPlatform?: string;
+	dataSchema?: string;
+	dataQueryLanguage?: string;
+	dataDomain?: string;
+	notes?: string;
+}

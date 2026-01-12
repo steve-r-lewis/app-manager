@@ -1,198 +1,167 @@
-# **`githubTypes.ts`**
+# Technical Specification Document
 
-**Note:** As this file consists exclusively of TypeScript **interfaces** and contains no executable code (functions, classes, or runtime logic), the specification focuses on the **Data Contract** and **Schema Definitions** rather than control flow.
+**Project:** app-manager
+**Component:** Remote GitHub Domain Type Definitions (`githubTypes.ts`)
+**Version:** 1.2.0
+**Date:** 2026-01-10
 
----
+## Part 1: Operational & Design Specification
 
-# Part 1: Operational & Design Specification
+### 1. Component Overview
 
-## 1. Component Overview
+* **Purpose:**
+This file serves as the centralized **Domain Definition** layer for the application's interaction with the GitHub ecosystem. It provides strict TypeScript interfaces to model configuration files (`registry`), Data Transfer Objects (DTOs) for the GitHub REST API, and error handling structures.
+* **Role in System:**
+* **Data Layer / Type Safety:** It acts as the foundational contract for the Data Layer. It ensures that any service consuming GitHub APIs or reading local configuration files adheres to a strict schema, preventing runtime errors caused by mismatched property access.
+* **Interoperability:** It standardizes the data shape between the local application logic (CamelCase convention) and external GitHub API responses (Snake_Case convention).
 
-* **Purpose:** This file acts as the **Central Domain Model** for the application's GitHub interactions. It defines the strict data contracts for Git status reporting, repository configuration (registry), and external GitHub REST API responses.
-* **Role in System:** **Data Layer / Type Definitions**. It serves as a foundational dependency for the `GithubService`, configuration loaders, and UI components, ensuring type safety across the architectural boundaries of the application.
 
-## 2. Architecture & Patterns
+
+### 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Data Transfer Object (DTO) Definitions:** The interfaces (specifically `GithubUser`, `GithubRepo`, `GithubOrg`) act as DTO definitions for API responses.
-* **Configuration Schema:** `GithubRegistry` and `GithubRepositoryConfig` define the schema for the application's persistence layer (`repositoryRegistry.json`).
+* **Data Transfer Object (DTO):** The interfaces `GithubRepo`, `GithubUser`, and `GithubOrg` implement the DTO pattern, mirroring the external API's JSON structure exactly to facilitate direct serialization/deserialization.
+* **Config Object:** `GithubRegistry` and `GithubRepositoryConfig` follow a structural pattern for configuration management.
 
 
-* **State Management:** **Stateless**. This file contains only type definitions which are erased at runtime.
-* **Complexity Assessment:** **Low**. The file is purely declarative. Complexity lies only in the correct mapping of external API fields to these interfaces.
+* **State Management:**
+* **Stateless:** This component is purely declarative. It contains no runtime logic, state, or side effects.
 
-## 3. Dependency Graph
 
-* **Internal Dependencies:** **None**. This file is a leaf node in the dependency tree.
-* **External Dependencies:** **None**. It relies on standard TypeScript primitives.
+* **Complexity Assessment:**
+* **Rating:** **Low**
+* **Justification:** The file consists exclusively of TypeScript `interface` definitions. There is no control flow, cyclomatic complexity, or algorithm implementation.
+* **QA Flag:** *Discrepancy Detected.* The header comments for V1.2.0 claim the addition of a `GitStatusResult` interface, but this interface is **missing** from the provided code body. This represents a documentation/implementation mismatch.
+
+
+
+### 3. Dependency Graph
+
+* **Internal Dependencies:** None. (This file is a leaf node in the dependency graph).
+* **External Dependencies:** None.
 * **Coupling Analysis:**
-* **Inbound Coupling (Afferent):** **High**. Many services (e.g., `GithubService`, `GitService`, configuration utilities) likely import these types.
-* **Outbound Coupling (Efferent):** **Zero**. This file imports nothing.
+* **Loose Coupling:** The file does not import any other modules.
+* **High Cohesion:** The file contains *only* types related to the GitHub domain, ensuring a single responsibility.
 
 
 
-## 4. Data Types & Interfaces
+### 4. Data Types & Interfaces
 
-This section details the specific contracts enforced by this file.
+The following interfaces are exported for system-wide use.
 
-### A. Local Git Status
+#### Configuration Types
 
-**Interface:** `GitStatusResult`
+| Interface | Usage |
+| --- | --- |
+| **`GithubRepositoryConfig`** | Defines the schema for a single entry in the local registry JSON file. Note the optional `githubOrg` which acts as an override. |
+| **`GithubRegistry`** | Defines the root structure of the registry file, containing an array of records. |
 
-* **Purpose:** Represents the state of a local git repository on the disk.
-* **Fields:**
-* `branch` (string): Current active branch.
-* `isDirty` (boolean): Flag indicating uncommitted changes.
-* `modified` (string[]): List of modified file paths.
-* `staged` (string[]): List of staged file paths.
-* `ahead` (number, optional): Commits ahead of remote.
-* `behind` (number, optional): Commits behind remote.
+#### API Response Types (DTOs)
 
+| Interface | Usage |
+| --- | --- |
+| **`GithubUser`** | Models the `owner` object in API responses. Discriminated by `type` ('User' vs 'Organization'). |
+| **`GithubRepo`** | Models the repository details. **Strictly enforces snake_case** to match the raw API JSON. |
+| **`GithubOrg`** | Models organization details. |
+| **`GithubApiError`** | Standardized structure for catching and typing HTTP errors from the GitHub API. |
 
+### 5. Functional Logic Specification
 
-### B. Configuration (Registry)
+*Note: As this is a Type Definition file, it contains no executable methods. However, it dictates the Logic Flow of services that import it.*
 
-**Interface:** `GithubRepositoryConfig`
+#### Implicit Contract Rules
 
-* **Purpose:** Schema for a single entry in `repositoryRegistry.json`.
-* **Fields:**
-* `repositoryName` (string): The identifier.
-* `githubToken` (string): Auth token (likely a PAT).
-* `githubOrg` (string, optional): The organization name. Note: Marked as required for `githubService` usage in comments, but optional in type definition (`?`).
+While there are no methods to specify, the interfaces enforce the following logic on consuming services:
 
-
-
-**Interface:** `GithubRegistry`
-
-* **Purpose:** Root structure of the registry JSON file.
-* **Fields:**
-* `records`: Array of `GithubRepositoryConfig`.
-
-
-
-### C. External API Responses
-
-**Interface:** `GithubUser`
-
-* **Purpose:** Subset of GitHub API User object.
-* **Fields:** `login`, `id`, `avatar_url`, `html_url`.
-
-**Interface:** `GithubRepo`
-
-* **Purpose:** Subset of GitHub API Repository object.
-* **Fields:** `id`, `name`, `full_name`, `private`, `html_url`, `description` (nullable), `fork`, `created_at`, `updated_at`, `default_branch`, `clone_url` (optional), `owner` (optional `GithubUser`).
-
-**Interface:** `GithubOrg`
-
-* **Purpose:** Subset of GitHub API Organization object.
-* **Fields:** `login`, `id`, `url`, `repos_url`.
-* **Type Safety Audit:**
-* **Implicit Any:** None.
-* **Nullable Types:** `description` is explicitly `string | null`.
-* **Optional Properties:** `ahead`, `behind`, `githubOrg`, `clone_url`, `owner` are correctly marked optional (`?`).
-
-
-
-## 5. Functional Logic Specification
-
-*Since this file contains no executable methods, this section outlines the validation logic implied by the types.*
-
-### 5.1 Interface: `GitStatusResult`
-
-* **Logic Implication:** Any service returning this object must calculate `isDirty` based on the presence of files in `modified` or `staged`, though the interface allows them to be decoupled.
-* **Side Effects:** None.
-
-### 5.2 Interface: `GithubRepositoryConfig`
-
-* **Logic Implication:** Consumers of this type must handle the case where `githubOrg` is undefined, potentially falling back to the authenticated user's context or throwing a configuration error if strict organization scoping is required.
+1. **Registry Parsing:** Any service reading the registry file **MUST** validate that the JSON root object contains a `records` array, and each item in that array contains `repositoryName` and `githubToken`.
+2. **API Consumption:** Services fetching data from GitHub **MUST** expect `snake_case` properties (e.g., `html_url`, `clone_url`). Mapping to `camelCase` for internal app use must happen *after* the raw response is typed against `GithubRepo`.
+3. **Nullable Fields:** The `GithubRepo` interface defines `description` as `string | null`. Logic consuming this property **MUST** handle null checks to avoid rendering errors.
 
 ---
 
-# Part 2: Appendix - Testing Reference
+## Part 2: Appendix - Testing Reference
 
-**Note:** You cannot "unit test" this file directly as it disappears at compilation. The strategy below details how to use these types to facilitate testing of *dependent* services (e.g., `GithubService`).
+Since this file contains only interfaces (which are erased at runtime), you cannot "Unit Test" this file directly. However, these types are the "Source of Truth" for testing the **Services** that use them.
 
-## 1. Mocking Strategy
+The following strategies ensure the types accurately reflect reality.
 
-When testing services that consume these types, use these definitions to generate strictly typed mocks.
+### 1. Mocking Strategy
 
-* **Services to Mock:** None (this file has no dependencies).
-* **Mock Behaviour (For Consumers):**
-* **Mocking `GitStatusResult`:** Create mocks with `isDirty: true` to test "commit required" logic in consumers. Create mocks with `behind: 5` to test "pull required" logic.
-* **Mocking `GithubRepo`:** Create mocks with `private: true` vs `private: false` to test visibility logic.
+When testing services (e.g., `GithubService.ts` or `ConfigLoader.ts`) that import these types, use the following Mock Objects.
+
+* **Target:** `GithubRepositoryConfig`
+* **Scenario:** Testing config loading logic.
+* **Mock Behavior:** Create valid and invalid JSON objects to test schema validation.
+
+
+* **Target:** `GithubRepo` (API Response)
+* **Scenario:** Testing the method that fetches repo details.
+* **Mock Behavior:** Mock the HTTP Client (e.g., Axios/Fetch) to return a JSON object that strictly matches `GithubRepo`.
 
 
 
-## 2. Test Scenarios (Integration/Type Compliance)
+### 2. Test Scenarios (For Consuming Services)
 
-These scenarios apply to the **consumers** of `githubTypes.ts`.
+These scenarios validate that the application handles the data structures defined in `githubTypes.ts` correctly.
 
-| Scenario Category | Scenario Description | Expected Outcome |
-| --- | --- | --- |
-| **Happy Path** | Load `repositoryRegistry.json` and cast to `GithubRegistry`. | The JSON structure matches the interface strictly. |
-| **Happy Path** | API Service maps a raw `axios` response to `GithubRepo`. | All required fields (`id`, `name`, `full_name`) are present. |
-| **Edge Case** | `GithubRepo` response has `description: null`. | Type system allows it; UI/Logic should handle `null` gracefully. |
-| **Edge Case** | `GitStatusResult` has `ahead: undefined`. | Logic should assume 0 or "unknown" without crashing. |
-| **Error State** | `GithubRepositoryConfig` missing `repositoryName`. | TypeScript compiler throws error during development; Runtime validation (Zod/Joi) should fail. |
+| Scenario Category | Scenario ID | Description | Expected Outcome |
+| --- | --- | --- | --- |
+| **Happy Path** | `TC-CONF-01` | Load `GithubRegistry` with valid records. | System parses `repositoryName` and `githubToken` correctly. |
+| **Happy Path** | `TC-API-01` | Receive `GithubRepo` from API with `owner` type "Organization". | System correctly identifies `owner.login` and access `ssh_url`. |
+| **Edge Case** | `TC-API-02` | Receive `GithubRepo` with `description: null`. | UI/Log displays "No description provided" (or empty) without crashing. |
+| **Edge Case** | `TC-CONF-02` | `GithubRepositoryConfig` missing optional `githubOrg`. | System defaults to User scope logic. |
+| **Error State** | `TC-API-ERR` | API returns 404. | Service maps response to `GithubApiError` and reads `message`. |
 
-## 3. Test Data Requirements
+### 3. Test Data Requirements (Fixtures)
 
-Use the following JSON fixtures in your test suites. They are guaranteed to satisfy the interfaces defined in `githubTypes.ts`.
+Use these JSON snippets as fixtures in your test suite. They conform strictly to the interfaces in `githubTypes.ts`.
 
-### Fixture A: `mockGitStatus.json` (Satisfies `GitStatusResult`)
+#### Fixture A: Valid Repository Config (`GithubRepositoryConfig`)
 
 ```json
 {
-  "branch": "feature/upgrade-types",
-  "isDirty": true,
-  "modified": ["src/app.ts", "package.json"],
-  "staged": ["src/types.ts"],
-  "ahead": 1,
-  "behind": 0
+  "repositoryName": "app-manager",
+  "githubToken": "ghp_1234567890abcdef",
+  "githubOrg": "TechCorp"
 }
 
 ```
 
-### Fixture B: `mockRegistry.json` (Satisfies `GithubRegistry`)
+#### Fixture B: Valid API Response (`GithubRepo`)
+
+*Note the snake_case keys as defined in the interface.*
 
 ```json
 {
-  "records": [
-    {
-      "repositoryName": "app-manager",
-      "githubToken": "ghp_SECRET_TOKEN_123",
-      "githubOrg": "AcmeCorp"
-    },
-    {
-      "repositoryName": "legacy-system",
-      "githubToken": "ghp_SECRET_TOKEN_456"
-    }
-  ]
-}
-
-```
-
-### Fixture C: `mockGithubRepo.json` (Satisfies `GithubRepo`)
-
-```json
-{
-  "id": 12345678,
+  "id": 123456,
+  "node_id": "MDEwOlJlcG9zaXRvcnkxMjM0NTY=",
   "name": "app-manager",
-  "full_name": "SteveRLewis/app-manager",
+  "full_name": "TechCorp/app-manager",
   "private": true,
-  "html_url": "https://github.com/SteveRLewis/app-manager",
-  "description": "Central application manager",
-  "fork": false,
-  "created_at": "2025-12-31T01:08:00Z",
-  "updated_at": "2025-12-31T01:30:00Z",
-  "default_branch": "main",
-  "clone_url": "https://github.com/SteveRLewis/app-manager.git",
   "owner": {
-    "login": "SteveRLewis",
-    "id": 999,
-    "avatar_url": "https://avatars.githubusercontent.com/u/999?v=4",
-    "html_url": "https://github.com/SteveRLewis"
-  }
+    "login": "TechCorp",
+    "id": 98765,
+    "avatar_url": "https://avatars.githubusercontent.com/u/98765?v=4",
+    "html_url": "https://github.com/TechCorp",
+    "type": "Organization"
+  },
+  "html_url": "https://github.com/TechCorp/app-manager",
+  "description": "Central management tool",
+  "fork": false,
+  "url": "https://api.github.com/repos/TechCorp/app-manager",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-02T00:00:00Z",
+  "pushed_at": "2025-01-03T00:00:00Z",
+  "git_url": "git://github.com/TechCorp/app-manager.git",
+  "ssh_url": "git@github.com:TechCorp/app-manager.git",
+  "clone_url": "https://github.com/TechCorp/app-manager.git",
+  "default_branch": "main"
 }
 
 ```
+
+---
+
+### Next Steps
+
+Would you like me to generate a **Zod** schema or **io-ts** validator based on these interfaces? This would allow you to enforce these types at runtime (validating actual API responses against these definitions).

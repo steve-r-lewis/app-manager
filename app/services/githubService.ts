@@ -58,6 +58,22 @@
  * ================================================================================
  */
 
+/**
+ * git
+ * initRepo
+ * cloneRepo
+ * getStatus
+ * createCommit
+ * push
+ * syncRepo
+ * addSubmodule
+ * getRemotes
+ * getStagedDiff
+ * getAuthHeader
+ * deleteRemoteRepo
+ * listRemoteRepos
+ */
+
 import { simpleGit, SimpleGit } from 'simple-git';
 import { logger } from './loggerService';
 import type {

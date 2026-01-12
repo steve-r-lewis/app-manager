@@ -1,200 +1,192 @@
-Here is the comprehensive Technical Specification and Test Strategy based on the analysis of the provided source code.
-
 ### Part 1: Operational & Design Specification
 
-#### 1. Component Overview
+**1. Component Overview**
 
-* **Purpose:** The `codeService` module is designed to automate code introspection and documentation management. It provides capabilities to parse source code files (TypeScript, JavaScript, and Vue), extract metadata, manage file headers, and generate JSDoc comments using an LLM integration.
-* **Role in System:** This component acts as a **Tooling/Utility Service**. It bridges the gap between raw file storage (`fileService`) and AI generation capabilities (`llmService`) to perform structural code modifications.
+* **Purpose:** The `CodeService` acts as a "Code Intelligence" engine designed to parse, analyze, and manipulate source code files programmatically. Its primary capabilities include extracting metadata, identifying documentable code blocks (functions, classes), and injecting automated documentation (File Headers and JSDoc).
+* **Role in System:** This is a **Service Layer** component. It functions as a middleware between the File System (data persistence) and the LLM Service (generative content), orchestrating the read-modify-write cycle required for automated code documentation tools.
 
-#### 2. Architecture & Patterns
+**2. Architecture & Patterns**
 
 * **Design Patterns:**
-* **Strategy Pattern:** The service utilizes the Strategy pattern to handle different file types. It defines an `ICodeStrategy` interface and implements concrete strategies: `TypescriptStrategy` and `VueStrategy`.
-* **Singleton Pattern:** The class `CodeService` is instantiated immediately upon export (`export const codeService = new CodeService();`), ensuring a single instance manages the strategy registry.
-* **Composition:** The `VueStrategy` composes an instance of `TypescriptStrategy` to delegate parsing logic after extracting script content.
+* **Strategy Pattern:** This is the core architectural pattern. The service defines an interface `ICodeStrategy` and implements specific strategies for different file types: `TypescriptStrategy` (Base) and `VueStrategy` (Composed).
+* **Singleton Pattern:** The service is instantiated and exported as a singleton (`export const codeService = new CodeService();`), ensuring a single entry point for code manipulation logic across the application.
+* **Composition:** The `VueStrategy` composes an instance of `TypescriptStrategy` to delegate script parsing logic, adding a layer of offset calculation for Vue Single File Components (SFCs).
 
 
 * **State Management:**
-* **Quasi-Stateless:** The service maintains a `strategies` Map initialized in the constructor. It does not maintain state regarding the files being processed between method calls; each method call is an independent transaction requiring a file path.
+* **Stateless Execution:** The service methods are largely stateless; they operate on the inputs provided (file paths) and do not retain state between method calls.
+* **Immutable Configuration:** The `strategies` map is populated in the constructor and remains immutable during the application lifecycle.
 
 
-* **Complexity Assessment:** **Medium**.
-* While the control flow is straightforward, the complexity arises from the **Regular Expression (Regex)** logic used to identify code blocks, manage indentation, and parse Vue SFC (Single File Component) structures.
-* **Architectural Note:** There is a logic leak in `updateHeader`. While parsing is delegated to strategies, the logic to update headers for Vue files is hardcoded within the main `CodeService` class rather than being delegated to the `VueStrategy`, breaking the encapsulation of the Strategy pattern.
+* **Complexity Assessment:** **High**.
+* *Justification:* While the control flow is straightforward, the implementation relies heavily on **Regular Expressions** to emulate AST (Abstract Syntax Tree) parsing. Regex-based parsing for code is inherently fragile and prone to edge-case failures (e.g., nested braces, complex export syntaxes), making the logic sensitive to syntax variations.
 
 
 
-#### 3. Dependency Graph
+**3. Dependency Graph**
 
 * **Internal Dependencies:**
-* `fileService`: Handles physical I/O (read/write operations).
-* `llmService`: Provides the interface for generating documentation via AI.
-* `logger`: Provides logging capabilities.
+* `fileService`: Handles I/O operations (reading/writing source files).
+* `llmService`: Provides the generative AI capabilities to create JSDoc strings.
+* `logger`: Provides standardized logging for success/info states.
+* `../types/index`: Source of truth for shared interfaces.
 
 
 * **External Dependencies:**
-* No direct third-party imports are listed in the file headers. It relies on standard Node.js/JavaScript runtime features (Regex, String manipulation).
+* Standard Node.js/Runtime libraries (implied by usage of `RegExp`, `String` manipulation).
 
 
 * **Coupling Analysis:**
-* **Tight Coupling:** The service directly imports instances of `fileService`, `llmService`, and `logger`. This makes unit testing difficult without module-level mocking/spying, as dependencies are not injected via the constructor.
+* **Tightly Coupled (Implementation):** The service directly imports specific instances (`fileService`, `llmService`). It does not use Dependency Injection via constructor arguments, making unit testing difficult without module-level mocking/spying.
+* **Loosely Coupled (Logic):** The logic is decoupled from file extensions via the `ICodeStrategy` interface, allowing easy addition of new languages (e.g., Python or Java) in the future without modifying the core `inspect` logic.
 
 
 
-#### 4. Data Types & Interfaces
+**4. Data Types & Interfaces**
 
 * **Key Interfaces (Implemented):**
-* `ICodeStrategy`: Defines the contract for parsing metadata, updating metadata, finding blocks, and injecting docs.
+* `ICodeStrategy`: Defines `parseMetadata`, `injectHeader`, `findDocumentableBlocks`, and `injectFunctionDoc`.
 
 
 * **Return Types:**
-* `inspect(filePath: string): CodeBlock[]`.
-* `updateHeader(filePath: string, newHeader: string): void`.
-* `generateDocFor(filePath: string, functionName: string): Promise<void>`.
-
-
-* **Type Warnings:**
-* In `TypescriptStrategy.findDocumentableBlocks`, the `type` property is cast as `any` (`type: match[2] as any`), which bypasses strict type safety.
+* `inspect(filePath: string): CodeBlock[]` - Returns an array of identified code blocks (start/end lines, types, signatures).
+* `updateHeader(filePath: string, newHeader: string): void` - Performs side-effects only.
+* `generateDocFor(filePath: string, functionName: string): Promise<void>` - Async operation performing side-effects only.
 
 
 
-#### 5. Functional Logic Specification
+**5. Functional Logic Specification**
 
 **Method: `inspect**`
 
-* **Signature:** `inspect(filePath: string): CodeBlock[]`
+* **Signature:** `public inspect(filePath: string): CodeBlock[]`
 * **Logic Flow:**
-1. Reads file content using `fileService.read`. Throws Error if file is null.
-2. Resolves strategy based on file extension (`.ts`, `.js`, or `.vue`) via `getStrategy`.
-3. Calls `strategy.findDocumentableBlocks(content)` to return an array of code blocks.
+1. Reads raw content using `fileService.read`.
+2. Resolves the appropriate strategy based on file extension (`.ts`, `.js`, `.vue`).
+3. Delegates parsing to `strategy.findDocumentableBlocks`.
+4. **Vue Specifics:** If Vue, extracts `<script>`, parses it, and adds the line number offset of the script tag to the results.
 
 
-* **Error Handling:** Throws "File not found" or "Unsupported file type" errors.
+* **Error Handling:** Throws `Error` if the file is not found or if the file extension is unsupported.
 
 **Method: `updateHeader**`
 
-* **Signature:** `updateHeader(filePath: string, newHeader: string): void`
+* **Signature:** `public updateHeader(filePath: string, newHeader: string): void`
 * **Logic Flow:**
 1. Reads file content.
-2. **Conditional Logic (Vue vs. TS/JS):**
-* **If Vue:** Searches for `<script setup>` or `<script>`. If found, checks if body starts with `/**`. Replaces existing JSDoc or prepends the new header to the script body. If no script tag, prepends to file.
-* **If TS/JS:** Checks if file starts with `/**`. Replaces existing JSDoc block or prepends new header + newlines.
+2. Resolves strategy.
+3. Calls `strategy.injectHeader`.
+* *TS Strategy:* Replaces existing top-level JSDoc or prepends new text.
+* *Vue Strategy:* Locates `<script setup>` (priority) or `<script>`, reconstructs the tag content with the header injected inside the script block.
 
 
-3. Writes updated content via `fileService.write`.
-4. Logs success.
+4. Writes updated content using `fileService.write`.
+5. Logs success.
 
 
-* **Side Effects:** Modifies file content on disk.
 
 **Method: `generateDocFor**`
 
-* **Signature:** `generateDocFor(filePath: string, functionName: string): Promise<void>`
+* **Signature:** `public async generateDocFor(filePath: string, functionName: string): Promise<void>`
 * **Logic Flow:**
-1. Reads file content.
-2. Uses `strategy.findDocumentableBlocks` to locate the block matching `functionName`.
-3. **Constraint:** If `target` is not found, throws Error `Function '${functionName}' not found`.
-4. Constructs a prompt: `Generate a JSDoc comment for this code:\n${target.signature}`.
-5. Awaits `llmService.generate(prompt)`.
-6. Calls `strategy.injectFunctionDoc` to merge the generated doc into the content.
-7. Writes the new content to disk.
+1. Reads file content and resolves strategy.
+2. Calls `findDocumentableBlocks` to locate the target function (by name) and retrieve its signature.
+3. **LLM Call:** Sends the function signature to `llmService.generate` with a prompt to create JSDoc.
+4. **Injection:** Calls `strategy.injectFunctionDoc`.
+* Calculates indentation of the target function.
+* Matches indentation for the new JSDoc block.
+* Splices the comment into the file lines array immediately before the function definition.
 
 
-* **Side Effects:** API call to LLM, file write operation.
+5. Writes file and logs success.
+
+
+* **Side Effects:**
+* File System Write.
+* Network call (implied by LLM service).
+
+
+* **Error Handling:** Throws `Error` if `functionName` is not found in the file logic.
 
 ---
 
 ### Part 2: Appendix - Testing Reference
 
-#### 1. Mocking Strategy
+**1. Mocking Strategy**
 
-To test `CodeService` in isolation, the following dependencies must be intercepted.
+To achieve 100% coverage, the following dependencies must be mocked. Since the service uses direct imports, use a library like `jest.mock` or `sinon` to intercept module loading.
 
-| Service | Method | Mock Behaviour | Purpose |
-| --- | --- | --- | --- |
-| **fileService** | `read` | Return string content | Simulate existing source files. |
-| **fileService** | `read` | Return `null` | Test "File not found" error handling. |
-| **fileService** | `write` | `jest.fn()` (Spy) | Verify that the correct updated content is written to disk. |
-| **llmService** | `generate` | Return string (JSDoc) | Simulate AI response without making network calls. |
-| **logger** | `info/success` | No-op / Spy | Prevent console clutter and verify operation steps. |
+* **`fileService`**:
+* `read(path)`: Must return varying string templates (Empty, Standard TS, Vue Setup, Vue Standard).
+* `write(path, content)`: Spy on this to verify the *content* argument contains the injected strings.
 
-#### 2. Test Scenarios
 
-**Group A: File Inspection (`inspect`)**
+* **`llmService`**:
+* `generate(prompt)`: Mock to return a predictable string, e.g., `/** Mock Generated Doc */`.
 
-| ID | Scenario | Input | Expected Outcome |
-| --- | --- | --- | --- |
-| A1 | **Happy Path TS** | `.ts` file with 1 function | Return 1 `CodeBlock` with correct line numbers. |
-| A2 | **Happy Path Vue** | `.vue` with `<script setup>` | Return `CodeBlock` with line numbers offset by script tag position. |
-| A3 | **Doc Detection** | Function with `*/` above it | `CodeBlock.hasDoc` should be `true`. |
-| A4 | **Unsupported** | `.css` file | Throw Error: "Unsupported file type". |
-| A5 | **Missing File** | Non-existent path | Throw Error: "File not found". |
 
-**Group B: Header Management (`updateHeader`)**
+* **`logger`**:
+* `info`, `success`: Spy to ensure correct process flow logging.
 
-| ID | Scenario | Input | Expected Outcome |
-| --- | --- | --- | --- |
-| B1 | **New Header TS** | TS file (no header) | Header string prepended to top of file. |
-| B2 | **Replace Header TS** | TS file (existing header) | Old header removed, new header inserted. |
-| B3 | **Update Vue Setup** | Vue file `<script setup>` | Header inserted *inside* the script tag, not at file top. |
-| B4 | **Update Vue Legacy** | Vue file `<script>` | Header inserted inside legacy script tag. |
 
-**Group C: Doc Generation (`generateDocFor`)**
 
-| ID | Scenario | Input | Expected Outcome |
-| --- | --- | --- | --- |
-| C1 | **Happy Path** | Valid function name | `llmService` called; `fileService.write` called with injected JSDoc. |
-| C2 | **Indentation** | Function indented 2 tabs | Injected JSDoc respects 2 tab indentation. |
-| C3 | **Missing Func** | Invalid function name | Throw Error: "Function ... not found". |
-| C4 | **LLM Failure** | `llmService` throws | Propagate error, no file write. |
+**2. Test Scenarios**
 
-#### 3. Test Data Requirements
+| Category | Scenario | Expectation |
+| --- | --- | --- |
+| **Happy Path** | **Inspect .ts file** | Should identify `export const` and `export function` correctly. |
+| **Happy Path** | **Inspect .vue (Script Setup)** | Should identify functions inside `<script setup>` and apply correct line offsets. |
+| **Happy Path** | **Generate Doc (TS)** | Should call LLM, receive doc, and inject it *before* the function with matching indentation. |
+| **Happy Path** | **Update Header (Vue)** | Should inject header comment *inside* the opening `<script>` tag, not at the top of the `.vue` file. |
+| **Edge Case** | **Existing JSDoc (Header)** | `updateHeader` should replace the existing top-level JSDoc block rather than duplicating it. |
+| **Edge Case** | **Existing JSDoc (Function)** | `inspect` should mark `hasDoc: true` if a block already has documentation. |
+| **Error State** | **Unsupported Extension** | `inspect('test.txt')` should throw `Error: Unsupported file type: .txt`. |
+| **Error State** | **File Not Found** | `inspect` or `updateHeader` should throw specific file not found errors. |
+| **Error State** | **Function Not Found** | `generateDocFor` should throw if the requested function name does not exist in the AST. |
 
-**Data 1: Simple TypeScript File**
+**3. Test Data Requirements**
 
+* **Sample TS File Content:**
 ```typescript
-export const simpleTsContent = `
-export function calculate(a: number, b: number) {
-    return a + b;
-}
-`;
+/** Existing Header */
+import foo from 'bar';
+export const myVar = 10;
+export function myFunction() { return true; }
 
 ```
 
-**Data 2: Vue Component (Script Setup)**
 
-```typescript
-export const vueSetupContent = `
-<template>
-  <div>Hello</div>
-</template>
-
+* **Sample Vue File (Script Setup):**
+```vue
+<template><div></div></template>
 <script setup lang="ts">
 import { ref } from 'vue';
+export const useLogic = () => { return true; }
+</script>
 
-export const count = ref(0);
+```
 
-export function increment() {
-  count.value++;
+
+* **Sample Vue File (Standard):**
+```vue
+<script>
+export default {
+  setup() { return {}; }
 }
 </script>
-`;
 
 ```
 
-**Data 3: Complex Class (Regex Torture Test)**
 
+* **Indentation Test Case:**
 ```typescript
-export const complexClassContent = `
-export default class UserManager {
-    /**
-     * Existing doc
-     */
-    public async findUser(id: string) {
-        return true;
+class MyClass {
+    export async function indentedMethod() {
+        // logic
     }
 }
-`;
 
 ```
+
+
+*(Note: The current regex strategy looks for `export` at the start of the match, but allows whitespace. This data ensures the indentation logic in `injectFunctionDoc` works correctly).*
