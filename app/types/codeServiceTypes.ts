@@ -48,12 +48,16 @@ export interface CodeFileMetadata {
  * Represents a specific unit of code found within a file.
  */
 export interface CodeBlock {
+	id: string;             // Unique identifier (e.g., function name)
 	name: string;
 	type: CodeBlockType;
 	startLine: number; // 0-based index
 	endLine: number;
+	range: [number, number];// Start/End indices (for the Scanner)
 	signature: string; // The function signature (e.g., "export function foo()")
 	hasDoc: boolean;   // True if a JSDoc block already exists
+	docBlock?: string;      // Existing JSDoc (if any)
+	content: string;        // The raw text (for the LLM)
 }
 
 /**
@@ -62,6 +66,18 @@ export interface CodeBlock {
  * (e.g., TypescriptStrategy, VueStrategy)
  */
 export interface ICodeStrategy {
+	
+	// 1. ANALYSIS: Used by Command to prepare context for LLM
+	scan(content: string): CodeBlock[];
+	
+	// 2. MANIPULATION: Used by Command to apply LLM results
+	// Returns the new full file content
+	patch(content: string, blockId: string, newText: string): string;
+	
+	// 3. GENERATION: Used by Command to create new files
+	// (Delegates to your Template functions)
+	generate(templateData: any): string;
+	
 	/**
 	 * Extracts metadata from the file header comments.
 	 */

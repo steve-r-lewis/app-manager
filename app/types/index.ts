@@ -46,4 +46,5 @@ export * from './loggerServiceTypes'; // --- Core ---
 export * from './nuxtTypes';          // --- Feature Domains ---
 export * from './processTypes';       // --- Infrastructure Domains ---
 export * from './utilsTypes';         // --- Infrastructure Domains ---
+export * from './scannerTypes'        // --- Infrastructure Domains ---
 export * from './templateTypes';      // --- Template Engine ---
