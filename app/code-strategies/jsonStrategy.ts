@@ -11,11 +11,23 @@
  * ================================================================================
  *
  * @description:
- * Strategy for manipulating JSON files.
+ * Strategy for manipulating JSON/JSONC files using 'jsonc-parser'.
  *
- * NOTE:
- * Since JSON doesn't support comments, this strategy updates
- * root-level fields (e.g., version, author, description).
+ * ARCHITECTURE:
+ * Uses a CST (Concrete Syntax Tree) approach (via jsonc-parser) rather than
+ * basic AST (JSON.parse). This allows "Surgical Edits":
+ * - Preserves Comments (// ...)
+ * - Preserves Formatting (Tabs vs Spaces)
+ * - Preserves Key Ordering
+ *
+ * SCHEMA SUPPORT:
+ * - Detects 'metadataEntity' (App Manager Schema)
+ * - Fallbacks to Standard JSON (package.json)
+ *
+ * FEATURES:
+ * - Surgical Edits (Preserves formatting/comments)
+ * - Deep Path Creation (Auto-creates missing nested objects like 'development')
+ * - Resilience (Gracefully handles malformed files)
  *
  * ================================================================================
  *
@@ -27,54 +39,115 @@
  * ================================================================================
  */
 
+import { parse, modify, applyEdits, type JSONPath, type ParseError } from 'jsonc-parser';
 import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../types/index';
 
 export class JsonStrategy implements ICodeStrategy {
 	
 	public parseMetadata(content: string): CodeFileMetadata {
-		try {
-			const json = JSON.parse(content);
+		const errors: ParseError[] = [];
+		const json = parse(content, errors);
+		
+		if (!json) return {};
+		
+		if (json.metadataEntity) {
+			const entity = json.metadataEntity;
+			const dev = entity.development || {};
 			return {
-				version: json.version || json._version,
-				description: json.description || json._description,
-				author: json.author || json._author
+				version: dev.schemaVersion,
+				description: entity.description,
+				author: entity.author
 			};
-		} catch (e) {
-			return {};
 		}
+		
+		return {
+			version: json.version,
+			description: json.description,
+			author: json.author
+		};
 	}
 	
 	public injectHeader(content: string, headerText: string): string {
-		// We cannot inject a text header. We must parse headers and apply them as keys.
-		try {
-			const json = JSON.parse(content);
-			
-			// Extract known keys from the headerText (assuming format "Key: Value")
-			const lines = headerText.split('\n');
-			lines.forEach(line => {
-				const [key, ...val] = line.split(':');
-				if (key && val.length > 0) {
-					const cleanKey = key.replace(/[@*]/g, '').trim().toLowerCase();
-					const cleanVal = val.join(':').trim();
-					
-					// Map common metadata to JSON fields
-					if (cleanKey === 'version') json.version = cleanVal;
-					if (cleanKey === 'author') json.author = cleanVal;
-					if (cleanKey === 'description') json.description = cleanVal;
-				}
-			});
-			
-			return JSON.stringify(json, null, 2);
-		} catch (e) {
-			return content; // Fail safe
+		let currentContent = content;
+		
+		// 1. Validate Content
+		const errors: ParseError[] = [];
+		const initialJson = parse(content, errors);
+		
+		// If completely malformed (and not just empty), return original to avoid corruption
+		if (content.trim().length > 0 && !initialJson && errors.length > 0) {
+			return content;
 		}
+		
+		const changes = this.parseHeaderText(headerText);
+		const useComplexSchema = !!(initialJson && initialJson.metadataEntity);
+		
+		// Formatting options (default to 2 spaces, can be inferred in future)
+		const options = {
+			formattingOptions: { insertSpaces: true, tabSize: 2 }
+		};
+		
+		// 2. Apply Edits
+		for (const [key, value] of Object.entries(changes)) {
+			let path: JSONPath = [];
+			
+			// Re-parse current state to check for existence of intermediate paths
+			// (Needed for "Deep Creation" logic)
+			const currentJson = parse(currentContent) || {};
+			
+			if (useComplexSchema) {
+				// --- App Manager Schema ---
+				if (key === 'version') {
+					// Target: metadataEntity.development.schemaVersion
+					
+					// Auto-create 'development' if missing
+					if (!currentJson.metadataEntity.development) {
+						// Insert 'development' with the version inside
+						path = ['metadataEntity', 'development'];
+						const edits = modify(currentContent, path, { schemaVersion: value }, options);
+						currentContent = applyEdits(currentContent, edits);
+						continue; // Done for this key
+					}
+					
+					path = ['metadataEntity', 'development', 'schemaVersion'];
+				}
+				else if (key === 'description') path = ['metadataEntity', 'description'];
+				else if (key === 'author') path = ['metadataEntity', 'author'];
+			} else {
+				// --- Standard Schema ---
+				if (key === 'version') path = ['version'];
+				else if (key === 'description') path = ['description'];
+				else if (key === 'author') path = ['author'];
+			}
+			
+			// Perform Surgical Edit if path determined
+			if (path.length > 0) {
+				const edits = modify(currentContent, path, value, options);
+				currentContent = applyEdits(currentContent, edits);
+			}
+		}
+		
+		return currentContent;
+	}
+	
+	private parseHeaderText(headerText: string): Record<string, string> {
+		const updates: Record<string, string> = {};
+		headerText.split('\n').forEach(line => {
+			const [k, ...v] = line.split(':');
+			if (k && v.length > 0) {
+				const key = k.replace(/[@*]/g, '').trim().toLowerCase();
+				const value = v.join(':').trim();
+				updates[key] = value;
+			}
+		});
+		return updates;
 	}
 	
 	public findDocumentableBlocks(content: string): CodeBlock[] {
-		return []; // Not applicable for JSON
+		return [];
 	}
 	
 	public injectFunctionDoc(content: string, functionName: string, docBlock: string): string {
-		return content; // Not applicable for JSON
+		return content;
 	}
 }
