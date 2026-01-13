@@ -106,4 +106,10 @@ export abstract class BaseScanner<TTokenType> {
 	protected slice(start: number, end: number): string {
 		return this.source.substring(start, end);
 	}
+	
+	private skipWhitespace() {
+		while (!this.isAtEnd() && this.isWhitespace(this.peek())) {
+			this.advance();
+		}
+	}
 }

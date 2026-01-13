@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/scanners/typescriptScanner.ts
- * @version:    1.0.0
+ * @version:    1.1.0
  * @createDate: 2026 Jan 12
  * @createTime: 23:06
  * @author:     Steve R Lewis
@@ -11,20 +11,24 @@
  * ================================================================================
  *
  * @description:
+ *
+ * It does NOT build an AST. It provides the reliable token stream for the
+ * TypescriptStrategy to interpret.
  * The TypeScript Token Scanner.
  *
  * Responsibilities:
  * - Accurately tokenizes TS/JS source code into a linear stream.
  * - Categorizes structural boundaries ({ }) and semantic units.
- * - robustly handles strings (', ", `) and comments (//, /*) to ensure
- * structure is never inferred from non-code text.
- *
- * It does NOT build an AST. It provides the reliable token stream for the
- * TypescriptStrategy to interpret.
+ * - Robustly handles strings (', ", `) and comments (//, /*).
+ * - Implements "Regex Trap" avoidance by detecting Context-Aware Regex Literals.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20260113
+ * Added scanRegex() and isRegexStart() logic to fix structural errors caused
+ * by braces inside regex literals (e.g., / { /).
  *
  * V1.0.0, 20260112-23:06
  * Initial creation and release of typescriptScanner.ts
@@ -43,17 +47,14 @@ const KEYWORDS = new Set([
 	'if', 'else', 'for', 'while', 'switch', 'case', 'break',
 	'try', 'catch', 'finally', 'throw', 'new', 'this',
 	'public', 'private', 'protected', 'readonly', 'static',
-	'extends', 'implements'
+	'extends', 'implements', 'typeof', 'void', 'delete', 'in', 'instanceof'
 ]);
 
 export class TypescriptScanner extends BaseScanner<TsTokenType> {
 	
-	/**
-	 * Main scan loop.
-	 * Iterates through the source and produces a complete token stream.
-	 */
 	public scan(): Token<TsTokenType>[] {
 		const tokens: Token<TsTokenType>[] = [];
+		let lastSignificantToken: Token<TsTokenType> | null = null;
 		
 		while (!this.isAtEnd()) {
 			const start = this.getCurrentLocation();
@@ -61,71 +62,158 @@ export class TypescriptScanner extends BaseScanner<TsTokenType> {
 			
 			// 1. Whitespace
 			if (this.isWhitespace(char)) {
-				// We generally skip whitespace in the token stream for this use case,
-				// but we could emit it if formatting preservation was required.
-				// For now, we skip to keep the stream clean for the Strategy.
 				continue;
 			}
 			
 			// 2. Structural Blocks
 			if (char === '{') {
-				tokens.push(this.createToken('BlockStart', char, start));
+				const t = this.createToken('BlockStart', char, start);
+				tokens.push(t);
+				lastSignificantToken = t;
 				continue;
 			}
 			if (char === '}') {
-				tokens.push(this.createToken('BlockEnd', char, start));
+				const t = this.createToken('BlockEnd', char, start);
+				tokens.push(t);
+				lastSignificantToken = t;
 				continue;
 			}
 			
 			// 3. Punctuation
 			if (['(', ')', '[', ']', ';', ',', '.', ':'].includes(char)) {
-				tokens.push(this.createToken('Punctuation', char, start));
+				const t = this.createToken('Punctuation', char, start);
+				tokens.push(t);
+				lastSignificantToken = t;
 				continue;
 			}
 			
 			// 4. Strings
 			if (char === "'" || char === '"' || char === '`') {
-				tokens.push(this.scanString(char, start));
+				const t = this.scanString(char, start);
+				tokens.push(t);
+				lastSignificantToken = t;
 				continue;
 			}
 			
-			// 5. Comments or Division
+			// 5. Comments, Division, OR Regex
 			if (char === '/') {
 				if (this.match('/')) {
+					// Line comment (ignored for structural tracking)
 					tokens.push(this.scanLineComment(start));
 					continue;
 				} else if (this.match('*')) {
+					// Block comment (ignored for structural tracking)
 					tokens.push(this.scanBlockComment(start));
 					continue;
 				} else {
-					tokens.push(this.createToken('Operator', char, start));
+					// Context Check: Is this a Regex Literal or a Division Operator?
+					if (this.isRegexStart(lastSignificantToken)) {
+						const t = this.scanRegex(start);
+						tokens.push(t);
+						lastSignificantToken = t;
+					} else {
+						const t = this.createToken('Operator', char, start);
+						tokens.push(t);
+						lastSignificantToken = t;
+					}
 					continue;
 				}
 			}
 			
-			// 6. Operators (Simplified)
+			// 6. Operators
 			if (['=', '+', '-', '*', '%', '&', '|', '!', '^', '~', '<', '>', '?'].includes(char)) {
-				// Greedy match for potential multi-char operators like =>, ===, !=
-				// For our purpose, single char operators are often enough, but let's be safe for Arrows
+				// Greedy match for potential multi-char operators
+				let value = char;
 				if (char === '=' && this.match('>')) {
-					tokens.push(this.createToken('Operator', '=>', start));
-				} else {
-					tokens.push(this.createToken('Operator', char, start));
+					value = '=>';
 				}
+				// Basic check for other common multi-char ops to keep stream clean
+				else if (['=', '+', '-', '&', '|'].includes(char) && this.match(char)) {
+					value += char; // ==, ++, --, &&, ||
+				}
+				
+				const t = this.createToken('Operator', value, start);
+				tokens.push(t);
+				lastSignificantToken = t;
 				continue;
 			}
 			
 			// 7. Identifiers & Keywords
 			if (this.isAlpha(char)) {
-				tokens.push(this.scanIdentifier(char, start));
+				const t = this.scanIdentifier(char, start);
+				tokens.push(t);
+				lastSignificantToken = t;
 				continue;
 			}
 			
 			// 8. Fallback
-			tokens.push(this.createToken('Unknown', char, start));
+			const t = this.createToken('Unknown', char, start);
+			tokens.push(t);
+			// Numbers often fall here in this simplified scanner, treated as significant
+			if (this.isDigit(char)) lastSignificantToken = t;
 		}
 		
 		return tokens;
+	}
+	
+	// --- Regex Logic ---
+	
+	/**
+	 * Determines if a '/' character indicates the start of a Regex literal.
+	 * Based on the previous significant token.
+	 */
+	private isRegexStart(lastToken: Token<TsTokenType> | null): boolean {
+		if (!lastToken) return true; // Start of file
+		
+		const { type, value } = lastToken;
+		
+		if (type === 'Keyword') return true; // return /abc/;
+		if (type === 'Operator') return true; // = /abc/;
+		if (type === 'BlockStart') return true; // { /abc/ }
+		
+		if (type === 'Punctuation') {
+			// Closing brackets usually mean division: (a + b) / 2 or array[0] / 2
+			if (value === ')' || value === ']') return false;
+			return true; // ( /abc/, [ /abc/, : /abc/
+		}
+		
+		// Identifier, String, Number, BlockEnd usually mean Division
+		// x / 2, "str" / 2, 5 / 2, } / 2
+		return false;
+	}
+	
+	private scanRegex(start: SourceLocation): Token<TsTokenType> {
+		let value = '/';
+		let inClass = false; // Are we inside [...]
+		
+		while (!this.isAtEnd()) {
+			const char = this.advance();
+			value += char;
+			
+			// Escape sequence: consume next char blindly (even if it's / or ])
+			if (char === '\\' && !this.isAtEnd()) {
+				value += this.advance();
+				continue;
+			}
+			
+			if (inClass) {
+				if (char === ']') inClass = false;
+			} else {
+				if (char === '[') {
+					inClass = true;
+				} else if (char === '/') {
+					// End of Regex body
+					break;
+				}
+			}
+		}
+		
+		// Consume flags (g, i, m, s, u, y, d)
+		while (!this.isAtEnd() && this.isAlpha(this.peek())) {
+			value += this.advance();
+		}
+		
+		return this.createToken('Regex', value, start);
 	}
 	
 	// --- Specific Scanners ---
@@ -138,7 +226,6 @@ export class TypescriptScanner extends BaseScanner<TsTokenType> {
 			value += char;
 			
 			if (char === '\\' && !this.isAtEnd()) {
-				// Consume escaped character immediately
 				value += this.advance();
 				continue;
 			}
@@ -163,8 +250,9 @@ export class TypescriptScanner extends BaseScanner<TsTokenType> {
 		let value = '/*';
 		while (!this.isAtEnd()) {
 			if (this.check('*/')) {
-				value += this.advance(); // *
-				value += this.advance(); // /
+				value += '*/';
+				this.advance(); // *
+				this.advance(); // /
 				break;
 			}
 			value += this.advance();
@@ -186,6 +274,10 @@ export class TypescriptScanner extends BaseScanner<TsTokenType> {
 	
 	private isWhitespace(char: string): boolean {
 		return /\s/.test(char);
+	}
+	
+	private isDigit(char: string): boolean {
+		return /[0-9]/.test(char);
 	}
 	
 	private isAlpha(char: string): boolean {
