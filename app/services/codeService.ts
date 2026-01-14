@@ -41,7 +41,7 @@
 import { fileService } from './fileService';
 import { llmService } from './llmService';
 import { logger } from './loggerService';
-import { getStrategyForFile } from '../code-strategies/index';
+import { getStrategyForFile } from '../strategies/index';
 import type { CodeBlock } from '../types/index';
 
 class CodeService {

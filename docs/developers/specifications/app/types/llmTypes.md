@@ -1,7 +1,3 @@
-Based on the analysis of the provided source code file `llmTypes.ts`, here is the comprehensive Technical Specification Document and Test Strategy Appendix.
-
----
-
 # Part 1: Operational & Design Specification
 
 ## 1. Component Overview

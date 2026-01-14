@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/code-strategies/index.test.ts
+ * @file:       ~/tests/unit/strategies/index.test.ts
  * @version:    1.0.0
  * @createDate: 2026 Jan 12
  * @createTime: 00:02
@@ -24,12 +24,12 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { getStrategyForFile } from '../../../app/code-strategies/index';
-import { TypescriptStrategy } from '../../../app/code-strategies/typescriptStrategy';
-import { VueStrategy } from '../../../app/code-strategies/vueStrategy';
-import { JsonStrategy } from '../../../app/code-strategies/jsonStrategy';
-import { CssStrategy } from '../../../app/code-strategies/cssStrategy';
-import { HtmlStrategy } from '../../../app/code-strategies/htmlStrategy';
+import { getStrategyForFile } from '../../../app/strategies/index';
+import { TypescriptStrategy } from '../../../app/strategies/typescriptStrategy';
+import { VueStrategy } from '../../../app/strategies/vueStrategy';
+import { JsonStrategy } from '../../../app/strategies/jsonStrategy';
+import { CssStrategy } from '../../../app/strategies/cssStrategy';
+import { HtmlStrategy } from '../../../app/strategies/htmlStrategy';
 
 describe('Strategy Registry', () => {
 	

@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/code-strategies/cssStrategy.test.ts
+ * @file:       ~/tests/unit/strategies/cssStrategy.test.ts
  * @version:    1.0.0
  * @createDate: 2026 Jan 11
  * @createTime: 23:32
@@ -23,9 +23,9 @@
  * ================================================================================
  */
 
-// tests/unit/code-strategies/cssStrategy.test.ts
+// tests/unit/strategies/cssStrategy.test.ts
 import { describe, it, expect } from 'vitest';
-import { CssStrategy } from '../../../app/code-strategies/cssStrategy';
+import { CssStrategy } from '../../../app/strategies/cssStrategy';
 
 describe('CssStrategy', () => {
 	const strategy = new CssStrategy();

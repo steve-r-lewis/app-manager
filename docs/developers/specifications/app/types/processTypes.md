@@ -1,7 +1,3 @@
-Based on the analysis of the provided source code file `processTypes.ts`, here is the comprehensive Technical Specification Document and Test Strategy Appendix.
-
----
-
 # Technical Specification: Process Execution Domain Definitions
 
 ## Part 1: Operational & Design Specification
@@ -101,7 +97,7 @@ This section details the strict contracts defined in the file.
 
 ## Part 2: Appendix - Testing Reference
 
-Since `processTypes.ts` is a type definition file, it is erased at runtime and cannot be "unit tested" in the traditional sense. However, it **strictly dictates** the testing requirements for the services that import it.
+Since `processServiceTypes.ts` is a type definition file, it is erased at runtime and cannot be "unit tested" in the traditional sense. However, it **strictly dictates** the testing requirements for the services that import it.
 
 The following strategy applies to any service (e.g., `ProcessService.ts`) that implements these interfaces.
 
@@ -118,7 +114,7 @@ When testing services that use these types, the following mocking approach match
 
 ### 2. Test Scenarios (For Consuming Services)
 
-These scenarios ensure the types defined in `processTypes.ts` are respected by the logic layer.
+These scenarios ensure the types defined in `processServiceTypes.ts` are respected by the logic layer.
 
 | Category | Scenario | Description | Expected Outcome |
 | --- | --- | --- | --- |
@@ -131,7 +127,7 @@ These scenarios ensure the types defined in `processTypes.ts` are respected by t
 
 ### 3. Test Data Requirements
 
-The following JSON objects serve as strictly typed fixtures based on `processTypes.ts`.
+The following JSON objects serve as strictly typed fixtures based on `processServiceTypes.ts`.
 
 **Fixture A: Full Configuration (`ProcessExecuteOptions`)**
 

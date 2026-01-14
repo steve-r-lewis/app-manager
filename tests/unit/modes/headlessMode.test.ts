@@ -25,7 +25,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { runHeadless } from '../../../app/modes/headlessMode';
-import { registry } from '../../../app/commands/registry';
+import { commandRegistry } from '../../../app/commands/commandRegistry';
 import { BaseCommand } from '../../../app/commands/baseCommand';
 import { configService } from '../../../app/services/configService';
 import { logger } from '../../../app/services/loggerService';
@@ -84,11 +84,11 @@ describe('Headless Mode', () => {
 	
 	beforeEach(() => {
 		vi.clearAllMocks();
-		(registry as any).commands.clear();
+		(commandRegistry as any).commands.clear();
 		
 		// 1. Register a valid command
 		mockCmd = new MockCommand('test.run');
-		registry.register(mockCmd);
+		commandRegistry.register(mockCmd);
 		
 		// 2. Mock process.exit to throw ExitError instead of killing process
 		mockExit = vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
@@ -144,7 +144,7 @@ describe('Headless Mode', () => {
 		const failCmd = new MockCommand('test.crash', true);
 		// Overwrite the name to match the action 'crash'
 		(failCmd.metadata as any).name = 'crash';
-		registry.register(failCmd);
+		commandRegistry.register(failCmd);
 		
 		await runSafely(['test', 'crash']);
 		

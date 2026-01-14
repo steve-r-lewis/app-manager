@@ -36,7 +36,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { logger } from '../../app/services/loggerService';
 import { configService } from '../../app/services/configService';
-import { registry } from '../../app/commands/registry';
+import { commandRegistry } from '../../app/commands/commandRegistry';
 
 import { main } from '../../app/index';
 
@@ -84,8 +84,8 @@ describe('App Entry Point (Router)', () => {
 	// 2. Command Registration Phase
 	// ========================================================================
 	it('should ensure core commands are registered', async () => {
-		// Since registration happens at module import time, we check the registry state
-		const commands = registry.getDomains().flatMap(d => registry.getByDomain(d));
+		// Since registration happens at module import time, we check the commandRegistry state
+		const commands = commandRegistry.getDomains().flatMap(d => commandRegistry.getByDomain(d));
 		const ids = commands.map(c => c.metadata.id);
 		
 		expect(ids).toContain('git.commit');

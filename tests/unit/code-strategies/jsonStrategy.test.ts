@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/code-strategies/jsonStrategy.test.ts
+ * @file:       ~/tests/unit/strategies/jsonStrategy.test.ts
  * @version:    1.0.0
  * @createDate: 2026 Jan 11
  * @createTime: 23:31
@@ -38,7 +38,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { parse } from 'jsonc-parser';
-import { JsonStrategy } from '../../../app/code-strategies/jsonStrategy';
+import { JsonStrategy } from '../../../app/strategies/jsonStrategy';
 
 describe('JsonStrategy (Architectural Coverage)', () => {
 	const strategy = new JsonStrategy();

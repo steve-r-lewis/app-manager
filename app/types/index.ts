@@ -37,14 +37,14 @@
 
 export * from './baseCommandTypes';   // --- Infrastructure Domains ---
 export * from './codeServiceTypes';   // --- Infrastructure Domains ---
-export * from './configTypes';        // --- Core ---
+export * from './configServiceTypes';        // --- Core ---
 export * from './fileServiceTypes';   // --- Infrastructure Domains ---
-export * from './githubTypes';        // --- Feature Domains ---
+export * from './githubServiceTypes';        // --- Feature Domains ---
 export * from './gitTypes';           // --- Feature Domains ---
-export * from './llmTypes';           // --- Feature Domains ---
+export * from './llmServiceTypes';           // --- Feature Domains ---
 export * from './loggerServiceTypes'; // --- Core ---
 export * from './nuxtTypes';          // --- Feature Domains ---
-export * from './processTypes';       // --- Infrastructure Domains ---
+export * from './processServiceTypes';       // --- Infrastructure Domains ---
 export * from './utilsTypes';         // --- Infrastructure Domains ---
 export * from './scannerTypes'        // --- Infrastructure Domains ---
 export * from './templateTypes';      // --- Template Engine ---

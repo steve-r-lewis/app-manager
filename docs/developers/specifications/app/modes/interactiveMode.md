@@ -5,18 +5,18 @@ Based on the analysis of the provided source code, here is the Technical Specifi
 **1. Component Overview**
 
 * **Purpose:** The `interactiveMode.ts` module serves as the **Presentation Layer** for the CLI application's interactive mode. It provides a Terminal User Interface (TUI) that allows users to configure the session, view available command domains, and execute specific commands dynamically.
-* **Role in System:** It acts as the **Controller** and **Entry Point** for manual user interaction. It mediates between the user's terminal input and the underlying business logic provided by the `registry`, `llmService`, and `configService`.
+* **Role in System:** It acts as the **Controller** and **Entry Point** for manual user interaction. It mediates between the user's terminal input and the underlying business logic provided by the `commandRegistry`, `llmService`, and `configService`.
 
 **2. Architecture & Patterns**
 
 * **Design Patterns:**
-* **Command Pattern:** The module retrieves command objects from a `registry` and invokes an `execute()` method on them, decoupling the invoker (TUI) from the receiver (Command logic).
+* **Command Pattern:** The module retrieves command objects from a `commandRegistry` and invokes an `execute()` method on them, decoupling the invoker (TUI) from the receiver (Command logic).
 * **Facade:** It aggregates various backend services (`logger`, `config`, `llm`) behind a unified user interface.
 * **Game Loop / Event Loop:** It utilizes an infinite `while (true)` loop to maintain the application state until the user explicitly chooses to exit.
 
 
 * **State Management:** The function itself is technically **stateful** regarding the execution flow (it maintains the loop), but it delegates application state persistence to the singleton `configService` and `loggerService`.
-* **Complexity Assessment:** **Medium**. While the logic is procedural, the complexity arises from the nested asynchronous prompts (`await select`), the handling of cancellation tokens (`isCancel`), and the integration of dynamic registry data within an infinite loop.
+* **Complexity Assessment:** **Medium**. While the logic is procedural, the complexity arises from the nested asynchronous prompts (`await select`), the handling of cancellation tokens (`isCancel`), and the integration of dynamic commandRegistry data within an infinite loop.
 
 **3. Dependency Graph**
 
@@ -24,7 +24,7 @@ Based on the analysis of the provided source code, here is the Technical Specifi
 * `../services/loggerService`: Used for operational logging and initialization.
 * `../services/configService`: Used to store session flags (verbose mode).
 * `../services/llmService`: Used to verify AI provider availability.
-* `../commands/registry`: Used to fetch available domains and commands.
+* `../commands/commandRegistry`: Used to fetch available domains and commands.
 
 
 * **External Dependencies:**
@@ -35,14 +35,14 @@ Based on the analysis of the provided source code, here is the Technical Specifi
 
 * **Coupling Analysis:**
 * **Tightly Coupled:** To `@clack/prompts` (UI implementation) and the internal Singletons (`logger`, `config`).
-* **Loosely Coupled:** To specific commands. The module iterates over `registry` data, meaning new commands can be added to the system without modifying this file.
+* **Loosely Coupled:** To specific commands. The module iterates over `commandRegistry` data, meaning new commands can be added to the system without modifying this file.
 
 
 
 **4. Data Types & Interfaces**
 
 * **Key Interfaces (Implicit):**
-* **Registry Command:** The code assumes objects returned by `registry.getByDomain` possess:
+* **Registry Command:** The code assumes objects returned by `commandRegistry.getByDomain` possess:
 * `metadata`: `{ id: string, label: string, description: string }`
 * `isEnabled(root: string): Promise<boolean>`
 * `execute(root: string, args: object): Promise<void>`
@@ -77,7 +77,7 @@ Based on the analysis of the provided source code, here is the Technical Specifi
 
 * **3. Main Execution Loop:**
 * **Logic:** Enters `while(true)`.
-* **Step A (Domain Selection):** Fetches domains from `registry`. If empty, warns and prompts exit. Otherwise, displays domains via `select`.
+* **Step A (Domain Selection):** Fetches domains from `commandRegistry`. If empty, warns and prompts exit. Otherwise, displays domains via `select`.
 * **Step B (Action Selection):** Fetches commands for the chosen domain. Displays commands via `select` (mapped to labels/hints). Includes a "Back" option.
 * **Step C (Execution):**
 * Checks `command.isEnabled(targetRoot)`.
@@ -107,7 +107,7 @@ To achieve high test coverage, the following dependencies must be mocked. The in
 
 
 * **Internal Services:**
-* `registry`: Mock `getDomains` and `getByDomain` to return controlled test data.
+* `commandRegistry`: Mock `getDomains` and `getByDomain` to return controlled test data.
 * `llmService`: Mock `checkAvailability` to resolve or reject.
 * `logger` & `configService`: Mock methods to verify calls.
 
@@ -120,7 +120,7 @@ To achieve high test coverage, the following dependencies must be mocked. The in
 | **Happy Path** | Full execution flow: Config -> Domain -> Command. | `multiselect` returns `[]`; `llm` resolves; `select` returns Domain then CommandID. | Command `execute` method is called; Loop continues (requires mock `select` to eventually return 'exit'). |
 | **Happy Path** | Enable Logging Options. | `multiselect` returns `['verbose', 'file']`. | `configService.setFlag` called; `logger.init` called; `process.env` updated. |
 | **Edge Case** | User cancels at Config. | `multiselect` returns `isCancel(true)`. | `process.exit(0)` called; `outro` called. |
-| **Edge Case** | Empty Registry. | `registry.getDomains` returns `[]`. | Warning logged; prompt with "System Empty" -> "Exit" appears. |
+| **Edge Case** | Empty Registry. | `commandRegistry.getDomains` returns `[]`. | Warning logged; prompt with "System Empty" -> "Exit" appears. |
 | **Flow Control** | "Back" navigation. | Domain `select` returns Valid; Action `select` returns `'back'`. | Loop restarts at Domain selection; Command `execute` is NOT called. |
 | **Error State** | AI Service Down. | `llmService.checkAvailability` rejects. | Spinner stops with yellow warning; App proceeds to Main Loop (does not crash). |
 | **Error State** | Command Execution Failure. | Command `execute` throws Error. | `logger.error` called with message; App proceeds to Main Loop. |
@@ -147,8 +147,8 @@ const mockCommand = {
 
 ```typescript
 const mockDomains = ['utils', 'core'];
-// registry.getDomains() returns mockDomains
-// registry.getByDomain('utils') returns [mockCommand]
+// commandRegistry.getDomains() returns mockDomains
+// commandRegistry.getByDomain('utils') returns [mockCommand]
 
 ```
 

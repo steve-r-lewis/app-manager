@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/code-strategies/typescriptStrategy.test.ts
+ * @file:       ~/tests/unit/strategies/typescriptStrategy.test.ts
  * @version:    1.1.0
  * @createDate: 2026 Jan 11
  * @createTime: 23:29
@@ -29,7 +29,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { TypescriptStrategy } from '../../../app/code-strategies/typescriptStrategy';
+import { TypescriptStrategy } from '../../../app/strategies/typescriptStrategy';
 
 describe('TypescriptStrategy', () => {
 	const strategy = new TypescriptStrategy();

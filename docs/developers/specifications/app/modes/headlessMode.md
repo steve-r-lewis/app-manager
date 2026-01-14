@@ -14,9 +14,9 @@ Here is the comprehensive Technical Specification and Test Strategy based on the
 #### 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Command Pattern:** The module consumes a `registry` to retrieve command objects, adhering to an interface that presumably includes `execute` and `isEnabled` methods.
+* **Command Pattern:** The module consumes a `commandRegistry` to retrieve command objects, adhering to an interface that presumably includes `execute` and `isEnabled` methods.
 * **Facade:** `runHeadless` abstracts the complexity of argument parsing and error handling, providing a simple interface for the application entry point.
-* **Singleton Consumer:** It relies on singleton instances of `logger`, `configService`, and `registry`.
+* **Singleton Consumer:** It relies on singleton instances of `logger`, `configService`, and `commandRegistry`.
 
 
 * **State Management:**
@@ -34,7 +34,7 @@ Here is the comprehensive Technical Specification and Test Strategy based on the
 * **Internal Dependencies:**
 * `../services/loggerService`: Used for operational logging and error reporting.
 * `../services/configService`: Used to set runtime flags based on CLI arguments.
-* `../commands/registry`: The central repository for looking up executable commands.
+* `../commands/commandRegistry`: The central repository for looking up executable commands.
 
 
 * **External Dependencies:**
@@ -42,7 +42,7 @@ Here is the comprehensive Technical Specification and Test Strategy based on the
 
 
 * **Coupling Analysis:**
-* **High Coupling:** The module is tightly coupled to the specific implementation of the `registry`. It assumes the objects returned by `registry.get()` strictly implement `isEnabled` and `execute`.
+* **High Coupling:** The module is tightly coupled to the specific implementation of the `commandRegistry`. It assumes the objects returned by `commandRegistry.get()` strictly implement `isEnabled` and `execute`.
 
 
 
@@ -91,7 +91,7 @@ interface ICommand {
 
 
 4. **Command Lookup & Validation:**
-* Queries `registry.get(domain, action)`.
+* Queries `commandRegistry.get(domain, action)`.
 * **Guard Clause:** If no command is found, logs `Unknown command` and executes `process.exit(1)`.
 
 
@@ -119,7 +119,7 @@ interface ICommand {
 To achieve 100% unit test coverage without side effects, the following mocks are required:
 
 * **`process.exit` (Crucial):** Must be mocked (spy) to prevent the test runner from terminating when `runHeadless` encounters an error or validation failure.
-* **`registry`:**
+* **`commandRegistry`:**
 * Method: `get(domain, action)`
 * **Mock Behavior A:** Return `undefined` (to test "Unknown command").
 * **Mock Behavior B:** Return a `MockCommand` object (defined below).
@@ -153,7 +153,7 @@ To achieve 100% unit test coverage without side effects, the following mocks are
 | --- | --- | --- | --- | --- |
 | **Happy Path** | HP-01 | **Standard Execution**<br>
 
-<br>Valid domain/action, no flags. | `['user', 'create', 'john_doe']` | `registry.get` called.<br>
+<br>Valid domain/action, no flags. | `['user', 'create', 'john_doe']` | `commandRegistry.get` called.<br>
 
 <br>`command.execute` called with arg `john_doe`. |
 | **Happy Path** | HP-02 | **Flag Parsing (Boolean)**<br>

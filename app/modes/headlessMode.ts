@@ -25,7 +25,7 @@
 
 import { logger } from '../services/loggerService';
 import { configService } from '../services/configService';
-import { registry } from '../commands/registry';
+import { commandRegistry } from '../commands/commandRegistry';
 
 export async function runHeadless(targetRoot: string, args: string[]) {
 	const [domain, action, ...rest] = args;
@@ -54,7 +54,7 @@ export async function runHeadless(targetRoot: string, args: string[]) {
 	logger.info(`Running Headless: ${domain}.${action}`);
 	
 	// 3. Command Lookup
-	const command = registry.get(domain, action);
+	const command = commandRegistry.get(domain, action);
 	if (!command) {
 		logger.error(`Unknown command: ${domain} ${action}`);
 		process.exit(1);

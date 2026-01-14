@@ -55,7 +55,7 @@
  * GitSyncOptions
  */
 
-import { LLMProviderStatus } from './llmTypes';
+import { LLMProviderStatus } from './llmServiceTypes';
 
 // ============================================================================
 // Core State Types

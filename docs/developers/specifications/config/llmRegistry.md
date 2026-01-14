@@ -1,6 +1,4 @@
-Based on the analysis of the provided artifact `llmRegistry.json`, which serves as a configuration data store rather than an executable script, the following Technical Specification and Test Strategy have been reverse-engineered. This document treats the JSON file as a critical static resource defining the schema and behavior for an LLM (Large Language Model) integration service.
-
-### Part 1: Operational & Design Specification
+# Part 1: Operational & Design Specification
 
 #### 1. Component Overview
 
@@ -14,7 +12,7 @@ Based on the analysis of the provided artifact `llmRegistry.json`, which serves 
 #### 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Registry Pattern:** The file implements a registry where providers are indexed by unique IDs (e.g., `claude`, `deepseek`, `ollama`).
+* **Registry Pattern:** The file implements a commandRegistry where providers are indexed by unique IDs (e.g., `claude`, `deepseek`, `ollama`).
 * **Strategy Pattern (Implied):** The `type` field (predominantly "openai-compatible") and the `mapping` object imply that the consuming service uses a Strategy pattern to select the correct HTTP client or response parser based on the configuration.
 * **Adapter Pattern (Implied):** The `mapping` field defines how to adapt distinct vendor JSON responses (e.g., `content.0.text` for Claude vs `choices.0.message.content` for others) into a unified application format.
 
@@ -32,7 +30,7 @@ Based on the analysis of the provided artifact `llmRegistry.json`, which serves 
 
 
 * **External Dependencies (Implied environment):**
-* **Environment Variables:** The registry relies heavily on the runtime environment to provide secrets. It maps specific configuration keys to environment variables: `API_KEY_CLAUDE`, `API_KEY_DEEPSEEK`, `API_KEY_GEMINI`, `API_KEY_GROK`, `API_KEY_KIMI`, `API_KEY_META`, `API_KEY_OLLAMA`, `API_KEY_OPENROUTER`, `API_KEY_HUGGINGFACE`.
+* **Environment Variables:** The commandRegistry relies heavily on the runtime environment to provide secrets. It maps specific configuration keys to environment variables: `API_KEY_CLAUDE`, `API_KEY_DEEPSEEK`, `API_KEY_GEMINI`, `API_KEY_GROK`, `API_KEY_KIMI`, `API_KEY_META`, `API_KEY_OLLAMA`, `API_KEY_OPENROUTER`, `API_KEY_HUGGINGFACE`.
 * **Network:** Requires HTTP/HTTPS access to `api.anthropic.com`, `generativelanguage.googleapis.com`, `localhost` (for Ollama), etc..
 
 
@@ -140,7 +138,7 @@ While the file is not executable code, it dictates the following logic flows for
 | **Edge Case** | **EC-01** | Null Timeout | Verify that providers like `grok` or `gemini` with `timeOut: null` default to the system default (e.g., 30s or 60s). |  |
 | **Edge Case** | **EC-02** | HTTP vs HTTPS | Verify the network client handles the protocol difference between Ollama (`http`) and others (`https`). |  |
 | **Error State** | **ES-01** | Missing Env Var | Attempt to initialize `meta` provider without `API_KEY_META` in `process.env`. | Throw `ConfigurationError: Missing API Key`. |
-| **Error State** | **ES-02** | Schema Version Mismatch | Load registry with `metadataEntity.currentVersion` != "2.0.0". | Warn or Throw depending on strictness. |
+| **Error State** | **ES-02** | Schema Version Mismatch | Load commandRegistry with `metadataEntity.currentVersion` != "2.0.0". | Warn or Throw depending on strictness. |
 
 #### 3. Test Data Requirements
 

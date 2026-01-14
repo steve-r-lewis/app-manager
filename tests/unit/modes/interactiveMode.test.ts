@@ -25,7 +25,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { runInteractive } from '../../../app/modes/interactiveMode';
-import { registry } from '../../../app/commands/registry';
+import { commandRegistry } from '../../../app/commands/commandRegistry';
 import { BaseCommand } from '../../../app/commands/baseCommand';
 import * as clack from '@clack/prompts';
 import { logger } from '../../../app/services/loggerService';
@@ -76,15 +76,15 @@ describe('Interactive Mode', () => {
 	
 	beforeEach(() => {
 		vi.clearAllMocks();
-		(registry as any).commands.clear();
+		(commandRegistry as any).commands.clear();
 		
 		validCmd = new MockCommand('test.run', true);
 		disabledCmd = new MockCommand('test.blocked', false);
 		crashCmd = new MockCommand('test.crash', true);
 		
-		registry.register(validCmd);
-		registry.register(disabledCmd);
-		registry.register(crashCmd);
+		commandRegistry.register(validCmd);
+		commandRegistry.register(disabledCmd);
+		commandRegistry.register(crashCmd);
 		
 		(clack.spinner as any).mockReturnValue({ start: vi.fn(), stop: vi.fn() });
 		
@@ -174,8 +174,8 @@ describe('Interactive Mode', () => {
 		expect(process.env.LOG_TO_FILE).toBe('true');
 	});
 	
-	it('should exit gracefully if registry is empty', async () => {
-		(registry as any).commands.clear();
+	it('should exit gracefully if commandRegistry is empty', async () => {
+		(commandRegistry as any).commands.clear();
 		vi.mocked(clack.multiselect).mockResolvedValueOnce([]);
 		vi.mocked(clack.select).mockResolvedValueOnce('exit');
 		

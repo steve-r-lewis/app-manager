@@ -1,17 +1,15 @@
-Here is the comprehensive technical analysis and specification for `index.ts`.
+# Part 1: Operational & Design Specification
 
-### Part 1: Operational & Design Specification
-
-#### 1. Component Overview
+## 1. Component Overview
 
 * **Purpose:** This component serves as the **Bootstrapper** and **Entry Point** for the `app-manager` CLI application. Its primary responsibility is to initialize the runtime environment, register available commands, and determine the execution mode (Headless vs. Interactive) based on user input.
 * **Role in System:** **Orchestrator**. It bridges the gap between the Node.js runtime (`process`) and the application's core logic. It sits at the top of the call stack.
 
-#### 2. Architecture & Patterns
+## 2. Architecture & Patterns
 
 * **Design Patterns:**
-* **Singleton/Module Pattern:** Imports instantiated services (`logger`, `configService`, `registry`) directly, treating modules as singletons.
-* **Command Pattern:** Registers specific command classes (`CommitCommand`, etc.) into a central registry.
+* **Singleton/Module Pattern:** Imports instantiated services (`logger`, `configService`, `commandRegistry`) directly, treating modules as singletons.
+* **Command Pattern:** Registers specific command classes (`CommitCommand`, etc.) into a central commandRegistry.
 * **Strategy Pattern (Implicit):** dynamically selects the execution strategy (`runHeadless` vs. `runInteractive`) based on input arguments.
 
 
@@ -22,11 +20,11 @@ Here is the comprehensive technical analysis and specification for `index.ts`.
 
 * **Complexity Assessment:** **Low**. The control flow is linear with a single major conditional branch. However, the side effects (global registration) at the top level add implicit complexity to testing.
 
-#### 3. Dependency Graph
+## 3. Dependency Graph
 
 * **Internal Dependencies:**
 * **Services:** `loggerService`, `configService`.
-* **Core Systems:** `registry` (Command Registry).
+* **Core Systems:** `commandRegistry` (Command Registry).
 * **Modes:** `headlessMode`, `interactiveMode`.
 * **Commands:** `CommitCommand`, `PushCommand`, `SyncCommand`.
 
@@ -60,11 +58,11 @@ Here is the comprehensive technical analysis and specification for `index.ts`.
 
 **A. Global Side Effects (Module Load Time)**
 
-* **Logic:** Upon importing this file, the `registry` singleton is immediately populated.
+* **Logic:** Upon importing this file, the `commandRegistry` singleton is immediately populated.
 * **Execution:**
-1. `registry.register(new CommitCommand())`
-2. `registry.register(new PushCommand())`
-3. `registry.register(new SyncCommand())`
+1. `commandRegistry.register(new CommitCommand())`
+2. `commandRegistry.register(new PushCommand())`
+3. `commandRegistry.register(new SyncCommand())`
 
 
 
@@ -117,7 +115,7 @@ To unit test `main` effectively, the following modules must be mocked using a fr
 
 * **`./services/loggerService`**: Mock `logger.init` (Spy).
 * **`./services/configService`**: Mock `configService.init` (Spy).
-* **`./commands/registry`**: Mock `registry.register`.
+* **`./commands/commandRegistry`**: Mock `commandRegistry.register`.
 * **`./modes/headlessMode`**: Mock `runHeadless` (Spy/Stub).
 * **`./modes/interactiveMode`**: Mock `runInteractive` (Spy/Stub).
 * **`process.argv`**: This creates a challenge. Since `process.argv` is read directly inside `main`, tests must temporarily modify `process.argv` or the code should be refactored to accept `args` as a parameter to `main`.
@@ -141,7 +139,7 @@ To unit test `main` effectively, the following modules must be mocked using a fr
 <br>2. `runHeadless` is called with args `['commit']`.<br>
 
 <br>3. `runInteractive` is NOT called. |
-| **Edge Case** | **Module Registration** | Import file | Verify `registry.register` was called 3 times (once for each command). |
+| **Edge Case** | **Module Registration** | Import file | Verify `commandRegistry.register` was called 3 times (once for each command). |
 | **Error State** | **Service Init Failure** | Mock `logger.init` to throw Error | `main` should throw/reject, propagating error to bootstrap catch block. |
 
 #### 3. Test Data Requirements

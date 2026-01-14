@@ -110,3 +110,14 @@ export interface Token<TType = string> {
 	start: SourceLocation;
 	end: SourceLocation;
 }
+
+export interface RegionOfInterest {
+	type: string;
+	start: number; // Absolute index in source string
+	end: number;   // Absolute index (exclusive)
+	content: string;
+	loc: {         // For logging/debugging
+		start: { line: number, column: number };
+		end: { line: number, column: number };
+	};
+}

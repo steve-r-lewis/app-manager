@@ -74,8 +74,8 @@ Here is the comprehensive Technical Specification and Test Strategy Document bas
 
 * **Logic Flow:**
 1. Extracts `filename` and `ext` (extension) from the path.
-2. **Priority 1:** Checks if the exact `filename` (e.g., `package.json`) exists in the registry. Returns match if found.
-3. **Priority 2:** Checks if the `ext` (e.g., `.json`) exists in the registry. Returns match if found.
+2. **Priority 1:** Checks if the exact `filename` (e.g., `package.json`) exists in the commandRegistry. Returns match if found.
+3. **Priority 2:** Checks if the `ext` (e.g., `.json`) exists in the commandRegistry. Returns match if found.
 4. **Fallback:** Returns `this.defaultHandler` (Text handler).
 
 

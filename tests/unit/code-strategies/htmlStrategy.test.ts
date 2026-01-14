@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/code-strategies/htmlStrategy.test.ts
+ * @file:       ~/tests/unit/strategies/htmlStrategy.test.ts
  * @version:    1.2.0
  * @createDate: 2026 Jan 11
  * @createTime: 23:33
@@ -32,7 +32,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { HtmlStrategy } from '../../../app/code-strategies/htmlStrategy';
+import { HtmlStrategy } from '../../../app/strategies/htmlStrategy';
 
 describe('HtmlStrategy', () => {
 	const strategy = new HtmlStrategy();

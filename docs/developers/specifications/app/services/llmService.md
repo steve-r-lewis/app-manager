@@ -93,7 +93,7 @@ The `LLMService` acts as a unified Gateway/Adapter to external Large Language Mo
 #### `checkAvailability(): LLMProviderStatus[]`
 
 * **Logic Flow:**
-1. Iterates through `registry.records`.
+1. Iterates through `commandRegistry.records`.
 2. Checks `process.env` for the existence of the specific `apiKeyEnv` string defined in the record.
 3. Maps results to a status object indicating `available: true/false` and a reason string if missing.
 
@@ -103,7 +103,7 @@ The `LLMService` acts as a unified Gateway/Adapter to external Large Language Mo
 #### `configure(providerId: string): void`
 
 * **Logic Flow:**
-1. Searches `registry.records` for a strict ID match.
+1. Searches `commandRegistry.records` for a strict ID match.
 2. **Error Handling:** Throws `Error: Provider '...' not found` if no match.
 3. Sets `this.activeConfig` to the matched record.
 

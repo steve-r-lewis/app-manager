@@ -1,7 +1,3 @@
-Here is the comprehensive Technical Specification and Test Strategy based on the analysis of `utilsTypes.ts`.
-
----
-
 # Technical Specification Document
 
 **Artifact:** `app/types/utilsTypes.ts`

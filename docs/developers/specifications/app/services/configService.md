@@ -1,7 +1,3 @@
-Based on the analysis of the provided source code `configService.ts`, here is the comprehensive Technical Specification and Test Strategy.
-
----
-
 # Technical Specification Document: Configuration Service
 
 ## Part 1: Operational & Design Specification

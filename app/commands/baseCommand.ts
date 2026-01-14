@@ -11,7 +11,19 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Defines the abstract BaseCommand class, which serves as the foundational contract
+ * for all CLI and TUI commands within the application.
+ *
+ * Responsibilities:
+ * - Encapsulates command metadata (id, domain, name, visibility) in a strongly typed,
+ *   readonly property.
+ * - Declares the abstract `execute()` method that must be implemented by all concrete
+ *   command classes to perform domain-specific operations.
+ * - Provides an optional `isEnabled()` asynchronous hook for conditional availability
+ *   of commands based on project context or environment.
+ *
+ * This class ensures a consistent interface for command discovery, registration, and
+ * execution by the CommandRegistry and higher-level CLI/TUI services.
  *
  * ================================================================================
  *

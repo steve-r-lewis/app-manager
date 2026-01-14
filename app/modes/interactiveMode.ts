@@ -28,7 +28,7 @@ import pc from 'picocolors';
 import { logger } from '../services/loggerService';
 import { configService } from '../services/configService';
 import { llmService } from '../services/llmService';
-import { registry } from '../commands/registry';
+import { commandRegistry } from '../commands/commandRegistry';
 
 export async function runInteractive(targetRoot: string) {
 	console.clear();
@@ -66,7 +66,7 @@ export async function runInteractive(targetRoot: string) {
 	
 	// C. Main Menu Loop
 	while (true) {
-		const domains = registry.getDomains();
+		const domains = commandRegistry.getDomains();
 		
 		if (domains.length === 0) {
 			logger.warn('No commands registered! (System is empty)');
@@ -87,7 +87,7 @@ export async function runInteractive(targetRoot: string) {
 			process.exit(0);
 		}
 		
-		const commands = registry.getByDomain(domain as string);
+		const commands = commandRegistry.getByDomain(domain as string);
 		
 		const action = await select({
 			message: `${(domain as string).toUpperCase()} Actions:`,

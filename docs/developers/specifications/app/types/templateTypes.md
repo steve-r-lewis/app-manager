@@ -1,6 +1,4 @@
-Here is the comprehensive Technical Specification and Test Strategy based on the provided `templateTypes.ts` file.
-
-### Part 1: Operational & Design Specification
+# Part 1: Operational & Design Specification
 
 **1. Component Overview**
 

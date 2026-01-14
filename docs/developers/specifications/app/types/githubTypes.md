@@ -1,7 +1,7 @@
 # Technical Specification Document
 
 **Project:** app-manager
-**Component:** Remote GitHub Domain Type Definitions (`githubTypes.ts`)
+**Component:** Remote GitHub Domain Type Definitions (`githubServiceTypes.ts`)
 **Version:** 1.2.0
 **Date:** 2026-01-10
 
@@ -10,7 +10,7 @@
 ### 1. Component Overview
 
 * **Purpose:**
-This file serves as the centralized **Domain Definition** layer for the application's interaction with the GitHub ecosystem. It provides strict TypeScript interfaces to model configuration files (`registry`), Data Transfer Objects (DTOs) for the GitHub REST API, and error handling structures.
+This file serves as the centralized **Domain Definition** layer for the application's interaction with the GitHub ecosystem. It provides strict TypeScript interfaces to model configuration files (`commandRegistry`), Data Transfer Objects (DTOs) for the GitHub REST API, and error handling structures.
 * **Role in System:**
 * **Data Layer / Type Safety:** It acts as the foundational contract for the Data Layer. It ensures that any service consuming GitHub APIs or reading local configuration files adheres to a strict schema, preventing runtime errors caused by mismatched property access.
 * **Interoperability:** It standardizes the data shape between the local application logic (CamelCase convention) and external GitHub API responses (Snake_Case convention).
@@ -53,8 +53,8 @@ The following interfaces are exported for system-wide use.
 
 | Interface | Usage |
 | --- | --- |
-| **`GithubRepositoryConfig`** | Defines the schema for a single entry in the local registry JSON file. Note the optional `githubOrg` which acts as an override. |
-| **`GithubRegistry`** | Defines the root structure of the registry file, containing an array of records. |
+| **`GithubRepositoryConfig`** | Defines the schema for a single entry in the local commandRegistry JSON file. Note the optional `githubOrg` which acts as an override. |
+| **`GithubRegistry`** | Defines the root structure of the commandRegistry file, containing an array of records. |
 
 #### API Response Types (DTOs)
 
@@ -73,7 +73,7 @@ The following interfaces are exported for system-wide use.
 
 While there are no methods to specify, the interfaces enforce the following logic on consuming services:
 
-1. **Registry Parsing:** Any service reading the registry file **MUST** validate that the JSON root object contains a `records` array, and each item in that array contains `repositoryName` and `githubToken`.
+1. **Registry Parsing:** Any service reading the commandRegistry file **MUST** validate that the JSON root object contains a `records` array, and each item in that array contains `repositoryName` and `githubToken`.
 2. **API Consumption:** Services fetching data from GitHub **MUST** expect `snake_case` properties (e.g., `html_url`, `clone_url`). Mapping to `camelCase` for internal app use must happen *after* the raw response is typed against `GithubRepo`.
 3. **Nullable Fields:** The `GithubRepo` interface defines `description` as `string | null`. Logic consuming this property **MUST** handle null checks to avoid rendering errors.
 
@@ -102,7 +102,7 @@ When testing services (e.g., `GithubService.ts` or `ConfigLoader.ts`) that impor
 
 ### 2. Test Scenarios (For Consuming Services)
 
-These scenarios validate that the application handles the data structures defined in `githubTypes.ts` correctly.
+These scenarios validate that the application handles the data structures defined in `githubServiceTypes.ts` correctly.
 
 | Scenario Category | Scenario ID | Description | Expected Outcome |
 | --- | --- | --- | --- |
@@ -114,7 +114,7 @@ These scenarios validate that the application handles the data structures define
 
 ### 3. Test Data Requirements (Fixtures)
 
-Use these JSON snippets as fixtures in your test suite. They conform strictly to the interfaces in `githubTypes.ts`.
+Use these JSON snippets as fixtures in your test suite. They conform strictly to the interfaces in `githubServiceTypes.ts`.
 
 #### Fixture A: Valid Repository Config (`GithubRepositoryConfig`)
 

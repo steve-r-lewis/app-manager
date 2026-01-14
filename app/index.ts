@@ -29,7 +29,7 @@ import { dirname, resolve } from 'node:path';
 // Services
 import { logger } from './services/loggerService';
 import { configService } from './services/configService';
-import { registry } from './commands/registry';
+import { commandRegistry } from './commands/commandRegistry';
 
 // Modes
 import { runHeadless } from './modes/headlessMode';
@@ -41,9 +41,9 @@ import { PushCommand } from './commands/git/pushCommand';
 import { SyncCommand } from './commands/git/syncCommand';
 
 // --- REGISTER COMMANDS ---
-registry.register(new CommitCommand());
-registry.register(new PushCommand());
-registry.register(new SyncCommand());
+commandRegistry.register(new CommitCommand());
+commandRegistry.register(new PushCommand());
+commandRegistry.register(new SyncCommand());
 
 // --- MAIN ORCHESTRATOR ---
 export async function main(targetRoot: string, toolRoot: string) {

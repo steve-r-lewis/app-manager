@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/tests/unit/code-strategies/vueStrategy.test.ts
+ * @file:       ~/tests/unit/strategies/vueStrategy.test.ts
  * @version:    1.0.0
  * @createDate: 2026 Jan 11
  * @createTime: 23:30
@@ -24,7 +24,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { VueStrategy } from '../../../app/code-strategies/vueStrategy';
+import { VueStrategy } from '../../../app/strategies/vueStrategy';
 
 describe('VueStrategy', () => {
 	const strategy = new VueStrategy();

@@ -1,152 +1,286 @@
-Based on the analysis of the provided source file `baseCommand.ts`, here is the comprehensive Technical Specification and Test Strategy.
+# Technical Specification Document
+
+**Component:** `BaseCommand`
+**File:** `~/app/commands/baseCommand.ts`
+**Project:** `app-manager`
+**Language:** TypeScript (Node.js runtime)
 
 ---
 
 ## Part 1: Operational & Design Specification
 
-### 1. Component Overview
+---
 
-* **Purpose:**
-The `BaseCommand` class serves as the foundational abstract contract for all executable commands within the `app-manager` CLI application. It standardizes how commands are defined, metadata is stored, and execution logic is invoked.
-* **Role in System:**
-**Core Architecture / Strategy Pattern Base.**
-This component acts as the interface definition for the Command design pattern. It sits at the core of the command handling layer, ensuring that the command registry or dispatcher can interact with any command implementation uniformly without knowing specific implementation details.
+## 1. Component Overview
 
-### 2. Architecture & Patterns
+### 1.1 Purpose
 
-* **Design Patterns:**
-* **Command Pattern:** The class explicitly encapsulates a request as an object, strictly defining the `execute` method signature.
-* **Template Method:** While minimal, it provides a hook (`isEnabled`) with a default implementation that subclasses can override, allowing for context-aware availability checks.
+`BaseCommand` defines the **abstract contract** for all CLI commands in the system. It ensures consistent metadata management and enforces implementation of an `execute()` method while providing optional helper hooks for conditional availability.
 
+It is intended to be **subclassed** by concrete command implementations (e.g., `GitCommitCommand`, `NuxtBuildCommand`) that encapsulate domain-specific logic.
 
-* **State Management:**
-* **Immutable/Read-Only State:** The class is stateful but immutable regarding its configuration. It holds `public readonly metadata`, ensuring command definitions cannot be altered after instantiation.
+### 1.2 Role in System
 
+**Architectural Role:**
+Command Abstraction Layer / Base Class
 
-* **Complexity Assessment:**
-* **Rating:** **Low**
-* **Justification:** The file contains no complex control flow. It primarily serves as a type definition and contract enforcement mechanism for subclasses.
+**System Context:**
 
-
-
-### 3. Dependency Graph
-
-* **Internal Dependencies:**
-* `../types/index`: Imports `CommandMetadata` and `CommandOptions` to strictly type the inputs.
-
-
-* **External Dependencies:**
-* None. This file is pure TypeScript logic with no dependencies on Node.js runtime modules (like `fs` or `path`) or third-party libraries.
-
-
-* **Coupling Analysis:**
-* **Loosely Coupled.** The class relies entirely on interface abstraction (`CommandMetadata`, `CommandOptions`) rather than concrete implementations, making it highly extensible and easy to mock.
-
-
-
-### 4. Data Types & Interfaces
-
-* **Key Interfaces:**
-* `CommandMetadata`: Defines the shape of the configuration data passed to the constructor.
-* `CommandOptions`: Defines the shape of flags/options passed to the execution method.
-
-
-* **Return Types:**
-* `execute(...)`: `Promise<void>` (Explicit).
-* `isEnabled(...)`: `Promise<boolean>` (Explicit).
-* *Auditor Note:* No `any` types were detected. Strict typing is currently upheld.
-
-
-
-### 5. Functional Logic Specification
-
-#### Method: `constructor`
-
-* **Signature:** `constructor(public readonly metadata: CommandMetadata)`
-* **Logic Flow:**
-1. Receives a metadata object.
-2. Assigns it to a public, read-only property on the instance.
-
-
-* **Side Effects:** None.
-* **Error Handling:** None (assumes valid object passed via TypeScript strictness).
-
-#### Abstract Method: `execute`
-
-* **Signature:** `abstract execute(targetRoot: string, options: CommandOptions, ...args: string[]): Promise<void>`
-* **Logic Flow:**
-* This is an abstract method. It enforces that all subclasses *must* implement their own execution logic.
-* It expects the project root path, parsed options, and variadic positional arguments.
-
-
-* **Side Effects:** Dependent on subclass implementation.
-* **Error Handling:** Dependent on subclass implementation, though the Promise return type implies asynchronous error propagation.
-
-#### Method: `isEnabled`
-
-* **Signature:** `isEnabled(targetRoot: string): Promise<boolean>`
-* **Logic Flow:**
-1. Receives the `targetRoot` (allowing context-aware checks, e.g., "Is this a git repo?").
-2. Returns `true` by default.
-
-
-* **Side Effects:** None.
-* **Error Handling:** Returns a resolved Promise.
+* All CLI and TUI commands in the system extend `BaseCommand`.
+* Provides the standard interface consumed by the `CommandRegistry` for registration, discovery, and execution.
+* Guarantees consistent metadata access (`CommandMetadata`) across all commands.
+* Allows optional contextual availability checks via `isEnabled()`.
 
 ---
 
-## Part 2: Appendix - Testing Reference
+## 2. Architecture & Patterns
 
-Since `BaseCommand` is an **abstract class**, it cannot be instantiated directly. Testing requires the creation of a concrete `TestImplementationCommand` within the test suite to verify the base class mechanics.
+### 2.1 Design Patterns
 
-### 1. Mocking Strategy
+| Pattern                | Usage                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------- |
+| **Template Method**    | Defines the `execute()` method as abstract, forcing subclasses to implement the core behavior. |
+| **Strategy / Hook**    | Optional `isEnabled()` hook allows subclasses to override contextual validation logic.         |
+| **Immutable Metadata** | `metadata` is readonly, preventing mutation after instantiation.                               |
 
-* **Services to Mock:**
-* **Derived Implementation:** A concrete class extending `BaseCommand` must be created within the test file to test inheritance and the `isEnabled` default behavior.
+### 2.2 State Management
 
+**Statefulness:** Stateless (except metadata)
 
-* **Mock Behaviour:**
-* **Metadata Object:** Must mock a valid `CommandMetadata` object to pass to the super-constructor.
+* `BaseCommand` instances are **immutable** except for potentially inherited state in subclasses.
+* `metadata` is readonly; no other internal state is maintained.
 
+### 2.3 Complexity Assessment
 
+**Rating:** Low
 
-### 2. Test Scenarios
+* No branching or control flow in the base class.
+* All complexity is deferred to subclasses.
+* `isEnabled()` is asynchronous but simple by default.
 
-| Scenario ID | Category | Name | Description | Expected Result |
-| --- | --- | --- | --- | --- |
-| **BC-001** | Happy Path | **Metadata Assignment** | Instantiate a concrete subclass with valid metadata. | `instance.metadata` should match the injected mock object. |
-| **BC-002** | Happy Path | **Default Enablement** | Call `isEnabled()` on the concrete subclass without overriding it. | Should return `true` (default behavior defined in). |
-| **BC-003** | Edge Case | **Argument Spreading** | Call `execute` with multiple trailing string arguments on a subclass that logs args. | The subclass should receive the `...args` array correctly populated. |
-| **BC-004** | Architecture | **Contract Enforcement** | (TypeScript Compile Check) Attempt to create a subclass without implementing `execute`. | Compilation error (or linter error) proving the abstract contract is enforced. |
+---
 
-### 3. Test Data Requirements
+## 3. Dependency Graph
 
-To test this component, the following data structures are required to satisfy the imports from `../types/index`.
+### 3.1 Internal Dependencies
 
-**A. Mock Command Metadata:**
+| Dependency       | Type             | Purpose                                                                  |
+| ---------------- | ---------------- | ------------------------------------------------------------------------ |
+| `../types/index` | Type Definitions | Provides `CommandMetadata` and `CommandOptions` types for strong typing. |
 
-```typescript
-const mockMetadata: CommandMetadata = {
-    name: "test-command",
-    description: "A command for testing the base class",
-    version: "1.0.0",
-    example: "app test-command --force"
-};
+### 3.2 External Dependencies
 
+* None (no Node.js built-ins or third-party libraries).
+
+### 3.3 Coupling Analysis
+
+**Coupling Level:** Low
+
+* Loosely coupled to the rest of the system.
+* Depends only on type definitions.
+* Concrete commands implement `execute()` and may introduce tighter coupling individually.
+
+---
+
+## 4. Data Types & Interfaces
+
+### 4.1 Key Interfaces and Types
+
+#### `CommandMetadata` (Imported)
+
+Expected shape:
+
+```ts
+interface CommandMetadata {
+  id: string;
+  domain: string;
+  name: string;
+  hidden?: boolean;
+}
 ```
 
-**B. Mock Command Options:**
+#### `CommandOptions` (Imported)
 
-```typescript
-const mockOptions: CommandOptions = {
-    verbose: true,
-    force: false,
-    // Dynamic dictionary for other flags
-    dryRun: true
+* Arbitrary key-value object representing parsed CLI flags.
+* Example: `{ force: true, verbose: false }`
+
+---
+
+### 4.2 Public API & Return Types
+
+| Method        | Signature                                                                                         | Return Type        | Notes                                                            |
+| ------------- | ------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------- |
+| `constructor` | `constructor(metadata: CommandMetadata)`                                                          | `BaseCommand`      | Immutable metadata stored in `readonly metadata`.                |
+| `execute`     | `abstract execute(targetRoot: string, options: CommandOptions, ...args: string[]): Promise<void>` | `Promise<void>`    | Must be implemented by subclasses.                               |
+| `isEnabled`   | `async isEnabled(targetRoot: string): Promise<boolean>`                                           | `Promise<boolean>` | Default implementation always returns `true`; optional override. |
+
+**Type Safety Observations:**
+
+* All methods are strongly typed.
+* Abstract method ensures compile-time enforcement of implementation.
+* No `any` types.
+
+---
+
+## 5. Functional Logic Specification
+
+---
+
+### 5.1 `constructor`
+
+**Signature:**
+`constructor(metadata: CommandMetadata)`
+
+**Logic Flow:**
+
+1. Accepts a `CommandMetadata` object.
+2. Stores it in the `readonly metadata` property.
+
+**Side Effects:**
+None beyond property assignment.
+
+**Error Handling:**
+No validation; runtime errors possible if invalid metadata is passed.
+
+---
+
+### 5.2 `execute`
+
+**Signature:**
+`abstract execute(targetRoot: string, options: CommandOptions, ...args: string[]): Promise<void>`
+
+**Logic Flow:**
+
+* No implementation in the base class.
+* Subclasses must implement command-specific behavior.
+* Designed for asynchronous execution.
+
+**Side Effects:**
+
+* Defined by subclass (e.g., file system changes, API calls, logging).
+
+**Error Handling:**
+
+* Left to subclass implementation.
+
+---
+
+### 5.3 `isEnabled`
+
+**Signature:**
+`async isEnabled(targetRoot: string): Promise<boolean>`
+
+**Logic Flow:**
+
+1. By default, always returns `true`.
+2. Intended to be overridden by subclasses to determine runtime availability based on:
+
+    * Presence of required files (e.g., `.git` folder)
+    * Environment constraints
+    * Project type or configuration
+
+**Side Effects:** None by default.
+
+**Error Handling:**
+
+* No explicit error handling.
+* Subclass overrides may include validation and exceptions.
+
+---
+
+## Part 2: Appendix – Testing Reference
+
+---
+
+## 1. Mocking Strategy
+
+### 1.1 Services / Dependencies to Mock
+
+* None at the base class level.
+* Concrete subclasses may depend on services such as:
+
+    * File system access
+    * Network requests
+    * Logger services
+
+### 1.2 Mock Behaviour
+
+* For unit tests, create stub implementations of `BaseCommand`:
+
+    * Provide predictable `metadata`.
+    * Override `execute` with a no-op or test-specific behavior.
+    * Optionally override `isEnabled` to simulate enabled/disabled states.
+
+---
+
+## 2. Test Scenarios
+
+### 2.1 Happy Path
+
+| Scenario                           | Expected Outcome                                                    |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| Instantiate a concrete command     | `metadata` is correctly assigned                                    |
+| Call `isEnabled()` on base class   | Returns `true`                                                      |
+| Call `execute()` on abstract class | Compile-time error if called directly (cannot instantiate abstract) |
+
+---
+
+### 2.2 Edge Cases
+
+| Scenario                                         | Expected Outcome                            |
+| ------------------------------------------------ | ------------------------------------------- |
+| Metadata with optional `hidden` property missing | No runtime errors                           |
+| Metadata with empty strings                      | Metadata stored as provided; no enforcement |
+
+---
+
+### 2.3 Error States
+
+| Category                              | Scenario                                               | Expected Behavior                    |
+| ------------------------------------- | ------------------------------------------------------ | ------------------------------------ |
+| Invalid Metadata                      | Pass `null` or incomplete metadata                     | Runtime exception on property access |
+| Override `execute` with invalid logic | Dependent on subclass implementation; may throw errors |                                      |
+
+---
+
+## 3. Test Data Requirements
+
+### 3.1 Sample Metadata
+
+```ts
+const sampleMetadata = {
+  id: 'git.commit',
+  domain: 'git',
+  name: 'commit',
+  hidden: false
 };
-
 ```
 
-### Next Step
+### 3.2 Sample Command Subclass
 
-Would you like me to generate the **TypeScript Test Suite** (using Jest or Mocha) based on this strategy, or would you like to analyse the `../types/index` file next to ensure the interfaces match our assumptions?
+```ts
+class TestCommand extends BaseCommand {
+  async execute(targetRoot: string, options: CommandOptions, ...args: string[]) {
+    // no-op for testing
+    return;
+  }
+
+  async isEnabled(targetRoot: string) {
+    return true;
+  }
+}
+```
+
+---
+
+## Final Architectural Notes
+
+* `BaseCommand` is **the foundation for all CLI command implementations**.
+* Strongly typed metadata and enforced `execute()` contracts promote consistency.
+* Future enhancements could include:
+
+    * Validation of `metadata` during construction.
+    * Optional pre/post execution hooks for cross-cutting concerns (logging, telemetry, error handling).
+
+---
+
