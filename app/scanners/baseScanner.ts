@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/scanners/baseScanner.ts
- * @version:    1.0.0
+ * @version:    1.0.1
  * @createDate: 2026 Jan 12
  * @createTime: 22:59
  * @author:     Steve R Lewis
@@ -22,11 +22,17 @@
  *
  * @notes: Revision History
  *
+ * V1.0.1, 20260115
+ * Fixed missing 'isWhitespace' implementation and visibility of 'skipWhitespace'.
+ * Added missing imports.
+ *
  * V1.0.0, 20260112-22:59
  * Initial creation and release of baseScanner.ts
  *
  * ================================================================================
  */
+
+import type { Token, SourceLocation } from '../types/index';
 
 export abstract class BaseScanner<TTokenType> {
 	protected readonly source: string;
@@ -107,9 +113,19 @@ export abstract class BaseScanner<TTokenType> {
 		return this.source.substring(start, end);
 	}
 	
-	private skipWhitespace() {
+	/**
+	 * Advances the cursor past any whitespace characters.
+	 */
+	protected skipWhitespace(): void {
 		while (!this.isAtEnd() && this.isWhitespace(this.peek())) {
 			this.advance();
 		}
+	}
+	
+	/**
+	 * Determines if a character is a whitespace character.
+	 */
+	protected isWhitespace(char: string): boolean {
+		return /\s/.test(char);
 	}
 }

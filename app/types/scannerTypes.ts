@@ -41,6 +41,7 @@ export type TsTokenType =
 	| 'Unknown';
 
 export type HtmlTokenType =
+	| 'Attribute'
 	| 'TagOpen'         // <div
 	| 'TagClose'        // </div>
 	| 'TagSelfClose'    // />

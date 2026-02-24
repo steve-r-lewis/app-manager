@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/scanners/vueScanner.ts
- * @version:    1.0.0
+ * @version:    1.0.3
  * @createDate: 2026 Jan 12
  * @createTime: 23:42
  * @author:     Steve R Lewis
@@ -28,6 +28,23 @@
  *
  * @notes: Revision History
  *
+ * V1.0.3, 20260115-21:18
+ * Final strict implementation based on Master Specification and Tool Kit architecture.
+ * - Decomposed logic into flat, atomic tools (isRootTagStart, extractBlock).
+ * - Fixed: Correctly handles HtmlScanner's token emission for closing tags (TagOpen '</').
+ * - Fixed: Implemented strict type guards and attribute parsing as per spec.
+ * - Added support for self-closing root blocks (e.g. <script ... />).
+ *
+ * V1.0.2, 20260115-20:20
+ * Refactored to "Tool Kit" pattern (reduced cyclomatic complexity).*
+ *
+ * V1.0.1, 20260115
+ * Refactored to fix parsing logic flaws.
+ * - Added depth tracking to support nested <template> tags.
+ * - Added support for self-closing root blocks (e.g., <script src="..." />).
+ * - Fixed attribute scanning loop to recognize TagSelfClose.
+ * - Improved type safety for SfcBlock.type.
+ *
  * V1.0.0, 20260112-23:42
  * Initial creation and release of vueScanner.ts
  *
@@ -35,115 +52,243 @@
  */
 
 import { HtmlScanner } from './htmlScanner';
-import type { Token, SourceLocation, SfcBlock } from '../types/index';
+import type { Token, SfcBlock, HtmlTokenType } from '../types/index';
+
+// Strict type definition for root tags as per Spec 4.2 Recommendation
+type SfcRootType = 'script' | 'template' | 'style';
+const ROOT_TAGS = new Set<string>(['script', 'template', 'style']);
 
 export class VueScanner extends HtmlScanner {
 	
 	/**
-	 * Scans the Vue file and returns the high-level SFC blocks.
-	 * This is the primary entry point for the VueStrategy.
+	 * Primary Tool: Scans the Vue file and returns the high-level SFC blocks.
+	 * This orchestrates the smaller tools to produce the structural map.
 	 */
 	public scanSfcBlocks(): SfcBlock[] {
+		// Phase 1: Tokenization (Inherited)
 		const tokens = this.scan();
 		const blocks: SfcBlock[] = [];
 		
-		let currentTag: string | null = null;
-		let currentAttributes: Record<string, string | boolean> = {};
-		let tagStartIndex: number = 0;
-		let contentStartIndex: number = 0;
-		let contentStartLoc: SourceLocation | null = null;
-		
-		// Iterate tokens to assemble blocks
+		// Phase 2: Iterative Block Detection
 		for (let i = 0; i < tokens.length; i++) {
 			const token = tokens[i];
 			
-			// 1. Detect Block Start
-			if (token.type === 'TagOpen') {
-				// Look ahead for the TagName
-				if (i + 1 < tokens.length && tokens[i + 1].type === 'TagName') {
-					const tagNameToken = tokens[i + 1];
-					const tagName = tagNameToken.value.toLowerCase();
-					
-					// We only care about top-level blocks
-					if (['script', 'template', 'style'].includes(tagName)) {
-						currentTag = tagName;
-						tagStartIndex = token.start.index;
-						currentAttributes = {};
-						
-						// Collect Attributes until we hit the closing '>' of the opening tag
-						let j = i + 2;
-						while (j < tokens.length && tokens[j].type !== 'TagClose') {
-							if (tokens[j].type === 'AttributeName') {
-								const attrName = tokens[j].value;
-								let attrValue: string | boolean = true;
-								
-								// Check if next token is =, then Value
-								if (j + 2 < tokens.length && tokens[j + 1].type === 'Equals') {
-									if (tokens[j + 2].type === 'AttributeValue') {
-										attrValue = tokens[j + 2].value;
-										j += 2; // Skip = and Value
-									}
-								}
-								currentAttributes[attrName] = attrValue;
-							}
-							j++;
-						}
-						
-						// Move main loop index to the end of the opening tag
-						i = j;
-						
-						// The content starts immediately after the >
-						if (tokens[i].type === 'TagClose') {
-							contentStartIndex = tokens[i].end.index;
-							contentStartLoc = tokens[i].end; // Approximate, but good enough for block tracking
-						}
-					}
-				}
+			// A. Detect Opening Tag
+			if (!this.isRootTagStart(token, tokens, i)) {
 				continue;
 			}
 			
-			// 2. Capture Content (Text)
-			// The HtmlScanner emits "Text" tokens for the body of script/style/template
-			if (currentTag && token.type === 'Text') {
-				// We defer content capture until the closing tag to ensure we get the full range
-				continue;
-			}
+			// Extract the full block using the Tool Kit
+			const blockResult = this.extractBlock(tokens, i);
 			
-			// 3. Detect Block End
-			if (currentTag && token.type === 'TagClose' && token.value === '</') {
-				// Check if this closing tag matches our current block
-				if (i + 1 < tokens.length && tokens[i + 1].type === 'TagName') {
-					if (tokens[i + 1].value.toLowerCase() === currentTag) {
-						
-						// Found the closing tag for our active block
-						const closingTagStart = token.start.index;
-						const contentEndIndex = closingTagStart;
-						
-						// Extract the full raw content from source
-						const content = this.source.substring(contentStartIndex, contentEndIndex);
-						
-						blocks.push({
-							type: currentTag as any,
-							content: content,
-							start: contentStartIndex,
-							end: contentEndIndex,
-							tagStart: tagStartIndex,
-							tagEnd: tokens[i + 2]?.end.index || closingTagStart, // approximate end of >
-							attributes: currentAttributes,
-							loc: {
-								start: contentStartLoc || token.start,
-								end: token.start
-							}
-						});
-						
-						// Reset
-						currentTag = null;
-						currentAttributes = {};
-					}
-				}
+			if (blockResult) {
+				blocks.push(blockResult.block);
+				// Fast-forward to the end of this block to resume scanning
+				i = blockResult.endIndex;
 			}
 		}
 		
 		return blocks;
+	}
+	
+	// --- Identification Tools ---
+	
+	/**
+	 * Tool: Checks if the current token is the start of a valid root block.
+	 * Corresponds to Spec Phase 2.A.
+	 */
+	private isRootTagStart(token: Token<HtmlTokenType>, tokens: Token<HtmlTokenType>[], index: number): boolean {
+		if (token.type !== 'TagOpen') return false;
+		
+		// Look ahead for the TagName
+		const nextToken = tokens[index + 1];
+		if (!nextToken || nextToken.type !== 'TagName') return false;
+		
+		return ROOT_TAGS.has(nextToken.value.toLowerCase());
+	}
+	
+	// --- Extraction Tools ---
+	
+	/**
+	 * Tool: Extracts a single SFC block starting at the given index.
+	 * Orchestrates attribute scanning and content boundary detection.
+	 * Returns the block and the index where the block ends.
+	 */
+	private extractBlock(tokens: Token<HtmlTokenType>[], startIndex: number): { block: SfcBlock, endIndex: number } | null {
+		// 1. Identify Block Identity
+		const nameToken = tokens[startIndex + 1];
+		const blockType = nameToken.value.toLowerCase() as SfcRootType;
+		const tagStartIndex = tokens[startIndex].start.index;
+		
+		// 2. Extract Attributes (Spec Phase 2.B)
+		const { attributes, contentStartTokenIndex, isSelfClosing } = this.scanBlockAttributes(tokens, startIndex + 2);
+		
+		// Handle Self-Closing (e.g., <script src="..." />)
+		if (isSelfClosing) {
+			const closeToken = tokens[contentStartTokenIndex]; // The /> or > token
+			const closeIndex = closeToken.end.index;
+			
+			return {
+				block: this.createBlock(
+					blockType,
+					'', // Empty content
+					tagStartIndex,
+					closeIndex,
+					attributes,
+					closeToken.start.index, // "Point" content
+					closeToken.start.index
+				),
+				endIndex: contentStartTokenIndex
+			};
+		}
+		
+		// 3. Mark Content Start (Spec Phase 2.C)
+		const contentStartToken = tokens[contentStartTokenIndex]; // The > token
+		if (!contentStartToken) return null; // EOF safety
+		
+		const contentStartIndex = contentStartToken.end.index;
+		// Spec: loc.start is "Opening tag end" (which is contentStartIndex)
+		
+		// 4. Find Matching Closing Tag (Spec Phase 2.D)
+		const closingIndex = this.findMatchingClosingTag(tokens, contentStartTokenIndex + 1, blockType);
+		if (closingIndex === -1) return null; // Malformed/Unclosed block
+		
+		const closingTokenStart = tokens[closingIndex]; // The </ token
+		const contentEndIndex = closingTokenStart.start.index;
+		
+		// 5. Construct Block
+		// Find the actual end of the closing tag (>) for the window 'tagEnd'
+		const closingTagEndIndex = this.findTagEndIndex(tokens, closingIndex);
+		const content = this.source.substring(contentStartIndex, contentEndIndex);
+		
+		return {
+			block: this.createBlock(
+				blockType,
+				content,
+				tagStartIndex,
+				closingTagEndIndex,
+				attributes,
+				contentStartIndex,
+				contentEndIndex
+			),
+			endIndex: closingTagEndIndex // Resume main loop after this block
+		};
+	}
+	
+	/**
+	 * Tool: Scans attributes until the tag closes.
+	 * Implements Spec Phase 2.B: "Collect AttributeName... Detect optional ="
+	 */
+	private scanBlockAttributes(tokens: Token<HtmlTokenType>[], startIndex: number): { attributes: Record<string, string | boolean>, contentStartTokenIndex: number, isSelfClosing: boolean } {
+		const attributes: Record<string, string | boolean> = {};
+		let i = startIndex;
+		
+		while (i < tokens.length) {
+			const t = tokens[i];
+			
+			// Boundary checks
+			if (t.type === 'TagClose') { // >
+				return { attributes, contentStartTokenIndex: i, isSelfClosing: false };
+			}
+			if (t.type === 'TagSelfClose') { // />
+				return { attributes, contentStartTokenIndex: i, isSelfClosing: true };
+			}
+			
+			if (t.type === 'AttributeName') {
+				const name = t.value;
+				let value: string | boolean = true; // Default to true (boolean attribute)
+				
+				// Lookahead for Equals and Value
+				if (tokens[i + 1]?.type === 'Equals' && tokens[i + 2]?.type === 'AttributeValue') {
+					// Spec: "string for valued attributes"
+					value = this.stripQuotes(tokens[i + 2].value);
+					i += 2; // Consume = and Value
+				}
+				
+				attributes[name] = value;
+			}
+			i++;
+		}
+		
+		return { attributes, contentStartTokenIndex: i, isSelfClosing: false };
+	}
+	
+	/**
+	 * Tool: Locates the matching closing tag.
+	 * Implements Spec Phase 2.D with nested depth tracking for <template>.
+	 */
+	private findMatchingClosingTag(tokens: Token<HtmlTokenType>[], startIndex: number, tagName: string): number {
+		let depth = 0;
+		
+		for (let i = startIndex; i < tokens.length; i++) {
+			const t = tokens[i];
+			
+			// Nested <template> check (Spec 2.3 implied/Structure requirement)
+			if (tagName === 'template' && t.type === 'TagOpen' && t.value !== '</') {
+				if (tokens[i + 1]?.type === 'TagName' && tokens[i + 1].value.toLowerCase() === 'template') {
+					depth++;
+				}
+			}
+			
+			// Detect Closing Tag: TagOpen with value '</'
+			// (Note: HtmlScanner emits TagOpen '</' for closing tags, not TagClose type)
+			if (t.type === 'TagOpen' && t.value === '</') {
+				if (tokens[i + 1]?.type === 'TagName' && tokens[i + 1].value.toLowerCase() === tagName) {
+					if (depth === 0) {
+						return i; // Found our closing tag
+					}
+					depth--;
+				}
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Tool: Scans forward from the start of a closing tag (</) to find the end (>).
+	 */
+	private findTagEndIndex(tokens: Token<HtmlTokenType>[], closingTagStartIndex: number): number {
+		for (let i = closingTagStartIndex; i < tokens.length; i++) {
+			if (tokens[i].type === 'TagClose') {
+				return tokens[i].end.index;
+			}
+		}
+		return tokens[closingTagStartIndex].end.index; // Fallback
+	}
+	
+	// --- Helpers ---
+	
+	private createBlock(
+		type: SfcRootType,
+		content: string,
+		tagStart: number,
+		tagEnd: number,
+		attributes: Record<string, string | boolean>,
+		contentStart: number,
+		contentEnd: number
+	): SfcBlock {
+		return {
+			type,
+			content,
+			start: contentStart,
+			end: contentEnd,
+			tagStart,
+			tagEnd,
+			attributes,
+			loc: {
+				// Approximate SourceLocation reconstruction based on indices
+				// In a full implementation, we would extract exact line/col from tokens
+				start: { line: 0, column: 0, index: contentStart },
+				end: { line: 0, column: 0, index: contentEnd }
+			}
+		};
+	}
+	
+	private stripQuotes(value: string): string {
+		if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+			return value.slice(1, -1);
+		}
+		return value;
 	}
 }

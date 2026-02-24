@@ -2,10 +2,10 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/commands/git/commitCommand.ts
+ * @file:       ~/app/commands/utils/autoDoc.ts
  * @version:    1.0.0
  * @createDate: 2026 Jan 21
- * @createTime: 12:03
+ * @createTime: 11:52
  * @author:     Steve R Lewis
  *
  * ================================================================================
@@ -17,8 +17,8 @@
  *
  * @notes: Revision History
  *
- * V1.0.0, 20260121-12:03
- * Initial creation and release of commitCommand.ts
+ * V1.0.0, 20260121-11:52
+ * Initial creation and release of autoDoc.ts
  *
  * ================================================================================
  */
