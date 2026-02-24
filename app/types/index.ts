@@ -23,6 +23,9 @@
  *
  * @notes: Revision History
  *
+ * V1.2.1, 20260224-18:36
+ * Changed the spacing and text formatting for better readability.
+ *
  * V1.2.0, 20260101-17:15
  * Added export for Template Engine types.
  *
@@ -35,16 +38,16 @@
  * ================================================================================
  */
 
-export * from './baseCommandTypes';   // --- Infrastructure Domains ---
-export * from './codeServiceTypes';   // --- Infrastructure Domains ---
-export * from './configServiceTypes';        // --- Core ---
-export * from './fileServiceTypes';   // --- Infrastructure Domains ---
-export * from './githubServiceTypes';        // --- Feature Domains ---
-export * from './gitTypes';           // --- Feature Domains ---
-export * from './llmServiceTypes';           // --- Feature Domains ---
-export * from './loggerServiceTypes'; // --- Core ---
-export * from './nuxtTypes';          // --- Feature Domains ---
-export * from './processServiceTypes';       // --- Infrastructure Domains ---
-export * from './utilsTypes';         // --- Infrastructure Domains ---
-export * from './scannerTypes'        // --- Infrastructure Domains ---
-export * from './templateTypes';      // --- Template Engine ---
+export * from './baseCommandTypes';    // --- Infrastructure Domains ---
+export * from './codeServiceTypes';    // --- Infrastructure Domains ---
+export * from './configServiceTypes';  // --- Core ---
+export * from './fileServiceTypes';    // --- Infrastructure Domains ---
+export * from './githubServiceTypes';  // --- Feature Domains ---
+export * from './gitTypes';            // --- Feature Domains ---
+export * from './llmServiceTypes';     // --- Feature Domains ---
+export * from './loggerServiceTypes';  // --- Core ---
+export * from './nuxtTypes';           // --- Feature Domains ---
+export * from './processServiceTypes'; // --- Infrastructure Domains ---
+export * from './utilsTypes';          // --- Infrastructure Domains ---
+export * from './scannerTypes'         // --- Infrastructure Domains ---
+export * from './templateTypes';       // --- Template Engine ---
