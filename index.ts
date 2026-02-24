@@ -35,7 +35,7 @@
  * ================================================================================
  */
 
-import { main } from './app/app.js';
+import { main } from './app/index';
 import { consola } from 'consola';
 import path from 'path';
 import { fileURLToPath } from 'url';
