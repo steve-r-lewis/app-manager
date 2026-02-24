@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/index.ts
- * @version:    1.0.0
+ * @version:    1.1.0
  * @createDate: 2026 Jan 07
  * @createTime: 20:28
  * @author:     Steve R Lewis
@@ -16,6 +16,9 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20260224-21:44
+ * Added the RunApp command registration and main function.
  *
  * V1.0.0, 20260107-20:28
  * Initial creation and release of index.ts
@@ -39,11 +42,13 @@ import { runInteractive } from './modes/interactiveMode.js';
 import { CommitCommand } from './commands/git/commitCommand.js';
 import { PushCommand } from './commands/git/pushCommand.js';
 import { SyncCommand } from './commands/git/syncCommand.js';
+import { RunAppCommand } from './commands/app/runApp.js'; // <-- New import
 
 // --- REGISTER COMMANDS ---
 commandRegistry.register(new CommitCommand());
 commandRegistry.register(new PushCommand());
 commandRegistry.register(new SyncCommand());
+commandRegistry.register(new RunAppCommand()); // <-- New registration
 
 // --- MAIN ORCHESTRATOR ---
 export async function main(targetRoot: string, toolRoot: string) {
