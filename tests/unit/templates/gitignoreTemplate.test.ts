@@ -39,8 +39,8 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet
-import { gitignoreTemplate } from '../../../app/templates/gitignoreTemplate';
-import type { GitIgnoreContext } from '../../../app/types/index';
+import { gitignoreTemplate } from '../../../app/templates/gitignoreTemplate.js';
+import type { GitIgnoreContext } from '../../../app/types/index.js';
 
 describe('gitignoreTemplate', () => {
 	

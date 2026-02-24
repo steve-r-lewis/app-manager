@@ -39,7 +39,7 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet (Red Phase)
-import { nuxtConfigTemplate, type NuxtConfigContext } from '../../../app/templates/nuxtConfigTemplate';
+import { nuxtConfigTemplate, type NuxtConfigContext } from '../../../app/templates/nuxtConfigTemplate.js';
 
 describe('nuxtConfigTemplate', () => {
 	

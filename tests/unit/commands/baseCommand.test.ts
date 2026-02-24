@@ -24,8 +24,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { BaseCommand } from '../../../app/commands/baseCommand';
-import type { CommandOptions } from '../../../app/types/index';
+import { BaseCommand } from '../../../app/commands/baseCommand.js';
+import type { CommandOptions } from '../../../app/types/index.js';
 
 // 1. Create a concrete implementation for testing
 class TestCommand extends BaseCommand {

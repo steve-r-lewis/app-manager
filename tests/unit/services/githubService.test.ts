@@ -56,8 +56,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
-import { githubService } from '../../../app/services/githubService';
-import { logger } from '../../../app/services/loggerService';
+import { githubService } from '../../../app/services/githubService.js';
+import { logger } from '../../../app/services/loggerService.js';
 
 // --- Mocks ---
 

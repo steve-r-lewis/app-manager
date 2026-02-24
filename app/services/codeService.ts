@@ -38,11 +38,11 @@
  * ================================================================================
  */
 
-import { fileService } from './fileService';
-import { llmService } from './llmService';
-import { logger } from './loggerService';
-import { getStrategyForFile } from '../strategies/index';
-import type { CodeBlock } from '../types/index';
+import { fileService } from './fileService.js';
+import { llmService } from './llmService.js';
+import { logger } from './loggerService.js';
+import { getStrategyForFile } from '../strategies/index.js';
+import type { CodeBlock } from '../types/index.js';
 
 class CodeService {
 	

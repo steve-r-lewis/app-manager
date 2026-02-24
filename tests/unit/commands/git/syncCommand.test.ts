@@ -40,10 +40,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { SyncCommand } from '../../../../app/commands/git/syncCommand';
-import { githubService } from '../../../../app/services/githubService';
-import { logger } from '../../../../app/services/loggerService';
 import * as clack from '@clack/prompts';
+import { SyncCommand } from '../../../../app/commands/git/syncCommand.js';
+import { githubService } from '../../../../app/services/githubService.js';
+import { logger } from '../../../../app/services/loggerService.js';
 
 // ----------------------------------------------------------------------------
 // Mocks (UI Module)

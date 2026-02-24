@@ -35,7 +35,7 @@
  * ================================================================================
  */
 
-import { CommandMetadata, CommandOptions } from '../types/index';
+import { CommandMetadata, CommandOptions } from '../types/index.js';
 
 export abstract class BaseCommand {
 	constructor(public readonly metadata: CommandMetadata) {}

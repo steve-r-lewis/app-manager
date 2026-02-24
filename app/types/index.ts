@@ -38,16 +38,16 @@
  * ================================================================================
  */
 
-export * from './baseCommandTypes';    // --- Infrastructure Domains ---
-export * from './codeServiceTypes';    // --- Infrastructure Domains ---
-export * from './configServiceTypes';  // --- Core ---
-export * from './fileServiceTypes';    // --- Infrastructure Domains ---
-export * from './githubServiceTypes';  // --- Feature Domains ---
-export * from './gitTypes';            // --- Feature Domains ---
-export * from './llmServiceTypes';     // --- Feature Domains ---
-export * from './loggerServiceTypes';  // --- Core ---
-export * from './nuxtTypes';           // --- Feature Domains ---
-export * from './processServiceTypes'; // --- Infrastructure Domains ---
-export * from './utilsTypes';          // --- Infrastructure Domains ---
-export * from './scannerTypes'         // --- Infrastructure Domains ---
-export * from './templateTypes';       // --- Template Engine ---
+export * from './baseCommandTypes.js';    // --- Infrastructure Domains ---
+export * from './codeServiceTypes.js';    // --- Infrastructure Domains ---
+export * from './configServiceTypes.js';  // --- Core ---
+export * from './fileServiceTypes.js';    // --- Infrastructure Domains ---
+export * from './githubServiceTypes.js';  // --- Feature Domains ---
+export * from './gitTypes.js';            // --- Feature Domains ---
+export * from './llmServiceTypes.js';     // --- Feature Domains ---
+export * from './loggerServiceTypes.js';  // --- Core ---
+export * from './nuxtTypes.js';           // --- Feature Domains ---
+export * from './processServiceTypes.js'; // --- Infrastructure Domains ---
+export * from './utilsTypes.js';          // --- Infrastructure Domains ---
+export * from './scannerTypes.js'         // --- Infrastructure Domains ---
+export * from './templateTypes.js';       // --- Template Engine ---

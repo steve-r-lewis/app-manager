@@ -24,9 +24,9 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { commandRegistry } from '../../../app/commands/commandRegistry';
-import { BaseCommand } from '../../../app/commands/baseCommand';
-import { logger } from '../../../app/services/loggerService';
+import { commandRegistry } from '../../../app/commands/commandRegistry.js';
+import { BaseCommand } from '../../../app/commands/baseCommand.js';
+import { logger } from '../../../app/services/loggerService.js';
 
 // Mock the logger to verify warnings
 vi.mock('../../../app/services/loggerService');

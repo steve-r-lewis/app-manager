@@ -39,9 +39,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { modify, applyEdits, parse } from 'jsonc-parser';
-import { logger } from './loggerService';
 import { consola } from 'consola';
+import { modify, applyEdits, parse } from 'jsonc-parser';
+import { logger } from './loggerService.js';
 
 class FileService {
 	

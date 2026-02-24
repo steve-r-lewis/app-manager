@@ -32,7 +32,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { HtmlStrategy } from '../../../app/strategies/htmlStrategy';
+import { HtmlStrategy } from '../../../app/strategies/htmlStrategy.js';
 
 describe('HtmlStrategy', () => {
 	const strategy = new HtmlStrategy();

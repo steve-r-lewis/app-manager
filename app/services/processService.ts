@@ -34,8 +34,8 @@
  */
 
 import { exec, spawn } from 'child_process';
-import type { ProcessExecuteOptions, ProcessResult } from '../types/index';
-import { logger } from './loggerService';
+import type { ProcessExecuteOptions, ProcessResult } from '../types/index.js';
+import { logger } from './loggerService.js';
 
 class ProcessService {
 	/**

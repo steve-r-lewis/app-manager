@@ -41,7 +41,7 @@
  * ================================================================================
  */
 
-import type { BaseTemplateContext, TemplateFunction } from '../types/index';
+import type { BaseTemplateContext, TemplateFunction } from '../types/index.js';
 
 /**
  * Generates the source code string for nuxt.config.ts.

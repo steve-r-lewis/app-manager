@@ -33,8 +33,8 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet
-import * as templates from '../../../app/templates/rootConfigTemplate';
-import type { PnpmWorkspaceContext, GitModulesContext } from '../../../app/types/index';
+import * as templates from '../../../app/templates/rootConfigTemplate.js';
+import type { PnpmWorkspaceContext, GitModulesContext } from '../../../app/types/index.js';
 
 const baseCtx = { projectName: 'test', author: 'Steve', year: '2026' };
 

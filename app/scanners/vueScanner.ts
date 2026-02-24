@@ -51,8 +51,8 @@
  * ================================================================================
  */
 
-import { HtmlScanner } from './htmlScanner';
-import type { Token, SfcBlock, HtmlTokenType } from '../types/index';
+import { HtmlScanner } from './htmlScanner.js';
+import type { Token, SfcBlock, HtmlTokenType } from '../types/index.js';
 
 // Strict type definition for root tags as per Spec 4.2 Recommendation
 type SfcRootType = 'script' | 'template' | 'style';

@@ -45,8 +45,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { llmService } from '../../../app/services/llmService';
-import type { LLMMessage } from '../../../app/types/index';
+import { llmService } from '../../../app/services/llmService.js';
+import type { LLMMessage } from '../../../app/types/index.js';
 
 // 1. Standalone Mock for Fetch
 const fetchMock = vi.fn();

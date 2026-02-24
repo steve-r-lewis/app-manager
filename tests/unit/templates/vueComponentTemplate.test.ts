@@ -24,8 +24,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { vueComponentTemplate } from '../../../app/templates/vueComponentTemplate';
-import type { VueComponentContext } from '../../../app/types/index';
+import { vueComponentTemplate } from '../../../app/templates/vueComponentTemplate.js';
+import type { VueComponentContext } from '../../../app/types/index.js';
 
 describe('vueComponentTemplate', () => {
 	

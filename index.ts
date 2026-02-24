@@ -35,12 +35,12 @@
  * ================================================================================
  */
 
-import { main } from './app/index';
+import { main } from './app/index.js';
 import { consola } from 'consola';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { configService } from './app/services/configService';
-import { logger } from './app/services/loggerService'; // Import Logger
+import { configService } from './app/services/configService.js';
+import { logger } from './app/services/loggerService.js'; // Import Logger
 
 // 1. Resolve Paths
 const __filename = fileURLToPath(import.meta.url);

@@ -39,7 +39,7 @@ import type {
 	PnpmWorkspaceContext,
 	GitModulesContext,
 	TemplateFunction
-} from '../types/index';
+} from '../types/index.js';
 
 /**
  * Generates .editorconfig content.

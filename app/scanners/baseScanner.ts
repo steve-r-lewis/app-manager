@@ -32,7 +32,7 @@
  * ================================================================================
  */
 
-import type { Token, SourceLocation } from '../types/index';
+import type { Token, SourceLocation } from '../types/index.js';
 
 export abstract class BaseScanner<TTokenType> {
 	protected readonly source: string;

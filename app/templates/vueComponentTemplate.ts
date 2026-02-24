@@ -23,7 +23,7 @@
  * ================================================================================
  */
 
-import type { BaseTemplateContext, TemplateFunction } from '../types/index';
+import type { BaseTemplateContext, TemplateFunction } from '../types/index.js';
 
 export const vueComponentTemplate: TemplateFunction<VueComponentContext, string> = (ctx) => {
 	const dateStr = new Date().toISOString().split('T')[0];

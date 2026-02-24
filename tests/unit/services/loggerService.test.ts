@@ -35,10 +35,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { logger } from '../../../app/services/loggerService';
 import { consola } from 'consola';
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../../../app/services/loggerService.js';
 
 // 1. Mock External Dependencies
 vi.mock('fs');

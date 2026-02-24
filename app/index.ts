@@ -27,18 +27,18 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 // Services
-import { logger } from './services/loggerService';
-import { configService } from './services/configService';
-import { commandRegistry } from './commands/commandRegistry';
+import { logger } from './services/loggerService.js';
+import { configService } from './services/configService.js';
+import { commandRegistry } from './commands/commandRegistry.js';
 
 // Modes
-import { runHeadless } from './modes/headlessMode';
-import { runInteractive } from './modes/interactiveMode';
+import { runHeadless } from './modes/headlessMode.js';
+import { runInteractive } from './modes/interactiveMode.js';
 
 // Commands (Registration)
-import { CommitCommand } from './commands/git/commitCommand';
-import { PushCommand } from './commands/git/pushCommand';
-import { SyncCommand } from './commands/git/syncCommand';
+import { CommitCommand } from './commands/git/commitCommand.js';
+import { PushCommand } from './commands/git/pushCommand.js';
+import { SyncCommand } from './commands/git/syncCommand.js';
 
 // --- REGISTER COMMANDS ---
 commandRegistry.register(new CommitCommand());

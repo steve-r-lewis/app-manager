@@ -29,7 +29,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { HtmlScanner } from '../../../app/scanners/htmlScanner';
+import { HtmlScanner } from '../../../app/scanners/htmlScanner.js';
 
 describe('HtmlScanner', () => {
 	

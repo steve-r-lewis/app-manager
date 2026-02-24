@@ -33,8 +33,8 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet
-import { licenseTemplate } from '../../../app/templates/licenseTemplate';
-import type { LicenseContext } from '../../../app/types/index';
+import { licenseTemplate } from '../../../app/templates/licenseTemplate.js';
+import type { LicenseContext } from '../../../app/types/index.js';
 
 describe('licenseTemplate', () => {
 	

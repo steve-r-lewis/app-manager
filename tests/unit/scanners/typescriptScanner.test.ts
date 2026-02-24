@@ -41,7 +41,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { TypescriptScanner } from '../../../app/scanners/typescriptScanner';
+import { TypescriptScanner } from '../../../app/scanners/typescriptScanner.js';
 
 describe('TypescriptScanner (Stress Tests)', () => {
 	

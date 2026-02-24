@@ -24,10 +24,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { CommitCommand } from '../../../../app/commands/git/commitCommand';
-import { githubService } from '../../../../app/services/githubService';
-import { llmService } from '../../../../app/services/llmService';
 import * as clack from '@clack/prompts';
+import { CommitCommand } from '../../../../app/commands/git/commitCommand.js';
+import { githubService } from '../../../../app/services/githubService.js';
+import { llmService } from '../../../../app/services/llmService.js';
 
 // Mock Services
 vi.mock('../../../../app/services/githubService');

@@ -24,11 +24,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { runHeadless } from '../../../app/modes/headlessMode';
-import { commandRegistry } from '../../../app/commands/commandRegistry';
-import { BaseCommand } from '../../../app/commands/baseCommand';
-import { configService } from '../../../app/services/configService';
-import { logger } from '../../../app/services/loggerService';
+import { runHeadless } from '../../../app/modes/headlessMode.js';
+import { commandRegistry } from '../../../app/commands/commandRegistry.js';
+import { BaseCommand } from '../../../app/commands/baseCommand.js';
+import { configService } from '../../../app/services/configService.js';
+import { logger } from '../../../app/services/loggerService.js';
 
 // ----------------------------------------------------------------------------
 // Mocks & Helpers

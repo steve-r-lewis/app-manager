@@ -29,7 +29,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { TypescriptStrategy } from '../../../app/strategies/typescriptStrategy';
+import { TypescriptStrategy } from '../../../app/strategies/typescriptStrategy.js';
 
 describe('TypescriptStrategy', () => {
 	const strategy = new TypescriptStrategy();

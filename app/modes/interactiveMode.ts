@@ -25,10 +25,10 @@
 
 import { intro, outro, select, multiselect, isCancel, spinner } from '@clack/prompts';
 import pc from 'picocolors';
-import { logger } from '../services/loggerService';
-import { configService } from '../services/configService';
-import { llmService } from '../services/llmService';
-import { commandRegistry } from '../commands/commandRegistry';
+import { logger } from '../services/loggerService.js';
+import { configService } from '../services/configService.js';
+import { llmService } from '../services/llmService.js';
+import { commandRegistry } from '../commands/commandRegistry.js';
 
 export async function runInteractive(targetRoot: string) {
 	console.clear();

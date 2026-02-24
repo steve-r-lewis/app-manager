@@ -23,9 +23,9 @@
  * ================================================================================
  */
 
-import { logger } from '../services/loggerService';
-import { configService } from '../services/configService';
-import { commandRegistry } from '../commands/commandRegistry';
+import { logger } from '../services/loggerService.js';
+import { configService } from '../services/configService.js';
+import { commandRegistry } from '../commands/commandRegistry.js';
 
 export async function runHeadless(targetRoot: string, args: string[]) {
 	const [domain, action, ...rest] = args;

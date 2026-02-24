@@ -23,7 +23,7 @@
  * ================================================================================
  */
 
-import type { ICodeStrategy, CodeFileMetadata, CodeBlock, CodeBlockType } from '../types/index';
+import type { ICodeStrategy, CodeFileMetadata, CodeBlock, CodeBlockType } from '../types/index.js';
 
 // Type Guard for validation
 function isCodeBlockType(value: string): value is CodeBlockType {

@@ -34,14 +34,14 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { logger } from '../../app/services/loggerService';
-import { configService } from '../../app/services/configService';
-import { commandRegistry } from '../../app/commands/commandRegistry';
+import { logger } from '../../app/services/loggerService.js';
+import { configService } from '../../app/services/configService.js';
+import { commandRegistry } from '../../app/commands/commandRegistry.js';
 
-import { main } from '../../app/index';
+import { main } from '../../app/index.js';
 
-import { runHeadless } from '../../app/modes/headlessMode';
-import { runInteractive } from '../../app/modes/interactiveMode';
+import { runHeadless } from '../../app/modes/headlessMode.js';
+import { runInteractive } from '../../app/modes/interactiveMode.js';
 
 // ----------------------------------------------------------------------------
 // Mocks

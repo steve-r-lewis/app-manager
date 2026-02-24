@@ -33,7 +33,7 @@
  * ================================================================================
  */
 
-import type { JsonTemplateContext, TemplateFunction } from '../types/index';
+import type { JsonTemplateContext, TemplateFunction } from '../types/index.js';
 
 /**
  * Generates the metadata JSON object.

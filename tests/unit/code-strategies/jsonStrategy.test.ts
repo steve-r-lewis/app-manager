@@ -38,7 +38,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { parse } from 'jsonc-parser';
-import { JsonStrategy } from '../../../app/strategies/jsonStrategy';
+import { JsonStrategy } from '../../../app/strategies/jsonStrategy.js';
 
 describe('JsonStrategy (Architectural Coverage)', () => {
 	const strategy = new JsonStrategy();

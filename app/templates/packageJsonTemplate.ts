@@ -39,7 +39,7 @@
  * ================================================================================
  */
 
-import type { BaseTemplateContext, TemplateFunction } from '../types/index';
+import type { BaseTemplateContext, TemplateFunction } from '../types/index.js';
 
 /**
  * Generates a strictly typed package.json object.

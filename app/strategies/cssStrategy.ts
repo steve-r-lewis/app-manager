@@ -23,7 +23,7 @@
  * ================================================================================
  */
 
-import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../types/index';
+import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../types/index.js';
 
 export class CssStrategy implements ICodeStrategy {
 	

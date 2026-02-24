@@ -29,7 +29,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { configService } from '../../../app/services/configService';
+import { configService } from '../../../app/services/configService.js';
 
 describe('ConfigService', () => {
 	

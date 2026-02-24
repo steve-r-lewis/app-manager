@@ -43,7 +43,7 @@ import type {
 	LLMResponse,
 	LLMProviderStatus,
 	ChatOptions
-} from '../types/index';
+} from '../types/index.js';
 
 class LLMService {
 	

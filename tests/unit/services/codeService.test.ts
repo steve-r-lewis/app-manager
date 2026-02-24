@@ -36,9 +36,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { codeService } from '../../../app/services/codeService';
-import { fileService } from '../../../app/services/fileService';
-import { llmService } from '../../../app/services/llmService';
+import { codeService } from '../../../app/services/codeService.js';
+import { fileService } from '../../../app/services/fileService.js';
+import { llmService } from '../../../app/services/llmService.js';
 
 // Mock dependencies
 vi.mock('../../../app/services/fileService');

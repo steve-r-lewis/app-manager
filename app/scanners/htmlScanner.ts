@@ -70,8 +70,8 @@
  * ================================================================================
  */
 
-import { BaseScanner } from './baseScanner';
-import type { Token, SourceLocation, HtmlTokenType } from '../types/index';
+import { BaseScanner } from './baseScanner.js';
+import type { Token, SourceLocation, HtmlTokenType } from '../types/index.js';
 
 const RAW_TEXT_TAGS = new Set(['script', 'style', 'textarea', 'title']);
 

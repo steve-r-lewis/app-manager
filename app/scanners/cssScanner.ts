@@ -57,8 +57,8 @@
  * ================================================================================
  */
 
-import { BaseScanner } from './baseScanner';
-import type { Token, SourceLocation, CssTokenType } from '../types/index';
+import { BaseScanner } from './baseScanner.js';
+import type { Token, SourceLocation, CssTokenType } from '../types/index.js';
 
 export class CssScanner extends BaseScanner<CssTokenType> {
 	

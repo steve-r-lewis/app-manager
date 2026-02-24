@@ -29,8 +29,8 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // @ts-ignore
-import { processService } from '../../../app/services/processService';
 import * as child_process from 'child_process';
+import { processService } from '../../../app/services/processService.js';
 
 // Mock child_process
 vi.mock('child_process', () => ({

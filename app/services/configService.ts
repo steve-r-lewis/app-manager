@@ -36,7 +36,7 @@
  * ================================================================================
  */
 
-import type { AppConfig, GitUserConfig } from '../types/index';
+import type { AppConfig, GitUserConfig } from '../types/index.js';
 
 class ConfigService {
 	private config: AppConfig;

@@ -36,8 +36,8 @@
  * ================================================================================
  */
 
-import { BaseScanner } from './baseScanner';
-import type { Token, SourceLocation, TsTokenType } from '../types/index';
+import { BaseScanner } from './baseScanner.js';
+import type { Token, SourceLocation, TsTokenType } from '../types/index.js';
 
 // Keywords relevant to structural analysis
 const KEYWORDS = new Set([

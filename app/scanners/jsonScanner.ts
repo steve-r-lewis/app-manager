@@ -11,30 +11,6 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
- *
- * ================================================================================
- *
- * @notes: Revision History
- *
- * V1.0.0, 20260112-23:20
- * Initial creation and release of jsonScanner.ts
- *
- * ================================================================================
- */
-
-/**
- * ================================================================================
- *
- * @project:    app-manager
- * @file:       ~/app/scanners/jsonScanner.ts
- * @version:    1.0.0
- * @createDate: 2026 Jan 12
- * @author:     Steve R Lewis
- *
- * ================================================================================
- *
- * @description:
  * The JSON Token Scanner.
  *
  * Responsibilities:
@@ -50,14 +26,14 @@
  *
  * @notes: Revision History
  *
- * V1.0.0, 20260112
+ * V1.0.0, 20260112-23:20
  * Initial creation and release of jsonScanner.ts
  *
  * ================================================================================
  */
 
-import { BaseScanner } from './baseScanner';
-import type { Token, SourceLocation, JsonTokenType } from '../types/index';
+import { BaseScanner } from './baseScanner.js';
+import type { Token, SourceLocation, JsonTokenType } from '../types/index.js';
 
 export class JsonScanner extends BaseScanner<JsonTokenType> {
 	

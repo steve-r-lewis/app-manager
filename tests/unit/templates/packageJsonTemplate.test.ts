@@ -41,7 +41,7 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet (Red Phase)
-import { packageJsonTemplate, type PackageJsonContext } from '../../../app/templates/packageJsonTemplate';
+import { packageJsonTemplate, type PackageJsonContext } from '../../../app/templates/packageJsonTemplate.js';
 
 describe('packageJsonTemplate', () => {
 	

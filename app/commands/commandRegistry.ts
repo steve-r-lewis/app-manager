@@ -34,8 +34,8 @@
  * ================================================================================
  */
 
-import { BaseCommand } from './baseCommand';
-import { logger } from '../services/loggerService';
+import { BaseCommand } from './baseCommand.js';
+import { logger } from '../services/loggerService.js';
 
 class CommandRegistry {
 	private commands = new Map<string, BaseCommand>();

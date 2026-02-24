@@ -40,7 +40,7 @@
  */
 
 import { parse, modify, applyEdits, type JSONPath, type ParseError } from 'jsonc-parser';
-import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../types/index';
+import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../types/index.js';
 
 export class JsonStrategy implements ICodeStrategy {
 	

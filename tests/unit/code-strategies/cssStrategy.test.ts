@@ -25,7 +25,7 @@
 
 // tests/unit/strategies/cssStrategy.test.ts
 import { describe, it, expect } from 'vitest';
-import { CssStrategy } from '../../../app/strategies/cssStrategy';
+import { CssStrategy } from '../../../app/strategies/cssStrategy.js';
 
 describe('CssStrategy', () => {
 	const strategy = new CssStrategy();

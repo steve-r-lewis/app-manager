@@ -24,12 +24,12 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { runInteractive } from '../../../app/modes/interactiveMode';
-import { commandRegistry } from '../../../app/commands/commandRegistry';
-import { BaseCommand } from '../../../app/commands/baseCommand';
 import * as clack from '@clack/prompts';
-import { logger } from '../../../app/services/loggerService';
-import { configService } from '../../../app/services/configService';
+import { BaseCommand } from '../../../app/commands/baseCommand.js';
+import { runInteractive } from '../../../app/modes/interactiveMode.js';
+import { commandRegistry } from '../../../app/commands/commandRegistry.js';
+import { logger } from '../../../app/services/loggerService.js';
+import { configService } from '../../../app/services/configService.js';
 
 // ----------------------------------------------------------------------------
 // Mocks & Helpers

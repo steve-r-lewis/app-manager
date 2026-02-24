@@ -37,8 +37,8 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet
-import { readmeTemplate } from '../../../app/templates/readmeTemplate';
-import { ReadmeContext } from '../../../app/types/index';
+import { readmeTemplate } from '../../../app/templates/readmeTemplate.js';
+import { ReadmeContext } from '../../../app/types/index.js';
 
 describe('readmeTemplate', () => {
 	

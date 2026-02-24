@@ -38,8 +38,8 @@
 
 import { describe, it, expect } from 'vitest';
 // @ts-ignore - Module does not exist yet
-import { tsconfigTemplate } from '../../../app/templates/tsconfigTemplate';
-import type { TSConfigContext } from '../../../app/types/index';
+import { tsconfigTemplate } from '../../../app/templates/tsconfigTemplate.js';
+import type { TSConfigContext } from '../../../app/types/index.js';
 
 describe('tsconfigTemplate', () => {
 	

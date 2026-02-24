@@ -24,7 +24,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { VueStrategy } from '../../../app/strategies/vueStrategy';
+import { VueStrategy } from '../../../app/strategies/vueStrategy.js';
 
 describe('VueStrategy', () => {
 	const strategy = new VueStrategy();

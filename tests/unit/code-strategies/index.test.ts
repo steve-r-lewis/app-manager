@@ -24,12 +24,12 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { getStrategyForFile } from '../../../app/strategies/index';
-import { TypescriptStrategy } from '../../../app/strategies/typescriptStrategy';
-import { VueStrategy } from '../../../app/strategies/vueStrategy';
-import { JsonStrategy } from '../../../app/strategies/jsonStrategy';
-import { CssStrategy } from '../../../app/strategies/cssStrategy';
-import { HtmlStrategy } from '../../../app/strategies/htmlStrategy';
+import { getStrategyForFile } from '../../../app/strategies/index.js';
+import { TypescriptStrategy } from '../../../app/strategies/typescriptStrategy.js';
+import { VueStrategy } from '../../../app/strategies/vueStrategy.js';
+import { JsonStrategy } from '../../../app/strategies/jsonStrategy.js';
+import { CssStrategy } from '../../../app/strategies/cssStrategy.js';
+import { HtmlStrategy } from '../../../app/strategies/htmlStrategy.js';
 
 describe('Strategy Registry', () => {
 	

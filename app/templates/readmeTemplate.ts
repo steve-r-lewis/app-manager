@@ -37,7 +37,7 @@
  * ================================================================================
  */
 
-import type { ReadmeContext, TemplateFunction } from '../types/index';
+import type { ReadmeContext, TemplateFunction } from '../types/index.js';
 
 /**
  * Generates a formatted Markdown string for README.md.

@@ -75,14 +75,14 @@
  */
 
 import { simpleGit, SimpleGit } from 'simple-git';
-import { logger } from './loggerService';
+import { logger } from './loggerService.js';
 import type {
 	GitInitOptions,
 	GitSubmoduleOptions,
 	GitStatusResult,
 	GithubRepo,
 	GitRemote
-} from '../types/index';
+} from '../types/index.js';
 
 class GithubService {
 	

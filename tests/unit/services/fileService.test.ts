@@ -40,7 +40,7 @@
  */
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { fileService } from '../../../app/services/fileService';
+import { fileService } from '../../../app/services/fileService.js';
 import fs from 'fs';
 import path from 'path';
 import { consola } from 'consola'; // Import consola to spy on it
