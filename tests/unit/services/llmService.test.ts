@@ -162,6 +162,42 @@ describe('LLMService', () => {
 			await expect(llmService.chat([{ role: 'user', content: 'hi' }]))
 				.rejects.toThrow(/Timed Out/);
 		});
+		
+		it('should safely handle and parse 429 Rate Limit HTTP errors', async () => {
+			fetchMock.mockResolvedValue({
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				json: async () => ({ error: { message: 'Quota Exceeded' } })
+			});
+			
+			await expect(llmService.chat([{ role: 'user', content: 'hi' }]))
+				.rejects.toThrow('LLM Rate Limit Exceeded (HTTP 429)');
+		});
+		
+		it('should prevent crash when provider returns an HTML string (e.g. 502 Bad Gateway)', async () => {
+			fetchMock.mockResolvedValue({
+				ok: false,
+				status: 502,
+				statusText: 'Bad Gateway',
+				json: async () => { throw new SyntaxError('Unexpected token < in JSON'); }
+			});
+			
+			await expect(llmService.chat([{ role: 'user', content: 'hi' }]))
+				.rejects.toThrow('Provider returned invalid JSON (Possible Gateway Timeout)');
+		});
+		
+		it('should extract deep error messages from valid JSON error payloads', async () => {
+			fetchMock.mockResolvedValue({
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				json: async () => ({ error: { message: 'Invalid model parameter' } })
+			});
+			
+			await expect(llmService.chat([{ role: 'user', content: 'hi' }]))
+				.rejects.toThrow('API Error (400): Invalid model parameter');
+		});
 	});
 	
 	// --------------------------------------------------------------------------

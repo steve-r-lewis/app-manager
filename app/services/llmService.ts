@@ -36,16 +36,18 @@
  */
 
 import registryData from '../../config/llmRegistry.json';
+import { logger } from './loggerService.js';
 import type {
 	LLMRegistry,
 	LLMProviderConfig,
 	LLMMessage,
 	LLMResponse,
 	LLMProviderStatus,
-	ChatOptions
+	ChatOptions,
+	ILLMService
 } from '../types/index.js';
 
-class LLMService {
+class LLMService implements ILLMService {
 	
 	private activeConfig: LLMProviderConfig | null = null;
 	private registry: LLMRegistry = registryData as LLMRegistry;
@@ -57,16 +59,13 @@ class LLMService {
 	private initializeDefault() {
 		const defaultId = process.env.API_MODEL_DEFAULT;
 		if (defaultId) {
-			// Attempt configuration, handling case sensitivity and errors gracefully
-			// so we don't crash the application/tests at module load time.
 			try {
 				this.configure(defaultId);
 			} catch (error) {
 				try {
-					// Fallback: try lowercase
 					this.configure(defaultId.toLowerCase());
 				} catch (e) {
-					// Silently fail if default is invalid; waiting for user manual selection
+					// Wait for manual user selection
 				}
 			}
 		}
@@ -85,22 +84,21 @@ class LLMService {
 	}
 	
 	public configure(providerId: string) {
-		// Strict ID matching first
 		const record = this.registry.records.find(r => r.id === providerId);
 		if (!record) throw new Error(`Provider '${providerId}' not found.`);
 		this.activeConfig = record;
 	}
 	
-	private resolvePath(obj: any, path: string): any {
-		return path.split('.').reduce((acc, part) => {
-			return acc && acc[part] !== undefined ? acc[part] : undefined;
+	// Strictly typed dynamic path resolver
+	private resolvePath(obj: unknown, path: string): unknown {
+		return path.split('.').reduce((acc: unknown, part: string) => {
+			if (acc && typeof acc === 'object' && part in acc) {
+				return (acc as Record<string, unknown>)[part];
+			}
+			return undefined;
 		}, obj);
 	}
 	
-	/**
-	 * Sanitizes input text (like Git Diffs) to prevent token overflows.
-	 * Truncates from the middle to preserve headers and footers.
-	 */
 	public sanitizeContext(input: string, maxLength: number = 4000): string {
 		if (!input || input.length <= maxLength) return input || '';
 		
@@ -111,10 +109,6 @@ class LLMService {
 		return `${head}\n\n... [TRUNCATED ${input.length - maxLength} CHARS] ...\n\n${tail}`;
 	}
 	
-	/**
-	 * Convenience wrapper for simple prompt-response interactions.
-	 * Used by Smart Commit and AutoDoc commands.
-	 */
 	public async generate(prompt: string, options?: ChatOptions): Promise<string> {
 		const response = await this.chat([{ role: 'user', content: prompt }], options);
 		return response.content;
@@ -129,7 +123,8 @@ class LLMService {
 		const baseUrl = config.baseUrl?.replace(/\/$/, '') || 'https://api.openai.com/v1';
 		const endpoint = `${baseUrl}/chat/completions`;
 		
-		const body: any = {
+		// Strictly typed request body
+		const body: Record<string, unknown> = {
 			model: config.model,
 			messages: messages,
 			stream: false
@@ -155,17 +150,31 @@ class LLMService {
 				signal: controller.signal
 			});
 			
-			if (!response.ok) {
-				throw new Error(`API Error: ${response.status} ${response.statusText}`);
+			// 1. Trap 502/503 HTML Crash Responses safely
+			let rawData: unknown;
+			try {
+				rawData = await response.json();
+			} catch (parseError) {
+				throw new Error(`API Error (${response.status}): Provider returned invalid JSON (Possible Gateway Timeout).`);
 			}
 			
-			const rawData = await response.json();
+			// 2. Evaluate Network Success & Rate Limits
+			if (!response.ok) {
+				if (response.status === 429) {
+					throw new Error('LLM Rate Limit Exceeded (HTTP 429). Please slow down or check your provider quota.');
+				}
+				
+				// Attempt to extract provider-specific error message
+				const errorObj = this.resolvePath(rawData, 'error.message') as string;
+				throw new Error(`API Error (${response.status}): ${errorObj || response.statusText}`);
+			}
 			
+			// 3. Apply Strategy Extraction
 			const contentPath = config.mapping?.content || 'choices.0.message.content';
 			const tokenPath = config.mapping?.tokens || 'usage.total_tokens';
 			
-			const content = this.resolvePath(rawData, contentPath);
-			const tokens = this.resolvePath(rawData, tokenPath);
+			const content = this.resolvePath(rawData, contentPath) as string;
+			const tokens = this.resolvePath(rawData, tokenPath) as number;
 			
 			if (!content) {
 				throw new Error(`Failed to parse content using path: '${contentPath}'`);
@@ -175,10 +184,17 @@ class LLMService {
 				content: content,
 				usage: { totalTokens: Number(tokens) || 0 }
 			};
+			
 		} catch (error: unknown) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			
 			if (error instanceof Error && error.name === 'AbortError') {
-				throw new Error(`LLM Request Timed Out after ${config.timeOut}ms`);
+				const toMsg = `LLM Request Timed Out after ${config.timeOut}ms`;
+				logger.error(toMsg);
+				throw new Error(toMsg);
 			}
+			
+			logger.error(errMsg);
 			throw error;
 		} finally {
 			if (timeoutId) clearTimeout(timeoutId);

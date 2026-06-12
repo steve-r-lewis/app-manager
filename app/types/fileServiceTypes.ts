@@ -30,30 +30,65 @@
  * ================================================================================
  */
 
+import type { ZodSchema, z } from 'zod';
+
 /**
- * The core contract that any specific file handler (JSON, Text, Code) must implement.
+ * The core contract for the Central File I/O Orchestrator.
+ */
+export interface IFileService {
+	read<T = unknown>(filePath: string, schema?: ZodSchema<T>): Promise<T | null>;
+	readText(filePath: string): Promise<string | null>;
+	write(filePath: string, content: unknown): Promise<void>;
+	update(filePath: string, content: unknown): Promise<void>;
+	exists(filePath: string): Promise<boolean>;
+	delete(filePath: string): Promise<void>;
+}
+
+/**
+ * The core contract that any specific file handler must implement.
+ * Enforces asynchronous, non-blocking I/O and strict type boundaries.
  */
 export interface IFileHandler {
 	/**
-	 * Reads file content from disk.
-	 * Returns null if the file does not exist, preventing try/catch bloat in consumers.
-	 * @template T - The expected return type (e.g. string for text, object for JSON).
+	 * Asynchronously reads file content from disk.
+	 * @template T - The expected return type.
+	 * @param filePath - The path to the file.
+	 * @param schema - Optional Zod schema to enforce runtime shape validation.
+	 * @returns A Promise resolving to the validated object, raw text, or null.
 	 */
-	read<T = any>(filePath: string): T | null;
+	read<T = unknown>(filePath: string, schema?: ZodSchema<T>): Promise<T | null>;
 	
 	/**
-	 * Writes content to a file, overwriting existing content.
-	 * Should handle directory creation automatically if the service layer requires it.
+	 * Asynchronously reads a file strictly as a UTF-8 string.
+	 * @param filePath - The path to the file.
+	 * @returns A Promise resolving to the string content, or null if missing.
 	 */
-	write(filePath: string, content: any): void;
+	readText(filePath: string): Promise<string | null>;
 	
 	/**
-	 * Optional: Intelligently updates existing content without destroying it.
-	 * - For JSON: Performs a shallow merge.
-	 * - For Text: Appends content if unique.
-	 * - For Code: (Often unimplemented or delegates to AST logic).
+	 * Asynchronously writes content to a file, overwriting existing content.
+	 * Must handle directory creation automatically.
+	 * @param filePath - The path to the file.
+	 * @param content - The untrusted content to write (enforced as unknown).
 	 */
-	update?(filePath: string, content: any): void;
+	write(filePath: string, content: unknown): Promise<void>;
+	
+	/**
+	 * Asynchronously and intelligently updates existing content without destroying it.
+	 * @param filePath - The path to the file.
+	 * @param content - The partial content to merge or append.
+	 */
+	update?(filePath: string, content: unknown): Promise<void>;
+	
+	/**
+	 * Asynchronously checks if a file exists without throwing errors.
+	 */
+	exists(filePath: string): Promise<boolean>;
+	
+	/**
+	 * Asynchronously deletes a file if it exists.
+	 */
+	delete(filePath: string): Promise<void>;
 }
 
 /**

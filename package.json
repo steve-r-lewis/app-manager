@@ -11,10 +11,14 @@
     "application code manager",
     "typescript"
   ],
-  "packageManager": "pnpm@10.30.2",
+  "packageManager": "pnpm@11.5.2",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
+  },
+  "volta": {
+    "node": "20.12.0",
+    "pnpm": "11.5.2"
   },
   "repository": {
     "type": "git",
@@ -56,7 +60,8 @@
     "jsonc-parser": "^3.3.1",
     "picocolors": "^1.1.1",
     "simple-git": "^3.30.0",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",

@@ -32,117 +32,154 @@
  */
 
 import { consola } from 'consola';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import { inspect } from 'node:util';
+import type { ILogger } from '../types/index.js';
 
-class LoggerService {
+class LoggerService implements ILogger {
 	private _root: string = process.cwd();
 	private _logStream: fs.WriteStream | null = null;
-	// Maintain strict compatibility with existing tests by using consola instance
 	private _console = consola;
 	
-	/**
-	 * Initializes the logger with the target project root.
-	 * This fixes the "logger.init is not a function" error.
-	 */
-	public init(targetRoot: string) {
+	// Regex patterns for common secrets (GitHub tokens, OpenAI keys, generic Bearer tokens)
+	private readonly SECRET_PATTERNS = [
+		/(gh[pousr]_[A-Za-z0-9_]{36,})/g, // GitHub Tokens
+		/(sk-[A-Za-z0-9_-]{32,})/g,       // Standard Secret Keys (OpenAI, etc.)
+		/(Bearer\s+)[A-Za-z0-9\-._~+/]+/g // Generic Bearer Tokens
+	];
+	
+	public async init(targetRoot: string): Promise<void> {
 		this._root = targetRoot;
 		
-		// Check environment variable to enable file logging (set by app/index.ts)
 		if (process.env.LOG_TO_FILE === 'true') {
-			this._enableFileLogging();
+			await this._enableFileLogging();
+			await this._cleanupOldLogs();
 		}
+		
+		// Ensure buffer is flushed if process exits abruptly
+		process.on('exit', () => this.close());
 	}
 	
-	private _enableFileLogging() {
+	private async _enableFileLogging(): Promise<void> {
 		try {
 			const monitorDir = path.join(this._root, 'app-monitor', 'logs');
-			if (!fs.existsSync(monitorDir)) {
-				fs.mkdirSync(monitorDir, { recursive: true });
-			}
+			await fsp.mkdir(monitorDir, { recursive: true });
 			
-			// Create unique session log file
 			const filename = `session-${new Date().toISOString().replace(/[:.]/g, '-')}.log`;
 			const logPath = path.join(monitorDir, filename);
 			
 			this._logStream = fs.createWriteStream(logPath, { flags: 'a' });
 			this.info(`File logging enabled. Writing to: ${logPath}`);
-		} catch (error) {
+		} catch (error: unknown) {
 			this._console.warn('Failed to initialize file logging', error);
 		}
 	}
 	
-	private _writeToFile(level: string, message: any, args: any[]) {
+	/**
+	 * Deletes logs older than 14 days to prevent disk bloat.
+	 */
+	private async _cleanupOldLogs(): Promise<void> {
+		try {
+			const monitorDir = path.join(this._root, 'app-monitor', 'logs');
+			const files = await fsp.readdir(monitorDir);
+			const cutoffDate = Date.now() - (14 * 24 * 60 * 60 * 1000); // 14 days ago
+			
+			for (const file of files) {
+				if (!file.startsWith('session-')) continue;
+				const filePath = path.join(monitorDir, file);
+				const stats = await fsp.stat(filePath);
+				
+				if (stats.mtimeMs < cutoffDate) {
+					await fsp.unlink(filePath).catch(() => {}); // Fire and forget
+				}
+			}
+		} catch {
+			// Silently fail if directory doesn't exist or permissions prevent cleanup
+		}
+	}
+	
+	/**
+	 * Redacts sensitive tokens from strings to prevent secret leakage.
+	 */
+	private _redact(input: string): string {
+		let redacted = input;
+		for (const pattern of this.SECRET_PATTERNS) {
+			// If it's a bearer token, keep the "Bearer " prefix but mask the token
+			redacted = redacted.replace(pattern, (match, p1) => {
+				return p1.trim() === 'Bearer' ? 'Bearer [REDACTED]' : '[REDACTED]';
+			});
+		}
+		return redacted;
+	}
+	
+	private _writeToFile(level: string, message: string, args: unknown[]): void {
 		if (!this._logStream) return;
 		
 		const timestamp = new Date().toISOString();
-		// safe stringify for objects
-		const formattedArgs = args.map(a =>
-			typeof a === 'object' ? JSON.stringify(a) : a
-		).join(' ');
 		
-		this._logStream.write(`[${timestamp}] [${level.toUpperCase()}] ${message} ${formattedArgs}\n`);
+		const formattedArgs = args.length > 0
+			? ' ' + args.map(a => typeof a === 'string' ? a : inspect(a, { depth: 3 })).join(' ')
+			: '';
+		
+		const finalOutput = this._redact(`[${timestamp}] [${level.toUpperCase()}] ${message}${formattedArgs}`);
+		this._logStream.write(finalOutput + '\n');
 	}
 	
-	// --- Public API (Preserves existing interface) ---
+	/**
+	 * Synchronously flushes and closes the stream.
+	 */
+	public close(): void {
+		if (this._logStream) {
+			this._logStream.end();
+			this._logStream = null;
+		}
+	}
 	
-	public info(message: any, ...args: any[]) {
-		this._console.info(message, ...args);
+	// --- Public API ---
+	
+	public info(message: string, ...args: unknown[]): void {
+		this._console.info(this._redact(message), ...args);
 		this._writeToFile('info', message, args);
 	}
 	
-	public success(message: any, ...args: any[]) {
-		this._console.success(message, ...args);
+	public success(message: string, ...args: unknown[]): void {
+		this._console.success(this._redact(message), ...args);
 		this._writeToFile('success', message, args);
 	}
 	
-	public warn(message: any, ...args: any[]) {
-		this._console.warn(message, ...args);
+	public warn(message: string, ...args: unknown[]): void {
+		this._console.warn(this._redact(message), ...args);
 		this._writeToFile('warn', message, args);
 	}
 	
-	public debug(message: any, ...args: any[]) {
-		// Only log debug if explicitly enabled
-		if (process.env.DEBUG || process.env.VERBOSE) {
-			this._console.debug(message, ...args);
+	public debug(message: string, ...args: unknown[]): void {
+		if (process.env.DEBUG === 'true' || process.env.VERBOSE === 'true') {
+			this._console.debug(this._redact(message), ...args);
 			this._writeToFile('debug', message, args);
 		}
 	}
 	
-	public error(message: string | Error, ...args: any[]): void {
-		// 1. Console Output (Your Custom Logic)
-		if (message instanceof Error) {
-			console.error(`✖ ${message.message}`);
-			if (message.stack) {
-				console.error(message.stack);
-			}
-			// 2. File Logging (Restored)
-			this._writeToFile('error', message.message, [message.stack, ...args]);
+	public error(message: string | Error, ...args: unknown[]): void {
+		const errMsg = message instanceof Error ? message.message : message;
+		const errObj = message instanceof Error ? message : undefined;
+		
+		const redactedMsg = this._redact(errMsg);
+		
+		if (errObj) {
+			// Note: We don't modify the Error object directly to preserve its stack trace in memory,
+			// but we ensure the console output and file stream receive the redacted string.
+			this._console.error(redactedMsg, ...args);
+			this._writeToFile('error', errMsg, [errObj.stack, ...args]);
 		} else {
-			console.error(`✖ ${message}`, ...args);
-			// 2. File Logging (Restored)
-			this._writeToFile('error', message, args);
+			this._console.error(redactedMsg, ...args);
+			this._writeToFile('error', errMsg, args);
 		}
 	}
 	
 	public box(message: string): void {
-		const lines = message.split('\n');
-		const maxLength = Math.max(...lines.map(l => l.length));
-		const padding = 2;
-		const width = maxLength + (padding * 2);
-		
-		const top = '┌' + '─'.repeat(width) + '┐';
-		const bottom = '└' + '─'.repeat(width) + '┘';
-		
-		console.log(top);
-		lines.forEach(line => {
-			// Explicitly calculate Left Padding to ensure symmetry
-			const leftPad = ' '.repeat(padding);
-			const rightPad = ' '.repeat(width - line.length - padding);
-			
-			console.log(`│${leftPad}${line}${rightPad}│`);
-		});
-		console.log(bottom);
+		this._console.box(this._redact(message));
 	}
 }
 

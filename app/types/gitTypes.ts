@@ -44,17 +44,6 @@
  * ================================================================================
  */
 
-/**
- * GitStatusResult
- * GitRemote
- * GitInitOptions
- * GitCloneOptions
- * GitSubmoduleOptions
- * GitCommitOptions
- * GitPushOptions
- * GitSyncOptions
- */
-
 import { LLMProviderStatus } from './llmServiceTypes.js';
 
 // ============================================================================

@@ -40,27 +40,27 @@ export type ProcessPackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 export interface ProcessExecuteOptions {
 	/** The directory to execute the command in (defaults to process.cwd()) */
 	cwd?: string;
-	
 	/** Environment variable overrides for this specific process */
 	env?: Record<string, string>;
-	
 	/** If true, suppresses stdout/stderr logging to the console */
 	silent?: boolean;
-	
 	/** Execution timeout in milliseconds */
 	timeout?: number;
+	
+	/** Explicitly define if the shell should be used. Essential for security boundaries. */
+	shell?: boolean | string;
+}
+
+export interface ProcessResult {
+	stdout: string;   /** The standard output string (trimmed) */
+	stderr: string;   /** The standard error string (trimmed) */
+	exitCode: number; /** The process exit code (0 usually indicates success) */
 }
 
 /**
- * The standardized result object returned after a command finishes.
+ * The core contract for the Process Service Domain.
  */
-export interface ProcessResult {
-	/** The standard output string (trimmed) */
-	stdout: string;
-	
-	/** The standard error string (trimmed) */
-	stderr: string;
-	
-	/** The process exit code (0 usually indicates success) */
-	exitCode: number;
+export interface IProcessService {
+	execute(command: string, options?: ProcessExecuteOptions): Promise<ProcessResult>;
+	spawn(command: string, args: string[], options?: ProcessExecuteOptions): Promise<number>;
 }

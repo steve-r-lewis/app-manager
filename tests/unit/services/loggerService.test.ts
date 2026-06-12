@@ -34,242 +34,146 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import { consola } from 'consola';
-import fs from 'fs';
-import path from 'path';
+import fsp from 'node:fs/promises';
+import fs from 'node:fs';
+import path from 'node:path';
 import { logger } from '../../../app/services/loggerService.js';
 
-// 1. Mock External Dependencies
-vi.mock('fs');
+// 1. Mock Dependencies
+vi.mock('node:fs/promises');
+vi.mock('node:fs');
 vi.mock('consola', () => ({
 	consola: {
 		info: vi.fn(),
 		success: vi.fn(),
 		warn: vi.fn(),
 		debug: vi.fn(),
-		// We don't mock error here because your implementation uses native console.error
+		error: vi.fn(),
+		box: vi.fn()
 	}
 }));
 
 describe('LoggerService', () => {
-	let errorSpy: any;
-	let logSpy: any;
-	
 	beforeEach(() => {
 		vi.clearAllMocks();
 		process.env.LOG_TO_FILE = 'false';
 		process.env.DEBUG = 'false';
-		
-		// 2. Spy on Native Console (used by .error() and .box())
-		errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-		logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		process.env.VERBOSE = 'false';
 	});
 	
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});
 	
-	// ========================================================================
-	// Core Logging (Restored Tests)
-	// ========================================================================
-	it('should log info messages', () => {
-		logger.info('Test Info');
-		// Your code uses consola.info for this
-		expect(consola.info).toHaveBeenCalledWith('Test Info');
-	});
-	
-	it('should log success messages', () => {
-		logger.success('Operation Successful');
-		// Your code uses consola.success for this
-		expect(consola.success).toHaveBeenCalledWith('Operation Successful');
-	});
-	
-	it('should log warning messages', () => {
-		logger.warn('Careful now');
-		// Your code uses consola.warn for this
-		expect(consola.warn).toHaveBeenCalledWith('Careful now');
-	});
-	
-	it('should log error messages', () => {
-		logger.error('Something broke');
-		// Your code uses native console.error for this
-		expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Something broke'));
-	});
-	
-	it('should handle Error objects in error logs', () => {
-		const err = new Error('Fatal System Error');
-		logger.error(err);
-		// Should log the message formatted with X
-		expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('✖ Fatal System Error'));
-	});
-	
-	// ========================================================================
-	// Visual Formatting (Restored Tests)
-	// ========================================================================
-	describe('Visual Formatting', () => {
-		it('should render a box with symmetrical padding', () => {
-			const message = 'Hello\nWorld';
-			logger.box(message);
-			
-			// Logic Check based on your implementation:
-			// "Hello" (5 chars) + 2 padding left + 2 padding right = 9 chars width.
-			// Box Width: 9 dashes.
-			
-			// 1. Check Top Border
-			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('┌─────────┐'));
-			
-			// 2. Check Content Alignment
-			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('│  Hello  │'));
-			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('│  World  │'));
-			
-			// 3. Check Bottom Border
-			expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('└─────────┘'));
-		});
-	});
-	
-	// ========================================================================
-	// Initialization & File Logging (New Tests)
-	// ========================================================================
-	describe('Initialization & File Logging', () => {
-		it('should initialize without errors', () => {
-			expect(() => logger.init('/test/root')).not.toThrow();
+	describe('Core Logging Methods', () => {
+		it('should route info messages to consola', () => {
+			logger.info('Test Info');
+			expect(consola.info).toHaveBeenCalledWith('Test Info');
 		});
 		
-		it('should enable file stream when LOG_TO_FILE is true', () => {
+		it('should route success messages to consola', () => {
+			logger.success('Operation Successful');
+			expect(consola.success).toHaveBeenCalledWith('Operation Successful');
+		});
+		
+		it('should route warning messages to consola', () => {
+			logger.warn('Careful now');
+			expect(consola.warn).toHaveBeenCalledWith('Careful now');
+		});
+		
+		it('should route error strings to consola', () => {
+			logger.error('Something broke');
+			expect(consola.error).toHaveBeenCalledWith('Something broke');
+		});
+		
+		it('should extract strings from Error objects for secure consola routing', () => {
+			const err = new Error('Fatal System Error');
+			logger.error(err);
+			
+			// The new architecture extracts the message string so it can be safely redacted
+			expect(consola.error).toHaveBeenCalledWith('Fatal System Error');
+			// (The stack trace is safely routed to the file stream, which is tested elsewhere)
+		});
+		
+		it('should draw a box using consola', () => {
+			logger.box('Hello\nWorld');
+			expect(consola.box).toHaveBeenCalledWith('Hello\nWorld');
+		});
+	});
+	
+	describe('Initialization & File Logging', () => {
+		it('should initialize asynchronously without errors', async () => {
+			await expect(logger.init('/test/root')).resolves.not.toThrow();
+		});
+		
+		it('should enable file stream when LOG_TO_FILE is true', async () => {
 			process.env.LOG_TO_FILE = 'true';
-			vi.mocked(fs.existsSync).mockReturnValue(false); // Force mkdir
-			vi.mocked(fs.createWriteStream).mockReturnValue({ write: vi.fn() } as any);
+			vi.mocked(fsp.mkdir).mockResolvedValue(undefined);
+			vi.mocked(fs.createWriteStream).mockReturnValue({ write: vi.fn() } as unknown as fs.WriteStream);
 			
-			logger.init('/test/root');
+			await logger.init('/test/root');
 			
-			// Verify directory creation
-			expect(fs.mkdirSync).toHaveBeenCalledWith(
+			expect(fsp.mkdir).toHaveBeenCalledWith(
 				expect.stringContaining(path.join('app-monitor', 'logs')),
 				{ recursive: true }
 			);
-			// Verify stream creation
 			expect(fs.createWriteStream).toHaveBeenCalled();
 		});
 		
-		it('should write errors to file when file logging is active', () => {
-			// Setup File Logging
+		it('should safely serialize complex objects without crashing', async () => {
 			const mockStream = { write: vi.fn() };
-			(logger as any)._logStream = mockStream; // Inject mock stream directly
+			// Inject mock stream directly for testing
+			(logger as unknown as { _logStream: unknown })._logStream = mockStream;
 			
-			// Trigger Error
-			logger.error('Database failed');
+			// Create a circular reference that breaks JSON.stringify
+			const circularObj: Record<string, unknown> = {};
+			circularObj.self = circularObj;
 			
-			// Verify it went to console AND file
-			expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Database failed'));
+			// This would throw a TypeError in the old implementation
+			expect(() => logger.info('Circular Payload', circularObj)).not.toThrow();
+			
+			// Verify it was safely formatted by util.inspect
 			expect(mockStream.write).toHaveBeenCalledWith(
-				expect.stringContaining('[ERROR] Database failed')
+				expect.stringContaining('[INFO] Circular Payload')
 			);
 		});
 	});
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { logger } from '../../../app/services/loggerService';
-import fs from 'fs';
-import path from 'path';
-
-// Mock fs to prevent actual file writing during tests
-vi.mock('fs');
-
-describe('LoggerService', () => {
 	
-	beforeEach(() => {
-		vi.clearAllMocks();
-		process.env.LOG_TO_FILE = 'false'; // Default to off
-		process.env.DEBUG = 'false';
+	describe('Security Edge Cases (Redaction)', () => {
+		it('should redact GitHub Personal Access Tokens', () => {
+			const secretMsg = 'Cloning repo with token ghp_1234567890abcdef1234567890abcdef1234';
+			logger.info(secretMsg);
+			
+			expect(consola.info).toHaveBeenCalledWith('Cloning repo with token [REDACTED]');
+		});
 		
-		// Spy on native console methods since your implementation uses them
-		vi.spyOn(console, 'error').mockImplementation(() => {});
-		vi.spyOn(console, 'log').mockImplementation(() => {});
+		it('should redact OpenAI API Keys', () => {
+			const secretMsg = 'Connected via sk-1234567890abcdef1234567890abcdef';
+			logger.error(secretMsg);
+			
+			expect(consola.error).toHaveBeenCalledWith('Connected via [REDACTED]');
+		});
+		
+		it('should redact generic Bearer tokens', () => {
+			const secretMsg = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+			logger.warn(secretMsg);
+			
+			expect(consola.warn).toHaveBeenCalledWith('Authorization: Bearer [REDACTED]');
+		});
 	});
 	
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
-	
-	it('should initialize without errors', () => {
-		expect(() => logger.init('/test/root')).not.toThrow();
-	});
-	
-	it('should enable file stream when LOG_TO_FILE is true', () => {
-		process.env.LOG_TO_FILE = 'true';
-		vi.mocked(fs.existsSync).mockReturnValue(false); // Force mkdir
-		vi.mocked(fs.createWriteStream).mockReturnValue({ write: vi.fn() } as any);
-		
-		logger.init('/test/root');
-		
-		// Verify directory creation
-		expect(fs.mkdirSync).toHaveBeenCalledWith(
-			expect.stringContaining(path.join('app-monitor', 'logs')),
-			{ recursive: true }
-		);
-		expect(fs.createWriteStream).toHaveBeenCalled();
-	});
-	
-	it('should handle Error objects correctly', () => {
-		const testError = new Error('Test Crash');
-		// Mock the stream to verify file writing
-		const mockStream = { write: vi.fn() };
-		(logger as any)._logStream = mockStream;
-		
-		logger.error(testError);
-		
-		// 1. Verify Console Output (Custom formatting)
-		expect(console.error).toHaveBeenCalledWith(expect.stringContaining('✖ Test Crash'));
-		
-		// 2. Verify File Write (Restored functionality)
-		expect(mockStream.write).toHaveBeenCalledWith(
-			expect.stringContaining('[ERROR] Test Crash')
-		);
-	});
-	
-	it('should handle string errors correctly', () => {
-		const mockStream = { write: vi.fn() };
-		(logger as any)._logStream = mockStream;
-		
-		logger.error('Simple failure');
-		
-		expect(console.error).toHaveBeenCalledWith(expect.stringContaining('✖ Simple failure'));
-		expect(mockStream.write).toHaveBeenCalledWith(
-			expect.stringContaining('[ERROR] Simple failure')
-		);
-	});
-	
-	it('should draw a box without crashing', () => {
-		logger.box('Hello\nWorld');
-		
-		// We just verify it calls console.log multiple times (Top, Middle lines, Bottom)
-		expect(console.log).toHaveBeenCalled();
+	describe('Stream Lifecycle Edge Cases', () => {
+		it('should gracefully close the log stream on command', async () => {
+			process.env.LOG_TO_FILE = 'true';
+			const mockStream = { write: vi.fn(), end: vi.fn() };
+			vi.mocked(fs.createWriteStream).mockReturnValue(mockStream as unknown as fs.WriteStream);
+			
+			await logger.init('/test/root');
+			logger.close();
+			
+			expect(mockStream.end).toHaveBeenCalled();
+		});
 	});
 });

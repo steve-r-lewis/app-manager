@@ -34,14 +34,10 @@ import { configService } from '../../../app/services/configService.js';
 describe('ConfigService', () => {
 	
 	beforeEach(() => {
-		// Reset state ensures isolation between tests
 		configService.reset();
 	});
 	
-	// ========================================================================
-	// 1. New Functionality (Infrastructure)
-	// ========================================================================
-	describe('Infrastructure', () => {
+	describe('Infrastructure Mapping', () => {
 		it('should initialize with tool root', () => {
 			configService.init('/my/tool/path');
 			expect(configService.toolRoot).toBe('/my/tool/path');
@@ -55,9 +51,6 @@ describe('ConfigService', () => {
 		});
 	});
 	
-	// ========================================================================
-	// 2. Legacy Functionality (Configuration Management)
-	// ========================================================================
 	describe('Configuration Management', () => {
 		it('should provide default configuration', () => {
 			const config = configService.getConfig();
@@ -77,42 +70,54 @@ describe('ConfigService', () => {
 		});
 		
 		it('should update feature flags independently', () => {
-			// Test Verbose
 			configService.setFlag('verbose', true);
 			expect(configService.getConfig().flags.verbose).toBe(true);
 			
-			// Test Dry Run (ensure no cross-contamination)
 			configService.setFlag('dryRun', true);
 			expect(configService.getConfig().flags.dryRun).toBe(true);
 		});
 	});
 	
-	// ========================================================================
-	// 3. State Integrity (Restored from Legacy)
-	// ========================================================================
-	describe('State Integrity', () => {
-		it('should return a copy of the config to prevent direct mutation', () => {
+	describe('State Integrity & Validation Boundaries', () => {
+		it('should return a deep clone of the config to prevent egress nested mutation', () => {
 			const config1 = configService.getConfig();
 			
-			// Attempt to mutate the returned object property directly
+			// Attempt malicious nested property mutation from a consumer context
+			// @ts-ignore
+			config1.flags.verbose = true;
 			// @ts-ignore
 			config1.cwd = '/hacked/path';
 			
-			// Verify the internal service state remains unchanged
 			const config2 = configService.getConfig();
-			expect(config2.cwd).not.toBe('/hacked/path');
-			expect(config2.cwd).toBe(process.cwd());
+			expect(config2.flags.verbose).toBe(false); // Deep check holds secure
+			expect(config2.cwd).not.toBe('/hacked/path'); // Base primitive holds secure
+		});
+		
+		it('should prevent ingress mutation by completely severing input references', () => {
+			const sourceUser = { name: 'Alice', email: 'alice@test.com' };
+			configService.setGitUser(sourceUser);
+			
+			// Mutate original source container post-insertion
+			sourceUser.name = 'Hacked External Reference';
+			
+			const state = configService.getConfig();
+			expect(state.gitUser.name).toBe('Alice');
+			expect(state.gitUser.name).not.toBe('Hacked External Reference');
+		});
+		
+		it('should strictly reject malformed data types at runtime via Zod schemas', () => {
+			// Simulating unvalidated, toxic filesystem input bypass
+			const badData = { name: 123, email: 'corrupted-string-format' } as any;
+			
+			expect(() => configService.setGitUser(badData)).toThrow();
 		});
 		
 		it('should reset state completely to defaults', () => {
-			// 1. Change State
 			configService.init('/dirty/path');
 			configService.setFlag('verbose', true);
 			
-			// 2. Reset
 			configService.reset();
 			
-			// 3. Verify Clean Slate
 			expect(configService.toolRoot).toBe('');
 			expect(configService.isVerbose()).toBe(false);
 			expect(configService.getConfig().flags.verbose).toBe(false);

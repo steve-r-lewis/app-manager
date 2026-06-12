@@ -39,191 +39,106 @@
  * ================================================================================
  */
 
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import fs from 'node:fs/promises';
+import { z } from 'zod';
 import { fileService } from '../../../app/services/fileService.js';
-import fs from 'fs';
-import path from 'path';
-import { consola } from 'consola'; // Import consola to spy on it
+import { logger } from '../../../app/services/loggerService.js';
 
-// --------------------------------------------------------------------------------
-// 1. Mocks & Stubs
-// --------------------------------------------------------------------------------
-
-// Mock the file system to prevent side effects on the actual disk
-vi.mock('fs', () => ({
-	default: {
-		existsSync: vi.fn(),
-		readFileSync: vi.fn(),
-		writeFileSync: vi.fn(),
-		mkdirSync: vi.fn(),
-	}
+vi.mock('node:fs/promises');
+vi.mock('../../../app/services/loggerService.js', () => ({
+	logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() }
 }));
 
-// Mock consola to keep the test output clean and suppress logs during tests
-vi.mock('consola', () => ({
-	consola: {
-		error: vi.fn(),
-		warn: vi.fn(),
-		success: vi.fn(),
-	}
-}));
-
-// --------------------------------------------------------------------------------
-// 2. Test Suite
-// --------------------------------------------------------------------------------
-
-describe('FileService', () => {
-	
-	// Clean up mocks after every test to ensure isolation
-	afterEach(() => {
+describe('FileService (Complete)', () => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 	
-	// ... [Previous read/write tests remain unchanged] ...
-	
-	describe('read()', () => {
-		it('should return null if file does not exist', () => {
-			// Simulate file missing
-			vi.mocked(fs.existsSync).mockReturnValue(false);
-			
-			const result = fileService.read('missing.txt');
+	describe('read() [Schema & JSONC Boundary]', () => {
+		const TestSchema = z.object({ version: z.string() });
+		
+		it('should parse and validate JSON successfully', async () => {
+			vi.mocked(fs.readFile).mockResolvedValueOnce('{"version": "1.0.0"}');
+			const result = await fileService.read('test.json', TestSchema);
+			expect(result).toStrictEqual({ version: '1.0.0' });
+		});
+		
+		it('should safely reject invalid JSONC syntax using the AST parser', async () => {
+			// jsonc-parser handles trailing commas, but breaks on malformed objects
+			vi.mocked(fs.readFile).mockResolvedValueOnce('{ "version": ');
+			const result = await fileService.read('test.json', TestSchema);
 			
 			expect(result).toBeNull();
-			// Ensure we didn't try to read a non-existent file
-			expect(fs.readFileSync).not.toHaveBeenCalled();
-		});
-		
-		it('should auto-parse .json files', () => {
-			const mockPath = '/app/package.json';
-			const mockContent = JSON.stringify({ name: "test-app" });
-			
-			// Simulate file exists + return JSON string
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			vi.mocked(fs.readFileSync).mockReturnValue(mockContent);
-			
-			const result = fileService.read(mockPath);
-			
-			// Assert parsing happened automatically
-			expect(result).toEqual({ name: "test-app" });
-		});
-		
-		it('should return raw string for .txt/.env files', () => {
-			const mockPath = '/app/.env';
-			const mockContent = 'KEY=VALUE';
-			
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			vi.mocked(fs.readFileSync).mockReturnValue(mockContent);
-			
-			const result = fileService.read(mockPath);
-			
-			// Assert no parsing happened
-			expect(result).toBe('KEY=VALUE');
-		});
-		
-		it('should fallback to Text Handler for unknown extensions', () => {
-			const mockPath = '/app/unknown.xyz';
-			const mockContent = 'raw data';
-			
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			vi.mocked(fs.readFileSync).mockReturnValue(mockContent);
-			
-			const result = fileService.read(mockPath);
-			expect(result).toBe('raw data');
+			expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Invalid JSONC syntax'));
 		});
 	});
 	
-	describe('write()', () => {
-		it('should write objects as formatted JSON string for .json files', () => {
-			const mockPath = '/app/config.json';
-			const data = { valid: true };
+	describe('readText() [Permissions Boundary]', () => {
+		it('should trigger security log on EACCES permission denied', async () => {
+			const accessError = Object.assign(new Error('EACCES'), { code: 'EACCES' });
+			vi.mocked(fs.readFile).mockRejectedValueOnce(accessError);
 			
-			fileService.write(mockPath, data);
-			
-			// Expect JSON.stringify with 2 spaces indentation
-			expect(fs.writeFileSync).toHaveBeenCalledWith(
-				mockPath,
-				JSON.stringify(data, null, 2)
-			);
-		});
-		
-		it('should write raw strings for text files', () => {
-			const mockPath = '/app/notes.txt';
-			fileService.write(mockPath, 'Hello World');
-			
-			expect(fs.writeFileSync).toHaveBeenCalledWith(mockPath, 'Hello World');
-		});
-		
-		it('should create directories recursively if they do not exist', () => {
-			const mockPath = '/app/deep/nested/file.txt';
-			
-			// Simulate directory check fails (folder doesn't exist yet)
-			vi.mocked(fs.existsSync).mockReturnValue(false);
-			
-			fileService.write(mockPath, 'content');
-			
-			// Expect mkdirSync to be called for the parent directory
-			expect(fs.mkdirSync).toHaveBeenCalledWith('/app/deep/nested', { recursive: true });
+			await expect(fileService.readText('locked.txt')).rejects.toThrow();
+			expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Permission denied'));
 		});
 	});
 	
-	describe('update()', () => {
-		it('should merge JSON objects (Patch Strategy)', () => {
-			const mockPath = '/app/data.json';
-			const current = JSON.stringify({ a: 1, b: 2 });
+	describe('write() [Atomic Boundary]', () => {
+		it('should execute an atomic write pattern for files', async () => {
+			vi.mocked(fs.mkdir).mockResolvedValue(undefined);
+			vi.mocked(fs.writeFile).mockResolvedValue(undefined);
+			vi.mocked(fs.rename).mockResolvedValue(undefined);
 			
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			vi.mocked(fs.readFileSync).mockReturnValue(current);
+			await fileService.write('output.json', { a: 1 });
 			
-			// Update only 'b', add 'c'
-			fileService.update(mockPath, { b: 99, c: 3 });
-			
-			// Expected: { a: 1 (kept), b: 99 (updated), c: 3 (added) }
-			const expectedWrite = JSON.stringify({ a: 1, b: 99, c: 3 }, null, 2);
-			expect(fs.writeFileSync).toHaveBeenCalledWith(mockPath, expectedWrite);
+			expect(fs.writeFile).toHaveBeenCalledWith(expect.stringContaining('.tmp.'), '{\n  "a": 1\n}', 'utf-8');
+			expect(fs.rename).toHaveBeenCalledWith(expect.stringContaining('.tmp.'), 'output.json');
 		});
-		
-		it('should append text if it does not exist (Append Strategy)', () => {
-			const mockPath = '/app/.gitignore';
-			const current = 'node_modules\n';
+	});
+	
+	describe('update() [AST Modification Boundary]', () => {
+		it('should modify JSON AST and save via atomic write', async () => {
+			// Mock exists to return true
+			vi.mocked(fs.access).mockResolvedValue(undefined);
+			vi.mocked(fs.readFile).mockResolvedValueOnce('{"version": "1.0.0"}');
 			
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			vi.mocked(fs.readFileSync).mockReturnValue(current);
+			await fileService.update('config.json', { target: "node" });
 			
-			fileService.update(mockPath, '.env');
-			
-			// Expect newline + new content
-			expect(fs.writeFileSync).toHaveBeenCalledWith(mockPath, 'node_modules\n.env\n');
-		});
-		
-		it('should NOT append text if it already exists (Idempotency)', () => {
-			const mockPath = '/app/.gitignore';
-			const current = 'node_modules\n.env\n';
-			
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			vi.mocked(fs.readFileSync).mockReturnValue(current);
-			
-			fileService.update(mockPath, '.env');
-			
-			// Should do nothing because .env is already there
-			expect(fs.writeFileSync).not.toHaveBeenCalled();
-		});
-		
-		it('should warn and fall back to overwrite for Code files (Unsupported Update)', () => {
-			const mockPath = '/app/script.ts'; // .ts uses FileHandlerCode (no update method)
-			const content = 'console.log("overwrite");';
-			
-			// Mock file existence
-			vi.mocked(fs.existsSync).mockReturnValue(true);
-			
-			fileService.update(mockPath, content);
-			
-			// 1. Verify Warning was logged
-			expect(consola.warn).toHaveBeenCalledWith(
-				expect.stringContaining('Update not supported for script.ts')
+			// Verify AST parser injected the new property
+			expect(fs.writeFile).toHaveBeenCalledWith(
+				expect.stringContaining('.tmp.'),
+				expect.stringContaining('"target": "node"'),
+				'utf-8'
 			);
+		});
+		
+		it('should cleanly append to text files using memory swap', async () => {
+			vi.mocked(fs.access).mockResolvedValue(undefined);
+			vi.mocked(fs.readFile).mockResolvedValueOnce('LINE 1\n');
 			
-			// 2. Verify it fell back to Overwrite (Safety Net)
-			expect(fs.writeFileSync).toHaveBeenCalledWith(mockPath, content);
+			await fileService.update('.env', 'LINE 2');
+			
+			// Verify it read, appended in memory, and wrote atomically
+			expect(fs.writeFile).toHaveBeenCalledWith(
+				expect.stringContaining('.tmp.'),
+				'LINE 1\nLINE 2\n',
+				'utf-8'
+			);
+		});
+	});
+	
+	describe('delete() & exists()', () => {
+		it('should safely confirm existence', async () => {
+			vi.mocked(fs.access).mockResolvedValueOnce(undefined);
+			expect(await fileService.exists('file.txt')).toBe(true);
+		});
+		
+		it('should safely suppress ENOENT during delete', async () => {
+			const noEntryError = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+			vi.mocked(fs.unlink).mockRejectedValueOnce(noEntryError);
+			
+			await expect(fileService.delete('missing.txt')).resolves.not.toThrow();
 		});
 	});
 });

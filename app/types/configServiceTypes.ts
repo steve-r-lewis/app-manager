@@ -27,33 +27,54 @@
  */
 
 /**
- * The specific Git user configuration required for scaffolding.
+ * ================================================================================
+ *
+ * @project:    app-manager
+ * @file:       ~/app/types/configServiceTypes.ts
+ * @version:    2.0.0
+ *
+ * ================================================================================
  */
-export interface GitUserConfig {
-	name: string;
-	email: string;
-}
+
+import { z } from 'zod';
 
 /**
- * The Master Configuration Interface.
+ * Runtime schema definition for Git User configurations.
+ * Natively enforces string types and structural format validation.
  */
-export interface AppConfig {
-	/**
-	 * The detected or configured git user.
-	 * Used for populating LICENSE and package.json author fields.
-	 */
-	gitUser: GitUserConfig;
-	
-	/**
-	 * The current working directory (usually process.cwd()).
-	 */
-	cwd: string;
-	
-	/**
-	 * Global flags (verbose mode, dry-run, etc).
-	 */
-	flags: {
-		verbose: boolean;
-		dryRun: boolean;
-	};
+export const GitUserConfigSchema = z.object({
+	name: z.string(),
+	email: z.string().email().or(z.literal('')), // Natively supports default empty string states
+});
+export type GitUserConfig = z.infer<typeof GitUserConfigSchema>;
+
+/**
+ * Runtime schema for global operational feature flags.
+ */
+export const AppConfigFlagsSchema = z.object({
+	verbose: z.boolean(),
+	dryRun: z.boolean(),
+});
+
+/**
+ * The Master Core Configuration Schema.
+ */
+export const AppConfigSchema = z.object({
+	gitUser: GitUserConfigSchema,
+	cwd: z.string(),
+	flags: AppConfigFlagsSchema,
+});
+export type AppConfig = z.infer<typeof AppConfigSchema>;
+
+/**
+ * The core architectural contract for the Configuration Service.
+ */
+export interface IConfigService {
+	readonly toolRoot: string;
+	init(toolRoot: string): void;
+	reset(): void;
+	getConfig(): Readonly<AppConfig>;
+	setGitUser(user: GitUserConfig): void;
+	setFlag(key: keyof AppConfig['flags'], value: boolean): void;
+	isVerbose(): boolean;
 }

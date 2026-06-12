@@ -24,46 +24,6 @@
  *
  * @notes: Revision History
  *
- * V1.0.8, 20260115
- * Strict refactor based on architectural review.
- * - Fixed: Moved all helper methods out of scan() to class level.
- * - Fixed: scan() loop properly dispatches to void handlers or token pushers.
- * - Logic: Implemented explicit Raw Text state handling for script/style.
- * - Logic: Added robust attribute scanning (Boolean, Unquoted, Quoted).
- *
- * V1.0.7, 20260115
- * Complete rewrite to fix corruption.
- * - Implemented correct scan loop for Tags, Comments, and Text.
- * - Added correct Raw Text handling for Script/Style tags.
- * - Fixed TS compilation errors (SourceLocation, Token types).
- *
- * V1.0.6, 20260113-00:35
- * Complete refactor to fix ReferenceErrors and logic bugs.
- * - Removed hallucinatory 'value +=' logic from main scan loop.
- * - Fixed BaseScanner API usage (replaced invalid 'match(string)' with 'check(string)').
- * - Standardized attribute scanning for quoted/unquoted/boolean values.
- *
- * V1.0.5, 20260113-00:30
- * Complete refactor to fix ReferenceErrors and logic bugs.
- * - Fixed BaseScanner API usage (removed non-existent 'current/match(string)').
- * - Added support for Unquoted Attribute Values.
- * - Fixed off-by-one error in Text scanning.
- *
- * V1.0.4, 20260113-00:25
- * Complete refactor to fix ReferenceErrors and logic bugs.
- * - Fixed BaseScanner API usage (removed non-existent 'current/match(string)').
- * - Added support for Unquoted Attribute Values.
- * - Fixed off-by-one error in Text scanning.
- *
- * V1.0.3, 20260113-00:20
- * Fixed critical corruption in scan() loop.
- *
- * V1.0.2, 20260113-00:15
- * Fixed corruption in scan() loop where comment logic was misplaced.
- *
- * V1.0.1, 20260113-00:05
- * Fixed corruption in scan() method causing ReferenceError.
- *
  * V1.0.0, 20260112-23:20
  * Initial creation and release of htmlScanner.ts
  *
@@ -71,99 +31,162 @@
  */
 
 import { BaseScanner } from './baseScanner.js';
-import type { Token, SourceLocation, HtmlTokenType } from '../types/index.js';
-
-const RAW_TEXT_TAGS = new Set(['script', 'style', 'textarea', 'title']);
+import type { Token, HtmlTokenType } from '../types/index.js';
 
 export class HtmlScanner extends BaseScanner<HtmlTokenType> {
-	
 	private tokens: Token<HtmlTokenType>[] = [];
+	private rawTextMode = false;
+	private rawTagName: string | null = null;
 	
-	/**
-	 * Main execution method.
-	 * Scans the entire source string and returns a stream of typed tokens.
-	 */
+	constructor(source: string) {
+		super(source);
+	}
+	
 	public scan(): Token<HtmlTokenType>[] {
-		this.tokens = [];
-		
 		while (!this.isAtEnd()) {
-			const char = this.peek();
+			this.consumeWhile(c => this.isWhitespace(c));
 			
-			if (char === '<') {
-				// 1. Comments: if (this.check('')) {
-				value += this.advance();
+			if (this.isAtEnd()) break;
+			
+			if (this.peek() === '<') {
+				if (this.peek(1) === '/') {
+					this.scanCloseTag();
+				} else if (this.peek(1) === '!') {
+					this.scanComment();
+				} else {
+					this.scanOpenOrSelfClosingTag();
+				}
+			} else {
+				this.scanText();
 			}
-			
-			if (this.check('-->')) {
-				value += '-->';
-				this.advance(); this.advance(); this.advance();
-			}
-			
-			this.tokens.push(this.createToken('Comment', value, start));
-		}
-	
-	private scanDoctype(): void {
-		const start = this.getCurrentLocation();
-		let value = '';
-		
-		// Consume until >
-		while (!this.isAtEnd() && this.peek() !== '>') {
-			value += this.advance();
-		}
-	
-		if (this.peek() === '>') {
-			value += this.advance();
 		}
 		
-		// Falling back to Comment as Doctype is not active in types
-		this.tokens.push(this.createToken('Comment' as HtmlTokenType, value, start));
+		return this.tokens;
+	}
+	
+	private scanOpenOrSelfClosingTag(): void {
+		const start = this.currentLocation();
+		
+		this.advance(); // '<'
+		
+		const tagStart = this.currentLocation();
+		this.consumeWhile(c => this.isTagNameChar(c));
+		const tagEnd = this.currentLocation();
+		
+		const tagName = this.source.slice(tagStart.index, tagEnd.index);
+		
+		this.tokens.push(this.token('TagName', start, tagEnd));
+		
+		this.consumeAttributes();
+		
+		if (this.peek() === '/') {
+			this.advance();
+			if (this.peek() === '>') this.advance();
+			
+			this.tokens.push(this.token('TagSelfClose', this.currentLocation(), this.currentLocation()));
+			return;
+		}
+		
+		if (this.peek() === '>') this.advance();
+		
+		// raw text mode (script/style)
+		if (tagName === 'script' || tagName === 'style') {
+			this.rawTextMode = true;
+			this.rawTagName = tagName;
+		}
+	}
+	
+	private scanCloseTag(): void {
+		const start = this.currentLocation();
+		
+		this.advance(); // <
+		this.advance(); // /
+		
+		const tagStart = this.currentLocation();
+		this.consumeWhile(c => this.isTagNameChar(c));
+		const tagEnd = this.currentLocation();
+		
+		this.consumeWhile(c => c !== '>');
+		
+		if (this.peek() === '>') this.advance();
+		
+		const value = this.source.slice(start.index, this.currentLocation().index);
+		
+		this.tokens.push(this.token('TagClose', start, this.currentLocation()));
 	}
 	
 	private scanText(): void {
-		const start = this.getCurrentLocation();
-		let value = '';
+		const start = this.currentLocation();
 		
-		while (!this.isAtEnd() && this.peek() !== '<') {
-			value += this.advance();
+		this.consumeWhile(c => c !== '<');
+		
+		const end = this.currentLocation();
+		
+		const value = this.source.slice(start.index, end.index);
+		
+		this.tokens.push(this.token('Text', start, end));
+	}
+	
+	private scanComment(): void {
+		const start = this.currentLocation();
+		
+		// assumes <!-- already detected
+		this.advance();
+		this.advance();
+		
+		this.consumeUntilSequence('-->');
+		
+		if (this.match('-->')) {
+			// consume closing safely
 		}
 		
-		if (value.length > 0) {
-			this.tokens.push(this.createToken('Text', value, start));
+		this.tokens.push(this.token('Comment', start, this.currentLocation()));
+	}
+	
+	private consumeAttributes(): void {
+		while (!this.isAtEnd()) {
+			this.consumeWhile(c => this.isWhitespace(c));
+			
+			if (this.peek() === '>' || this.peek() === '/') break;
+			
+			// attribute name
+			const nameStart = this.currentLocation();
+			this.consumeWhile(c => this.isTagNameChar(c));
+			const nameEnd = this.currentLocation();
+			
+			const attrName = this.source.slice(nameStart.index, nameEnd.index);
+			
+			this.tokens.push(this.token('AttributeName', nameStart, nameEnd));
+			
+			this.consumeWhile(c => this.isWhitespace(c));
+			
+			// boolean attribute
+			if (this.peek() !== '=') continue;
+			
+			this.advance(); // '='
+			
+			this.consumeWhile(c => this.isWhitespace(c));
+			
+			const quote = this.peek();
+			
+			if (quote === '"' || quote === "'") {
+				this.advance();
+				const valStart = this.currentLocation();
+				this.advance(); // opening quote
+				
+				this.consumeWhile(c => c !== quote);
+				
+				const valEnd = this.currentLocation();
+				this.advance(); // opening quote
+				
+				this.advance(); // closing quote
+				
+				this.tokens.push(this.token('AttributeValue', valStart, valEnd));
+			}
 		}
 	}
 	
-	// --- Helpers ---
-	
-	private checkClosingTagRaw(tagName: string): boolean {
-		// We want to check for </tagName> or </tagName whitespace
-		if (this.index + 2 + tagName.length > this.length) return false;
-		
-		// 1. Check </
-		if (this.source.substring(this.index, this.index + 2) !== '</') return false;
-		
-		// 2. Check tagName (case insensitive logic needed? Spec says HTML5. Let's assume standard)
-		const potentialName = this.source.substring(this.index + 2, this.index + 2 + tagName.length);
-		if (potentialName.toLowerCase() !== tagName) return false;
-		
-		// 3. Check what follows: should be > or whitespace or /
-		const nextChar = this.source[this.index + 2 + tagName.length];
-		return nextChar === '>' || nextChar === '/' || /\s/.test(nextChar);
-	}
-	
-	private isAlpha(char: string): boolean {
-		return /[a-zA-Z]/.test(char);
-	}
-	
-	private isAlphaNumeric(char: string): boolean {
-		return /[a-zA-Z0-9]/.test(char);
-	}
-	
-	private createToken(type: HtmlTokenType, value: string, start: SourceLocation): Token<HtmlTokenType> {
-		return {
-		  type,
-			value,
-			start,
-			end: this.getCurrentLocation()
-		};
+	private isTagNameChar(char: string): boolean {
+		return this.isAlphaNumeric(char) || char === '-' || char === '_' || char === ':';
 	}
 }

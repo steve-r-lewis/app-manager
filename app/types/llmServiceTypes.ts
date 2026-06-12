@@ -34,8 +34,8 @@
  */
 
 export interface LLMResponseMapping {
-	content: string; // Path to text (e.g. "choices.0.message.content")
-	tokens?: string; // Path to usage (e.g. "usage.total_tokens")
+	readonly content: string; // Path to text (e.g. "choices.0.message.content")
+	readonly tokens?: string; // Path to usage (e.g. "usage.total_tokens")
 }
 
 /**
@@ -44,43 +44,37 @@ export interface LLMResponseMapping {
  */
 export interface LLMProviderConfig {
 	/** Unique internal identifier (e.g. "gemini", "ollama", "deepseek") */
-	id: string;
-	
+	readonly id: string;
 	/** The name of the environment variable that holds the API key (e.g. "API_KEY_GEMINI") */
-	apiKeyEnv: string;
-	
+	readonly apiKeyEnv: string;
 	/** The specific model string to send in API requests (e.g. "gemini-1.5-flash") */
-	model: string;
-	
+	readonly model: string;
 	/** Optional: Overrides the default API endpoint (crucial for Ollama or local proxies) */
-	baseUrl?: string;
-	
+	readonly baseUrl?: string;
 	/** The logic adapter to use (e.g. "ollama" for local, "openai-compatible" for generic REST) */
-	type?: string;
-	
+	readonly type?: string;
 	/** Human-readable display name for UI prompts */
-	label?: string | null;
-	
+	readonly label?: string | null;
 	/** Request timeout in milliseconds (useful for slower local models) */
-	timeOut?: number | null;
-	
-	mapping?: LLMResponseMapping;
+	readonly timeOut?: number | null;
+	readonly mapping?: LLMResponseMapping;
 }
 
 // Define the shape of the config the service expects at runtime
 export interface LLMServiceConfig {
-	provider: string;
-	apiKey: string;
-	model: string;
-	baseUrl?: string;
+	readonly provider: string;
+	readonly apiKey: string;
+	readonly model: string;
+	readonly baseUrl?: string;
 }
 
 /**
  * Structure of the JSON file used to store AI provider configurations.
  */
 export interface LLMRegistry {
-	records: LLMProviderConfig[];
+	readonly records: LLMProviderConfig[];
 }
+
 
 /**
  * Represents the runtime availability status of a provider.
@@ -88,32 +82,30 @@ export interface LLMRegistry {
  */
 export interface LLMProviderStatus {
 	/** Matches the ID in LLMProviderConfig */
-	id: string;
-	
+	readonly id: string;
 	/** True if the API key exists in env or the service is reachable */
-	available: boolean;
-	
+	readonly available: boolean;
 	/** Display name for the selection menu */
-	name: string;
-	
+	readonly name: string;
 	/** Optional: Why the provider is unavailable (e.g. "Missing API Key") */
-	reason?: string;
+	readonly reason?: string;
 }
 
 /**
  * Options for the chat request.
  */
 export interface ChatOptions {
-	jsonMode?: boolean;
+	readonly jsonMode?: boolean;
 }
+
 
 /**
  * Standardized response format returned to the application.
  */
 export interface LLMResponse {
-	content: string;
-	usage?: {
-		totalTokens: number;
+	readonly content: string;
+	readonly usage?: {
+		readonly totalTokens: number;
 	};
 }
 
@@ -121,6 +113,17 @@ export interface LLMResponse {
  * Standard OpenAI-compatible message format.
  */
 export interface LLMMessage {
-	role: 'system' | 'user' | 'assistant';
-	content: string;
+	readonly role: 'system' | 'user' | 'assistant';
+	readonly content: string;
+}
+
+/**
+ * The core architectural contract for the AI Service.
+ */
+export interface ILLMService {
+	checkAvailability(): LLMProviderStatus[];
+	configure(providerId: string): void;
+	sanitizeContext(input: string, maxLength?: number): string;
+	generate(prompt: string, options?: ChatOptions): Promise<string>;
+	chat(messages: LLMMessage[], options?: ChatOptions): Promise<LLMResponse>;
 }

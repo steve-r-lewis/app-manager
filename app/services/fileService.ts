@@ -11,15 +11,13 @@
  * ================================================================================
  *
  * @description:
- * The Central File I/O Orchestrator.
+ *
+ * The Central File I/O Orchestrator. (Strict Asynchronous Implementation)
  *
  * FEATURES:
- * - Smart Read: Auto-detects and parses JSON, returns strings for others.
- * - Smart Update (Token Scanner): Uses 'jsonc-parser' for non-destructive JSON updates.
- * - Safety: Handles directory creation and existence checks automatically.
- *
- * ARCHITECTURE:
- * Replaces legacy "Handler" patterns with a unified, extension-aware service.
+ * - Smart Read: Auto-detects and parses JSONC, returning strictly validated schemas.
+ * - Smart Update: Uses 'jsonc-parser' for non-destructive, AST-based JSON updates.
+ * - Safety: Non-blocking async I/O. Schema-enforced type guarantees.
  *
  * ================================================================================
  *
@@ -37,168 +35,179 @@
  * ================================================================================
  */
 
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { consola } from 'consola';
 import { modify, applyEdits, parse } from 'jsonc-parser';
+import type { ZodSchema } from 'zod';
 import { logger } from './loggerService.js';
+import type { IFileService, ILogger } from '../types/index.js';
 
-class FileService {
+export class FileService implements IFileService {
+	private logger: ILogger = logger;
 	
-	/**
-	 * Smartly reads a file.
-	 * - If .json: Returns parsed Object (ignoring comments via jsonc-parser).
-	 * - If other: Returns raw string.
-	 * - Returns null if file missing.
-	 */
-	public read<T = any>(filePath: string): T | null {
-		if (!this.exists(filePath)) return null;
+	public async read<T = unknown>(filePath: string, schema?: ZodSchema<T>): Promise<T | null> {
+		const content = await this.readText(filePath);
+		if (content === null) return null;
 		
-		try {
-			const content = fs.readFileSync(filePath, 'utf-8');
+		if (filePath.endsWith('.json')) {
+			const errors: any[] = [];
+			// Your brilliant AST-based parser prevents native JSON.parse crashes
+			const parsed = parse(content, errors);
 			
-			if (filePath.endsWith('.json')) {
-				// Use jsonc-parser's parse to safely handle comments if present
-				// fallback to standard parse if needed, but jsonc is safer for config files
-				const errors: any[] = [];
-				const parsed = parse(content, errors);
-				
-				// If strictly empty or invalid, return null or empty object?
-				// Tests imply strict equality to content, so we assume valid JSON.
-				return parsed as T;
+			if (errors.length > 0) {
+				this.logger.error(`FileService Read Error (${filePath}): Invalid JSONC syntax detected.`);
+				return null;
 			}
 			
-			return content as unknown as T;
-		} catch (error: any) {
-			logger.error(`FileService Read Error (${filePath}): ${error.message}`);
-			return null;
+			if (schema) {
+				const result = schema.safeParse(parsed);
+				if (!result.success) {
+					this.logger.error(`FileService Schema Error (${filePath}): ${result.error.message}`);
+					throw new Error(`Schema validation failed for ${filePath}`);
+				}
+				return result.data;
+			}
+			
+			return parsed as T;
+		}
+		
+		return content as unknown as T;
+	}
+	
+	public async readText(filePath: string): Promise<string | null> {
+		try {
+			return await fs.readFile(filePath, 'utf-8');
+		} catch (error: unknown) {
+			if (error instanceof Error && 'code' in error) {
+				const osError = error as NodeJS.ErrnoException;
+				if (osError.code === 'ENOENT') return null;
+				if (osError.code === 'EACCES') {
+					this.logger.error(`OS Permission denied. Cannot read file: ${filePath}`);
+				}
+			}
+			const errMsg = error instanceof Error ? error.message : String(error);
+			this.logger.error(`FileService ReadText Error (${filePath}): ${errMsg}`);
+			throw error; // Escalate permission errors
 		}
 	}
 	
-	/**
-	 * Explicitly reads a file as a raw UTF-8 string.
-	 * Useful for CodeService or when AST operations are required.
-	 */
-	public readText(filePath: string): string | null {
-		if (!this.exists(filePath)) return null;
+	public async write(filePath: string, content: unknown): Promise<void> {
 		try {
-			return fs.readFileSync(filePath, 'utf-8');
-		} catch (error: any) {
-			logger.error(`FileService ReadText Error (${filePath}): ${error.message}`);
-			return null;
-		}
-	}
-	
-	/**
-	 * Writes content to a file.
-	 * - Automatically ensures parent directories exist.
-	 * - Auto-stringifies Objects if target is .json.
-	 */
-	public write(filePath: string, content: any): void {
-		try {
-			this.ensureDir(filePath);
+			await this.ensureDir(filePath);
 			
-			let dataToWrite = content;
+			let dataToWrite = typeof content === 'string' ? content : String(content);
 			
-			// Auto-serialize JSON if passed an object for a .json file
 			if (filePath.endsWith('.json') && typeof content === 'object' && content !== null) {
 				dataToWrite = JSON.stringify(content, null, 2);
 			}
 			
-			fs.writeFileSync(filePath, dataToWrite, 'utf-8');
-		} catch (error: any) {
-			logger.error(`FileService Write Error (${filePath}): ${error.message}`);
+			// Replaced fs.writeFile with atomic helper
+			await this.atomicWrite(filePath, dataToWrite);
+		} catch (error: unknown) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			this.logger.error(`FileService Write Error (${filePath}): ${errMsg}`);
 			throw error;
 		}
 	}
 	
-	/**
-	 * intelligently updates a file without destroying it.
-	 * - JSON: Uses Token Scanner (jsonc-parser) to merge fields while preserving comments/formatting.
-	 * - Text: Appends content if it doesn't already exist.
-	 */
-	public update(filePath: string, content: any): void {
-		if (!this.exists(filePath)) {
-			// If missing, just write it
-			this.write(filePath, content);
+	public async update(filePath: string, content: unknown): Promise<void> {
+		const fileExists = await this.exists(filePath);
+		
+		if (!fileExists) {
+			await this.write(filePath, content);
 			return;
 		}
 		
 		try {
-			// --- JSON Strategy (Token Scanner) ---
 			if (filePath.endsWith('.json')) {
-				if (typeof content !== 'object') {
-					throw new Error('Update content for JSON must be an object');
+				if (typeof content !== 'object' || content === null) {
+					throw new TypeError('Update content for JSON must be a non-null object.');
 				}
 				
-				let rawText = fs.readFileSync(filePath, 'utf-8');
+				let rawText = await fs.readFile(filePath, 'utf-8');
 				
-				// Apply edits sequentially for each key in the update object
-				// This acts as a "Patch" operation
-				for (const [key, value] of Object.entries(content)) {
+				for (const [key, value] of Object.entries(content as Record<string, unknown>)) {
 					const edits = modify(rawText, [key], value, {
 						formattingOptions: { insertSpaces: true, tabSize: 2 }
 					});
 					rawText = applyEdits(rawText, edits);
 				}
 				
-				fs.writeFileSync(filePath, rawText, 'utf-8');
+				// Replaced fs.writeFile with atomic helper
+				await this.atomicWrite(filePath, rawText);
 				return;
 			}
 			
-			// --- Text Strategy (Append) ---
-			// Ideal for .env, .gitignore, etc.
 			if (this.isTextFile(filePath)) {
-				const currentContent = fs.readFileSync(filePath, 'utf-8');
+				const currentContent = await fs.readFile(filePath, 'utf-8');
 				const newContent = String(content);
 				
-				// Idempotency Check: Don't append if already present
 				if (!currentContent.includes(newContent)) {
-					// Ensure newline separation
 					const separator = currentContent.endsWith('\n') ? '' : '\n';
-					fs.appendFileSync(filePath, `${separator}${newContent}\n`, 'utf-8');
+					// Replaced non-atomic fs.appendFile with atomic in-memory swap
+					await this.atomicWrite(filePath, `${currentContent}${separator}${newContent}\n`);
 				}
 				return;
 			}
 			
-			// --- Fallback / Safety ---
-			consola.warn(`Update not supported for ${path.basename(filePath)}. Overwriting.`);
-			this.write(filePath, content);
+			consola.warn(`Update logic not supported for ${path.basename(filePath)}. Overwriting entirely.`);
+			await this.write(filePath, content);
 			
-		} catch (error: any) {
-			logger.error(`FileService Update Error (${filePath}): ${error.message}`);
+		} catch (error: unknown) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			this.logger.error(`FileService Update Error (${filePath}): ${errMsg}`);
 			throw error;
 		}
 	}
 	
-	/**
-	 * Checks if a file exists.
-	 */
-	public exists(filePath: string): boolean {
-		return fs.existsSync(filePath);
+	public async exists(filePath: string): Promise<boolean> {
+		try {
+			await fs.access(filePath);
+			return true;
+		} catch {
+			return false;
+		}
 	}
 	
-	/**
-	 * Deletes a file if it exists.
-	 */
-	public delete(filePath: string): void {
-		if (this.exists(filePath)) {
-			fs.unlinkSync(filePath);
+	public async delete(filePath: string): Promise<void> {
+		try {
+			await fs.unlink(filePath);
+		} catch (error: unknown) {
+			if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code !== 'ENOENT') {
+				throw error;
+			}
 		}
 	}
 	
 	// --- Private Helpers ---
 	
-	private ensureDir(filePath: string): void {
+	private async ensureDir(filePath: string): Promise<void> {
 		const dir = path.dirname(filePath);
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, { recursive: true });
-		}
+		await fs.mkdir(dir, { recursive: true });
 	}
 	
 	private isTextFile(filePath: string): boolean {
+		const base = path.basename(filePath).toLowerCase();
 		const ext = path.extname(filePath).toLowerCase();
-		return ['.txt', '.env', '.md', '.gitignore', '.npmrc'].includes(ext);
+		
+		// .txt and .md are standard extensions. .env and .gitignore are base filenames.
+		return ['.txt', '.md'].includes(ext) || ['.env', '.gitignore', '.npmrc'].includes(base);
+	}
+	
+	/**
+	 * Guarantees zero file corruption by writing to a temporary file
+	 * and executing an OS-level atomic rename operation.
+	 */
+	private async atomicWrite(filePath: string, data: string): Promise<void> {
+		const tempPath = `${filePath}.tmp.${Date.now()}`;
+		try {
+			await fs.writeFile(tempPath, data, 'utf-8');
+			await fs.rename(tempPath, filePath);
+		} catch (error) {
+			await fs.unlink(tempPath).catch(() => {}); // Clean up orphan
+			throw error;
+		}
 	}
 }
 

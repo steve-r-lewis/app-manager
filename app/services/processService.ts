@@ -33,15 +33,12 @@
  * ================================================================================
  */
 
-import { exec, spawn } from 'child_process';
-import type { ProcessExecuteOptions, ProcessResult } from '../types/index.js';
+import { exec, spawn, type ExecException } from 'node:child_process';
+import type { ProcessExecuteOptions, ProcessResult, IProcessService } from '../types/index.js';
 import { logger } from './loggerService.js';
 
-class ProcessService {
-	/**
-	 * Executes a shell command and buffers output.
-	 * Best for short-lived commands where you need to parse the result (e.g., git status).
-	 */
+class ProcessService implements IProcessService {
+	
 	public async execute(command: string, options: ProcessExecuteOptions = {}): Promise<ProcessResult> {
 		const cwd = options.cwd || process.cwd();
 		const env = options.env ? { ...process.env, ...options.env } : process.env;
@@ -51,33 +48,33 @@ class ProcessService {
 			logger.debug(`Executing: "${command}" in ${cwd}`);
 		}
 		
+		// Explicit Promise closure prevents V8 symbol stripping during Vitest module mocking
 		return new Promise((resolve) => {
-			exec(command, { cwd, env, timeout }, (error, stdout, stderr) => {
-				const outStr = stdout ? stdout.toString().trim() : '';
-				const errStr = stderr ? stderr.toString().trim() : '';
+			exec(command, { cwd, env, timeout }, (error: ExecException | null, stdout, stderr) => {
+				const outStr = stdout ? String(stdout).trim() : '';
+				const errStr = stderr ? String(stderr).trim() : '';
 				
 				let exitCode = 0;
 				if (error) {
+					// Fallback to exit code 1 if the OS error code is not numeric
 					exitCode = typeof error.code === 'number' ? error.code : 1;
 				}
 				
 				resolve({
 					stdout: outStr,
 					stderr: errStr,
-					exitCode: exitCode
+					exitCode
 				});
 			});
 		});
 	}
 	
-	/**
-	 * Spawns a shell command and streams output directly to the terminal.
-	 * Best for long-running processes (e.g., nuxt dev, npm install) or interactive tools.
-	 * * @returns Promise<number> The exit code.
-	 */
 	public async spawn(command: string, args: string[], options: ProcessExecuteOptions = {}): Promise<number> {
 		const cwd = options.cwd || process.cwd();
 		const env = options.env ? { ...process.env, ...options.env } : process.env;
+		
+		// Security Hardening: Safely handle Windows .cmd execution, but secure Unix environments.
+		const useShell = options.shell ?? (process.platform === 'win32');
 		
 		if (!options.silent) {
 			logger.debug(`Spawning: "${command} ${args.join(' ')}" in ${cwd}`);
@@ -87,8 +84,8 @@ class ProcessService {
 			const child = spawn(command, args, {
 				cwd,
 				env,
-				stdio: 'inherit', // CRITICAL: Pipes output directly to parent terminal
-				shell: true       // CRITICAL: Allows cross-platform commands (cmd/bash)
+				stdio: 'inherit',
+				shell: useShell
 			});
 			
 			child.on('error', (err) => reject(err));

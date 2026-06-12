@@ -29,11 +29,16 @@
 export type LogLevel = 'info' | 'success' | 'warn' | 'error' | 'debug';
 
 export interface ILogger {
-	info(message: string, ...args: any[]): void;
-	success(message: string, ...args: any[]): void;
-	warn(message: string, ...args: any[]): void;
-	error(message: string | Error, ...args: any[]): void;
-	debug(message: string, ...args: any[]): void;
+	/**
+	 * Asynchronously initializes the logging environment.
+	 */
+	init(targetRoot: string): Promise<void>;
+	
+	info(message: string, ...args: unknown[]): void;
+	success(message: string, ...args: unknown[]): void;
+	warn(message: string, ...args: unknown[]): void;
+	error(message: string | Error, ...args: unknown[]): void;
+	debug(message: string, ...args: unknown[]): void;
 	
 	/**
 	 * Creates a visual separator in the output.

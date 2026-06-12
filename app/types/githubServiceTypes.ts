@@ -34,15 +34,6 @@
  */
 
 /**
- * GithubRepositoryConfig {
- * GithubRegistry {
- * GithubUser {
- * GithubRepo {
- * GithubOrg {
- * GithubApiError {
- */
-
-/**
  * Configuration object for a single repository in the commandRegistry.
  */
 export interface GithubRepositoryConfig {
@@ -112,4 +103,29 @@ export interface GithubApiError {
 	message: string;
 	documentation_url?: string;
 	status?: string;
+}
+
+import type {
+	GitInitOptions,
+	GitCloneOptions,
+	GitStatusResult,
+	GitSubmoduleOptions,
+	GitRemote
+} from './gitTypes.js';
+
+/**
+ * The core architectural contract for the GitHub Network Service.
+ */
+export interface IGithubService {
+	initRepo(options: GitInitOptions): Promise<void>;
+	cloneRepo(options: GitCloneOptions): Promise<void>;
+	getStatus(cwd: string): Promise<GitStatusResult>;
+	createCommit(cwd: string, message: string, files?: string[]): Promise<void>;
+	push(cwd: string, remote?: string, branch?: string): Promise<void>;
+	syncRepo(cwd: string, silent?: boolean): Promise<void>;
+	addSubmodule(options: GitSubmoduleOptions): Promise<void>;
+	getRemotes(cwd: string): Promise<GitRemote[]>;
+	getStagedDiff(cwd: string): Promise<string>;
+	deleteRemoteRepo(owner: string, repo: string): Promise<void>;
+	listRemoteRepos(org?: string): Promise<GithubRepo[]>;
 }

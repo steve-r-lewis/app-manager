@@ -23,15 +23,16 @@
  * ================================================================================
  */
 
+// app/types/baseCommandTypes.ts refactor
 export interface CommandMetadata {
-	id: string;             // Unique ID (e.g., 'git.commit')
-	domain: string;         // Category (e.g., 'git', 'app', 'nuxt')
-	name: string;           // CLI Action Name (e.g., 'commit')
-	label: string;          // TUI Display Name (e.g., '📝 Smart Commit')
-	description: string;    // Help text
-	hidden?: boolean;       // Hide from menus?
+	readonly id: string;             // Unique ID (e.g., 'git.commit')
+	readonly domain: string;         // Category (e.g., 'git', 'app', 'nuxt')
+	readonly name: string;           // CLI Action Name (e.g., 'commit')
+	readonly label: string;          // TUI Display Name (e.g., '📝 Smart Commit')
+	readonly description: string;    // Help text
+	readonly hidden?: boolean;       // Hide from menus?
 }
 
-export interface CommandOptions {
-	[key: string]: any;     // Flexible key-value pairs for flags (--force, --dry-run)
-}
+// Enforce strict records instead of any
+export type CommandOptions = Record<string, string | number | boolean | undefined>;
+

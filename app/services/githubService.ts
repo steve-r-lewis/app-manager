@@ -58,22 +58,6 @@
  * ================================================================================
  */
 
-/**
- * git
- * initRepo
- * cloneRepo
- * getStatus
- * createCommit
- * push
- * syncRepo
- * addSubmodule
- * getRemotes
- * getStagedDiff
- * getAuthHeader
- * deleteRemoteRepo
- * listRemoteRepos
- */
-
 import { simpleGit, SimpleGit } from 'simple-git';
 import { logger } from './loggerService.js';
 import type {
@@ -81,12 +65,13 @@ import type {
 	GitSubmoduleOptions,
 	GitStatusResult,
 	GithubRepo,
-	GitRemote
+	GitRemote,
+	GitCloneOptions
 } from '../types/index.js';
+import type { IGithubService } from '../types/githubServiceTypes.js';
 
-class GithubService {
+class GithubService implements IGithubService {
 	
-	// --- Helper: Get Git Instance for a specific path ---
 	private git(cwd: string): SimpleGit {
 		return simpleGit(cwd);
 	}
@@ -95,25 +80,19 @@ class GithubService {
 	// Local Git Operations (via simple-git)
 	// ============================================================================
 	
-	/**
-	 * Initializes a new Git repository.
-	 */
 	public async initRepo(options: GitInitOptions): Promise<void> {
 		const { cwd, defaultBranch = 'main', userName, userEmail } = options;
 		logger.info(`Initializing Git repository in: ${cwd}`);
 		
 		const git = this.git(cwd);
-		
 		await git.init();
 		
-		// Rename branch if needed
 		const branches = await git.branchLocal();
 		if (branches.current !== defaultBranch) {
 			logger.debug(`Renaming branch '${branches.current}' to '${defaultBranch}'`);
 			await git.branch(['-M', defaultBranch]);
 		}
 		
-		// Configure User (Local Scope)
 		if (userName) {
 			logger.debug(`Setting local git user.name: ${userName}`);
 			await git.addConfig('user.name', userName);
@@ -124,43 +103,28 @@ class GithubService {
 		}
 	}
 	
-	/**
-	 * Clones a repository to the local file system.
-	 * Does not require an existing git instance/cwd.
-	 */
 	public async cloneRepo(options: GitCloneOptions): Promise<void> {
 		const { url, destination, branch, depth } = options;
 		logger.info(`Cloning repository...`);
 		logger.debug(`Source: ${url} | Dest: ${destination}`);
 		
-		// Construct args
 		const args: string[] = [];
-		if (branch) {
-			args.push('--branch', branch);
-		}
-		if (depth) {
-			args.push('--depth', String(depth));
-		}
+		if (branch) args.push('--branch', branch);
+		if (depth) args.push('--depth', String(depth));
 		
-		// Use global instance for cloning (not bound to a specific CWD yet)
 		try {
 			await simpleGit().clone(url, destination, args);
 			logger.info('Clone operation successful.');
-		} catch (error: any) {
-			const msg = `Clone failed: ${error.message}`;
+		} catch (error: unknown) {
+			const errMsg = error instanceof Error ? error.message : String(error);
+			const msg = `Clone failed: ${errMsg}`;
 			logger.error(msg);
 			throw new Error(msg);
 		}
 	}
 	
-	/**
-	 * Checks status of the repository.
-	 * Returns a structured object useful for AI prompts and UI.
-	 */
 	public async getStatus(cwd: string): Promise<GitStatusResult> {
-		// Log at DEBUG level to prevent spamming standard logs during polling
 		logger.debug(`Checking git status for: ${cwd}`);
-		
 		const status = await this.git(cwd).status();
 		
 		return {
@@ -173,9 +137,6 @@ class GithubService {
 		};
 	}
 	
-	/**
-	 * Stages files and commits them.
-	 */
 	public async createCommit(cwd: string, message: string, files: string[] = ['.']): Promise<void> {
 		logger.info(`Creating commit in ${cwd}`);
 		logger.debug(`Message: "${message}" | Files: ${files.join(', ')}`);
@@ -185,9 +146,6 @@ class GithubService {
 		await git.commit(message);
 	}
 	
-	/**
-	 * Pushes to remote.
-	 */
 	public async push(cwd: string, remote: string = 'origin', branch?: string): Promise<void> {
 		const target = branch ? `${remote}/${branch}` : remote;
 		logger.info(`Pushing changes to ${target}...`);
@@ -201,17 +159,10 @@ class GithubService {
 		logger.debug('Push completed successfully.');
 	}
 	
-	/**
-	 * Syncs repository (Pull + Submodule Update).
-	 * @param cwd - The repository root
-	 * @param silent - If false, pipes output to stdout/stderr (Headless mode requirement)
-	 */
 	public async syncRepo(cwd: string, silent: boolean = true): Promise<void> {
 		logger.info(`Syncing repository at: ${cwd}`);
 		const git = this.git(cwd);
 		
-		// In headless mode, we want to see the raw git output.
-		// This is synchronous configuration of the instance, not an async operation itself.
 		if (!silent) {
 			git.outputHandler((command, stdout, stderr) => {
 				stdout.pipe(process.stdout);
@@ -219,20 +170,15 @@ class GithubService {
 			});
 		}
 		
-		// 1. Pull Root
 		logger.debug('Executing git pull...');
 		await git.pull();
 		
-		// 2. Update Submodules (--init --recursive)
 		logger.debug('Updating submodules...');
 		await git.submoduleUpdate(['--init', '--recursive']);
 		
 		logger.info('Sync complete.');
 	}
 	
-	/**
-	 * Adds a submodule.
-	 */
 	public async addSubmodule(options: GitSubmoduleOptions): Promise<void> {
 		const { cwd, url, path, branch } = options;
 		logger.info(`Adding submodule: ${url} -> ${path}`);
@@ -244,21 +190,13 @@ class GithubService {
 		await this.git(cwd).submodule(args);
 	}
 	
-	/**
-	 * Gets list of remotes.
-	 */
 	public async getRemotes(cwd: string): Promise<GitRemote[]> {
 		logger.debug(`Retrieving remotes for: ${cwd}`);
-		
 		const remotes = await this.git(cwd).getRemotes(true);
-		
 		logger.debug(`Found ${remotes.length} remote(s).`);
 		return remotes;
 	}
 	
-	/**
-	 * Gets the raw diff of staged changes (for LLM context).
-	 */
 	public async getStagedDiff(cwd: string): Promise<string> {
 		const diff = await this.git(cwd).diff(['--cached']);
 		logger.debug(`Retrieved staged diff (${diff.length} chars)`);
@@ -284,30 +222,42 @@ class GithubService {
 	}
 	
 	/**
-	 * Deletes a repository from GitHub.
-	 * WARNING: Destructive.
+	 * Centralized network wrapper to enforce HTTP timeouts and prevent infinite CLI hangs.
 	 */
+	private async fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 15000): Promise<Response> {
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+		
+		try {
+			const response = await fetch(url, { ...options, signal: controller.signal });
+			clearTimeout(timeoutId);
+			return response;
+		} catch (error: unknown) {
+			clearTimeout(timeoutId);
+			if (error instanceof Error && error.name === 'AbortError') {
+				const timeoutMsg = `Network timeout: GitHub API did not respond within ${timeoutMs / 1000} seconds.`;
+				logger.error(timeoutMsg);
+				throw new Error(timeoutMsg);
+			}
+			throw error;
+		}
+	}
+	
 	public async deleteRemoteRepo(owner: string, repo: string): Promise<void> {
 		logger.warn(`DELETING REMOTE REPO: ${owner}/${repo}`);
-		
 		const url = `https://api.github.com/repos/${owner}/${repo}`;
 		
-		const response = await fetch(url, {
+		const response = await this.fetchWithTimeout(url, {
 			method: 'DELETE',
 			headers: this.getAuthHeader()
 		});
 		
 		if (!response.ok) {
-			const msg = `Failed to delete repo ${owner}/${repo}: ${response.statusText}`;
-			logger.error(msg);
-			throw new Error(msg);
+			await this.handleApiError(response, `Failed to delete repo ${owner}/${repo}`);
 		}
 		logger.info(`Successfully deleted remote repo: ${owner}/${repo}`);
 	}
 	
-	/**
-	 * Lists repositories for the authenticated user/org.
-	 */
 	public async listRemoteRepos(org?: string): Promise<GithubRepo[]> {
 		const target = org || 'Authenticated User';
 		logger.debug(`Fetching remote repositories for: ${target}`);
@@ -316,20 +266,37 @@ class GithubService {
 			? `https://api.github.com/orgs/${org}/repos`
 			: `https://api.github.com/user/repos`;
 		
-		const response = await fetch(url, {
+		const response = await this.fetchWithTimeout(url, {
 			method: 'GET',
 			headers: this.getAuthHeader()
 		});
 		
 		if (!response.ok) {
-			const msg = `GitHub API Error (${response.status}): ${response.statusText}`;
-			logger.error(msg);
-			throw new Error(msg);
+			await this.handleApiError(response, 'Failed to fetch repositories');
 		}
 		
 		const repos = await response.json();
 		logger.debug(`Fetched ${repos.length} repositories.`);
 		return repos;
+	}
+	
+	/**
+	 * Extracts detailed JSON error messages from GitHub responses.
+	 */
+	private async handleApiError(response: Response, context: string): Promise<never> {
+		let errorMsg = response.statusText;
+		try {
+			const errorBody = await response.json();
+			if (errorBody && errorBody.message) {
+				errorMsg = errorBody.message;
+			}
+		} catch {
+			// Fallback to statusText if body is unparseable
+		}
+		
+		const msg = `GitHub API Error (${response.status}): ${context} - ${errorMsg}`;
+		logger.error(msg);
+		throw new Error(msg);
 	}
 }
 

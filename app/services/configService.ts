@@ -36,9 +36,20 @@
  * ================================================================================
  */
 
-import type { AppConfig, GitUserConfig } from '../types/index.js';
+/**
+ * ================================================================================
+ *
+ * @project:    app-manager
+ * @file:       ~/app/services/configService.ts
+ * @version:    2.1.0
+ *
+ * ================================================================================
+ */
 
-class ConfigService {
+import { AppConfigSchema, GitUserConfigSchema } from '../types/index.js';
+import type { AppConfig, GitUserConfig, IConfigService } from '../types/index.js';
+
+class ConfigService implements IConfigService {
 	private config: AppConfig;
 	private _toolRoot: string = '';
 	
@@ -48,9 +59,8 @@ class ConfigService {
 	
 	/**
 	 * Initializes the configuration service with the CLI tool's root path.
-	 * @param toolRoot - The directory where the CLI tool code resides.
 	 */
-	public init(toolRoot: string) {
+	public init(toolRoot: string): void {
 		this._toolRoot = toolRoot;
 	}
 	
@@ -60,7 +70,6 @@ class ConfigService {
 	
 	/**
 	 * Resets the configuration to default values.
-	 * Useful for testing cleanup.
 	 */
 	public reset(): void {
 		this.config = this.getDefaults();
@@ -68,7 +77,7 @@ class ConfigService {
 	}
 	
 	/**
-	 * Returns the default configuration state.
+	 * Returns the default configuration state map.
 	 */
 	private getDefaults(): AppConfig {
 		return {
@@ -85,37 +94,36 @@ class ConfigService {
 	}
 	
 	/**
-	 * Retrieves the current application configuration.
-	 * Returns a copy to prevent direct mutation of the internal state.
+	 * Retrieves the current application configuration safely.
+	 * Returns a deep structured clone to eliminate nested reference mutations.
 	 */
 	public getConfig(): Readonly<AppConfig> {
-		return { ...this.config };
+		return structuredClone(this.config);
 	}
 	
 	/**
-	 * Updates the detected Git User configuration.
-	 * @param user The Git identity (name, email)
+	 * Validates and updates the detected Git User configuration.
+	 * Enforces runtime schema parsing to secure input parameters.
 	 */
 	public setGitUser(user: GitUserConfig): void {
-		this.config.gitUser = { ...user };
+		// Zod parse validates structural shape and strips unsafe properties simultaneously
+		this.config.gitUser = GitUserConfigSchema.parse(user);
 	}
 	
 	/**
 	 * Updates a specific global feature flag.
-	 * @param key The flag name (e.g., 'verbose')
-	 * @param value The boolean state
 	 */
 	public setFlag(key: keyof AppConfig['flags'], value: boolean): void {
 		this.config.flags[key] = value;
 	}
 	
 	/**
-	 * Helper to check verbose status (used by Logger)
+	 * Direct boolean helper to evaluate verbose tracking.
 	 */
 	public isVerbose(): boolean {
 		return this.config.flags.verbose;
 	}
 }
 
-// Export as a Singleton
+// Export as a strictly typed Singleton boundary
 export const configService = new ConfigService();

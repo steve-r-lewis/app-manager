@@ -354,5 +354,37 @@ describe('GithubService', () => {
 			await expect(githubService.listRemoteRepos()).rejects.toThrow('GitHub API Error (401)');
 			expect(logger.error).toHaveBeenCalled();
 		});
+		
+		it('should handle network timeouts safely without hanging the process', async () => {
+			// Simulate an AbortController timeout cancellation
+			const abortError = new Error('The operation was aborted');
+			abortError.name = 'AbortError';
+			(fetch as Mock).mockRejectedValue(abortError);
+			
+			await expect(githubService.listRemoteRepos()).rejects.toThrow('Network timeout');
+			expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('did not respond'));
+		});
+		
+		it('should extract detailed error messages from GitHub JSON payload', async () => {
+			(fetch as Mock).mockResolvedValue({
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				json: async () => ({ message: 'Repository name already exists on this account' })
+			});
+			
+			await expect(githubService.listRemoteRepos()).rejects.toThrow('GitHub API Error (422): Failed to fetch repositories - Repository name already exists on this account');
+		});
+		
+		it('should gracefully fallback if GitHub error payload is not valid JSON', async () => {
+			(fetch as Mock).mockResolvedValue({
+				ok: false,
+				status: 500,
+				statusText: 'Internal Server Error',
+				json: async () => { throw new Error('Cannot parse JSON'); }
+			});
+			
+			await expect(githubService.listRemoteRepos()).rejects.toThrow('GitHub API Error (500): Failed to fetch repositories - Internal Server Error');
+		});
 	});
 });
