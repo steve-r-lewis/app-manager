@@ -23,11 +23,7 @@
  * ================================================================================
  */
 
-export interface SourceLocation {
-	readonly line: number;
-	readonly column: number;
-	readonly index: number;
-}
+import type { SourceLocation } from './index.js';
 
 export interface Token<TTokenType extends string> {
 	readonly type: TTokenType;

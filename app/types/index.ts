@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/types/index.ts
- * @version:    1.1.0
+ * @version:    1.0.0
  * @createDate: 2025 Dec 31
  * @createTime: 01:11
  * @author:     Steve R Lewis
@@ -29,18 +29,18 @@
  * ================================================================================
  */
 
-export * from './baseCommandTypes.js';    // --- Infrastructure Domains ---
-export * from './codeServiceTypes.js';    // --- Infrastructure Domains ---
-export * from './configServiceTypes.js';  // --- Core ---
-export * from './fileServiceTypes.js';    // --- Core ---
-export * from './githubServiceTypes.js';  // --- Infrastructure Domains ---
-export * from './gitTypes.js';            // --- Feature Domains ---
-export * from './llmServiceTypes.js';     // --- Infrastructure Domains ---
-export * from './loggerServiceTypes.js';  // --- Core ---
-export * from './nuxtTypes.js';           // --- Feature Domains ---
-export * from './processServiceTypes.js'; // --- Infrastructure Domains ---
-export * from './templateTypes.js';       // --- Feature Domains ---
-export * from './utilsTypes.js';          // --- Feature Domains ---
+export * from './baseCommandTypes.js';            // --- Infrastructure Domains ---
+export * from './services/codeServiceTypes.js';            // --- Infrastructure Domains ---
+export * from './configServiceTypes.js';          // --- Core ---
+export * from './services/fileServiceTypes.js';            // --- Core ---
+export * from './services/githubServiceTypes.js';          // --- Infrastructure Domains ---
+export * from './gitTypes.js';                    // --- Feature Domains ---
+export * from './services/llmServiceTypes.js';             // --- Infrastructure Domains ---
+export * from './services/loggerServiceTypes.js';          // --- Core ---
+export * from './nuxtTypes.js';                   // --- Feature Domains ---
+export * from './services/processServiceTypes.js';         // --- Infrastructure Domains ---
+export * from './templateTypes.js';               // --- Feature Domains ---
+export * from './utilsTypes.js';                  // --- Feature Domains ---
 
 export * from './baseScannerTypes.js';
 export * from './characterStreamServiceTypes.js';
