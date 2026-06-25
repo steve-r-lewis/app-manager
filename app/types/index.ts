@@ -28,26 +28,69 @@
  *
  * ================================================================================
  */
+ 
+ /*
+ * Root
+ *
+ * ./globals.d.ts
+ * ./index.ts
+ *
+ */
+//export * from './`
+//export * from './`
 
-export * from './baseCommandTypes.js';            // --- Infrastructure Domains ---
-export * from './services/codeServiceTypes.js';            // --- Infrastructure Domains ---
-export * from './configServiceTypes.js';          // --- Core ---
-export * from './services/fileServiceTypes.js';            // --- Core ---
-export * from './services/githubServiceTypes.js';          // --- Infrastructure Domains ---
-export * from './gitTypes.js';                    // --- Feature Domains ---
-export * from './services/llmServiceTypes.js';             // --- Infrastructure Domains ---
-export * from './services/loggerServiceTypes.js';          // --- Core ---
-export * from './nuxtTypes.js';                   // --- Feature Domains ---
-export * from './services/processServiceTypes.js';         // --- Infrastructure Domains ---
-export * from './templateTypes.js';               // --- Feature Domains ---
-export * from './utilsTypes.js';                  // --- Feature Domains ---
+ /*
+ * Commands
+ */
+export * from './commands/baseCommandTypes.ts`;            // --- Infrastructure Domains ---
+export * from './commands/gitTypes.ts`;                    // --- Feature Domains ---
 
-export * from './baseScannerTypes.js';
-export * from './characterStreamServiceTypes.js';
-export * from './cssLanguageTypes.js';
-export * from './htmlLanguageTypes.js';
-export * from './jsLanguageTypes.js';
-export * from './jsonLanguageTypes.js';
-export * from './tsLanguageTypes.js';
-export * from './sfcTypes.js';
-export * from './tokenTypes.js';
+ /*
+ * Modes
+ */
+//export * from './modes/`
+
+ /*
+ * Orchestrators
+ */
+export * from './orchestrators/nuxtTypes.ts`;              // --- Feature Domains ---
+
+ /*
+ * Scanners
+ */
+export * from './scanners/baseScannerTypes.ts`;
+export * from './scanners/sfcTypes.ts`;
+export * from './scanners/tokenTypes.ts`;
+export * from './scanners/css/cssLanguageTypes.ts`;
+export * from './scanners/html/htmlLanguageTypes.ts`;
+export * from './scanners/javascript/jsLanguageTypes.ts`;
+export * from './scanners/json/jsonLanguageTypes.ts`;
+export * from './scanners/typescript/tsLanguageTypes.ts`;
+
+ /*
+ * Services
+ */
+export * from './services/characterStreamServiceTypes.ts`
+export * from './services/codeServiceTypes.ts`;            // --- Infrastructure Domains ---
+export * from './services/configServiceTypes.ts`;          // --- Core ---
+export * from './services/fileServiceTypes.ts`;            // --- Core ---
+export * from './services/githubServiceTypes.ts`;          // --- Infrastructure Domains ---
+export * from './services/llmServiceTypes.ts`;             // --- Infrastructure Domains ---
+export * from './services/loggerServiceTypes.ts`;          // --- Core ---
+export * from './services/processServiceTypes.ts`;         // --- Infrastructure Domains ---
+
+ /*
+ * Strategies
+ */
+//export * from './strategies/`;
+//export * from './strategies/css`;
+//export * from './strategies/html`;
+//export * from './strategies/javascript`;
+//export * from './strategies/json`;
+//export * from './strategies/typescript`;
+
+ /*
+ * Templates
+ */
+export * from './templates/templateTypes.ts`;               // --- Feature Domains ---
+export * from './templates/utilsTypes.ts`;                  // --- Feature Domains ---

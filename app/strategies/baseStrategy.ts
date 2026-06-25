@@ -2,7 +2,7 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/strategies/index.ts
+ * @file:       ~/app/strategies/baseStrategy.ts
  * @version:    1.0.0
  * @createDate: 2026 Jan 11
  * @createTime: 00:57
@@ -18,12 +18,12 @@
  * @notes: Revision History
  *
  * V1.0.0, 20260111-00:57
- * Initial creation and release of index.ts
+ * Initial creation and release of baseStrategy.ts
  *
  * ================================================================================
  */
 
-import type { ICodeStrategy } from '../types/index.js';
+import type { ICodeStrategy } from '../types/baseStrategy.js';
 
 import { TypescriptStrategy } from './typescriptStrategy.js';
 import { VueStrategy } from './vueStrategy.js';
