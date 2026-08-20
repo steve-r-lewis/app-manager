@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/strategies/javascript/javascriptStrategy.ts
- * @version:    1.1.0
+ * @version:    2.0.0
  * @createDate: 2026 Jan 11
  * @createTime: 01:01
  * @author:     Steve R Lewis
@@ -11,21 +11,28 @@
  * ================================================================================
  *
  * @description:
- * Strategy for parsing and manipulating TypeScript/JavaScript files.
+ * Strategy for parsing and manipulating JavaScript files.
  *
- * NOTE: This file is currently an exact duplicate of
- * app/strategies/typescript/typescriptStrategy.ts (both export a class named
- * TypescriptStrategy). That's a pre-existing structural oddity from the
- * project's folder reorganization, not something introduced by this fix —
- * flagged earlier as a candidate for deduplication once the build is green.
+ * For everything this strategy actually does — locating exported
+ * functions/classes/consts/interfaces for documentation purposes, and
+ * managing file headers — TypeScript and JavaScript are indistinguishable.
+ * This class exists as an explicit extension point rather than a full
+ * duplicate: it inherits 100% of TypescriptStrategy's behavior today, and
+ * is the place to override individual methods if genuine JS-specific
+ * behavior is ever needed (e.g. flagging 'interface'/'type'/'enum'
+ * declarations as invalid in a .js file, or handling .jsx/.mjs variants
+ * differently).
  *
  * ================================================================================
  *
  * @notes: Revision History
  *
- * V1.1.0, 20260820
- * Added required 'id', 'range', and 'content' fields to CodeBlock objects
- * pushed from findDocumentableBlocks (CodeBlock requires them).
+ * V2.0.0, 20260820
+ * Replaced the full byte-for-byte duplicate of TypescriptStrategy with a
+ * thin subclass. Deduplication decision: see chat history — TS/JS diverge
+ * only at the type-annotation level, which this strategy's regex-based
+ * export scanning doesn't currently touch, so there's no behavior to
+ * preserve separately yet.
  *
  * V1.0.0, 20260111-01:01
  * Initial creation and release of javascriptStrategy.ts
@@ -33,122 +40,12 @@
  * ================================================================================
  */
 
-import type { ICodeStrategy, CodeFileMetadata, CodeBlock, CodeBlockType } from '../../types/index.js';
+import { TypescriptStrategy } from '../typescript/typescriptStrategy.js';
 
-// Type Guard for validation
-function isCodeBlockType(value: string): value is CodeBlockType {
-	return ['function', 'method', 'class', 'interface', 'variable', 'const'].includes(value);
+export class JavascriptStrategy extends TypescriptStrategy {
+	// Intentionally empty. Inherits parseMetadata, injectHeader,
+	// findDocumentableBlocks, and injectFunctionDoc unchanged from
+	// TypescriptStrategy. Override a method here when JS-specific
+	// behavior is actually needed — don't re-copy the class.
 }
 
-export class TypescriptStrategy implements ICodeStrategy {
-
-	/**
-	 * Extracts metadata like version and author from JSDoc comments.
-	 * Fixes: Now handles messy whitespace, tabs, and alignment asterisks.
-	 */
-	parseMetadata(content: string): { version?: string; author?: string } {
-		const metadata: { version?: string; author?: string } = {};
-
-		const versionMatch = content.match(/@version\s*:?\s*([^\s*]+)/i);
-		if (versionMatch) {
-			metadata.version = versionMatch[1];
-		}
-
-		const authorMatch = content.match(/@author\s*:?\s*(.+)/i);
-		if (authorMatch) {
-			metadata.author = authorMatch[1].trim();
-		}
-
-		return metadata;
-	}
-
-	/**
-	 * Injects or replaces the file header.
-	 * Fixes: Detects Shebang (#!...) lines and inserts header AFTER them.
-	 */
-	injectHeader(content: string, header: string): string {
-		let finalContent = content;
-		let shebang = '';
-
-		// 1. Check for Shebang (must be the very first chars)
-		if (content.startsWith('#!')) {
-			const firstNewlineIndex = content.indexOf('\n');
-			if (firstNewlineIndex !== -1) {
-				// Extract the shebang line (including the newline)
-				shebang = content.substring(0, firstNewlineIndex + 1);
-				// Remove shebang from the content we are about to process
-				finalContent = content.substring(firstNewlineIndex + 1);
-			}
-		}
-
-		// 2. Remove existing top-level JSDoc header if it exists
-		finalContent = finalContent.replace(/^\s*\/\*\*[\s\S]*?\*\/\s*/, '');
-
-		// 3. Reconstruct: Shebang + Header + Code
-		return `${shebang}${header}\n\n${finalContent.trimStart()}`;
-	}
-
-	public findDocumentableBlocks(content: string): CodeBlock[] {
-		const blocks: CodeBlock[] = [];
-		const lines = content.split('\n');
-
-		// Regex: export [async] [type] [name]
-		const regex = /export\s+((?:default\s+|async\s+)*)(const|function|class|interface)\s+(\w+)/g;
-
-		let match;
-		while ((match = regex.exec(content)) !== null) {
-			const index = match.index;
-			const lineNum = content.substring(0, index).split('\n').length - 1;
-			const rawType = match[2];
-
-			// Normalise 'const' to 'variable'
-			const type: CodeBlockType = rawType === 'const' ? 'variable' : (rawType as CodeBlockType);
-
-			// Check for existing docs
-			let hasDoc = false;
-			for (let i = lineNum - 1; i >= 0; i--) {
-				const line = lines[i].trim();
-				if (!line) continue;
-				if (line.endsWith('*/')) { hasDoc = true; break; }
-				break;
-			}
-
-			if (isCodeBlockType(type) || rawType === 'const') {
-				blocks.push({
-					id: `ts:${match[3]}:${lineNum}`,
-					name: match[3],
-					type: type,
-					startLine: lineNum,
-					endLine: lineNum,
-					range: [lineNum, lineNum],
-					signature: match[0],
-					hasDoc,
-					content: lines[lineNum] ?? match[0]
-				});
-			}
-		}
-		return blocks;
-	}
-
-	public injectFunctionDoc(content: string, functionName: string, docBlock: string): string {
-		const lines = content.split('\n');
-
-		const targetIdx = lines.findIndex(l =>
-			l.match(new RegExp(`export\\s+(?:(?:default|async)\\s+)*(?:const|function|class|interface)\\s+${functionName}\\b`))
-		);
-
-		if (targetIdx === -1) return content;
-
-		// Match indentation
-		const targetLine = lines[targetIdx];
-		const indentation = targetLine.match(/^\s*/)?.[0] || '';
-
-		const indentedDoc = docBlock
-			.split('\n')
-			.map(line => indentation + line)
-			.join('\n');
-
-		lines.splice(targetIdx, 0, indentedDoc);
-		return lines.join('\n');
-	}
-}

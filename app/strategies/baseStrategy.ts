@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/strategies/baseStrategy.ts
- * @version:    1.0.0
+ * @version:    1.1.0
  * @createDate: 2026 Jan 11
  * @createTime: 00:57
  * @author:     Steve R Lewis
@@ -17,6 +17,13 @@
  *
  * @notes: Revision History
  *
+ * V1.1.0, 20260820
+ * '.js' files now resolve to a dedicated JavascriptStrategy instance instead
+ * of sharing the TypescriptStrategy instance directly. JavascriptStrategy
+ * currently extends TypescriptStrategy with no overrides, so behavior is
+ * unchanged today — this just gives '.js' files their own extension point
+ * for future JS-specific logic without touching TypescriptStrategy.
+ *
  * V1.0.0, 20260111-00:57
  * Initial creation and release of baseStrategy.ts
  *
@@ -26,6 +33,7 @@
 import type { ICodeStrategy } from '../types/index.js';
 
 import { TypescriptStrategy } from '../strategies/typescript/typescriptStrategy.js';
+import { JavascriptStrategy } from '../strategies/javascript/javascriptStrategy.js';
 import { CssStrategy } from '../strategies/css/cssStrategy.js';
 import { HtmlStrategy } from '../strategies/html/htmlStrategy.js';
 import { JsonStrategy } from '../strategies/json/jsonStrategy.js';
@@ -34,6 +42,7 @@ import { VueStrategy } from '../orchestrators/vue/vueOrchestrator.js';
 
 // Singleton Instances
 const tsStrategy = new TypescriptStrategy();
+const jsStrategy = new JavascriptStrategy();
 const vueStrategy = new VueStrategy();
 const cssStrategy = new CssStrategy();
 const htmlStrategy = new HtmlStrategy();
@@ -43,7 +52,7 @@ const strategyMap = new Map<string, ICodeStrategy>();
 
 // Register defaults
 strategyMap.set('.ts', tsStrategy);
-strategyMap.set('.js', tsStrategy);
+strategyMap.set('.js', jsStrategy);
 strategyMap.set('.vue', vueStrategy);
 strategyMap.set('.css', cssStrategy);
 strategyMap.set('.html', htmlStrategy);
@@ -56,7 +65,7 @@ strategyMap.set('.json', jsonStrategy);
 export function getStrategyForFile(filePath: string): ICodeStrategy {
 	const ext = filePath.substring(filePath.lastIndexOf('.'));
 	const strategy = strategyMap.get(ext);
-	
+
 	if (!strategy) {
 		throw new Error(`Unsupported file type: ${ext}`);
 	}
