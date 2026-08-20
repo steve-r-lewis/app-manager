@@ -46,7 +46,7 @@
  * ================================================================================
  */
 
-import type { LicenseContext, TemplateFunction } from '../types/index.js';
+import type { LicenseContext, TemplateFunction } from '../../types/index.js';
 
 /**
  * Generates the legal LICENSE text.

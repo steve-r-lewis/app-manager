@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/templates/packageJsonTemplate.ts
- * @version:    1.0.0
+ * @file:       ~/app/templates/frameworks/nuxt/{layer|project}/packageJsonTemplate.ts
+ * @version:    1.1.0
  * @createDate: 2026 Jan 01
  * @createTime: 02:58
  * @author:     Steve R Lewis
@@ -15,22 +15,17 @@
  *
  * This template produces the configuration file for Node.js projects. It uses a
  * discriminated union strategy ('root' vs 'layer') to generate two very different
- * file structures:
- *
- * 1. Root Mode ('root'):
- * - Full Nuxt 4 Monorepo Root configuration.
- * - Includes standard scripts (dev, build, appTools).
- * - Includes "Gold Standard" dependencies (Nuxt 4.2+, Tailwind 4, Pinia).
- *
- * 2. Layer Mode ('layer'):
- * - Minimal configuration for a Nuxt Layer (library mode).
- * - Scoped package name (@monorepo/name).
- * - Specific 'exports' configuration for Nuxt layer discovery.
- * - No scripts or heavy dependencies.
+ * file structures.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20260820
+ * Imported the missing 'PackageJsonContext' type. It exists in templateTypes.ts
+ * but was never imported here, which caused TS2304 (Cannot find name).
+ * IMPORTANT: verify the import path below actually matches this file's depth
+ * in your tree (see the same note in nuxtConfigTemplate.ts).
  *
  * V1.0.0, 20260101-02:58
  * Initial creation and release of packageJsonTemplate.ts
@@ -39,17 +34,17 @@
  * ================================================================================
  */
 
-import type { BaseTemplateContext, TemplateFunction } from '../types/index.js';
+import type { PackageJsonContext, TemplateFunction } from '../../../../types/index.js';
 
 /**
  * Generates a strictly typed package.json object.
  */
 export const packageJsonTemplate: TemplateFunction<PackageJsonContext, Record<string, any>> = (ctx) => {
 	const isRoot = ctx.target === 'root';
-	
+
 	// 1. Calculate Name (Scope logic)
 	const packageName = isRoot ? ctx.name : `@monorepo/${ctx.name}`;
-	
+
 	// 2. Base Structure (Shared by both)
 	const base = {
 		name: packageName,
@@ -63,7 +58,7 @@ export const packageJsonTemplate: TemplateFunction<PackageJsonContext, Record<st
 		bugs: ctx.bugs,
 		funding: ctx.funding,
 	};
-	
+
 	// 3. Root Specific Configuration
 	if (isRoot) {
 		return {
@@ -111,7 +106,7 @@ export const packageJsonTemplate: TemplateFunction<PackageJsonContext, Record<st
 			}
 		};
 	}
-	
+
 	// 4. Layer Specific Configuration
 	return {
 		...base,

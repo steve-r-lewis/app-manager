@@ -149,6 +149,7 @@ export interface TSConfigContext extends TargetedTemplateContext {
 export interface ReadmeContext extends TargetedTemplateContext {
 	features?: string[];
 	requirements?: string[];
+	description?: string;
 }
 
 /**
@@ -224,4 +225,6 @@ export interface JsonTemplateContext extends BaseTemplateContext {
 	dataQueryLanguage?: string;
 	dataDomain?: string;
 	notes?: string;
+	version?: string;
+	description?: string;
 }

@@ -38,7 +38,7 @@
  * ================================================================================
  */
 
-import type { GitIgnoreContext, TemplateFunction } from '../types/index.js';
+import type { GitIgnoreContext, TemplateFunction } from '../../../../types/index.js';
 
 /**
  * Generates a formatted .gitignore string.

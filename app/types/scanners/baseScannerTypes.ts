@@ -23,7 +23,7 @@
  * ================================================================================
  */
 
-import type { Token } from './index.js';
+import type { Token } from '../../types/index.js';
 
 export interface SourceLocation {
 	readonly line: number;

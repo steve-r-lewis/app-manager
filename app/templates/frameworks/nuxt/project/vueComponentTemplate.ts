@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/templates/vueComponentTemplate.ts
- * @version:    1.0.0
+ * @file:       ~/app/templates/frameworks/nuxt/project/vueComponentTemplate.ts
+ * @version:    1.1.0
  * @createDate: 2026 Jan 06
  * @createTime: 23:58
  * @author:     Steve R Lewis
@@ -11,11 +11,18 @@
  * ================================================================================
  *
  * @description:
- * TODO: Create description here
+ * Generates the source code for a new Vue 3 Single File Component, with a
+ * standardized project file-header placed inside the <script setup> block.
  *
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.1.0, 20260820
+ * Imported the missing 'VueComponentContext' type. It exists in templateTypes.ts
+ * but was never imported here, which caused TS2304 (Cannot find name).
+ * IMPORTANT: verify the import path below actually matches this file's depth
+ * in your tree (see the same note in nuxtConfigTemplate.ts).
  *
  * V1.0.0, 20260106-23:58
  * Initial creation and release of vueComponentTemplate.ts
@@ -23,14 +30,14 @@
  * ================================================================================
  */
 
-import type { BaseTemplateContext, TemplateFunction } from '../types/index.js';
+import type { VueComponentContext, TemplateFunction } from '../../../../types/index.js';
 
 export const vueComponentTemplate: TemplateFunction<VueComponentContext, string> = (ctx) => {
 	const dateStr = new Date().toISOString().split('T')[0];
 	const timeStr = new Date().toTimeString().split(' ')[0].substring(0, 5); // HH:MM
 	const year = ctx.year || new Date().getFullYear();
 	const author = ctx.author || 'Maintainer';
-	
+
 	// Note: We deliberately place script first, with the header INSIDE it.
 	return `<script setup lang="ts">
 /**

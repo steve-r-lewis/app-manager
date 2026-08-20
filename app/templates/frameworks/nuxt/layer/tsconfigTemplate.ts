@@ -36,7 +36,7 @@
  * ================================================================================
  */
 
-import type { TSConfigContext, TemplateFunction } from '../types/index.js';
+import type { TSConfigContext, TemplateFunction } from '../../../../types/index.js';
 
 /**
  * Generates a strictly typed tsconfig.json object.

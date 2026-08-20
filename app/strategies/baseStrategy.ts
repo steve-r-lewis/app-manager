@@ -23,13 +23,14 @@
  * ================================================================================
  */
 
-import type { ICodeStrategy } from '../types/baseStrategy.js';
+import type { ICodeStrategy } from '../types/index.js';
 
-import { TypescriptStrategy } from './typescriptStrategy.js';
-import { VueStrategy } from './vueStrategy.js';
-import { CssStrategy } from './cssStrategy.js';
-import { HtmlStrategy } from './htmlStrategy.js';
-import { JsonStrategy } from './jsonStrategy.js';
+import { TypescriptStrategy } from '../strategies/typescript/typescriptStrategy.js';
+import { CssStrategy } from '../strategies/css/cssStrategy.js';
+import { HtmlStrategy } from '../strategies/html/htmlStrategy.js';
+import { JsonStrategy } from '../strategies/json/jsonStrategy.js';
+
+import { VueStrategy } from '../orchestrators/vue/vueOrchestrator.js';
 
 // Singleton Instances
 const tsStrategy = new TypescriptStrategy();

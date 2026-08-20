@@ -24,8 +24,8 @@
  * ================================================================================
  */
 
-import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../types/index.js';
-import { TypescriptStrategy } from './typescriptStrategy.js';
+import type { ICodeStrategy, CodeFileMetadata, CodeBlock } from '../../types/index.js';
+import { TypescriptStrategy } from '../../strategies/typescript/typescriptStrategy.js';
 
 export class VueStrategy implements ICodeStrategy {
 	// Composition: We strictly reuse the TS strategy for the script block

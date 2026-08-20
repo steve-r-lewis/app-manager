@@ -16,7 +16,7 @@
  * This file re-exports all named interfaces and types from the domain-specific
  * definition files.
  *
- * NOTE: 'globals.d.ts' is NOT exported here because it is an Ambient Module
+ * NOTE: 'globals.d.js' is NOT exported here because it is an Ambient Module
  * automatically loaded by the TypeScript compiler.
  *
  * ================================================================================
@@ -36,61 +36,60 @@
  * ./index.ts
  *
  */
-//export * from './`
-//export * from './`
+//export * from './'
 
  /*
  * Commands
  */
-export * from './commands/baseCommandTypes.ts`;            // --- Infrastructure Domains ---
-export * from './commands/gitTypes.ts`;                    // --- Feature Domains ---
+export * from './commands/baseCommandTypes.js';            // --- Infrastructure Domains ---
+export * from './commands/gitTypes.js';                    // --- Feature Domains ---
 
  /*
  * Modes
  */
-//export * from './modes/`
+//export * from './modes/'
 
  /*
  * Orchestrators
  */
-export * from './orchestrators/nuxtTypes.ts`;              // --- Feature Domains ---
+export * from './orchestrators/nuxt/nuxtTypes.js';         // --- Feature Domains ---
 
  /*
  * Scanners
  */
-export * from './scanners/baseScannerTypes.ts`;
-export * from './scanners/sfcTypes.ts`;
-export * from './scanners/tokenTypes.ts`;
-export * from './scanners/css/cssLanguageTypes.ts`;
-export * from './scanners/html/htmlLanguageTypes.ts`;
-export * from './scanners/javascript/jsLanguageTypes.ts`;
-export * from './scanners/json/jsonLanguageTypes.ts`;
-export * from './scanners/typescript/tsLanguageTypes.ts`;
+export * from './scanners/baseScannerTypes.js';
+export * from './scanners/sfcTypes.js';
+export * from './scanners/tokenTypes.js';
+export * from './scanners/css/cssLanguageTypes.js';
+export * from './scanners/html/htmlLanguageTypes.js';
+export * from './scanners/javascript/jsLanguageTypes.js';
+export * from './scanners/json/jsonLanguageTypes.js';
+export * from './scanners/typescript/tsLanguageTypes.js';
 
  /*
  * Services
  */
-export * from './services/characterStreamServiceTypes.ts`
-export * from './services/codeServiceTypes.ts`;            // --- Infrastructure Domains ---
-export * from './services/configServiceTypes.ts`;          // --- Core ---
-export * from './services/fileServiceTypes.ts`;            // --- Core ---
-export * from './services/githubServiceTypes.ts`;          // --- Infrastructure Domains ---
-export * from './services/llmServiceTypes.ts`;             // --- Infrastructure Domains ---
-export * from './services/loggerServiceTypes.ts`;          // --- Core ---
-export * from './services/processServiceTypes.ts`;         // --- Infrastructure Domains ---
+export * from './services/characterStreamServiceTypes.js';
+export * from './services/codeServiceTypes.js';            // --- Infrastructure Domains ---
+export * from './services/configServiceTypes.js';          // --- Core ---
+export * from './services/fileServiceTypes.js';            // --- Core ---
+export * from './services/githubServiceTypes.js';          // --- Infrastructure Domains ---
+export * from './services/llmServiceTypes.js';             // --- Infrastructure Domains ---
+export * from './services/loggerServiceTypes.js';          // --- Core ---
+export * from './services/processServiceTypes.js';         // --- Infrastructure Domains ---
 
  /*
  * Strategies
  */
-//export * from './strategies/`;
-//export * from './strategies/css`;
-//export * from './strategies/html`;
-//export * from './strategies/javascript`;
-//export * from './strategies/json`;
-//export * from './strategies/typescript`;
+//export * from './strategies/';
+//export * from './strategies/css';
+//export * from './strategies/html';
+//export * from './strategies/javascript';
+//export * from './strategies/json';
+//export * from './strategies/typescript';
 
  /*
  * Templates
  */
-export * from './templates/templateTypes.ts`;               // --- Feature Domains ---
-export * from './templates/utilsTypes.ts`;                  // --- Feature Domains ---
+export * from './templates/templateTypes.js';               // --- Feature Domains ---
+export * from './templates/utilsTypes.js';                  // --- Feature Domains ---

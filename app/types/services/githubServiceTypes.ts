@@ -111,7 +111,7 @@ import type {
 	GitStatusResult,
 	GitSubmoduleOptions,
 	GitRemote
-} from './gitTypes.js';
+} from '../commands/gitTypes.js';
 
 /**
  * The core architectural contract for the GitHub Network Service.

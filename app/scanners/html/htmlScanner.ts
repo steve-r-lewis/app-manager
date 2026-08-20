@@ -30,8 +30,8 @@
  * ================================================================================
  */
 
-import { BaseScanner } from './baseScanner.js';
-import type { Token, HtmlTokenType } from '../types/index.js';
+import { BaseScanner } from '../baseScanner.js';
+import type { Token, HtmlTokenType } from '../../types/index.js';
 
 export class HtmlScanner extends BaseScanner<HtmlTokenType> {
 	private tokens: Token<HtmlTokenType>[] = [];

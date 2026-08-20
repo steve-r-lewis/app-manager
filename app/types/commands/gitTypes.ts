@@ -44,7 +44,7 @@
  * ================================================================================
  */
 
-import { LLMProviderStatus } from './llmServiceTypes.js';
+import { LLMProviderStatus } from '../../types/index.js';
 
 // ============================================================================
 // Core State Types

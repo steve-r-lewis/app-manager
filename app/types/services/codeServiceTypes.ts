@@ -28,7 +28,7 @@
  * ================================================================================
  */
 
-import type { BaseTemplateContext } from './templateTypes.js';
+import type { BaseTemplateContext } from '../../types/index.js';
 
 /**
  * Strict union type for supported code entities.
@@ -69,15 +69,15 @@ export interface CodeBlock {
  */
 export interface ICodeStrategy {
 	// 1. ANALYSIS: Used by Command to prepare context for LLM
-	scan(content: string): CodeBlock[];
+	// scan(content: string): CodeBlock[];
 	
 	// 2. MANIPULATION: Used by Command to apply LLM results
 	// Returns the new full file content
-	patch(content: string, blockId: string, newText: string): string;
+	// patch(content: string, blockId: string, newText: string): string;
 	
 	// 3. GENERATION: Used by Command to create new files
 	// (Delegates to your Template functions)
-	generate<TContext extends BaseTemplateContext>(templateData: TContext): string;
+	// generate<TContext extends BaseTemplateContext>(templateData: TContext): string;
 	
 	// 4. UTILITIES
 	/**
