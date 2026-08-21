@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/services/loggerService.ts
- * @version:    2.0.0
+ * @version:    2.0.1
  * @createDate: 2026 Jan 02
  * @createTime: 00:39
  * @author:     Steve R Lewis
@@ -20,6 +20,10 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V2.0.1, 20260821-23:15
+ * box() now writes its (redacted) content to the log file, consistent with
+ * the other log methods (info/success/warn/error/debug).
  *
  * V2.0.0, 20260107-22:04
  * Refactored to to provide an init function for file logging.
@@ -193,6 +197,7 @@ class LoggerService implements ILogger {
 	
 	public box(message: string): void {
 		this._console.box(this._redact(message));
+		this._writeToFile('box', message, []);
 	}
 }
 

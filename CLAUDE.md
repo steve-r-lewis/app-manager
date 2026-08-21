@@ -9,8 +9,8 @@ file-header/naming validation, and LLM-assisted docs/commit-message generation.
 - Build: `pnpm build` (runs `tsc`) — always run this after any change and treat
   a non-zero exit as the task not being done yet.
 - Test (single file): `pnpm vitest run tests/unit/services/<file>.test.ts`
-    — always scope to the file being worked on for now (see Testing
-    conventions below for why).
+  — always scope to the file being worked on for now (see Testing
+  conventions below for why).
 - Package manager: pnpm. Don't suggest npm/yarn equivalents.
 
 ## Working style
@@ -24,6 +24,8 @@ file-header/naming validation, and LLM-assisted docs/commit-message generation.
 - Relative import depth matters a lot here — verify folder depth for any new
   or moved file rather than copying an import path from a sibling file,
   since sibling files have been wrong in exactly this way before.
+- Don't trust a code read alone to confirm something is fixed — run the
+  relevant test and confirm it actually passes before reporting a task done.
 
 ## File header convention
 Every source file starts with this block (see any existing file for reference):
@@ -73,11 +75,16 @@ Do not jump ahead to commands/navigation work until the current layer is
 signed off as complete and tested.
 
 ## Known outstanding items (don't silently "fix" without flagging)
-- `loggerService`: secret redaction currently only scrubs the `message`
-  argument on console output, not `...args` — a real gap, not yet fixed.
-  Also: `init()` registers a `process.on('exit', ...)` listener with no
-  guard against duplicate registration on repeated calls.
-  `_cleanupOldLogs()` has no test coverage yet.
+- `loggerService`: `_cleanupOldLogs()` still has no test coverage — it's a
+  destructive operation (`fsp.unlink` on files older than 14 days), so lock
+  it down with tests before trusting it further.
+- `loggerService`: `box()` never writes to the log file, unlike every other
+  log method — this needs an explicit decision (should it log to file or
+  not?), then a test asserting whichever way is chosen, so it can't
+  silently drift.
+  (Resolved and tested as of commit 9cdceb8: secret redaction now covers
+  `...args`, not just `message`; `init()` now guards against duplicate
+  `exit` listener registration via `_exitListenerRegistered`.)
 - `app/scanners/javascript/javascriptScanner.ts` and
   `app/scanners/typescript/typescriptScanner.ts` are currently duplicate
   files (both export a class of the same name), as are
@@ -100,6 +107,6 @@ signed off as complete and tested.
 - **The full test suite currently has pre-existing failures unrelated to
   whatever service is under review.** Until the full suite is fixed as its
   own dedicated task, scope test runs to the specific file being worked on,
-  e.g. `pnpm vitest run tests/unit/services/loggerService.test.ts`, rather than
-  running the whole suite. Don't report unrelated failures as new problems
-  introduced by the current change — check whether they pre-date it.
+  e.g. `pnpm vitest run tests/unit/services/loggerService.test.ts`, rather
+  than running the whole suite. Don't report unrelated failures as new
+  problems introduced by the current change — check whether they pre-date it.

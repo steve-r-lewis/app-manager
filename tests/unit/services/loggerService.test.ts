@@ -139,6 +139,17 @@ describe('LoggerService', () => {
 				expect.stringContaining('[INFO] Circular Payload')
 			);
 		});
+
+		it('should write box content to the log file, consistent with other log methods', () => {
+			const mockStream = { write: vi.fn() };
+			(logger as unknown as { _logStream: unknown })._logStream = mockStream;
+
+			logger.box('Hello\nWorld');
+
+			expect(mockStream.write).toHaveBeenCalledWith(
+				expect.stringContaining('[BOX] Hello\nWorld')
+			);
+		});
 	});
 	
 	describe('Security Edge Cases (Redaction)', () => {
@@ -200,6 +211,60 @@ describe('LoggerService', () => {
 
 			expect(afterFirst - before).toBe(1);
 			expect(afterSecond - afterFirst).toBe(0);
+		});
+	});
+
+	describe('Log Cleanup (_cleanupOldLogs)', () => {
+		const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+
+		beforeEach(() => {
+			process.env.LOG_TO_FILE = 'true';
+			vi.mocked(fsp.mkdir).mockResolvedValue(undefined);
+			vi.mocked(fs.createWriteStream).mockReturnValue({ write: vi.fn() } as unknown as fs.WriteStream);
+			vi.mocked(fsp.unlink).mockResolvedValue(undefined);
+		});
+
+		it('should delete a log file older than 14 days', async () => {
+			vi.mocked(fsp.readdir).mockResolvedValue(['session-old.log'] as unknown as fs.Dirent[]);
+			vi.mocked(fsp.stat).mockResolvedValue({
+				mtimeMs: Date.now() - FOURTEEN_DAYS_MS - 1000
+			} as fs.Stats);
+
+			await logger.init('/test/root');
+
+			expect(fsp.unlink).toHaveBeenCalledWith(
+				expect.stringContaining(path.join('app-monitor', 'logs', 'session-old.log'))
+			);
+		});
+
+		it('should NOT delete a log file newer than 14 days', async () => {
+			vi.mocked(fsp.readdir).mockResolvedValue(['session-new.log'] as unknown as fs.Dirent[]);
+			vi.mocked(fsp.stat).mockResolvedValue({
+				mtimeMs: Date.now() - 1000
+			} as fs.Stats);
+
+			await logger.init('/test/root');
+
+			expect(fsp.unlink).not.toHaveBeenCalled();
+		});
+
+		it('should ignore files that do not match the session- naming pattern, even if old', async () => {
+			vi.mocked(fsp.readdir).mockResolvedValue(['other-file.log'] as unknown as fs.Dirent[]);
+			vi.mocked(fsp.stat).mockResolvedValue({
+				mtimeMs: Date.now() - FOURTEEN_DAYS_MS - 1000
+			} as fs.Stats);
+
+			await logger.init('/test/root');
+
+			expect(fsp.unlink).not.toHaveBeenCalled();
+			expect(fsp.stat).not.toHaveBeenCalled();
+		});
+
+		it('should fail gracefully if the log directory cannot be read', async () => {
+			vi.mocked(fsp.readdir).mockRejectedValue(new Error('ENOENT: no such directory'));
+
+			await expect(logger.init('/test/root')).resolves.not.toThrow();
+			expect(fsp.unlink).not.toHaveBeenCalled();
 		});
 	});
 });
