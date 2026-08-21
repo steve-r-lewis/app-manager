@@ -159,8 +159,15 @@ describe('LoggerService', () => {
 		it('should redact generic Bearer tokens', () => {
 			const secretMsg = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 			logger.warn(secretMsg);
-			
+
 			expect(consola.warn).toHaveBeenCalledWith('Authorization: Bearer [REDACTED]');
+		});
+
+		it('should redact secrets passed via ...args, not just the message string', () => {
+			const secretArg = 'token: ghp_1234567890abcdef1234567890abcdef1234';
+			logger.info('Safe message', secretArg);
+
+			expect(consola.info).toHaveBeenCalledWith('Safe message', 'token: [REDACTED]');
 		});
 	});
 	
@@ -169,11 +176,30 @@ describe('LoggerService', () => {
 			process.env.LOG_TO_FILE = 'true';
 			const mockStream = { write: vi.fn(), end: vi.fn() };
 			vi.mocked(fs.createWriteStream).mockReturnValue(mockStream as unknown as fs.WriteStream);
-			
+
 			await logger.init('/test/root');
 			logger.close();
-			
+
 			expect(mockStream.end).toHaveBeenCalled();
+		});
+
+		it('should not register a duplicate exit listener when init() is called more than once', async () => {
+			// The logger is a singleton, so earlier tests in this file may already
+			// have registered its exit listener. Reset both the real listener list
+			// and the singleton's internal guard to get a clean baseline.
+			process.removeAllListeners('exit');
+			(logger as unknown as { _exitListenerRegistered: boolean })._exitListenerRegistered = false;
+
+			const before = process.listenerCount('exit');
+
+			await logger.init('/test/root');
+			const afterFirst = process.listenerCount('exit');
+
+			await logger.init('/test/root');
+			const afterSecond = process.listenerCount('exit');
+
+			expect(afterFirst - before).toBe(1);
+			expect(afterSecond - afterFirst).toBe(0);
 		});
 	});
 });

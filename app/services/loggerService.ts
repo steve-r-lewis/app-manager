@@ -42,6 +42,7 @@ class LoggerService implements ILogger {
 	private _root: string = process.cwd();
 	private _logStream: fs.WriteStream | null = null;
 	private _console = consola;
+	private _exitListenerRegistered = false;
 	
 	// Regex patterns for common secrets (GitHub tokens, OpenAI keys, generic Bearer tokens)
 	private readonly SECRET_PATTERNS = [
@@ -59,7 +60,10 @@ class LoggerService implements ILogger {
 		}
 		
 		// Ensure buffer is flushed if process exits abruptly
-		process.on('exit', () => this.close());
+		if (!this._exitListenerRegistered) {
+			process.on('exit', () => this.close());
+			this._exitListenerRegistered = true;
+		}
 	}
 	
 	private async _enableFileLogging(): Promise<void> {
@@ -114,6 +118,14 @@ class LoggerService implements ILogger {
 		return redacted;
 	}
 	
+	/**
+	 * Redacts any string entries within a variadic args array, leaving
+	 * non-string args (objects, errors, etc.) untouched.
+	 */
+	private _redactArgs(args: unknown[]): unknown[] {
+		return args.map(arg => typeof arg === 'string' ? this._redact(arg) : arg);
+	}
+
 	private _writeToFile(level: string, message: string, args: unknown[]): void {
 		if (!this._logStream) return;
 		
@@ -140,40 +152,41 @@ class LoggerService implements ILogger {
 	// --- Public API ---
 	
 	public info(message: string, ...args: unknown[]): void {
-		this._console.info(this._redact(message), ...args);
+		this._console.info(this._redact(message), ...this._redactArgs(args));
 		this._writeToFile('info', message, args);
 	}
-	
+
 	public success(message: string, ...args: unknown[]): void {
-		this._console.success(this._redact(message), ...args);
+		this._console.success(this._redact(message), ...this._redactArgs(args));
 		this._writeToFile('success', message, args);
 	}
-	
+
 	public warn(message: string, ...args: unknown[]): void {
-		this._console.warn(this._redact(message), ...args);
+		this._console.warn(this._redact(message), ...this._redactArgs(args));
 		this._writeToFile('warn', message, args);
 	}
-	
+
 	public debug(message: string, ...args: unknown[]): void {
 		if (process.env.DEBUG === 'true' || process.env.VERBOSE === 'true') {
-			this._console.debug(this._redact(message), ...args);
+			this._console.debug(this._redact(message), ...this._redactArgs(args));
 			this._writeToFile('debug', message, args);
 		}
 	}
-	
+
 	public error(message: string | Error, ...args: unknown[]): void {
 		const errMsg = message instanceof Error ? message.message : message;
 		const errObj = message instanceof Error ? message : undefined;
-		
+
 		const redactedMsg = this._redact(errMsg);
-		
+		const redactedArgs = this._redactArgs(args);
+
 		if (errObj) {
 			// Note: We don't modify the Error object directly to preserve its stack trace in memory,
 			// but we ensure the console output and file stream receive the redacted string.
-			this._console.error(redactedMsg, ...args);
+			this._console.error(redactedMsg, ...redactedArgs);
 			this._writeToFile('error', errMsg, [errObj.stack, ...args]);
 		} else {
-			this._console.error(redactedMsg, ...args);
+			this._console.error(redactedMsg, ...redactedArgs);
 			this._writeToFile('error', errMsg, args);
 		}
 	}

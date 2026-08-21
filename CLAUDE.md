@@ -8,8 +8,9 @@ file-header/naming validation, and LLM-assisted docs/commit-message generation.
 ## Commands
 - Build: `pnpm build` (runs `tsc`) — always run this after any change and treat
   a non-zero exit as the task not being done yet.
-- Test: `pnpm vitest` (Vitest) — verify the exact script name against
-  `package.json` if this doesn't work; confirm and update this file once known.
+- Test (single file): `pnpm vitest run tests/unit/services/<file>.test.ts`
+    — always scope to the file being worked on for now (see Testing
+    conventions below for why).
 - Package manager: pnpm. Don't suggest npm/yarn equivalents.
 
 ## Working style
@@ -96,3 +97,9 @@ signed off as complete and tested.
   `fetch`, and `@clack/prompts`.
 - Follow existing test file structure/naming under `tests/unit/` when adding
   new suites.
+- **The full test suite currently has pre-existing failures unrelated to
+  whatever service is under review.** Until the full suite is fixed as its
+  own dedicated task, scope test runs to the specific file being worked on,
+  e.g. `pnpm vitest run tests/unit/services/loggerService.test.ts`, rather than
+  running the whole suite. Don't report unrelated failures as new problems
+  introduced by the current change — check whether they pre-date it.
