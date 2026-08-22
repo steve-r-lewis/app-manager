@@ -26,6 +26,25 @@ file-header/naming validation, and LLM-assisted docs/commit-message generation.
   since sibling files have been wrong in exactly this way before.
 - Don't trust a code read alone to confirm something is fixed — run the
   relevant test and confirm it actually passes before reporting a task done.
+- If tests reveal existing code already behaves correctly, don't change it
+  just to feel productive — add the missing coverage and say so.
+- For any change bigger than a straightforward gap-fill (new methods, new
+  contracts, anything touching how a service is used elsewhere), do a
+  read-only investigation pass first — report findings and open design
+  questions — before writing any implementation. Confirm the design before
+  implementing.
+- If implementing a fix reveals it changes a public interface/contract
+  (not just an internal detail), stop and confirm before proceeding, even
+  mid-task — don't silently widen scope. Check whether any current callers
+  exist before assuming a contract change is safe.
+- When a review finds several issues, not every one needs a fix — some are
+  fine to leave as documented, deliberate non-issues (e.g. cosmetic/dead
+  code with no real impact). Don't "fix" something just because it's on
+  the list.
+- When an interactive selection/checklist prompt is used to scope a task,
+  double check the summary against what was actually agreed before
+  accepting it as done — selections don't always land as intended, and
+  scope can creep in without anyone deciding it should.
 
 ## File header convention
 Every source file starts with this block (see any existing file for reference):
@@ -63,10 +82,49 @@ We are working through the codebase bottom-up by dependency, service by
 service, fully test-driven (TDD: write a failing test first, then implement),
 before moving on to the next component category:
 
-1. **Foundation services** (no/minimal internal deps): `loggerService` →
-   `configService` → `processService` → `fileService`
-2. **Second-tier services**: `llmService`, `githubService`, scanners,
-   `codeService`, templates
+1. **Foundation services** (no/minimal internal deps):
+   - ✅ `loggerService` — DONE. Full test coverage (20/20 passing), including
+     secret redaction on args, duplicate exit-listener guard, box() now logs
+     to file consistently with other methods, and _cleanupOldLogs() coverage.
+   - ✅ `configService` — DONE for this pass (13/13 passing). AppConfigSchema
+     now actually validates in getDefaults() (constructor + reset()); setFlag
+     validates key + value via AppConfigFlagsSchema instead of writing
+     blindly; duplicate/orphaned header block cleaned up.
+     **Deliberately deferred, not forgotten** — see "Known outstanding
+     items" below for the cwd-goes-live decision and why it's deferred.
+   - ✅ `processService` — DONE (18/18 passing). spawn()'s signal-killed
+     processes no longer report as success (was silently resolving code
+     null as 0); ProcessResult gained an optional `signal` field, populated
+     by both execute() and spawn(); spawn()'s return type changed from
+     Promise<number> to Promise<ProcessResult> (confirmed safe — no
+     existing callers); execute() now rejects on explicit `shell: false`
+     instead of silently ignoring it; coverage gaps filled for cwd/env/
+     timeout/silent option paths on both methods.
+   - ✅ `fileService` — DONE (28/28 passing). write() no longer corrupts
+     non-.json object content (was keying JSON.stringify off file
+     extension instead of typeof content); atomicWrite()'s temp filename
+     hardened with pid + random suffix; delete() now rethrows any
+     non-ENOENT error consistently with readText(); update()'s fallback
+     now logs via this.logger.warn instead of calling consola directly;
+     real .jsonc support added via a new isJsonFile() helper, wired into
+     read() and update() (update() preserves comments via jsonc-parser's
+     modify()/applyEdits()); allowTrailingComma: true also enabled on
+     parse() (folded in during the .jsonc task rather than as its own
+     separate decision — accepted as low-risk, see note below). Full
+     coverage added for every remaining untested path across all six
+     methods (read/readText/write/update/exists/delete) — confirmed every
+     new test passed immediately against existing behavior with zero
+     implementation changes needed.
+
+**Foundation tier complete** (loggerService, configService, processService,
+fileService) — all fully test-driven, reviewed, and signed off.
+
+2. **Second-tier services** (current phase):
+   - 👉 **`llmService` — up next.**
+   - `githubService`
+   - scanners
+   - `codeService`
+   - templates
 3. **Orchestrators** (`strategies/`, `orchestrators/`)
 4. **Commands / navigation / app layer** — last, once everything below it is
    fully built and tested.
@@ -75,16 +133,22 @@ Do not jump ahead to commands/navigation work until the current layer is
 signed off as complete and tested.
 
 ## Known outstanding items (don't silently "fix" without flagging)
-- `loggerService`: `_cleanupOldLogs()` still has no test coverage — it's a
-  destructive operation (`fsp.unlink` on files older than 14 days), so lock
-  it down with tests before trusting it further.
-- `loggerService`: `box()` never writes to the log file, unlike every other
-  log method — this needs an explicit decision (should it log to file or
-  not?), then a test asserting whichever way is chosen, so it can't
-  silently drift.
-  (Resolved and tested as of commit 9cdceb8: secret redaction now covers
-  `...args`, not just `message`; `init()` now guards against duplicate
-  `exit` listener registration via `_exitListenerRegistered`.)
+- **configService's `cwd` field is currently dead weight — confirmed by
+  investigation, not assumed.** It's set once (`process.cwd()` in
+  `getDefaults()`) and never read by any production code. The codebase
+  already handles the "operating directory" concept a completely different
+  way: `app/index.ts` captures `process.cwd()` as `targetRoot` at bootstrap
+  and threads it as an explicit parameter through `runHeadless`/
+  `runInteractive` down into command handlers (`runApp.ts`, `processService`,
+  `githubService` all take an explicit `cwd`/`targetRoot` param from their
+  caller instead). Only `toolRoot` (where app-manager itself is installed)
+  currently flows through configService.
+  **Decision: do NOT build `setCwd()` speculatively.** Wait until the
+  commands/navigation phase actually needs it, so the design (path
+  validation: must-exist vs. well-formed-absolute-path-only; relative-path
+  resolution) is driven by a real caller instead of guessed. When that
+  phase starts, revisit this note first — the investigation is already
+  done, don't redo it.
 - `app/scanners/javascript/javascriptScanner.ts` and
   `app/scanners/typescript/typescriptScanner.ts` are currently duplicate
   files (both export a class of the same name), as are

@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/services/fileService.ts
- * @version:    1.0.0
+ * @version:    2.0.3
  * @createDate: 2025 Dec 31
  * @createTime: 16:49
  * @author:     Steve R Lewis
@@ -23,6 +23,38 @@
  *
  * @notes: Revision History
  *
+ * V2.0.3, 20260822-02:00
+ * read() and update() now recognize '.jsonc' as well as '.json' (new
+ * private isJsonFile() helper), so JSONC files actually get parsed/
+ * surgically-updated via jsonc-parser instead of falling through to raw-
+ * text handling — the class doc comment's "Smart Read: Auto-detects and
+ * parses JSONC" claim was previously untrue for anything but '.json'.
+ * read()'s parse() call now also passes { allowTrailingComma: true },
+ * since jsonc-parser defaults that option to false — trailing commas were
+ * being rejected even for '.json' despite the JSONC-support claim. write()
+ * needed no change (it already branches on typeof content, not extension).
+ * modify()'s ModificationOptions has no equivalent trailing-comma option,
+ * so update()'s surgical-edit path is unaffected by this.
+ *
+ * V2.0.2, 20260822-01:33
+ * delete()'s catch block now rethrows any non-ENOENT error unconditionally
+ * (matching readText()'s posture) instead of only when the error shape has
+ * a 'code' property — a plain Error or non-standard thrown value is no
+ * longer silently swallowed. update()'s unsupported-extension fallback now
+ * logs via the injected this.logger.warn() instead of calling consola
+ * directly, matching every other log call site in this class; the now-
+ * unused 'consola' import was removed.
+ *
+ * V2.0.1, 20260822-01:30
+ * write() now decides JSON.stringify vs raw string based on the actual
+ * type of `content`, not the file extension — fixes object content being
+ * written as the literal string "[object Object]" for any non-.json path
+ * (and the same corruption via update()'s unsupported-extension fallback,
+ * which calls write()). atomicWrite()'s temp filename now includes the
+ * process pid and a random suffix alongside Date.now() to remove the
+ * (unlikely) millisecond-collision risk on concurrent writes to the same
+ * path.
+ *
  * V2.0.0, 20260112-18:15
  * Refactored to implement "Smart" logic directly.
  * - Added 'jsonc-parser' for surgical JSON updates (Token Scanner).
@@ -37,7 +69,6 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { consola } from 'consola';
 import { modify, applyEdits, parse } from 'jsonc-parser';
 import type { ZodSchema } from 'zod';
 import { logger } from './loggerService.js';
@@ -50,10 +81,10 @@ export class FileService implements IFileService {
 		const content = await this.readText(filePath);
 		if (content === null) return null;
 		
-		if (filePath.endsWith('.json')) {
+		if (this.isJsonFile(filePath)) {
 			const errors: any[] = [];
 			// Your brilliant AST-based parser prevents native JSON.parse crashes
-			const parsed = parse(content, errors);
+			const parsed = parse(content, errors, { allowTrailingComma: true });
 			
 			if (errors.length > 0) {
 				this.logger.error(`FileService Read Error (${filePath}): Invalid JSONC syntax detected.`);
@@ -96,10 +127,14 @@ export class FileService implements IFileService {
 		try {
 			await this.ensureDir(filePath);
 			
-			let dataToWrite = typeof content === 'string' ? content : String(content);
-			
-			if (filePath.endsWith('.json') && typeof content === 'object' && content !== null) {
+			let dataToWrite: string;
+
+			if (typeof content === 'string') {
+				dataToWrite = content;
+			} else if (typeof content === 'object' && content !== null) {
 				dataToWrite = JSON.stringify(content, null, 2);
+			} else {
+				dataToWrite = String(content);
 			}
 			
 			// Replaced fs.writeFile with atomic helper
@@ -120,7 +155,7 @@ export class FileService implements IFileService {
 		}
 		
 		try {
-			if (filePath.endsWith('.json')) {
+			if (this.isJsonFile(filePath)) {
 				if (typeof content !== 'object' || content === null) {
 					throw new TypeError('Update content for JSON must be a non-null object.');
 				}
@@ -151,7 +186,7 @@ export class FileService implements IFileService {
 				return;
 			}
 			
-			consola.warn(`Update logic not supported for ${path.basename(filePath)}. Overwriting entirely.`);
+			this.logger.warn(`Update logic not supported for ${path.basename(filePath)}. Overwriting entirely.`);
 			await this.write(filePath, content);
 			
 		} catch (error: unknown) {
@@ -174,9 +209,10 @@ export class FileService implements IFileService {
 		try {
 			await fs.unlink(filePath);
 		} catch (error: unknown) {
-			if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code !== 'ENOENT') {
-				throw error;
+			if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
+				return;
 			}
+			throw error;
 		}
 	}
 	
@@ -187,6 +223,10 @@ export class FileService implements IFileService {
 		await fs.mkdir(dir, { recursive: true });
 	}
 	
+	private isJsonFile(filePath: string): boolean {
+		return filePath.endsWith('.json') || filePath.endsWith('.jsonc');
+	}
+
 	private isTextFile(filePath: string): boolean {
 		const base = path.basename(filePath).toLowerCase();
 		const ext = path.extname(filePath).toLowerCase();
@@ -200,7 +240,8 @@ export class FileService implements IFileService {
 	 * and executing an OS-level atomic rename operation.
 	 */
 	private async atomicWrite(filePath: string, data: string): Promise<void> {
-		const tempPath = `${filePath}.tmp.${Date.now()}`;
+		const uniqueSuffix = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+		const tempPath = `${filePath}.tmp.${uniqueSuffix}`;
 		try {
 			await fs.writeFile(tempPath, data, 'utf-8');
 			await fs.rename(tempPath, filePath);

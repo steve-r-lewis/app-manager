@@ -2,8 +2,8 @@
  * ================================================================================
  *
  * @project:    app-manager
- * @file:       ~/app/types/fileServiceTypes.ts
- * @version:    1.0.0
+ * @file:       ~/app/types/services/fileServiceTypes.ts
+ * @version:    1.0.1
  * @createDate: 2025 Dec 31
  * @createTime: 01:10
  * @author:     Steve R Lewis
@@ -23,6 +23,10 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.0.1, 20260822-01:30
+ * Fixed stale @file path (was missing the services/ segment after the
+ * folder restructure).
  *
  * V1.0.0, 20251231-01:10
  * Initial creation and release of fileServiceTypes.ts

@@ -26,7 +26,7 @@
  * the other log methods (info/success/warn/error/debug).
  *
  * V2.0.0, 20260107-22:04
- * Refactored to to provide an init function for file logging.
+ * Refactored to provide an init function for file logging.
  *
  * V1.0.0, 20260102-00:39
  * Initial creation and release of loggerService.ts

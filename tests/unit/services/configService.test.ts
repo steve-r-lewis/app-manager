@@ -28,8 +28,9 @@
  * ================================================================================
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { configService } from '../../../app/services/configService.js';
+import { AppConfigSchema } from '../../../app/types/index.js';
 
 describe('ConfigService', () => {
 	
@@ -76,6 +77,25 @@ describe('ConfigService', () => {
 			configService.setFlag('dryRun', true);
 			expect(configService.getConfig().flags.dryRun).toBe(true);
 		});
+
+		it('should reject an unknown flag key at runtime', () => {
+			// @ts-ignore - simulating an untrusted/unknown key bypassing compile-time typing
+			expect(() => configService.setFlag('unknownFlag', true)).toThrow();
+		});
+
+		it('should reject a non-boolean flag value at runtime', () => {
+			// @ts-ignore - simulating a malformed value bypassing compile-time typing
+			expect(() => configService.setFlag('verbose', 'yes')).toThrow();
+		});
+
+		it('should leave flags unchanged when setFlag rejects invalid input', () => {
+			const before = configService.getConfig().flags;
+
+			// @ts-ignore
+			expect(() => configService.setFlag('unknownFlag', true)).toThrow();
+
+			expect(configService.getConfig().flags).toEqual(before);
+		});
 	});
 	
 	describe('State Integrity & Validation Boundaries', () => {
@@ -121,6 +141,15 @@ describe('ConfigService', () => {
 			expect(configService.toolRoot).toBe('');
 			expect(configService.isVerbose()).toBe(false);
 			expect(configService.getConfig().flags.verbose).toBe(false);
+		});
+
+		it('should validate the default configuration against AppConfigSchema on reset', () => {
+			const parseSpy = vi.spyOn(AppConfigSchema, 'parse');
+
+			configService.reset();
+
+			expect(parseSpy).toHaveBeenCalled();
+			parseSpy.mockRestore();
 		});
 	});
 });

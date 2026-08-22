@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/services/configService.ts
- * @version:    1.0.0
+ * @version:    2.1.0
  * @createDate: 2026 Jan 02
  * @createTime: 00:20
  * @author:     Steve R Lewis
@@ -25,6 +25,13 @@
  *
  * @notes: Revision History
  *
+ * V2.1.0, 20260822-00:22
+ * Wired up AppConfigSchema validation on default-config construction
+ * (constructor/reset), and added runtime validation to setFlag() (rejects
+ * unknown flag keys / non-boolean values), matching the validation posture
+ * already established by setGitUser(). Removed a duplicate/orphaned header
+ * block left over from a prior edit.
+ *
  * V2.0.0, 20260107-22:43
  * Refactored to include init method.
  *
@@ -36,17 +43,7 @@
  * ================================================================================
  */
 
-/**
- * ================================================================================
- *
- * @project:    app-manager
- * @file:       ~/app/services/configService.ts
- * @version:    2.1.0
- *
- * ================================================================================
- */
-
-import { AppConfigSchema, GitUserConfigSchema } from '../types/index.js';
+import { AppConfigFlagsSchema, AppConfigSchema, GitUserConfigSchema } from '../types/index.js';
 import type { AppConfig, GitUserConfig, IConfigService } from '../types/index.js';
 
 class ConfigService implements IConfigService {
@@ -78,9 +75,10 @@ class ConfigService implements IConfigService {
 	
 	/**
 	 * Returns the default configuration state map.
+	 * Enforces runtime schema parsing, consistent with setGitUser().
 	 */
 	private getDefaults(): AppConfig {
-		return {
+		return AppConfigSchema.parse({
 			cwd: process.cwd(),
 			gitUser: {
 				name: '',
@@ -90,7 +88,7 @@ class ConfigService implements IConfigService {
 				verbose: false,
 				dryRun: false
 			}
-		};
+		});
 	}
 	
 	/**
@@ -112,9 +110,13 @@ class ConfigService implements IConfigService {
 	
 	/**
 	 * Updates a specific global feature flag.
+	 * Enforces runtime schema parsing to reject unknown keys or wrong-typed
+	 * values, consistent with setGitUser().
 	 */
 	public setFlag(key: keyof AppConfig['flags'], value: boolean): void {
-		this.config.flags[key] = value;
+		const validKey = AppConfigFlagsSchema.keyof().parse(key);
+		const validValue = AppConfigFlagsSchema.shape[validKey].parse(value);
+		this.config.flags[validKey] = validValue;
 	}
 	
 	/**

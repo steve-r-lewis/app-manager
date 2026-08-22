@@ -3,7 +3,7 @@
  *
  * @project:    app-manager
  * @file:       ~/app/types/processServiceTypes.ts
- * @version:    1.0.1
+ * @version:    1.0.2
  * @createDate: 2025 Dec 31
  * @createTime: 01:04
  * @author:     Steve R Lewis
@@ -19,6 +19,12 @@
  * ================================================================================
  *
  * @notes: Revision History
+ *
+ * V1.0.2, 20260822-01:00
+ * Added optional `signal` field to ProcessResult and changed
+ * IProcessService.spawn()'s return type from Promise<number> to
+ * Promise<ProcessResult>, so a signal-terminated process can be
+ * distinguished from a clean exit code 0.
  *
  * V1.0.1, 20251231-01:48
  * Refactored to namespaced types (ProcessPrefix) and added execution interfaces.
@@ -55,6 +61,8 @@ export interface ProcessResult {
 	stdout: string;   /** The standard output string (trimmed) */
 	stderr: string;   /** The standard error string (trimmed) */
 	exitCode: number; /** The process exit code (0 usually indicates success) */
+	/** The signal that terminated the process (e.g. 'SIGTERM'), or null if it exited normally */
+	signal?: NodeJS.Signals | null;
 }
 
 /**
@@ -62,5 +70,5 @@ export interface ProcessResult {
  */
 export interface IProcessService {
 	execute(command: string, options?: ProcessExecuteOptions): Promise<ProcessResult>;
-	spawn(command: string, args: string[], options?: ProcessExecuteOptions): Promise<number>;
+	spawn(command: string, args: string[], options?: ProcessExecuteOptions): Promise<ProcessResult>;
 }
