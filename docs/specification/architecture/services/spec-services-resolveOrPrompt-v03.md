@@ -88,12 +88,16 @@ export type PromptConfig =
 
 #### 4.3 Public API
 
+**This is the single canonical signature for this function** — the only one in this document. An earlier draft of this spec had a second, separately "corrected" signature block further down (in what was §5.2), which itself had already drifted out of sync with this one by the time a further gap (`targetRoot`, see §5.5) was found. Consolidated to one place specifically to stop that from happening a third time.
+
 ```ts
 export async function resolveOrPrompt<K extends SettingsKey>(
 	key: K,
 	options: {
+		targetRoot: string;                       // needed for the git-identity lookup, §5.5
+		isHeadless: boolean;
 		promptConfig: PromptConfig;
-		persistSection: SettingsFileSectionName; // where a prompted answer gets written
+		persistSection: SettingsFileSectionName;  // where a prompted answer gets written
 		headlessFallbackMessage?: string;         // optional override for the thrown error text
 	}
 ): Promise<SettingsValueMap[K]>;
@@ -113,20 +117,7 @@ Notably, this **always** resolves to a real value or throws — it never returns
 
 #### 5.2 Determining Interactive vs. Headless
 
-**Design decision, not assumed:** this function does not re-derive "are we headless" itself — it accepts it implicitly via which code path calls it. In practice, `resolveOrPrompt` should only ever be called from within a command's interactive branch to begin with; a command's own headless branch should check `configService.resolve(key)` directly (or call `resolveOrPrompt` but expect it to always take the headless-throw path, never the prompt path, since a real terminal prompt cannot be shown in a headless run regardless of what this function does). To make this concrete and avoid ambiguity: **`resolveOrPrompt` takes an explicit `isHeadless: boolean` parameter** (added to the options object in §4.3, omitted above for brevity — corrected here) rather than trying to detect it internally via `process.stdin.isTTY` or similar, since every calling command already knows its own mode (it's threaded through every command's `execute(targetRoot, options)` already, per the existing `options.force`/`--yes` conventions seen throughout the command specs).
-
-**Corrected signature:**
-```ts
-export async function resolveOrPrompt<K extends SettingsKey>(
-	key: K,
-	options: {
-		isHeadless: boolean;
-		promptConfig: PromptConfig;
-		persistSection: SettingsFileSectionName;
-		headlessFallbackMessage?: string;
-	}
-): Promise<SettingsValueMap[K]>;
-```
+**Design decision, not assumed:** this function does not re-derive "are we headless" itself — it accepts it explicitly via `options.isHeadless` (§4.3), rather than trying to detect it internally via `process.stdin.isTTY` or similar, since every calling command already knows its own mode (it's threaded through every command's `execute(targetRoot, options)` already, per the existing `options.force`/`--yes` conventions seen throughout the command specs). In practice, `resolveOrPrompt` should only ever be called from within a command's interactive branch to begin with; a command's own headless branch should check `configService.resolve(key)` directly rather than calling this function and relying on it to take the headless-throw path.
 
 #### 5.3 Text Prompt Path (`promptConfig.kind === 'text'`)
 
@@ -138,11 +129,10 @@ export async function resolveOrPrompt<K extends SettingsKey>(
 #### 5.4 Provider-Select Prompt Path (`promptConfig.kind === 'provider-select'`)
 
 **Logic Flow:**
-1. Call `llmService.checkAvailability()`.
-2. Build `select()` options from the result: label format `${status.available ? '✅' : '⚠️'} ${status.name}${status.available ? '' : ` (${status.reason})`}` — showing every registry provider, available or not, so the user can see *why* an option is greyed-out-in-spirit rather than it simply being absent from the list.
-3. `const answer = await select({ message: promptConfig.message, options: [...] });`
-4. If `isCancel(answer)`, same cancellation handling as §5.3.
-5. Proceed to persistence.
+1. Call `buildProviderSelectOptions()` — an exported helper (also defined in this file, `settingsResolver.ts`) that calls `llmService.checkAvailability()` and builds the label format `${status.available ? '✅' : '⚠️'} ${status.name}${status.available ? '' : ` (${status.reason})`}` for every registry provider, available or not, so the user can see *why* an option is greyed-out-in-spirit rather than it simply being absent from the list. **This function is exported specifically so `AppConfigSetCommand`'s own interactive flow can call the identical menu-building logic** rather than reimplementing an equivalent-but-separately-maintained version — see the `app-config` command specs §1.2, which depends on this function existing here with this exact name and shape.
+2. `const answer = await select({ message: promptConfig.message, options: buildProviderSelectOptions() });`
+3. If `isCancel(answer)`, same cancellation handling as §5.3.
+4. Proceed to persistence.
 
 **Explicit non-requirement:** this path does not prevent the user from selecting an *unavailable* provider (missing API key) — that's a legitimate choice (e.g. "I'll set the key later") and the resolution chain in `LLMService.resolveActiveProvider()` already handles an unavailable configured-default gracefully by falling through to fallback/any-available/none. Blocking the selection here would just be a second, redundant place enforcing the same constraint.
 
@@ -152,12 +142,13 @@ Per the command specs' settings table (§10.3), `author.name`/`author.email` sho
 
 ```ts
 if (key === 'author.name' || key === 'author.email') {
-	const gitStatus = await githubService.getStatus(targetRoot); // needs targetRoot threaded through — see note below
-	// resolve git user.name/user.email via a small githubService addition or direct simple-git call
-	// if found, treat it exactly like a built-in default (§5.1 step 2) — return it, no prompt
+	const identity = await githubService.getLocalIdentity(options.targetRoot);
+	const field = key === 'author.name' ? identity.name : identity.email;
+	if (field) return field as SettingsValueMap[K]; // treat exactly like a built-in default (§5.1 step 2) — return it, no prompt
 }
 ```
-**Open implementation detail, not fully resolved by this spec:** `githubService` currently has no method exposing the local git config's `user.name`/`user.email` values directly (`getStatus()` returns branch/dirty/staged/ahead/behind — not identity). This needs either a small new `githubService.getLocalIdentity(cwd): Promise<{ name?: string; email?: string }>` method (a natural, small addition — `simple-git`'s `getConfig('user.name')`/`getConfig('user.email')`, mirroring how `initRepo()` already calls `git.addConfig` for the same two keys in the opposite direction) or equivalent. Flagging this explicitly rather than hand-waving it, since it's a real, small piece of missing functionality this helper depends on that wasn't caught until writing this spec.
+
+`options.targetRoot` is the field added to this function's canonical signature in §4.3 specifically to support this call — `githubService.getLocalIdentity(cwd)` needs a working directory to read local git config from, and this is the one place in the function that needs it (every other path resolves purely against `configService`, with no filesystem/git dependency of its own).
 
 ---
 
@@ -193,5 +184,5 @@ Reuses the `LLMProviderStatus[]` fixture shape already established in the `llmSe
 
 ## Final Architectural Notes
 
-- §5.5 surfaced a genuinely missing piece of `githubService` functionality (`getLocalIdentity`) that none of the prior specs anticipated — worth adding as a small addendum to the `githubService` spec rather than inventing it silently inside this file, since it's a `githubService`-shaped capability (wraps `simple-git`), not something that belongs in a UI-layer helper.
+- **Closed:** §5.5 surfaced a genuinely missing piece of `githubService` functionality (`getLocalIdentity`) that none of the prior specs anticipated. It's now specified in full in `spec-githubService-createRepo.md` §5.6, added there as a documented addendum rather than left living only as a note in this file.
 - This is the last of the four Phase 2 components. Per the roadmap, Phase 3 (`app-config` command) can now be specified in full, since every service capability it depends on (`configService`'s extensions, `llmService`'s `checkAvailability`, and this helper) is now specified in build-ready detail.
