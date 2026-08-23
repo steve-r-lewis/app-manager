@@ -1,154 +1,6 @@
 ```text
 D/my_projects/web_apps/app-manager/app
-├── commands
-│   ├── app
-│   │   ├── runApp.ts
-│   │   └── setupApp.ts
-│   ├── baseCommand.ts
-│   ├── commandRegistry.ts
-│   ├── docs
-│   │   └── runDocs.ts
-│   ├── git
-│   │   ├── addSubmodules.ts
-│   │   ├── commitCommand.ts
-│   │   ├── deleteRemoteRepos.ts
-│   │   ├── initLayers.ts
-│   │   ├── manageCommits.ts
-│   │   ├── pushAll.ts
-│   │   ├── pushCommand.ts
-│   │   ├── pushToRemote.ts
-│   │   ├── syncCommand.ts
-│   │   ├── syncReposAll.ts
-│   │   └── syncRepo.ts
-│   ├── nuxt
-│   │   ├── createLayer.ts
-│   │   ├── extractDocs.ts
-│   │   └── manageEnv.ts
-│   ├── quality
-│   │   └── runQuality.ts
-│   └── utils
-│       ├── addContributor.ts
-│       ├── autoDoc.ts
-│       ├── autoVersion.ts
-│       ├── cleanLogs.ts
-│       └── validateHeaders.ts
-├── index.ts
-├── modes
-│   ├── headlessMode.ts
-│   └── interactiveMode.ts
-├── orchestrators
-│   └── vue
-│       └── vueOrchestrator.ts
-├── scanners
-│   ├── baseScanner.ts
-│   ├── css
-│   │   └── cssScanner.ts
-│   ├── html
-│   │   └── htmlScanner.ts
-│   ├── json
-│   │   └── jsonScanner.ts
-│   └── typescript
-│       └── typescriptScanner.ts
-├── services
-│   ├── characterStreamService.ts
-│   ├── codeService.ts
-│   ├── configService.ts
-│   ├── fileService.ts
-│   ├── githubService.ts
-│   ├── llmService.ts
-│   ├── loggerService.ts
-│   └── processService.ts
-├── strategies
-│   ├── baseStrategy.ts
-│   ├── css
-│   │   └── cssStrategy.ts
-│   ├── html
-│   │   └── htmlStrategy.ts
-│   ├── javascript
-│   │   └── javascriptStrategy.ts
-│   ├── json
-│   │   └── jsonStrategy.ts
-│   └── typescript
-│       └── typescriptStrategy.ts
-├── templates
-│   ├── blocks
-│   │   └── headerTemplate.ts
-│   ├── frameworks
-│   │   └── nuxt
-│   │       ├── components
-│   │       │   └── vueComponentTemplate.ts
-│   │       ├── content
-│   │       │   └── contentConfigTemplate.ts
-│   │       ├── layer
-│   │       │   ├── gitignoreTemplate.ts
-│   │       │   ├── nuxtConfigTemplate.ts
-│   │       │   ├── packageJsonTemplate.ts
-│   │       │   └── tsconfigTemplate.ts
-│   │       └── project
-│   │           ├── appConfigTemplate.ts
-│   │           ├── editorconfigTemplate.ts
-│   │           ├── envTemplate.ts
-│   │           ├── gitignoreTemplate.ts
-│   │           ├── gitmodulesTemplate.ts
-│   │           ├── npmrcTemplate.ts
-│   │           ├── nuxtConfigTemplate.ts
-│   │           ├── nuxtrcTemplate.ts
-│   │           ├── packageJsonTemplate.ts
-│   │           ├── pnpmWorkspaceTemplate.ts
-│   │           ├── rootConfigTemplate.ts
-│   │           ├── tsconfigTemplate.ts
-│   │           ├── vitestConfigTemplate.ts
-│   │           ├── vitestSetupTemplate.ts
-│   │           └── vueComponentTemplate.ts
-│   ├── languages
-│   │   ├── jsonTemplate.ts
-│   │   ├── readmeTemplate.ts
-│   │   └── typescriptTemplate.ts
-│   └── license
-│       └── mitLicenseTemplate.ts
-└── types
-    ├── commands
-    │   ├── baseCommandTypes.ts
-    │   └── gitTypes.ts
-    ├── globals.d.ts
-    ├── index.ts
-    ├── modes
-    ├── orchestrators
-    │   ├── nuxt
-    │   │   └── nuxtTypes.ts
-    │   └── vue
-    ├── scanners
-    │   ├── baseScannerTypes.ts
-    │   ├── css
-    │   │   └── cssLanguageTypes.ts
-    │   ├── html
-    │   │   └── htmlLanguageTypes.ts
-    │   ├── javascript
-    │   │   └── jsLanguageTypes.ts
-    │   ├── json
-    │   │   └── jsonLanguageTypes.ts
-    │   ├── sfcTypes.ts
-    │   ├── tokenTypes.ts
-    │   └── typescript
-    │       └── tsLanguageTypes.ts
-    ├── services
-    │   ├── characterStreamServiceTypes.ts
-    │   ├── codeServiceTypes.ts
-    │   ├── configServiceTypes.ts
-    │   ├── fileServiceTypes.ts
-    │   ├── githubServiceTypes.ts
-    │   ├── llmServiceTypes.ts
-    │   ├── loggerServiceTypes.ts
-    │   └── processServiceTypes.ts
-    ├── strategies
-    │   ├── css
-    │   ├── html
-    │   ├── javascript
-    │   ├── json
-    │   └── typescript
-    └── templates
-        ├── templateTypes.ts
-        └── utilsTypes.ts
+
 ```
 
 # AppManager
@@ -177,51 +29,55 @@ In a project that uses AppManager, the AppManager application is started through
 ## Proposed Application Commands
 
 * app
-	Run Application (runApp.ts)
-		App Initialise (pnpm install)
-		App Preview (pnpm run preview)
-		App Post Installation (pnpm run postinstall)
-		App Build (pnpm run build)
-		App Run Locally (pnpm run dev)
-		App Clean
-			Remove all the caches
-		App Empty
-			Remove all of the build and setup files and directories including lock files and `/node_modules` directory along with `/dist`
-		App Reinitialise
-			Run the `App Empty` then initialise with `pnpm install` then finally run `App Build`.
-	Setup New Application (setupApp.ts)
-		Create a new basic application setup similar to `nuxi create` but specific to my idealised layer based architecture.
+	* Run Application
+		* **Initialise Environment** Executes `pnpm install`
+		* **Post Installation** Executes `pnpm run postinstall`.
+		* **Build Application** Executes `pnpm run build`.
+		* **Preview** Executes `pnpm run preview`.
+		* **App Run Locally** Executes `pnpm run dev`.
+		* **App Clean** Remove all the caches and then rebuild the types etc.
+		* **App Empty** Remove all of the build and setup files and directories including lock files and `/node_modules` directory along with `/dist`
+		* **Reinitialise** Run the `App Empty` then initialise with `pnpm install` then finally run `App Build`.
+	* Setup New Application (setupApp.ts)
+		* **New App** Create a new basic application setup similar to `nuxi create` but specific to my idealised layer based `monorepo` architecture.  This process should prompt the user for the files they want to have included, or just select minimal, or select complete.
+		* **New Layer** Create and provision a new basic Layer.
 
 * docs
-	(runDocs.ts)
-
+	* **Document Application** Generate codebase documentation for the entire project from `app/`, `layer/s` and `tests/`.
+	* **Document Code** Generate codebase documentation for the `app/`
+	* **Document Layers** Generate codebase documentation for all of the associated `layers/`
+	* **Document Layer** Generate codebase documentation for a user selected `layer/[SELECTED-LAYER]` 
+	* **Document Test** Generate documentation for the tests in `tests/`
+	* **Document File** Generate documentation for the a specific file (user selected), this will require a TUI selector to navigate to and selectiona given file.
+.
 * git
-	(addSubmodules.ts)
-	(commitCommand.ts)
-	(deleteRemoteRepos.ts)
-	(initLayers.ts)
-	(manageCommits.ts)
-	(pushAll.ts)
-	(pushCommand.ts)
-	(pushToRemote.ts)
-	(syncCommand.ts)
-	(syncReposAll.ts)
-	(syncRepo.ts)
+	* **Initialise New Repository**  Executes `git init`.
+	* **commitCommand** 
+	* **manageCommits**
+	* **Add Submodules** 
+	* **deleteRemoteRepos** 
+	* **initLayers**  
+	* **pushAll** 
+	* **pushCommand** 
+	* **pushToRemote** 
+	* **syncCommand** 
+	* **syncRepo** 
+	* **syncReposAll** 
 
 * nuxt
-	(createLayer.ts)
-	(extractDocs.ts)
-	(manageEnv.ts)
+	* **CreateLayer** 
+	* **extractDocs** 
+	* **manageEnv** 
 
 * quality
-	(runQuality.ts)
+	* **runQuality** 
 
 * utils
-	(addContributor.ts)
-	(autoDoc.ts)
-	(autoVersion.ts)
-	(cleanLogs.ts)
-	(validateHeaders.ts)
+	* **addContributor** 
+	* **autoDoc** 
+	* **autoVersion** 
+	* **cleanLogs** 
+	* **validateHeaders** 
 
 ---
 
