@@ -85,6 +85,8 @@ am settings app-defaults set <field> <value>
 
 **License Type** is deliberately **not** in this table — it's covered by `settings.templates` (§5) since setting a license also generates/overwrites the `LICENSE` file, not just a `package.json` field.
 
+**Update (post-`licenseService` design, see `spec-services-licenseService-v01.md`):** License Type is now OSI-catalog-driven rather than limited to the curated 8-entry registry originally scoped here — the picker shows the full OSI list (`approved` entries by default, per that document's §1.5), resolves verbatim text per its §1.3 resolution chain, and syncs `package.json`'s `license` field per its §1.4 (including the `"SEE LICENSE IN LICENSE"` fallback for entries with no `spdx_id`). The curated 8 templates remain the fast, network-free default path within that same picker, not a separate mechanism.
+
 **Behavior:** Grouped interactive menu (mirrors `app-config`'s grouped-by-category shape) or direct `get`/`set` per field. Each `set` is a single-field `fileService.read()` → mutate → `fileService.write()` round trip (§1.2) — no batch-write across multiple fields in one call, to keep failure isolated to the one field being changed.
 
 **Consumes:** `fileService`.
@@ -176,11 +178,11 @@ am settings templates delete --registry deployment <id>
 ```
 
 **Behavior:**
-1. **List:** iterate `licenseRegistry`, `nuxt.addFile`'s deployment registry, and `aiDocRegistry` (§1.1 of `spec-ai-domain-commands-v01.md`); print each as `[registry] id — label`. Read-only, no mutation.
-2. **Create License / Delete License:** same operation as `settings.appDefaults`'s License Type action (§2) — generates/overwrites `LICENSE` from `licenseRegistry` and updates `package.json`'s `license` field to the entry's `spdxId`; delete removes the `LICENSE` file and resets `license` to `UNLICENSED`. **One implementation, two menu entry points** (here and under Application Defaults) — same delegation posture as §4's `add`.
+1. **List:** for licenses, calls `licenseService.listLicenses()` (§3 of `spec-services-licenseService-v01.md`) rather than iterating the curated `licenseRegistry` directly — this is now the full OSI catalog, `approved` and unapproved, with each row's `textSource` shown (curated / auto-generated / link-only) so the user can see which entries support full automated generation before picking one. Deployment (`nuxt.addFile`) and AI-doc (`aiDocRegistry`, §1.1 of `spec-ai-domain-commands-v01.md`) registries are unaffected — still iterated directly, no service layer needed for those. Read-only, no mutation.
+2. **Create License / Delete License:** same operation as `settings.appDefaults`'s License Type action (§2) — calls `licenseService.createLicense()`/`deleteLicense()` (defaults the picker to `approved: true` entries, per that document's §1.5), which resolves verbatim text (curated template, or the OSI fetch-and-cache chain), writes `LICENSE`, and syncs `package.json`'s `license` field (SPDX id, or `"SEE LICENSE IN LICENSE"` when the entry has none). **One implementation, two menu entry points** (here and under Application Defaults) — same delegation posture as §4's `add`.
 3. **Add/Delete (deployment or AI-doc registries):** requires `--registry` (or an interactive first-step picker) since these are structurally different registries — dispatches to the matching domain's existing add/delete command (`nuxt.addFile` for deployment, `ai.create`/`ai.delete` for AI docs) rather than reimplementing either.
 
-**Consumes:** `licenseRegistry`, `nuxt.addFile`'s registry, `aiDocRegistry`; delegates execution to each domain's own existing command.
+**Consumes:** `licenseService` (new — for licenses specifically, replacing the previous plan to iterate `licenseRegistry` directly), `nuxt.addFile`'s registry, `aiDocRegistry`; delegates execution to each domain's own existing command.
 
 **Open Question:** is a fourth, genuinely generic "arbitrary custom template" registry wanted (for cases *outside* license/deployment/AI-doc — e.g. a `CONTRIBUTING.md` template, a PR template), or is "Manage Templates" meant to stay a pure aggregator over the three that already exist? The command specced above assumes the latter (aggregator only) — confirm before scoping a fourth registry.
 
