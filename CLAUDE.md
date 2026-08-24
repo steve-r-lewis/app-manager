@@ -121,6 +121,21 @@ fileService) — all fully test-driven, reviewed, and signed off.
 
 2. **Second-tier services** (current phase):
    - 👉 **`llmService` — up next.**
+   - **`licenseService` — added 2026-08-24, elevated priority, build right after
+     `llmService` (ahead of `githubService`/scanners/`codeService`/templates).**
+     Full build-ready spec already written:
+     `docs/specification/architecture/services/spec-services-licenseService-v01.md`.
+     OSI-catalog-driven LICENSE creation/change/delete for both the root project
+     and standalone layers — verbatim-only text resolution (curated templates →
+     cached OSI text → link-only fallback, never LLM-paraphrased), `package.json`
+     sync including the `SEE LICENSE IN LICENSE` fallback for entries with no
+     `spdx_id`. Moved ahead of the rest of this tier because the design work is
+     already done and de-risked: a real sample response from
+     `https://opensource.org/api/license` and a real captured
+     `opensource.org/license/mit` HTML page (see To-Do list below) resolved every
+     open question the spec had. Nothing about this item is still blocked on
+     investigation — it's ready to build test-first like everything else in this
+     phase.
    - `githubService`
    - scanners
    - `codeService`
@@ -162,6 +177,88 @@ signed off as complete and tested.
   removed because they were dead/unimplemented, not by accident.
 - There's also a legacy PowerShell toolset under `utilities/` — unclear
   whether it's still active or being phased out. Ask before touching it.
+
+## Actions outstanding — To-Do list
+*Living list, added 2026-08-24 during license-management design work. Update or
+check items off as they're resolved rather than deleting them silently, same
+spirit as the file-header revision-history convention above — if something
+here turns out already fine, say so and remove it, don't just quietly drop it.*
+
+**Bugs to fix (found, not yet fixed):**
+- `app/templates/license/mitLicenseTemplate.ts`'s GPLv3 branch double-prefixes
+  the copyright line (`authorLine` already starts with `Copyright (C)`, then
+  gets `Copyright (C) ` prepended again) — generated GPLv3 LICENSE text reads
+  `"Copyright (C) Copyright (C) <year> ..."`. Flagged in
+  `spec-templates-license-v01.md` §2 a while ago; never actually fixed in code.
+- That same file's header comment still says `@file: ~/app/templates/licenseTemplate.ts`
+  — stale from before the folder restructure; doesn't match its real path
+  (`app/templates/license/mitLicenseTemplate.ts`).
+- `tests/unit/templates/license/licenseTemplate.test.ts` imports
+  `../../../app/templates/licenseTemplate.js` with an explicit
+  `@ts-ignore - Module does not exist yet` — that path has never existed.
+  The test cannot currently be exercising the real implementation correctly.
+- No `LICENSE` file exists at the repo root, despite `package.json` declaring
+  `"license": "MIT"`.
+
+**Infrastructure gaps blocking more than one planned feature:**
+- The tiered settings-persistence layer (`app-config` domain's `settings.json`,
+  `app-manager-command-specs-v02.md` §10) doesn't exist — real `configService.ts`
+  today is only `{ cwd, gitUser, flags }` in memory, no disk persistence at all.
+  Two specced features depend on it: the Settings domain
+  (`spec-settings-domain-commands-v01.md`) and `licenseService`'s
+  `license.defaultType` (`spec-services-licenseService-v01.md` §1.7).
+- `codeService` doesn't exist yet — blocks `nuxt.config`'s Add/Delete actions
+  (deliberately deferred, not designed — see
+  `spec-settings-domain-commands-v01.md`'s Final Architectural Notes).
+
+**`licenseService` — implementation outstanding (spec complete):**
+- Build `licenseService.ts` per `spec-services-licenseService-v01.md`:
+  `syncCatalog`, `listLicenses`, `resolveText`, `createLicense`, `changeLicense`,
+  `deleteLicense`.
+- Build the `config/licenseRegistry.json` cache (mirrors `llmRegistry.json`/
+  `repositoryRegistry.json`'s existing pattern).
+- HTML extraction (spec §4) is now unblocked — a real `opensource.org/license/mit`
+  page was captured 2026-08-24 and confirms two reliably-IDed elements:
+  `<div id="separator">` (copyright placeholder, literal `<YEAR>`/
+  `<COPYRIGHT HOLDER>` tokens when a copyright line applies at all — absent for
+  licenses that shouldn't get one, which resolves §3.1's "how do we know not to
+  add a header" question without a hardcoded exceptions list) and
+  `<div id="LicenseText">` (verbatim body, `<p>` tags, HTML-entity-encoded).
+  Spec §3.1/§4 should be updated from "cannot be finalized" to this confirmed
+  structure before implementation starts.
+- Still unconfirmed: whether `GET /api/license` paginates the full catalog or
+  returns everything in one response (spec §1.1) — check against a real full
+  fetch once network access allows it.
+- Minor data-shape note: the official API announcement's own worked example
+  (`gpl-3-0`) omits `spdx_id` and `approved` entirely, while the live sample
+  fetched directly for this design (`curl`, `cddl-1-1`, etc.) has both. Don't
+  assume either field is always present — code defensively for both "empty
+  string" and "field missing" on `spdx_id`, and treat a missing `approved` as
+  unknown rather than assuming `false`.
+- **Do not delete the 8 curated hand-authored license templates yet** — asked
+  directly, answered 2026-08-24: they're currently the *only* working
+  LICENSE-generation path; `licenseService` is still spec-only, no code exists.
+  Build the OSI-driven path first, verify it (including a check against the
+  current curated output once the double-`Copyright (C)` bug above is fixed),
+  and only retire the curated tier once that's proven working — keeping both
+  permanently would recreate the "two competing implementations of one
+  operation" problem already resolved elsewhere in this codebase (the git
+  sync/push/commit consolidations).
+
+**Open design decisions (need your input before implementing):**
+- `nuxt.createLayer`'s "extend that layer" meaning — assumed to be (A) bring
+  it into a consuming app via `git.addSubmodules`, never explicitly confirmed
+  vs. (B) just keep developing it standalone (`app-manager-command-specs-v02.md`
+  §5.1).
+- Layer-development workflow: developing layers in-place inside the calling
+  app vs. always-standalone-then-linked — still being thought through (raised
+  during the `licenseService` design conversation, not yet resolved).
+- `settings.templates`'s "is a fourth generic template registry wanted" beyond
+  license/deployment/AI-doc — open, `spec-settings-domain-commands-v01.md` §5.
+- AI-doc registry's initial entry set beyond CLAUDE.md/GEMINI.md/AGENTS.md —
+  open, `spec-ai-domain-commands-v01.md` §1.1.
+- `javascriptScanner.ts`/`typescriptScanner.ts` (and the matching Strategy pair)
+  duplicate-file question — still unresolved, see "Known outstanding items" above.
 
 ## Testing conventions
 - Vitest, with `vi.mock` used to isolate services from `fs`, `simple-git`,
