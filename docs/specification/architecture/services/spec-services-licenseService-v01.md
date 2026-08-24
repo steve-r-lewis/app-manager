@@ -35,16 +35,23 @@ Real fields, from a live sample response (not guessed):
 
 **"State" is `approved: boolean`, not a multi-value status.** `keywords` supplies secondary, informal signals (e.g. `superseded`) — advisory only, never used to block an action, only to annotate it in listings.
 
-**Open/unconfirmed at spec time** (network to `opensource.org` was unavailable during this investigation — verify at implementation time, not blocking the rest of this design):
-- Whether `GET /api/license?` returns the entire catalog in one response or is paginated (the plural `_links.collection.href` suggests a separate collection concept worth checking).
-- The actual markup of an `_links.html.href` page (§1.3 depends on this for its HTML-extraction step).
+**Confirmed against the official API announcement (2026-08-24):** the endpoint is `https://opensource.org/api/license` (no trailing `?` required), with `https://opensource.org/api/license/<id>` for a single entry and `?name=`/`?spdx=` query filters for search. The legacy `api.opensource.org` service is being deprecated — nothing in this design uses it, so no action needed there.
 
-### 1.2 Two-Tier Registry, Not a Replacement
+**Data-shape caveat found by comparing two real samples:** the official announcement's own worked example (`gpl-3-0`) omits `spdx_id` and `approved` entirely, while the live sample fetched directly for this design (`curl`, `cddl-1-1`, etc.) has both fields present. Treat both as **optionally absent, not just optionally empty** — `resolveText`/`package.json`-sync logic (§1.4) must handle `spdx_id` being `undefined` the same way it handles `''`, and must not assume a missing `approved` means `false` (treat as unknown/unapproved-for-picker-purposes only, never silently coerce).
 
-- **Curated tier (existing, unchanged):** the 8 hand-authored templates from `spec-license-system-v01.md` (MIT, Apache-2.0, GPLv3, BSD-3-Clause, ISC, Unlicense, MPL-2.0, Proprietary) — each a `TemplateFunction` with a verified, correct copyright-line insertion point. This remains the default/recommended path: fastest, zero network dependency, already legally reviewed per that spec's GPLv3 sourcing discussion.
-- **OSI tier (new, this document):** every other entry in the OSI catalog, resolved and generated per §1.3/§3. Selected only when the user explicitly picks something outside the curated 8.
+**Open/unconfirmed at spec time:**
+- Whether `GET /api/license` returns the entire catalog in one response or is paginated (the plural `_links.collection.href` suggests a separate collection concept worth checking) — verify against a real full fetch at implementation time.
 
-`licenseRegistry` (existing, from the curated spec) and the new OSI cache are **separate data sources checked in sequence**, not merged into one schema — an id present in both (e.g. `mit`, `unlicense` likely appear in OSI's list too) resolves to the curated tier first, since that path is verified and doesn't need a network call.
+**Resolved since the previous revision of this document:** the markup of an `_links.html.href` page was previously the biggest open blocker for §1.3/§4 — it's now confirmed against a real captured page (`opensource.org/license/mit`, 2026-08-24). See §3.1/§4.
+
+### 1.2 Two-Tier Registry — Curated Tier Is Transitional, Not Permanent
+
+- **Curated tier (existing, unchanged for now):** the 8 hand-authored templates from `spec-license-system-v01.md` (MIT, Apache-2.0, GPLv3, BSD-3-Clause, ISC, Unlicense, MPL-2.0, Proprietary) — each a `TemplateFunction` with a hand-placed copyright-line insertion point. This is currently the *only working* LICENSE-generation path in the real codebase (`licenseService` itself is still spec-only) and stays the default/recommended path until the OSI tier is built and verified.
+- **OSI tier (new, this document):** every other entry in the OSI catalog, resolved and generated per §1.3/§3. Selected only when the user explicitly picks something outside the curated 8, until the point below changes that.
+
+`licenseRegistry` (existing, from the curated spec) and the new OSI cache are **separate data sources checked in sequence**, not merged into one schema — an id present in both (e.g. `mit`, `unlicense` likely appear in OSI's list too) currently resolves to the curated tier first.
+
+**Decision recorded 2026-08-24 (asked directly, answered directly): do not delete the curated tier yet.** Doing so now would leave zero working LICENSE-generation path, since the OSI tier isn't implemented. Once §4's now-confirmed HTML extraction is built and verified — including a check against the curated tier's own output once the known double-`"Copyright (C)"` GPLv3 bug is fixed (see the project's To-Do list in `CLAUDE.md`) — retire the curated tier in favor of the OSI tier for **every** id, curated or not. Keeping both permanently, once both work, would recreate exactly the "two competing implementations of one operation" problem this codebase has already resolved elsewhere (the git sync/push/commit consolidations) — the curated tier's only justification is "it's the only thing that currently works," which stops being true once the OSI tier is built.
 
 ### 1.3 Text Resolution — Verbatim-Only, Never Paraphrased
 
@@ -162,22 +169,47 @@ export interface ILicenseService {
 }
 ```
 
-### 3.1 `createLicense` / `changeLicense` — Copyright Line Insertion for Non-Curated Entries
+### 3.1 `createLicense` / `changeLicense` — Copyright Line Insertion (Resolved 2026-08-24)
 
-The curated tier already has a hand-verified insertion point per license (§1.2). For OSI-tier entries with no curated template, there is no per-license knowledge of *where* a copyright line belongs — most OSI-approved licenses follow the common BSD/MIT-style convention of a `Copyright (c) {year} {author}` line prepended above the body, but this is a simplification, not a universal rule (e.g. public-domain-style dedications don't want one at all).
+**Previously a known simplification (hardcoded exceptions list, no per-license insertion knowledge) — now resolved against a real captured page.** A real fetch of `opensource.org/license/mit` shows OSI's own page structure already answers this, per-license, with no guessing needed:
 
-**Rule:** prepend a standard copyright header above the verbatim body **unless** the entry's `keywords` or a small hardcoded exceptions list (seeded with ids that are explicitly public-domain-style dedications) says not to. This exceptions list starts empty in practice for the OSI tier, since `unlicense` itself is already curated (§1.2) and never reaches this path — but the mechanism needs to exist for the next public-domain-style license someone picks from the wider catalog. **Flagged as a known simplification, not a solved problem** — confirm it's acceptable before relying on it for anything license-sensitive; this is exactly the kind of thing worth a human legal sanity-check on the generated output before it ships, not just a unit test passing.
+```html
+<div id="separator">
+  <p><span ...>Copyright &lt;YEAR&gt; &lt;COPYRIGHT HOLDER&gt;</span></p>
+</div>
+<div id="LicenseText">
+  <p>Permission is hereby granted, free of charge, ...</p>
+  <p>The above copyright notice ...</p>
+  <p>THE SOFTWARE IS PROVIDED ...</p>
+</div>
+```
+
+**Rule (replaces the old hardcoded-exceptions-list approach):**
+1. If `#separator` is present and non-empty, it contains the exact copyright line template for *this specific license*, with literal `<YEAR>` and `<COPYRIGHT HOLDER>` placeholder tokens — string-replace those two tokens with the resolved `context.year`/`{context.author}, {context.email}` (matching the curated templates' existing formatting convention) and prepend the result above the body.
+2. If `#separator` is absent or empty for a given license's page, **do not add a copyright header at all** — this is the license steward's own signal that one doesn't apply (covers public-domain-style dedications correctly, without a hardcoded id list to maintain).
+3. The `#LicenseText` div's `<p>` children, HTML-entity-decoded and joined with blank lines, are the verbatim body (§4).
+
+This is a real per-license signal from the canonical source itself, not a heuristic — no more "known simplification" caveat needed once implemented this way, though the extraction code should still fail safe (§1.3 step 5) if either div is missing/malformed rather than guessing.
 
 ---
 
-## 4. New Small Capability: HTML Text Extraction
+## 4. New Small Capability: HTML Text Extraction (Resolved 2026-08-24)
 
 ```ts
-// New — a narrow, purpose-built extractor, not a general HTML-to-text library dependency
-function extractLicenseBodyFromOsiPage(html: string): string | null;
+// New — a narrow, purpose-built extractor targeting two specific div IDs, not a general HTML-to-text library dependency
+function extractLicenseBodyFromOsiPage(html: string): {
+	copyrightTemplate: string | null; // raw contents of #separator, with <YEAR>/<COPYRIGHT HOLDER> tokens intact, or null if absent/empty
+	body: string | null;              // #LicenseText's <p> children, entity-decoded and joined, or null if missing/empty
+};
 ```
 
-Scoped specifically to `opensource.org/license/<id>` pages' structure — **not** designed to handle arbitrary `license_steward_url` HTML (§1.3 step 4 restricts steward-URL fetching to plain-text-looking responses precisely to avoid needing a general-purpose HTML scraper). **This function's actual selector logic cannot be finalized from this investigation** — `opensource.org` was network-blocked throughout (§1.1) — write it against a real fetched page during implementation, not against assumed markup, and add a fixture-based test using a saved real HTML sample rather than a hand-written approximation.
+Scoped specifically to `opensource.org/license/<id>` pages' structure (confirmed via a real captured `opensource.org/license/mit` response, 2026-08-24 — this is a WordPress "license" custom-post-type page, per `class="... type-license status-publish ..."` on the `<article>` element, so every license's page shares this same template) — **not** designed to handle arbitrary `license_steward_url` HTML (§1.3 step 4 restricts steward-URL fetching to plain-text-looking responses precisely to avoid needing a general-purpose HTML scraper).
+
+Implementation notes:
+- Target `<div id="separator">...</div>` and `<div id="LicenseText">...</div>` specifically — both are stable, purpose-named element IDs, not CSS classes likely to change with theme updates, making them a reasonably durable extraction target.
+- HTML entities in `#LicenseText`'s `<p>` content (observed: `&#8220;`/`&#8221;` smart quotes, `&amp;` etc.) must be decoded, not left as literal entity text in the generated LICENSE file.
+- A fixture-based test using the real saved HTML sample (captured 2026-08-24, available in this conversation's history — save it as a test fixture rather than re-fetching live in CI) should back this function, not a hand-written approximation of the markup.
+- Still worth a spot-check against a second license's page (e.g. one with no `#separator`, such as `unlicense` or a public-domain-style entry) before relying on rule 2 above in production — only MIT's page has been directly observed so far.
 
 ---
 
@@ -202,11 +234,13 @@ Updates `spec-settings-domain-commands-v01.md` §2/§5 (edited alongside this do
 | LS-09 | `listLicenses()` (no filter) | Full catalog, approved and unapproved, matching the original "complete reference" request |
 | LS-10 | Second `createLicense()` call for the same OSI id after a successful resolution | Uses `cachedText`, no repeat network fetch |
 | LS-11 | `changeLicense()` called against a target with no existing `LICENSE` | Refused, points at `createLicense` instead |
+| LS-12 | `extractLicenseBodyFromOsiPage()` against the real captured MIT fixture | Returns the correct `copyrightTemplate` (with `<YEAR>`/`<COPYRIGHT HOLDER>` tokens intact) and `body` (entity-decoded, `#LicenseText`'s three paragraphs joined) |
+| LS-13 | `createLicense()` for an OSI-tier id whose page has no `#separator` | No copyright header prepended — verifies §3.1 rule 2 (no hardcoded exceptions list needed) |
 
 ---
 
 ## Final Architectural Notes
 
-- Two items are explicitly **not** resolved by this document and must be closed during implementation, not guessed around: (a) §1.1's pagination/full-catalog-size question, and (b) §4's HTML selector logic, both blocked purely on this session's inability to reach `opensource.org`. Everything else here is build-ready.
+- **Update, 2026-08-24:** both items previously flagged as unresolved are now closed. §4's HTML selector logic is confirmed against a real captured `opensource.org/license/mit` page (§3.1/§4 above) — no longer a guess. §1.1's pagination question remains the one genuinely open item, still to verify against a real full-catalog fetch at implementation time.
 - §1.7 is a repeat of a gap already flagged for the Settings domain — recorded again here because `licenseService` is a second, independent consumer of the same not-yet-built settings-persistence layer. Worth prioritizing that layer once two real features are blocked on it rather than one.
-- §3.1's copyright-insertion rule is the one piece of this design that's a deliberate simplification rather than a fully solved problem — flagged plainly rather than presented as more rigorous than it is.
+- §1.2/§3.1's curated-tier-retirement plan is new since the previous revision: the curated 8 templates were reframed from "the recommended default, permanently" to "the only thing that currently works, temporarily" — see `CLAUDE.md`'s To-Do list for the explicit decision not to delete them yet.
