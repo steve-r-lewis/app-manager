@@ -51,33 +51,85 @@ In a project that uses AppManager, the AppManager application is started through
 	* **Document File** Generate documentation for the a specific file (user selected), this will require a TUI selector to navigate to and selectiona given file.
 .
 * git
+	* **Show Config**
 	* **Initialise New Repository**  Executes `git init`.
-	* **commitCommand** 
-	* **manageCommits**
+	* **Commit** 
+	* **Manage Commits**
 	* **Add Submodules** 
-	* **deleteRemoteRepos** 
-	* **initLayers**  
-	* **pushAll** 
+	* **Initialise Layers**  
+	* **Delete Remote Repos** 
+	* **Push All** 
 	* **pushCommand** 
-	* **pushToRemote** 
-	* **syncCommand** 
-	* **syncRepo** 
-	* **syncReposAll** 
+	* **Push To Remote** 
+	* **Sync Command** 
+	* **Sync Repo** 
+	* **Sync Project** 
+
+* AI
+	* **List AI Doc's** Retrieve and present a list of exising AI doc's in the project root (e.g. CLAUDE.md, GEMINI.md etc.).
+	* **Create New Project AI Doc** Create a new AI doc in the project root (e.g. CLAUDE.md, GEMINI.md etc.).
+	* **Delete Project AI Doc** Delete an existing AI doc in the project root (e.g. CLAUDE.md, GEMINI.md etc.).
 
 * nuxt
-	* **CreateLayer** 
-	* **extractDocs** 
-	* **manageEnv** 
+	* **Manage nuxt.config** Tools to manage the `nuxt.config.ts` file.
+	* **List Config's** 
+	* **Add New Config** 
+	* **Delete Config** 
 
 * quality
-	* **runQuality** 
+	* **Code Test Suite**
+		* **Run All** Execute `vitest run`.
+		* **Run Unit** Execute ` vitest run tests/unit`.
+		* **Run E2E** Execute `vitest run tests/e2e --test-timeout=30000`.
+		* **Run Coverage** Execute `vitest run --coverage`.
+		* **Run UI** Execute `vitest --ui`.		
 
 * utils
+	* **Check Headers**
+	* **Repair Headers**
 	* **addContributor** 
 	* **autoDoc** 
 	* **autoVersion** 
 	* **cleanLogs** 
 	* **validateHeaders** 
+
+* Settings
+	* **Application Defaults**
+		* **Authors Name** Manage the developers name.
+		* **Authors Email** Manage the developers email.
+		* **Authors Telephone** Manage the developers telephone.
+		* **Authors URL** 
+		* **Funding Details**
+			* **Funding Type** 
+			* **Funding URL** 
+		* **Bug Reporting** 
+		* **Repository** 
+			* **Repository Type** Type of repository.
+			* **Repository URL**
+		* **Application Version** 
+		* **Application Description** 
+		* **Application Privacy Type** 
+		* **Application  Type** 
+		* **License Type** 
+		* **Keyword List** 
+	* **Manage .env File**
+		* **Create New `Env Vars` File** 
+		* **Read .env File** 
+		* **Add `Env Vars`** 
+		* **Edit `Env Vars`** 
+		* **Delete `Env Vars`**
+	* **Manage Contributors**
+		* **List Contributors** 
+		* **Add Contributors**
+			* **Contributors Name** 
+			* **Contributors Email**
+			* **Contributors URL**
+	* **Manage Templates**
+		* **Create New License** 
+		* **Delete Existing License** 
+		* **List Templates** 
+		* **Add Template** 
+		* **Delete Template**
 
 ---
 
