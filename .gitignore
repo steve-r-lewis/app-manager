@@ -50,8 +50,8 @@
 # Removed: .firebase/functions/example/node_modules - Too specific, handled by **/node_modules/
 
 # Package manager debug logs
-**/app-monitor*
-**/app_manager/logs*
+# **/app-monitor*
+# **/app_manager/logs*
 **/npm-debug.log*
 **/yarn-debug.log*
 **/yarn-error.log*
