@@ -23,34 +23,7 @@ This document handles all three, then lays out the phased path from here to a fu
 
 ---
 
-## 1. Directory Restructure
 
-### 1.1 Naming Decision: `app-manager/`, No Dot, Both Roots
-
-You wrote `<project>/app-manager/` without a dot — I'd flagged a dot-prefix question in the last round, and I'm resolving it in favor of no dot, for two concrete reasons found while checking the actual code rather than by preference: the codebase already has a working, undotted `app-monitor/` convention (real file-logging, already gitignored, already referenced in generated project templates), and consolidating that *into* `app-manager/` is explicitly part of what you're asking for. Matching your literal wording and the existing precedent both point the same way, so: **`app-manager/`, no dot, at both the tool root and every target project root.**
-
-### 1.2 Final Tool-Root Tree
-
-```
-<toolRoot>/
-  app-manager/
-    settings.json          # tool-tier settings (the "app-manager" section from §10 of the command specs)
-    llmRegistry.json        # moved from config/, unchanged content
-    repositoryRegistry.json # moved from config/, unchanged content
-    logs/
-      session-<timestamp>.log
-```
-
-### 1.3 Final Project-Root Tree
-
-```
-<targetRoot>/
-  app-manager/
-    settings.json           # project-tier settings (project-shared + project-local sections)
-    logs/
-      session-<timestamp>.log
-    test-logs/              # renamed from app-monitor/test-logs — vitest report output
-```
 
 ### 1.4 The Gitignore Problem This Consolidation Creates — and the Fix
 
