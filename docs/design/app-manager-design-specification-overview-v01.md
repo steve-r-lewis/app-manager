@@ -279,8 +279,6 @@ This lines up exactly with what the spec documents described as *planned* comman
 | `utils autoVersion` | Strategies' `parseMetadata()` (read/bump `@version` tags) |
 | `nuxt extractDocs` | Strategies' `findDocumentableBlocks()` (aggregate code for a doc report) |
 
-
-
 # Appendix I
 
 ```text
