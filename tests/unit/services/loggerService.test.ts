@@ -116,7 +116,7 @@ describe('LoggerService', () => {
 			await logger.init('/test/root');
 			
 			expect(fsp.mkdir).toHaveBeenCalledWith(
-				expect.stringContaining(path.join('app-monitor', 'logs')),
+				expect.stringContaining(path.join('app_manager', 'logs', 'test')),
 				{ recursive: true }
 			);
 			expect(fs.createWriteStream).toHaveBeenCalled();
@@ -233,7 +233,7 @@ describe('LoggerService', () => {
 			await logger.init('/test/root');
 
 			expect(fsp.unlink).toHaveBeenCalledWith(
-				expect.stringContaining(path.join('app-monitor', 'logs', 'session-old.log'))
+				expect.stringContaining(path.join('app_manager', 'logs', 'test', 'session-old.log'))
 			);
 		});
 

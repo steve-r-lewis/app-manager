@@ -72,7 +72,7 @@ class LoggerService implements ILogger {
 	
 	private async _enableFileLogging(): Promise<void> {
 		try {
-			const monitorDir = path.join(this._root, 'app-monitor', 'logs');
+			const monitorDir = path.join(this._root, 'app_manager', 'logs', 'test');
 			await fsp.mkdir(monitorDir, { recursive: true });
 			
 			const filename = `session-${new Date().toISOString().replace(/[:.]/g, '-')}.log`;
@@ -90,7 +90,7 @@ class LoggerService implements ILogger {
 	 */
 	private async _cleanupOldLogs(): Promise<void> {
 		try {
-			const monitorDir = path.join(this._root, 'app-monitor', 'logs');
+			const monitorDir = path.join(this._root, 'app_manager', 'logs', 'test');
 			const files = await fsp.readdir(monitorDir);
 			const cutoffDate = Date.now() - (14 * 24 * 60 * 60 * 1000); // 14 days ago
 			

@@ -20,7 +20,7 @@ The original architecture audit and the roadmap both classified eight template f
 | `npmrcTemplate.ts` | `TODO` | **Complete** — `shamefully-hoist=true` |
 | `nuxtrcTemplate.ts` | `TODO` | **Complete** — `typescript.includeWorkspace = true` |
 | `gitmodulesTemplate.ts` | `TODO` | **Complete, but with a real bug** — see §1 |
-| `vitestConfigTemplate.ts` | `TODO` | **Complete**, aside from the already-known `app-monitor` path rename — see §2 |
+| `vitestConfigTemplate.ts` | `TODO` | **Complete**, aside from the already-known `app_manager` path rename — see §2 |
 | `vitestSetupTemplate.ts` | `TODO` | **Complete** — a genuinely sophisticated `@clack/prompts` mocking harness for the test suite |
 | `envTemplate.ts` | `TODO` | **Complete, but with hardcoded personal identity** — see §3 |
 
@@ -67,15 +67,15 @@ This also fixes a second, smaller issue: the current signature can only ever des
 
 ## 2. `vitestConfigTemplate.ts` — Path Rename (Confirmed, Already Flagged)
 
-Two literal `app-monitor` references need updating to `app-manager`, per the directory restructure (Implementation Roadmap §1.4):
+Two literal `app_manager` references need updating to `app-manager`, per the directory restructure (Implementation Roadmap §1.4):
 
 ```diff
-- '**/app-monitor/test-logs/**',
-+ '**/app-manager/test-logs/**',
+- '**/app_manager/logs/test/**',
++ '**/app-manager/logs/test/**',
 ```
 ```diff
-- json: `./app-monitor/test-logs/test-report-${dateStr}.json`
-+ json: `./app-manager/test-logs/test-report-${dateStr}.json`
+- json: `./app_manager/logs/test/test-report-${dateStr}.json`
++ json: `./app-manager/logs/test/test-report-${dateStr}.json`
 ```
 
 No other change to this file — everything else in its `defineConfig` (pool strategy, coverage settings, timeouts) is unrelated to the restructure and stays exactly as-is.
@@ -240,7 +240,7 @@ Checked both `frameworks/nuxt/project/gitignoreTemplate.ts` and `frameworks/nuxt
 
 ```
 # Package manager debug logs
-**/app-monitor
+**/app_manager
 **/npm-debug.log*
 ```
 
@@ -248,13 +248,13 @@ Checked both `frameworks/nuxt/project/gitignoreTemplate.ts` and `frameworks/nuxt
 
 ```diff
 # Package manager debug logs
-- **/app-monitor
+- **/app_manager
 + app-manager/logs/
-+ app-manager/test-logs/
++ app-manager/logs/test/
 **/npm-debug.log*
 ```
 
-Note the changed pattern shape, not just the renamed word: `**/app-monitor` (a wildcard-anywhere blanket match) becomes two **non-wildcarded, path-rooted** entries — this is the deliberate fix from the roadmap, not an incidental change. A blanket `**/app-manager` here would re-introduce the exact problem the restructure was meant to solve (hiding `app-manager/settings.json`'s committable `project-shared` section along with the logs it sits next to).
+Note the changed pattern shape, not just the renamed word: `**/app_manager` (a wildcard-anywhere blanket match) becomes two **non-wildcarded, path-rooted** entries — this is the deliberate fix from the roadmap, not an incidental change. A blanket `**/app-manager` here would re-introduce the exact problem the restructure was meant to solve (hiding `app-manager/settings.json`'s committable `project-shared` section along with the logs it sits next to).
 
 ---
 

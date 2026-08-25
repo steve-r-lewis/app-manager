@@ -57,8 +57,8 @@ export default defineConfig({
 			'**/dist/**',
 			'**/.nuxt/**',
 			'**/.output/**',
-			'**/tests/logs/**',
-			'**/app-monitor/test-logs/**',
+			'**/logs/test/**',
+			'**/app_manager/logs/test/**',
 			'**/tests/fixtures/**'
 		],
 
@@ -78,7 +78,7 @@ export default defineConfig({
 
 		reporters: ['default', 'json'],
 		outputFile: {
-			json: `./app-monitor/test-logs/test-report-${dateStr}.json`
+			json: `./app_manager/logs/test/test-report-${dateStr}.json`
 		}
 	}
 });

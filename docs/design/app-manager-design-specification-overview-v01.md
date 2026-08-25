@@ -35,7 +35,7 @@ In a project that uses AppManager, the AppManager application is started through
 
 The application will adopt a consolidated directory structure and a flexible, non-destructive configuration model:
 
-* **Directory Restructure:** Dedicated, `app-manager/` directories at both the tool root and project root will centrally house logs and configuration files.
+* **Directory Restructure:** Dedicated, `app_manager/` directories at both the tool root and project root will centrally house logs and configuration files.
 * **Two-Tier Settings:** A global tool-tier settings file and a project-tier overrides file will seamlessly merge user preferences and shared project configurations without committing secrets.
 
 ### 2.1 Final Tool-Root Tree
@@ -51,7 +51,7 @@ The application will adopt a consolidated directory structure and a flexible, no
 	│	└── license-templates.json
 	├── logs
 	│   ├── application                      #
-	│   └── test                             # renamed from app-monitor/test — vitest report output
+	│   └── test                             # renamed from app_manager/logs/test — vitest report output
 	│       └── test-report-<timestamp>.json
 	├── settings.json                        # tool-tier settings (the "app-manager" section from §10 of the command specs)
 	└── templates
@@ -68,7 +68,7 @@ The application will adopt a consolidated directory structure and a flexible, no
 	│   └── repositoryRegistry.json
 	├── logs
 	│   ├── application
-	│   └── test                             # renamed from app-monitor/test — vitest report output
+	│   └── test                             # renamed from app_manager/logs/test/test — vitest report output
 	│       └── test-report-<timestamp>.json
 	├── settings.json                        # project-tier settings (project-shared + project-local sections)
 	└── templates

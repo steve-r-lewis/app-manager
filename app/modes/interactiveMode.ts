@@ -39,7 +39,7 @@ export async function runInteractive(targetRoot: string) {
 		message: 'Session Configuration:',
 		options: [
 			{ value: 'verbose', label: 'Enable Verbose Logging', hint: 'Show detailed debug logs' },
-			{ value: 'file', label: 'Enable File Logging', hint: 'Write logs to app-monitor/' }
+			{ value: 'file', label: 'Enable File Logging', hint: 'Write logs to app_manager/' }
 		],
 		required: false
 	});

@@ -629,7 +629,7 @@ am quality run
 **File:** `app/commands/utils/cleanLogs.ts`
 **Status:** New build, following the existing legacy spec closely — no scope changes requested.
 
-**Purpose:** Delete temporary test-run artifacts: log files under `app-monitor/test-logs/` and mock fixture directories (`mock-*` prefix) under `tests/fixtures/`.
+**Purpose:** Delete temporary test-run artifacts: log files under `app_manager/logs/test/` and mock fixture directories (`mock-*` prefix) under `tests/fixtures/`.
 
 **Behavior:** Unchanged from legacy spec — scan both target paths, skip cleanly if either doesn't exist, exit silently with no prompt if nothing found, otherwise display counts and require confirmation (default `false`) before deleting.
 

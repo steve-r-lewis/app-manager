@@ -27,7 +27,7 @@ This document handles all three, then lays out the phased path from here to a fu
 
 ### 1.4 The Gitignore Problem This Consolidation Creates — and the Fix
 
-Merging logs and settings into one folder creates a real conflict with the settings design from last round: `settings.json`'s `project-shared` section is meant to be **committed** (team-wide facts like `github.defaultOrg`), while `logs/`/`test-logs/` must **never** be committed. A blanket ignore of the whole `app-manager/` folder — which is exactly what the current `**/app-monitor` pattern does — would silently defeat the "shared settings are committed" design the moment the folders merge.
+Merging logs and settings into one folder creates a real conflict with the settings design from last round: `settings.json`'s `project-shared` section is meant to be **committed** (team-wide facts like `github.defaultOrg`), while `logs/`/`test-logs/` must **never** be committed. A blanket ignore of the whole `app-manager/` folder — which is exactly what the current `**/app_manager` pattern does — would silently defeat the "shared settings are committed" design the moment the folders merge.
 
 **Fix:** replace the blanket pattern with two targeted entries:
 ```gitignore
@@ -38,10 +38,10 @@ app-manager/test-logs/
 
 | File | Current | Change to |
 |---|---|---|
-| `.gitignore` (App Manager's own repo root) | `**/app-monitor` (line 53) | Targeted entries above |
-| `app/templates/frameworks/nuxt/project/gitignoreTemplate.ts` | `**/app-monitor` (line 88) | Targeted entries above |
-| `app/templates/frameworks/nuxt/layer/gitignoreTemplate.ts` | `**/app-monitor` (line 88) | Targeted entries above |
-| `app/templates/frameworks/nuxt/project/vitestConfigTemplate.ts` | `app-monitor/test-logs/**` and a template-string path building `./app-monitor/test-logs/test-report-...json` | `app-manager/test-logs/**` / `./app-manager/test-logs/test-report-...json` |
+| `.gitignore` (App Manager's own repo root) | `**/app_manager` (line 53) | Targeted entries above |
+| `app/templates/frameworks/nuxt/project/gitignoreTemplate.ts` | `**/app_manager` (line 88) | Targeted entries above |
+| `app/templates/frameworks/nuxt/layer/gitignoreTemplate.ts` | `**/app_manager` (line 88) | Targeted entries above |
+| `app/templates/frameworks/nuxt/project/vitestConfigTemplate.ts` | `app_manager/logs/test/**` and a template-string path building `./app_manager/logs/test/test-report-...json` | `app-manager/test-logs/**` / `./app-manager/test-logs/test-report-...json` |
 
 ### 1.5 Every Other Concrete Code Change the Move Requires
 
@@ -50,8 +50,8 @@ Found by searching the actual source, not inferred:
 | File | Change |
 |---|---|
 | `app/services/llmService.ts` (line 42) | `import registryData from '../../config/llmRegistry.json'` → `'../../app-manager/llmRegistry.json'` |
-| `app/services/loggerService.ts` (`_enableFileLogging`, `_cleanupOldLogs`) | `path.join(this._root, 'app-monitor', 'logs')` → `path.join(this._root, 'app-manager', 'logs')`, in both methods |
-| `app/modes/interactiveMode.ts` (line 42) | Menu hint text `'Write logs to app-monitor/'` → `'Write logs to app-manager/'` |
+| `app/services/loggerService.ts` (`_enableFileLogging`, `_cleanupOldLogs`) | `path.join(this._root, 'app_manager', 'logs')` → `path.join(this._root, 'app-manager', 'logs')`, in both methods |
+| `app/modes/interactiveMode.ts` (line 42) | Menu hint text `'Write logs to app_manager/'` → `'Write logs to app-manager/'` |
 | Physical move | `config/llmRegistry.json`, `config/repositoryRegistry.json` → `app-manager/llmRegistry.json`, `app-manager/repositoryRegistry.json`; delete the now-empty `config/` directory |
 
 **One gap this surfaced that isn't just a path rename:** `repositoryRegistry.json` currently isn't read by any code at all — unlike `llmRegistry.json`, which `llmService` actively parses for `apiKeyEnv` names, nothing in `githubService` today consults `repositoryRegistry.json` for its `githubOrg`/`githubToken` env var names. The legacy `deleteRemoteRepos` spec just hardcodes `GITHUB_ORG`/`'steve-r-lewis'` directly, bypassing the registry entirely. This needs real wiring, not just a move — `githubService` needs to actually load and consult this file the same way `llmService` already does with its own registry. Adding this to §2 below as a genuine service change, not a rename.
@@ -91,15 +91,15 @@ Found by searching the actual source, not inferred:
 
 ## 5. Required Changes to Templates
 
-| Template | Change | Why |
-|---|---|---|
-| `app/templates/blocks/headerTemplate.ts` | `author` parameter should resolve via `configService`/the new resolver helper (§2) instead of defaulting to the hardcoded `'Steve R Lewis'` string | Directly closes the personal-identity-hardcoded-into-shared-tooling issue flagged in the architectural appraisal, now that there's an actual settings layer to resolve it from |
-| `gitignoreTemplate.ts` (project + layer) | `**/app-monitor` → targeted `app-manager/logs/` + `app-manager/test-logs/` entries (§1.4) | Directory consolidation |
+| Template | Change                                                                                                                                                                                                                                                   | Why |
+|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
+| `app/templates/blocks/headerTemplate.ts` | `author` parameter should resolve via `configService`/the new resolver helper (§2) instead of defaulting to the hardcoded `'Steve R Lewis'` string                                                                                                       | Directly closes the personal-identity-hardcoded-into-shared-tooling issue flagged in the architectural appraisal, now that there's an actual settings layer to resolve it from |
+| `gitignoreTemplate.ts` (project + layer) | `**/app_manager` → targeted `app-manager/logs/test/` + `app-manager/logs/test/` entries (§1.4)                                                                                                                                                           | Directory consolidation |
 | `vitestConfigTemplate.ts` | Path references updated (§1.4); this is also one of the currently-stub templates that needs full implementation, not just a path edit, since `app.setup` and `nuxt.createLayer`'s standalone-runnability requirement both need a working test setup generated | Blocks §2.2 and §5.1 of the command specs |
-| `vitestSetupTemplate.ts` | Full implementation needed (currently `TODO`) | Same blocker as above |
-| `pnpmWorkspaceTemplate.ts`, `envTemplate.ts`, `editorconfigTemplate.ts`, `npmrcTemplate.ts`, `nuxtrcTemplate.ts`, `gitmodulesTemplate.ts` | Full implementation needed (currently `TODO`) | Directly blocks `app.setup` (command specs §2.2) — this command cannot be built until these exist |
-| **New:** deployment/CI file template category, starting with `netlifyTomlTemplate.ts` | New template, new category directory (e.g. `app/templates/deployment/`) | Backs `nuxt.addFile` (command specs §5.2) |
-| `packageJsonTemplate.ts` (layer mode) | Needs a variant or flag producing a genuinely standalone-runnable `package.json` (with `nuxt` as a direct dependency, not just assumed to come from a consuming root) | The current `'layer'` mode is designed to be *consumed by* a root project — `nuxt.createLayer`'s new standalone-first requirement (command specs §5.1) needs a layer that can `pnpm install && pnpm dev` entirely on its own, which is a different dependency shape |
+| `vitestSetupTemplate.ts` | Full implementation needed (currently `TODO`)                                                                                                                                                                                                            | Same blocker as above |
+| `pnpmWorkspaceTemplate.ts`, `envTemplate.ts`, `editorconfigTemplate.ts`, `npmrcTemplate.ts`, `nuxtrcTemplate.ts`, `gitmodulesTemplate.ts` | Full implementation needed (currently `TODO`)                                                                                                                                                                                                            | Directly blocks `app.setup` (command specs §2.2) — this command cannot be built until these exist |
+| **New:** deployment/CI file template category, starting with `netlifyTomlTemplate.ts` | New template, new category directory (e.g. `app/templates/deployment/`)                                                                                                                                                                                  | Backs `nuxt.addFile` (command specs §5.2) |
+| `packageJsonTemplate.ts` (layer mode) | Needs a variant or flag producing a genuinely standalone-runnable `package.json` (with `nuxt` as a direct dependency, not just assumed to come from a consuming root)                                                                                    | The current `'layer'` mode is designed to be *consumed by* a root project — `nuxt.createLayer`'s new standalone-first requirement (command specs §5.1) needs a layer that can `pnpm install && pnpm dev` entirely on its own, which is a different dependency shape |
 
 ---
 

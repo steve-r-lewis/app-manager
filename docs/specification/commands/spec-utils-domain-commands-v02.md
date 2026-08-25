@@ -172,7 +172,7 @@ Unchanged in outward behavior from the original design — resolve name/email/ur
 
 ### 6.1 Functional Logic
 
-Unchanged in outward behavior — scan `app-manager/test-logs/` (**renamed from `app-monitor/test-logs/`**, per the Phase 5 directory convention — this command's own hardcoded path needed the identical fix already applied to the gitignore templates and `vitestConfigTemplate`) and `tests/fixtures/` (unchanged path, outside the `app-manager/` restructure's scope) for `mock-*`-prefixed entries; if both empty, exit without prompting; otherwise confirm (default `false`) then delete via `fileService.deleteDir()` (§ Phase 6) rather than raw `fs.rmSync`, consistent with every other command in this codebase routing file I/O through `fileService`.
+Unchanged in outward behavior — scan `app-manager/logs/test/` (**renamed from `app_manager/logs/test/`**, per the Phase 5 directory convention — this command's own hardcoded path needed the identical fix already applied to the gitignore templates and `vitestConfigTemplate`) and `tests/fixtures/` (unchanged path, outside the `app-manager/` restructure's scope) for `mock-*`-prefixed entries; if both empty, exit without prompting; otherwise confirm (default `false`) then delete via `fileService.deleteDir()` (§ Phase 6) rather than raw `fs.rmSync`, consistent with every other command in this codebase routing file I/O through `fileService`.
 
 **Recommended, not required:** the original design's hardcoded path strings could move to `configService` for configurability, given `app.run`'s `Empty` action (Phase 6) already needs an overlapping-but-different target list — flagged as worth doing but not blocking, since nothing currently depends on these paths being configurable rather than fixed.
 
@@ -182,7 +182,7 @@ Unchanged in outward behavior — scan `app-manager/test-logs/` (**renamed from 
 |---|---|---|
 | CL-01 | Both directories have matching entries | Confirmation shown with correct counts; `deleteDir` called per entry on confirm |
 | CL-02 | Neither directory has anything | Exits silently, no confirmation prompt |
-| CL-03 | Path check uses `app-manager/test-logs`, not `app-monitor/test-logs` | Confirms the rename was actually applied, not just documented |
+| CL-03 | Path check uses `app-manager/test-logs`, not `app_manager/logs/test` | Confirms the rename was actually applied, not just documented |
 
 ---
 

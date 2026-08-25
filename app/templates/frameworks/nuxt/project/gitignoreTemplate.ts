@@ -85,7 +85,7 @@ export const gitignoreTemplate: TemplateFunction<GitIgnoreContext, string> = (ct
 **/pnpm-lock.yaml
 
 # Package manager debug logs
-**/app-monitor
+**/app_manager*
 **/npm-debug.log*
 **/yarn-debug.log*
 **/yarn-error.log*

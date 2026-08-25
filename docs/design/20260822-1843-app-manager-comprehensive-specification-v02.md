@@ -305,7 +305,7 @@ All three Nuxt commands are specified in detail against legacy `.ts.old` sources
 - **Part II cross-reference:** `TypescriptStrategy.parseMetadata()` (§10.4) already extracts `@version`/`@author` via regex — a real `autoVersion` implementation would naturally reuse that instead of its own bespoke regex against the header block.
 
 ### 8.4 `cleanLogs`
-- **Goal:** Workspace hygiene tool that deletes temporary test-run artifacts: log files under `app-monitor/test-logs/` and mock fixture directories (anything prefixed `mock-`) under `tests/fixtures/`.
+- **Goal:** Workspace hygiene tool that deletes temporary test-run artifacts: log files under `app_manager/logs/test/` and mock fixture directories (anything prefixed `mock-`) under `tests/fixtures/`.
 - **Flow:** resolve both target paths → scan each (skip cleanly if a directory doesn't exist) → if the combined count of matched items is zero, log info and exit **without prompting** → otherwise display counts and require a `confirm()` (defaulting to `false` as a safety measure) before any deletion → spinner-wrapped deletion loop (`fs.rmSync` with `force: true` for log files, `recursive: true, force: true` for fixture directories) → success or per-error logging.
 - **Hardcoded path coupling:** both target directory names are hardcoded rather than configurable, flagged as brittle if the project structure changes.
 

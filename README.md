@@ -112,7 +112,7 @@ Below are the specific commands available in **Headless Mode**. These commands c
 * `am utils headers`
   Scans source files and validates/updates copyright headers.
 * `am utils clean`
-  Removes temporary log files from the `app-monitor` directory.
+  Removes temporary log files from the `app_manager` directory.
 * `am utils contributor <name> <email>`
   Adds a new contributor entry to the project's `package.json`.
 
@@ -164,7 +164,7 @@ Enforces code standards.
 
 General-purpose maintenance and system hygiene tools.
 
-* **`clean`**: Wipes log directories (`app-monitor/`) to free up space clearing logs and temporary caches.
+* **`clean`**: Wipes log directories (`app_manager/`) to free up space clearing logs and temporary caches.
 * **`headers`**: Validates and updates standard file headers (copyright/license) across source files.
 * **`autodoc`**: Uses AI to automatically write JSDoc comments for functions and classes.
 * **`autoversion`**: Bumps package versions based on recent commit history (Semantic Versioning).
