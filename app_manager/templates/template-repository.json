@@ -1,1 +1,745 @@
-{}
+{
+  "metadataEntity": {
+    "description": "Canonical repository of scaffolding-template data extracted from app/templates/** — replaces hardcoded string/object literals in the Templates layer with a single configuration file the layer can be pointed at. Excludes app/templates/license/** (separate license-engine migration) and the confirmed legacy/duplicate .ts files superseded by a canonical implementation (see 'excludedLegacySources' on each affected record's notes). This file holds template DATA only — output assembly/interpolation logic remains in the TemplateFunction implementations under app/templates/**; no new templating/interpolation engine is introduced by this file. Any '{{field}}' token appearing inside a string value is a documentation-only marker showing where a TemplateFunction currently substitutes a context value — it is not evaluated by anything that reads this file.",
+    "targetFile": "~/app_manager/templates/template-repository.json",
+    "currentVersion": "1.0.0",
+    "createdAt": "2026-08-25T00:00:00Z",
+    "revisionHistory": [
+      {
+        "schemaVersion": "1.0.0",
+        "archivedAt": "2026-08-25T00:00:00Z",
+        "revisionNote": "Initial creation and release of template-repository.json. Populated from the canonical sources in app/templates/** (license templates and legacy/duplicate .ts files excluded per project instruction); no consumer wired up yet."
+      }
+    ]
+  },
+  "records": [
+    {
+      "id": "file-header-block",
+      "title": "Source File Header Block",
+      "category": "blocks",
+      "outputFileName": null,
+      "sourceFile": "app/templates/blocks/headerTemplate.ts#getHeaderBlock",
+      "contextType": "HeaderParams",
+      "format": "text",
+      "kind": "dynamic",
+      "content": null,
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": [
+        {
+          "field": "projectName",
+          "description": "Written to the @project tag."
+        },
+        {
+          "field": "filePath",
+          "description": "Written to the @file tag; its last path segment is also used in the initial revision-history line ('Initial creation and release of <fileName>')."
+        },
+        {
+          "field": "author",
+          "description": "Written to the @author tag.",
+          "defaultValue": "Steve R Lewis"
+        },
+        {
+          "field": "description",
+          "description": "Written under the @description section.",
+          "defaultValue": "TODO: Create description here"
+        },
+        {
+          "field": "version",
+          "description": "Written to the @version tag and used to label the initial revision-history entry.",
+          "defaultValue": "1.0.0"
+        }
+      ],
+      "notes": "No fixed static content to store — createDate/createTime and the revision-history date are computed from the system clock at generation time. The literal header skeleton this produces is the same block documented in this project's own CLAUDE.md ('File header convention')."
+    },
+    {
+      "id": "editorconfig",
+      "title": ".editorconfig",
+      "category": "framework.nuxt.rootConfig",
+      "outputFileName": ".editorconfig",
+      "sourceFile": "app/templates/frameworks/nuxt/project/rootConfigTemplate.ts#editorConfigTemplate",
+      "contextType": "BaseTemplateContext",
+      "format": "text",
+      "kind": "static",
+      "content": "root = true\n\n[*]\nindent_size = 2\nindent_style = space\nend_of_line = lf\ncharset = utf-8\ntrim_trailing_whitespace = true\ninsert_final_newline = true\n\n[*.md]\ntrim_trailing_whitespace = false\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": "Context is accepted but unused — output never varies. Canonical source is rootConfigTemplate.ts; the parameterless duplicate at frameworks/nuxt/project/editorconfigTemplate.ts is legacy and excluded from this file."
+    },
+    {
+      "id": "npmrc",
+      "title": ".npmrc",
+      "category": "framework.nuxt.rootConfig",
+      "outputFileName": ".npmrc",
+      "sourceFile": "app/templates/frameworks/nuxt/project/rootConfigTemplate.ts#npmrcTemplate",
+      "contextType": "BaseTemplateContext",
+      "format": "text",
+      "kind": "static",
+      "content": "shamefully-hoist=true\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": "Canonical source is rootConfigTemplate.ts; the parameterless duplicate at frameworks/nuxt/project/npmrcTemplate.ts is legacy and excluded from this file."
+    },
+    {
+      "id": "nuxtrc",
+      "title": ".nuxtrc",
+      "category": "framework.nuxt.rootConfig",
+      "outputFileName": ".nuxtrc",
+      "sourceFile": "app/templates/frameworks/nuxt/project/rootConfigTemplate.ts#nuxtrcTemplate",
+      "contextType": "BaseTemplateContext",
+      "format": "text",
+      "kind": "static",
+      "content": "typescript.includeWorkspace = true\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": "Canonical source is rootConfigTemplate.ts; the parameterless duplicate at frameworks/nuxt/project/nuxtrcTemplate.ts is legacy and excluded from this file."
+    },
+    {
+      "id": "pnpm-workspace",
+      "title": "pnpm-workspace.yaml",
+      "category": "framework.nuxt.rootConfig",
+      "outputFileName": "pnpm-workspace.yaml",
+      "sourceFile": "app/templates/frameworks/nuxt/project/rootConfigTemplate.ts#pnpmWorkspaceTemplate",
+      "contextType": "PnpmWorkspaceContext",
+      "format": "text",
+      "kind": "dynamic",
+      "content": null,
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": [
+        {
+          "field": "packages",
+          "description": "Required list of workspace package globs (e.g. 'layers/*'), rendered one per line under 'packages:'.",
+          "required": true
+        },
+        {
+          "field": "builtDependencies",
+          "description": "Optional list rendered under 'onlyBuiltDependencies:' when non-empty.",
+          "required": false
+        }
+      ],
+      "notes": "No default output exists — 'packages' has no fallback in the typed (canonical) implementation. Canonical source is rootConfigTemplate.ts; the parameterless duplicate at frameworks/nuxt/project/pnpmWorkspaceTemplate.ts (which hardcodes 'layers/*' with no parameters) is legacy and excluded from this file."
+    },
+    {
+      "id": "gitmodules",
+      "title": ".gitmodules",
+      "category": "framework.nuxt.rootConfig",
+      "outputFileName": ".gitmodules",
+      "sourceFile": "app/templates/frameworks/nuxt/project/rootConfigTemplate.ts#gitModulesTemplate",
+      "contextType": "GitModulesContext",
+      "format": "text",
+      "kind": "dynamic",
+      "content": null,
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": [
+        {
+          "field": "modules",
+          "description": "List of { name, path, url } submodule entries, each rendered as a [submodule \"name\"] block. An empty/undefined list yields an empty string.",
+          "required": false
+        }
+      ],
+      "notes": "Canonical source is rootConfigTemplate.ts; the parameterless duplicate at frameworks/nuxt/project/gitmodulesTemplate.ts (which hardcoded example-repo defaults) is legacy and excluded from this file."
+    },
+    {
+      "id": "vitest-config",
+      "title": "vitest.config.ts",
+      "category": "framework.nuxt.rootConfig",
+      "outputFileName": "vitest.config.ts",
+      "sourceFile": "app/templates/frameworks/nuxt/project/rootConfigTemplate.ts#vitestConfigTemplate",
+      "contextType": "BaseTemplateContext",
+      "format": "text",
+      "kind": "composite",
+      "content": null,
+      "variantKey": null,
+      "variants": null,
+      "blocks": {
+        "importStatement": "import { defineVitestConfig } from '@nuxt/test-utils/config'",
+        "testConfig": "test: {\n    // Ensure we scan the root tests AND the layer tests\n    include: [\n      'tests/**/*.test.ts',\n      'layers/**/*.test.ts'\n    ],\n  }"
+      },
+      "defaults": null,
+      "variables": [
+        {
+          "field": "projectName",
+          "description": "Written to the embedded file header's @project tag."
+        },
+        {
+          "field": "year",
+          "description": "Written to the embedded file header's @createDate tag.",
+          "defaultValue": "current year"
+        },
+        {
+          "field": "author",
+          "description": "Written to the embedded file header's @author tag.",
+          "defaultValue": "Maintainer"
+        }
+      ],
+      "notes": "This is the version app.setup / nuxt.createLayer should consume for a scaffolded project (per docs/specification/architecture/templates/spec-templates-full-v01.md §1.2): it configures Nuxt's own @nuxt/test-utils/config wrapper. The standalone frameworks/nuxt/project/vitestConfigTemplate.ts is a diverged legacy duplicate written for App Manager's own internal test suite (plain vitest/config, App-Manager-specific paths) and is excluded from this file."
+    },
+    {
+      "id": "app-config",
+      "title": "app.config.ts",
+      "category": "framework.nuxt.project",
+      "outputFileName": "app.config.ts",
+      "sourceFile": "app/templates/frameworks/nuxt/project/appConfigTemplate.ts#getAppConfigTemplate",
+      "contextType": null,
+      "format": "text",
+      "kind": "static",
+      "content": "/**\n * @description:\n * Nuxt App Configuration.\n * Use this file to configure your UI, themes, and public tokens.\n */\n\nexport default defineAppConfig({\n  // ui: {\n  //   primary: 'green',\n  //   gray: 'slate'\n  // }\n})\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": null
+    },
+    {
+      "id": "env-example",
+      "title": ".env.example",
+      "category": "framework.nuxt.project",
+      "outputFileName": ".env.example",
+      "sourceFile": "app/templates/frameworks/nuxt/project/envTemplate.ts#getEnvExampleTemplate",
+      "contextType": null,
+      "format": "text",
+      "kind": "static",
+      "content": "# DEFAULT API START\nAPI_MODEL_DEFAULT=OLLAMA\n# DEFAULT API END\n\n# AI MODEL API START\nAPI_KEY_CLAUDE=NULL\nAPI_KEY_DEEPSEEK=sk-000Xxx0xx0x0xXXXXXXxxxxXX000XX0x\nAPI_KEY_GEMINI=XxxXXXxx000xxx0x0xx0XXXX00xx00xXXXX0xx0\nAPI_KEY_GROK=NULL\nAPI_KEY_KIMI=sk-or-v1-xX0XxxX0000X0x0xX0XXXXXxxxx0xxx0x0000xxXxxx0XXXXxxxxXX0000XX0xxx\nAPI_KEY_META=NULL\n# AI MODEL API END\n\n# AI HUB START\nAPI_KEY_OLLAMA=00xx0x000xxxx00XX0XXxX000X00xxxxXXXX0xxxxx0000XXX000xxxXX\nAPI_KEY_OPENROUTER=NULL\nAPI_KEY_HUGGINGFACE=NULL\n# AI HUB END\n\n# GITHUB START\n# For accessing GitHub private repositories a \"fine grained Personal Access Token\" is required.\nGITHUB_TOKEN=github_pat_00XX0XXX0X0000xxxxXXX000XXX00000XXXXXX00000XX0000xxxx000xx00X0xXX0xx00X00000XxXXXX\n# GITHUB END\n\n# GITLAB START\nGITLAB_TOKEN=NULL\n# GITLAB END\n\n# Default Author / Maintainer Details\nAUTHOR_NAME=\"Steve R Lewis\"\nAUTHOR_EMAIL=\"me@steve-lewis.uk\"\nAUTHOR_URL=\"https://www.steve-lewis.uk\"\n\n# Repository Defaults\nREPO_URL=\"https://github.com/steve-r-lewis/nuxt4-monorepo-base-app.git\"\nBUGS_URL=\"https://github.com/steve-r-lewis/nuxt4-monorepo-base-app/issues\"\nLICENSE_TYPE=\"MIT\"\n\n# Funding (Optional)\nFUNDING_TYPE=\"individual\"\nFUNDING_URL=\"patreon.com/TheModuleFactory\"\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": "Values shown (API_KEY_* strings, GITHUB_TOKEN, etc.) are placeholder/example values already present in the source template, not real secrets."
+    },
+    {
+      "id": "content-config",
+      "title": "content.config.ts",
+      "category": "framework.nuxt.content",
+      "outputFileName": "content.config.ts",
+      "sourceFile": "app/templates/frameworks/nuxt/content/contentConfigTemplate.ts#getContentConfigTemplate",
+      "contextType": null,
+      "format": "text",
+      "kind": "static",
+      "content": "import { defineContentConfig, defineCollection, z } from '@nuxt/content'\n\nexport default defineContentConfig({\n  collections: {\n    blog: defineCollection({\n      type: 'page',\n      source: 'blog/*.md',\n      schema: z.object({\n        title: z.string(),\n        description: z.string(),\n        date: z.string().optional()\n      })\n    })\n  }\n})\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": null
+    },
+    {
+      "id": "vitest-setup",
+      "title": "vitest.setup.ts",
+      "category": "framework.nuxt.project",
+      "outputFileName": "vitest.setup.ts",
+      "sourceFile": "app/templates/frameworks/nuxt/project/vitestSetupTemplate.ts#getVitestSetupTemplate",
+      "contextType": null,
+      "format": "text",
+      "kind": "static",
+      "content": "import { vi, afterEach } from 'vitest';\n\nconst {\n\tmockConfirm,\n\tmockSelect,\n\tmockMultiselect,\n\tmockText,\n\tmockPassword\n} = vi.hoisted(() => {\n\treturn {\n\t\tmockConfirm: vi.fn(),\n\t\tmockSelect: vi.fn(),\n\t\tmockMultiselect: vi.fn(),\n\t\tmockText: vi.fn(),\n\t\tmockPassword: vi.fn(),\n\t};\n});\n\nvi.mock('@clack/prompts', async (importOriginal) => {\n\tconst actual = await importOriginal<typeof import('@clack/prompts')>();\n\treturn {\n\t\t...actual,\n\t\tconfirm: mockConfirm,\n\t\tselect: mockSelect,\n\t\tmultiselect: mockMultiselect,\n\t\ttext: mockText,\n\t\tpassword: mockPassword,\n\t\tisCancel: actual.isCancel,\n\t\tintro: vi.fn(),\n\t\toutro: vi.fn(),\n\t\tcancel: vi.fn(),\n\t\tnote: vi.fn(),\n\t\tgroup: vi.fn(),\n\t\tspinner: () => ({ start: vi.fn(), stop: vi.fn(), message: vi.fn() }),\n\t\tlog: {\n\t\t\tmessage: vi.fn(),\n\t\t\tinfo: vi.fn(),\n\t\t\tsuccess: vi.fn(),\n\t\t\tstep: vi.fn(),\n\t\t\twarn: vi.fn(),\n\t\t\terror: vi.fn(),\n\t\t}\n\t};\n});\n\nvi.mock('consola', () => {\n\tconst mockFn = vi.fn().mockReturnThis();\n\treturn {\n\t\tconsola: {\n\t\t\tinfo: mockFn,\n\t\t\twarn: mockFn,\n\t\t\terror: mockFn,\n\t\t\tsuccess: mockFn,\n\t\t\tstart: mockFn,\n\t\t\tready: mockFn,\n\t\t\tbox: mockFn,\n\t\t\tdebug: mockFn,\n\t\t\ttrace: mockFn,\n\t\t\taddReporter: vi.fn(),\n\t\t\tcreate: vi.fn().mockReturnThis(),\n\t\t\twithTag: vi.fn().mockReturnThis(),\n\t\t\twithDefaults: vi.fn().mockReturnThis(),\n\t\t}\n\t};\n});\n\nglobalThis.mockConfirm = mockConfirm;\nglobalThis.mockSelect = mockSelect;\nglobalThis.mockMultiselect = mockMultiselect;\nglobalThis.mockText = mockText;\nglobalThis.mockPassword = mockPassword;\n\nafterEach(() => {\n\tvi.clearAllMocks();\n});\n",
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": "Per spec-templates-full-v01.md §1.2, this mocks @clack/prompts and consola for App Manager's own CLI test suite — neither app.setup nor nuxt.createLayer currently plan to write this into a scaffolded project. Retained here as existing template data; inclusion is not a consumption decision."
+    },
+    {
+      "id": "typescript-file",
+      "title": "Generic TypeScript File Wrapper",
+      "category": "language",
+      "outputFileName": null,
+      "sourceFile": "app/templates/languages/typescriptTemplate.ts#getTypescriptTemplate",
+      "contextType": null,
+      "format": "text",
+      "kind": "dynamic",
+      "content": null,
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": [
+        {
+          "field": "description",
+          "description": "Written under a leading @description docblock.",
+          "defaultValue": "Generated TypeScript file"
+        },
+        {
+          "field": "content",
+          "description": "Raw TypeScript source appended after the docblock.",
+          "defaultValue": ""
+        }
+      ],
+      "notes": "Generic wrapper used for arbitrary scaffolded .ts files; has no fixed output file name of its own."
+    },
+    {
+      "id": "gitignore",
+      "title": ".gitignore",
+      "category": "framework.nuxt.project",
+      "outputFileName": ".gitignore",
+      "sourceFile": "app/templates/frameworks/nuxt/project/gitignoreTemplate.ts#gitignoreTemplate",
+      "contextType": "GitIgnoreContext",
+      "format": "text",
+      "kind": "variant",
+      "content": null,
+      "variantKey": "target",
+      "variants": {
+        "root": "# ============================================================================\n# .gitignore: Nuxt 4 Monorepo (PNPM Workspace) Starter Template\n# ----------------------------------------------------------------------------\n# This comprehensive .gitignore is designed for multi-package adapters\n# utilizing:\n#   - Nuxt 4 (with Nuxt Layers / Nitro / Vite)\n#   - pnpm (primary package manager)\n#   - TypeScript, TailwindCSS, Pinia, Vitest, Storybook, Cypress\n#\n# It employs double-star (**) recursive patterns to ensure this root\n# file safely ignores generated, secret, or volatile content everywhere, even\n# within nested packages.\n# ============================================================================\n\n**/.git\n\n# =============================================\n# 1. Package Managers & Dependency Stores\n# =============================================\n\n# Node dependency trees (high churn, generated)\n**/node_modules/\n\n# pnpm stores / virtual links\n**/.pnpm-store/\n**/.pnp\n**/.pnp.*\n**/.pnp.js\n\n# Lockfiles from other package managers (pnpm is canonical)\n**/package-lock.json\n**/yarn.lock\n**/pnpm-lock.yaml\n\n# Package manager debug logs\n**/app-monitor\n**/npm-debug.log*\n**/yarn-debug.log*\n**/yarn-error.log*\n**/pnpm-debug.log*\n\n# ---\n\n# =============================================\n# 2. Environment & Secrets\n# =============================================\n\n# Local environment files (per env/machine)\n**/.env\n**/.env.*\n\n# SERVICE SECRETS (Do not commit credentials)\n**/service-account.json\n\n# EXAMPLES / TEMPLATES (Keep tracked for onboarding)\n!**/.env.example\n\n# ---\n\n# =============================================\n# 3. System / OS Noise\n# =============================================\n\n# Microsoft Windows Specific\n**/Thumbs.db            # Windows thumbnail cache\n\n# Apple Mac Specific\n**/.AppleDouble         # Apple resource forks\n**/.DS_Store            # macOS Finder metadata\n**/.Spotlight-V100      # macOS indexing data\n**/.Trashes             # macOS trash\n\n# 'Unix-like' OS specific\n**/lost+found/          # Linux FS recovery artifacts\n\n# ---\n\n# =============================================\n# 4. Temporary & Backup Files\n# =============================================\n\n# Generic scratch directories\n**/tmp/\n**/temp/\n\n# Logs\n*.log                   # Catch stray root-level logs\n**/*.log                # Catch logs anywhere\n\n# Generic temp files\n*.tmp                   # Generic temp scratch files\n*.bak                   # Editor/backup cruft\n*.swp                   # Vim swap\n*.swo                   # Vim old swap\n*.orig                  # Merge conflict backups\n\n# ---\n\n# =============================================\n# 5. Nuxt / Nitro / Vite Build & Cache Artefacts\n# =============================================\n\n# Core Nuxt + build caches\n**/.cache/\n**/.nuxi/\n**/.nuxt/\n**/.output/\n**/.nitro/\n**/.vite/\n\n# Conventional build output\n**/dist/\n\n# Nuxt auto-generated route/page caches\n**/.nuxt/routes.json\n**/.nuxt/pages.json\n\n# Nuxt DevTools runtime cache/config\n.nuxt/devtools/\n\n# Nitro runtime + config\n**/nitro.json\n**/nitro.config.*\n**/*.nitro.*\n**/storage/\n\n# Standalone server builds\n**/nitro/build/\n**/nitro/standalone/\n**/standalone/\n\n# Specific file exclusions\nnuxt.config.ts\n\n# ---\n\n# =============================================\n# 6. Testing, Tooling, QA\n# =============================================\n\n# Vitest\n**/.vitest/\n**/vitest.*.json\ncoverage/\n\n# =============================================\n# 7. Vitepress documentation server\n# =============================================\ndocs/.vitepress/dist\ndocs/.vitepress/cache\n\n# Local development playgrounds / scratch apps\n**/playground/dist/\n**/playground/.nuxt/\n**/playground/.output/\n**/sandbox*/\n\n# Storybook\n.storybook/\nstorybook-static/\n\n# Cypress test runner artefacts\ncypress/screenshots/\ncypress/videos/\n\n# Powershell Generated Layer Documentation\npowershell/output/\n\n# ---\n\n# =============================================\n# 8. Backend / Hosting Providers\n# =============================================\n\n# Firebase\n!.firebase\n!.firebaserc\n!firebase.json\n!firebase/generated_scripts/importData.cjs\n!firebase/generated_scripts/importAuthUsers.cjs\n**/firebase-debug.log*\n**/firebase/functions/package-lock.json\n\n# Appwrite emulator\n**/apphosting.emulator.yaml\n\n# Netlify build state\n**/.netlify/\n\n# Vercel project-manager state\n**/.vercel/\n\n# ---\n\n# =============================================\n# 9. IDE / Editor Project Metadata\n# =============================================\n\n# JetBrains IDEs\n.idea/\nqodana.yaml\n\n# JetBrains Fleet\n.fleet/\n\n# VS Code workspace files\n.vscode/\n!**/.vscode/settings.json.example\n!**/.vscode/extensions.json.example\n\n# ---\n\n# =============================================\n# 10. TypeScript, Build Info & Transpiled Outputs\n# =============================================\n\n**/out-tsc/\n**/*.tsbuildinfo\n\n# ---\n\n# =============================================\n# 11. Project-Specific Runtime & Dev Data\n# =============================================\n\n# Generated data/datasets\n**/.data/\n**/.development/\n**/data/\n**/development/\n**/sandbox*/\n",
+        "layer": "# =============================================\n# 1. Package Managers & Dependency Stores\n# =============================================\n\n# Git management\n**/.git\n\n# Node dependency trees (high churn, generated)\n**/node_modules/\n"
+      },
+      "blocks": null,
+      "defaults": null,
+      "variables": null,
+      "notes": "Canonical source is frameworks/nuxt/project/gitignoreTemplate.ts. The byte-identical copy at frameworks/nuxt/layer/gitignoreTemplate.ts is legacy (this file already branches on ctx.target internally) and excluded from this file."
+    },
+    {
+      "id": "nuxt-config",
+      "title": "nuxt.config.ts",
+      "category": "framework.nuxt.project",
+      "outputFileName": "nuxt.config.ts",
+      "sourceFile": "app/templates/frameworks/nuxt/project/nuxtConfigTemplate.ts#nuxtConfigTemplate",
+      "contextType": "NuxtConfigContext",
+      "format": "text",
+      "kind": "composite",
+      "content": null,
+      "variantKey": "target",
+      "variants": null,
+      "blocks": {
+        "rootImports": "import { defineNuxtConfig } from 'nuxt/config'\nimport tailwindcss from '@tailwindcss/vite'",
+        "layerImports": "import { defineNuxtConfig } from 'nuxt/config'",
+        "modules": "\n  modules: [\n    '@pinia/nuxt',\n    '@nuxt/icon',\n  ],",
+        "vite": "\n  vite: {\n    plugins: [\n      tailwindcss()\n    ],\n    server: {\n      hmr: {\n        port: {{port}},\n        host: '127.0.0.1',\n        protocol: 'ws',\n        timeout: 30000,\n        overlay: true,\n      },\n    },\n    css: {\n      devSourcemap: true\n    },\n    build: {\n      cssMinify: true\n    }\n  },",
+        "nitro": "\n  nitro: {\n    dev: true,\n  },"
+      },
+      "defaults": {
+        "port": 11500,
+        "compatibilityDate": "2025-10-08"
+      },
+      "variables": [
+        {
+          "field": "target",
+          "description": "'root' includes the modules/vite/nitro blocks and the tailwindcss import; 'layer' omits all three and uses the plain import."
+        },
+        {
+          "field": "layers",
+          "description": "List of extends paths rendered into the 'extends' array; empty/undefined renders '[]'."
+        },
+        {
+          "field": "port",
+          "description": "Substituted into the 'vite' block's hmr.port field ({{port}} marker above).",
+          "defaultValue": 11500
+        },
+        {
+          "field": "compatibilityDate",
+          "description": "Substituted into 'compatibilityDate'.",
+          "defaultValue": "2025-10-08"
+        }
+      ],
+      "notes": "Canonical source is frameworks/nuxt/project/nuxtConfigTemplate.ts. The byte-identical copy at frameworks/nuxt/layer/nuxtConfigTemplate.ts is legacy and excluded from this file. Block assembly order/conditioning-by-target remains implementation logic, not data."
+    },
+    {
+      "id": "package-json",
+      "title": "package.json",
+      "category": "framework.nuxt.project",
+      "outputFileName": "package.json",
+      "sourceFile": "app/templates/frameworks/nuxt/project/packageJsonTemplate.ts#packageJsonTemplate",
+      "contextType": "PackageJsonContext",
+      "format": "json",
+      "kind": "variant",
+      "content": null,
+      "variantKey": "target",
+      "variants": {
+        "root": {
+          "license": "MIT",
+          "type": "module",
+          "main": "nuxt.config.ts",
+          "packageManager": "pnpm@10.25.0",
+          "engines": {
+            "node": ">=20.0.0",
+            "npm": ">=10.0.0"
+          },
+          "scripts": {
+            "appTools": "tsx scripts/tui/app.ts",
+            "dev": "nuxt dev --force",
+            "build": "nuxt build"
+          },
+          "dependencies": {
+            "@faker-js/faker": "^10.1.0",
+            "@iconify-json/lucide": "^1.2.80",
+            "@iconify-json/uil": "^1.2.3",
+            "@nuxt/icon": "^2.1.0",
+            "@pinia/nuxt": "^0.11.3",
+            "@tailwindcss/vite": "^4.1.18",
+            "jsonwebtoken": "^9.0.3",
+            "nuxt": "^4.2.2",
+            "pinia": "^3.0.4",
+            "tailwindcss": "^4.1.18",
+            "uuidv7": "^1.1.0",
+            "vue": "^3.5.25",
+            "vue-router": "^4.6.4"
+          },
+          "devDependencies": {
+            "@clack/prompts": "^0.11.0",
+            "@google/generative-ai": "^0.24.1",
+            "@types/node": "^25.0.3",
+            "consola": "^3.4.2",
+            "dotenv": "^17.2.3",
+            "picocolors": "^1.1.1",
+            "simple-git": "^3.30.0",
+            "tsx": "^4.21.0",
+            "typescript": "^5.9.3",
+            "vite-tsconfig-paths": "^5.1.4",
+            "vitepress": "2.0.0-alpha.15",
+            "vitest": "^4.0.15",
+            "vue-tsc": "^3.1.8"
+          }
+        },
+        "layer": {
+          "license": "MIT",
+          "type": "module",
+          "main": "./nuxt.config.ts",
+          "exports": {
+            ".": {
+              "types": "./tsconfig.json",
+              "import": "./nuxt.config.ts"
+            }
+          },
+          "scripts": {},
+          "dependencies": {},
+          "devDependencies": {}
+        }
+      },
+      "blocks": null,
+      "defaults": {
+        "version": "0.0.0",
+        "isPrivate": true
+      },
+      "variables": [
+        {
+          "field": "name",
+          "description": "Raw project name; root uses it as-is, layer prefixes it with '@monorepo/'."
+        },
+        {
+          "field": "version",
+          "description": "Overrides the default '0.0.0'.",
+          "defaultValue": "0.0.0"
+        },
+        {
+          "field": "description",
+          "description": "Written to the 'description' field."
+        },
+        {
+          "field": "isPrivate",
+          "description": "Maps to the 'private' field.",
+          "defaultValue": true
+        },
+        {
+          "field": "authors",
+          "description": "Overrides the default [{ name: author || 'Unknown' }].",
+          "defaultValue": "[{ name: author || 'Unknown' }]"
+        },
+        {
+          "field": "repository",
+          "description": "Written to the 'repository' field when provided."
+        },
+        {
+          "field": "bugs",
+          "description": "Written to the 'bugs' field when provided."
+        },
+        {
+          "field": "funding",
+          "description": "Written to the 'funding' field when provided."
+        }
+      ],
+      "notes": "Canonical source is frameworks/nuxt/project/packageJsonTemplate.ts. The byte-identical copy at frameworks/nuxt/layer/packageJsonTemplate.ts is legacy and excluded from this file."
+    },
+    {
+      "id": "tsconfig",
+      "title": "tsconfig.json",
+      "category": "framework.nuxt.project",
+      "outputFileName": "tsconfig.json",
+      "sourceFile": "app/templates/frameworks/nuxt/project/tsconfigTemplate.ts#tsconfigTemplate",
+      "contextType": "TSConfigContext",
+      "format": "json",
+      "kind": "variant",
+      "content": null,
+      "variantKey": "target",
+      "variants": {
+        "root": {
+          "compilerOptions": {
+            "baseUrl": ".",
+            "target": "es2016",
+            "module": "commonjs",
+            "esModuleInterop": true,
+            "forceConsistentCasingInFileNames": true,
+            "strict": true,
+            "skipLibCheck": true,
+            "outDir": "dist",
+            "paths": {
+              "#imports": [
+                ".nuxt/imports.d.ts"
+              ]
+            }
+          },
+          "include": [
+            "**/*.css",
+            "**/*.ts",
+            "**/*.vue",
+            "index.ts",
+            ".nuxt/nuxt.d.ts",
+            ".nuxt/tsconfig.json",
+            "app/assets",
+            "app/components",
+            "app/composables",
+            "app/layouts",
+            "app/middleware",
+            "app/pages",
+            "app/plugins",
+            "app/types",
+            "app/utils",
+            "content",
+            "layers/*",
+            "layers/ui/components",
+            "server",
+            "shared"
+          ]
+        },
+        "layer": {
+          "extends": "../../.nuxt/tsconfig.json"
+        }
+      },
+      "blocks": null,
+      "defaults": null,
+      "variables": [
+        {
+          "field": "relativePath",
+          "description": "Overrides the layer variant's 'extends' path when provided.",
+          "defaultValue": "../../.nuxt/tsconfig.json",
+          "appliesTo": "layer"
+        }
+      ],
+      "notes": "Canonical source is frameworks/nuxt/project/tsconfigTemplate.ts. The byte-identical copy at frameworks/nuxt/layer/tsconfigTemplate.ts is legacy and excluded from this file."
+    },
+    {
+      "id": "readme",
+      "title": "README.md",
+      "category": "language",
+      "outputFileName": "README.md",
+      "sourceFile": "app/templates/languages/readmeTemplate.ts#readmeTemplate",
+      "contextType": "ReadmeContext",
+      "format": "text",
+      "kind": "composite",
+      "content": null,
+      "variantKey": "target",
+      "variants": null,
+      "blocks": {
+        "setupSection": "## Setup\n\nMake sure to install the dependencies:\n\n```bash\n# Install dependencies\npnpm install\n```\n\n",
+        "developmentSection": "## Development\n\nStart the development server on `http://localhost:3000`:\n\n```bash\npnpm dev\n```\n\n",
+        "buildSection": "## Build\n\nBuild the application for production:\n\n```bash\npnpm build\n```\n\n",
+        "layerInstallationSection": "## Installation\n\nTo use this layer in your Nuxt application, add it to your `nuxt.config.ts`:\n\n```typescript\nexport default defineNuxtConfig({\n  extends: [\n    \"{{packageName}}\"\n  ]\n})\n```\n\n",
+        "footerSection": "## License\n\n[MIT](./LICENSE) License © {{year}}-PRESENT {{author}}"
+      },
+      "defaults": {
+        "description": "No description provided.",
+        "requirements": [
+          "Node.js >= 20.0.0",
+          "pnpm >= 9.0.0"
+        ]
+      },
+      "variables": [
+        {
+          "field": "projectName",
+          "description": "Used for the H1 title (root), and as the '@monorepo/'-prefixed package name referenced by layer's layerInstallationSection."
+        },
+        {
+          "field": "target",
+          "description": "'root' renders setupSection + developmentSection + buildSection; 'layer' renders layerInstallationSection only."
+        },
+        {
+          "field": "description",
+          "description": "Rendered under the H1 title.",
+          "defaultValue": "No description provided."
+        },
+        {
+          "field": "year",
+          "description": "Substituted into footerSection's {{year}} marker.",
+          "defaultValue": "current year"
+        },
+        {
+          "field": "author",
+          "description": "Substituted into footerSection's {{author}} marker.",
+          "defaultValue": "Maintainer"
+        },
+        {
+          "field": "features",
+          "description": "Optional bullet list rendered under a '## Features' heading when non-empty."
+        },
+        {
+          "field": "requirements",
+          "description": "Bullet list rendered under '## Prerequisites'.",
+          "defaultValue": [
+            "Node.js >= 20.0.0",
+            "pnpm >= 9.0.0"
+          ]
+        }
+      ],
+      "notes": "Known gap carried over from docs/specification/architecture/templates/spec-templates-full-v01.md §5: layerInstallationSection always assumes the layer is host-consumed. It has no standalone-layer variant yet (matching packageJsonTemplate's 'standalone' mode) — flagged there as a required follow-up, not fixed by this data migration."
+    },
+    {
+      "id": "vue-component",
+      "title": "Vue 3 Single File Component",
+      "category": "framework.nuxt.project",
+      "outputFileName": "{name}.vue",
+      "sourceFile": "app/templates/frameworks/nuxt/project/vueComponentTemplate.ts#vueComponentTemplate",
+      "contextType": "VueComponentContext",
+      "format": "text",
+      "kind": "composite",
+      "content": null,
+      "variantKey": null,
+      "variants": null,
+      "blocks": {
+        "scriptBlock": "<script setup lang=\"ts\">\n{{fileHeaderBlock}}\n\n/**\n * TODO: TypeScript code for the component goes here with suitable DocBlock type comments as necessary\n * for new/changed logic.\n */\n</script>",
+        "templateBlock": "<template>\n  <div class=\"{{name.toLowerCase}}\">\n    <h2>{{name}}.vue</h2>\n  </div>\n</template>",
+        "styleBlock": "<style scoped>\n/* TODO: Add component-specific styles if utility classes are insufficient. */\n</style>"
+      },
+      "defaults": null,
+      "variables": [
+        {
+          "field": "projectName",
+          "description": "Written to the embedded file header's @project tag."
+        },
+        {
+          "field": "name",
+          "description": "Component name; used in the header's @file path, the <h2> title, and (lowercased) the root <div> class."
+        },
+        {
+          "field": "description",
+          "description": "Written to the embedded file header's @description section.",
+          "defaultValue": "TODO: Create description here"
+        },
+        {
+          "field": "year",
+          "description": "Used for the header's date fields (via the current date, not context-supplied)."
+        },
+        {
+          "field": "author",
+          "description": "Written to the embedded file header's @author tag.",
+          "defaultValue": "Maintainer"
+        }
+      ],
+      "notes": "The header inside scriptBlock is hand-assembled here rather than calling the shared file-header-block template (headerTemplate.ts#getHeaderBlock) — a latent duplication worth resolving during implementation, not addressed by this data migration. The byte-similar (whitespace-only diff) copy at frameworks/nuxt/components/vueComponentTemplate.ts is legacy and excluded from this file."
+    },
+    {
+      "id": "json-metadata-entity",
+      "title": "Generic Metadata-Entity JSON Envelope",
+      "category": "language",
+      "outputFileName": null,
+      "sourceFile": "app/templates/languages/jsonTemplate.ts#jsonTemplate",
+      "contextType": "JsonTemplateContext",
+      "format": "json",
+      "kind": "static",
+      "content": {
+        "metadataEntity": {
+          "description": "Initial metadata definition",
+          "environment": "development",
+          "development": {
+            "targetFile": "",
+            "dataPlatform": "",
+            "dataSchema": "",
+            "dataQueryLanguage": "",
+            "schemaVersion": "1.0.0",
+            "createdAt": "{{generatedIsoTimestamp}}",
+            "revisionHistory": [
+              {
+                "schemaVersion": "1.0.0",
+                "archivedAt": "{{generatedIsoTimestamp}}",
+                "revisionNote": "Initial creation"
+              }
+            ]
+          },
+          "production": {
+            "dataPlatform": "",
+            "dataSchema": "",
+            "dataQueryLanguage": "",
+            "schemaVersion": "0.0.0",
+            "createdAt": "{{generatedIsoTimestamp}}",
+            "revisionHistory": []
+          }
+        },
+        "metadataContent": {
+          "dataDomain": "",
+          "recordCount": 0,
+          "notes": ""
+        },
+        "records": []
+      },
+      "variantKey": null,
+      "variants": null,
+      "blocks": null,
+      "defaults": null,
+      "variables": [
+        {
+          "field": "description",
+          "description": "Overrides metadataEntity.description.",
+          "defaultValue": "Initial metadata definition"
+        },
+        {
+          "field": "environment",
+          "description": "Overrides metadataEntity.environment.",
+          "defaultValue": "development"
+        },
+        {
+          "field": "targetFile",
+          "description": "Overrides metadataEntity.development.targetFile.",
+          "defaultValue": ""
+        },
+        {
+          "field": "dataPlatform",
+          "description": "Overrides metadataEntity.development.dataPlatform.",
+          "defaultValue": ""
+        },
+        {
+          "field": "dataSchema",
+          "description": "Overrides metadataEntity.development.dataSchema.",
+          "defaultValue": ""
+        },
+        {
+          "field": "dataQueryLanguage",
+          "description": "Overrides metadataEntity.development.dataQueryLanguage.",
+          "defaultValue": ""
+        },
+        {
+          "field": "version",
+          "description": "Overrides metadataEntity.development.schemaVersion and the initial revisionHistory entry's schemaVersion.",
+          "defaultValue": "1.0.0"
+        },
+        {
+          "field": "dataDomain",
+          "description": "Overrides metadataContent.dataDomain.",
+          "defaultValue": ""
+        },
+        {
+          "field": "notes",
+          "description": "Overrides metadataContent.notes.",
+          "defaultValue": ""
+        }
+      ],
+      "notes": "This is the same shape JsonStrategy's 'complex schema' detection matches (per docs/specification/architecture/templates/spec-templates-full-v01.md §7) — distinct from the flat envelope this repository file itself and llmRegistry.json/repositoryRegistry.json use. '{{generatedIsoTimestamp}}' marks fields computed at generation time (new Date().toISOString()), not literal defaults."
+    }
+  ]
+}
