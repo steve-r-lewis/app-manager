@@ -42,26 +42,37 @@ The application will adopt a consolidated directory structure and a flexible, no
 
 ```
 <toolRoot>/
-  app-manager/
-    settings.json                 # tool-tier settings (the "app-manager" section from §10 of the command specs)
-    llmRegistry.json              # moved from config/, unchanged content
-    repositoryRegistry.json       # moved from config/, unchanged content
-    logs/
-      session-<timestamp>.log
-    test-logs/                    # renamed from app-monitor/test-logs — vitest report output
-	  test-report-<timestamp>.log
+└── app_manager
+	├── config
+	│   ├── llmRegistry.json                 # moved from config/, unchanged content
+	│   └── repositoryRegistry.json          # moved from config/, unchanged content
+	├── license_engine
+	│   ├── opensource-api.json              # 
+	│	└── license-templates.json
+	├── logs
+	│   ├── application                      #
+	│   └── test                             # renamed from app-monitor/test — vitest report output
+	│       └── test-report-<timestamp>.json
+	├── settings.json                        # tool-tier settings (the "app-manager" section from §10 of the command specs)
+	└── templates
+		└── template-repository.json
 ```
 
 ### 2.2 Final Project-Root Tree
 
 ```
 <targetRoot>/
-  app-manager/
-    settings.json                 # project-tier settings (project-shared + project-local sections)
-    logs/
-      session-<timestamp>.log
-    test-logs/                    # renamed from app-monitor/test-logs — vitest report output
-	  test-report-<timestamp>.log
+└── app_manager
+	├── config
+	│   ├── llmRegistry.json
+	│   └── repositoryRegistry.json
+	├── logs
+	│   ├── application
+	│   └── test                             # renamed from app-monitor/test — vitest report output
+	│       └── test-report-<timestamp>.json
+	├── settings.json                        # project-tier settings (project-shared + project-local sections)
+	└── templates
+		└── license-template.json
 ```
 
 ## 2.3. Operational modes
@@ -112,8 +123,6 @@ The application uses the concept of
 
 ### 4.7 **Resolvers**
 `app-manager/app/resolvers/` — 
-
-
 
 ## 5. Command Surface & Domains
 
