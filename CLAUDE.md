@@ -14,13 +14,13 @@ file-header/naming validation, and LLM-assisted docs/commit-message generation.
 - Package manager: pnpm. Don't suggest npm/yarn equivalents.
 
 ## Working style
-- **Always run the build (and relevant tests) after making a change, before
-  saying a task is complete.** Don't assume a fix compiles — verify it.
+- **Always run the build (and relevant tests) after making a change to code files, 
+  before saying a task is complete.** Don't assume a fix compiles — verify it.
 - Before creating or editing any file, check its *actual* current location and
   content first (`ls`/read the file) rather than assuming a path from memory
   or from a doc — this codebase has been through a folder restructure and
-  several docs/specs are stale relative to the real tree. Trust the filesystem
-  over prior descriptions, including this file if it ever goes stale.
+  several docs/specs are stale relative to the real tree. Including this file
+  if it ever goes stale.
 - Relative import depth matters a lot here — verify folder depth for any new
   or moved file rather than copying an import path from a sibling file,
   since sibling files have been wrong in exactly this way before.
