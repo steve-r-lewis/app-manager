@@ -1,2 +1,27 @@
 {
+  "app-manager": {
+    "applicationDefaults": {
+      "author": {
+        "name": "",
+        "email": "",
+        "telephone": "",
+        "url": ""
+      },
+      "funding": {
+        "type": "",
+        "url": ""
+      },
+      "bugs": "",
+      "repository": {
+        "type": "",
+        "url": ""
+      },
+      "version": "",
+      "description": "",
+      "privacyType": "",
+      "applicationType": "",
+      "licenseType": "",
+      "keywords": []
+    }
+  }
 }
