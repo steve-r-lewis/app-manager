@@ -936,6 +936,30 @@ Authority comes from:
 - verified implementation evidence where implementation state is relevant;
 - reviewed and accepted changes.
 
+### 19.5 AI GitHub Branch and Pull Request Workflow
+
+When an AI system is permitted to modify the AppManager GitHub repository, it must use a reviewable branch-and-pull-request workflow by default.
+
+The repository's default or protected integration branch, currently `master`, must be treated as an integration target rather than an AI working branch.
+
+Unless the user explicitly authorises a specific direct integration-branch operation, an AI system must:
+
+1. establish the current target integration branch and create a dedicated session or task branch from its current head before making repository changes;
+2. make all AI-generated file changes and commits on that session or task branch;
+3. use a branch name that identifies the AI workflow and the purpose of the work, normally in the form `ai/<purpose>`, for example `ai/documentation-github-workflow`;
+4. keep related changes for the same coherent task on the same branch and Pull Request where practical rather than creating unnecessary branches or Pull Requests for individual edits;
+5. create a new branch and Pull Request when beginning a materially separate unit of work;
+6. open a Pull Request targeting the appropriate integration branch when the proposed work is ready for review;
+7. describe the purpose of the change, the significant files or areas affected, material design or documentation consequences, and any validation performed in the Pull Request description;
+8. leave acceptance and merging of the Pull Request to the user or to an explicitly approved project review or automation process;
+9. not merge its own Pull Request unless the user explicitly instructs it to do so;
+10. not force-push, rewrite shared history, or directly modify a protected or integration branch unless the user explicitly authorises that specific operation;
+11. preserve the reviewability of the change by avoiding unrelated modifications, formatting churn, or incidental file rewrites on the session branch.
+
+An explicit user instruction may override this default workflow for a specific operation, but the departure must be unambiguous. General permission to work on the repository does not constitute permission to commit directly to `master` or another protected or integration branch.
+
+Repository branch protection or rulesets should be used where practical to reinforce this policy technically in addition to documenting it here.
+
 ---
 
 ## 20. Design and Implementation Separation
