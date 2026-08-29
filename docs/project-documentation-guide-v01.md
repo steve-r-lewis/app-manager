@@ -509,8 +509,15 @@ docs/
 ├── design/
 ├── functional/
 ├── detailed_design/
-└── implementation/
+├── implementation/
+└── archive/
+    ├── design/
+    ├── functional/
+    ├── detailed_design/
+    └── implementation/
 ```
+
+The `archive/` tree is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status.
 
 This tree is a target documentation model rather than an instruction to immediately move every existing document.
 
@@ -578,6 +585,25 @@ Date-prefixed names may be appropriate for:
 
 Normative documents should have stable semantic names and explicit versions.
 
+### 13.1 Retired Document Filenames
+
+A document must receive the `-retired` lifecycle suffix only when it satisfies the retirement criteria defined in Section 18.
+
+The suffix must appear immediately after the document version and before the file extension:
+
+```text
+<document-name>-v<version>-retired.md
+```
+
+Examples:
+
+```text
+app-manager-design-specification-overview-v01-retired.md
+appmanager-design-specification-v02-retired.md
+```
+
+Archiving alone must not add the `-retired` suffix. An archived document that has not completed retirement retains its existing filename.
+
 ---
 
 ## 14. Document Versioning
@@ -596,7 +622,7 @@ A version change should represent a meaningful revision to the document's conten
 
 Minor wording corrections need not automatically create a new document version if normal source-control history provides sufficient auditability.
 
-When a new document version supersedes an old one, the older version should be clearly retired, archived, or otherwise marked as non-authoritative rather than left ambiguously active.
+When a new document version supersedes an old one, the older version must be made unambiguously non-authoritative when it leaves active use. It may first be archived while reconciliation remains incomplete and subsequently marked retired when the retirement criteria in Section 18 have been satisfied.
 
 The project should avoid multiple apparently current specifications covering the same responsibility.
 
@@ -630,7 +656,8 @@ Use terms deliberately:
 - `proposed` for design ideas that are not yet approved requirements;
 - `deferred` for approved scope intentionally postponed;
 - `deprecated` for functionality still present but scheduled for replacement;
-- `retired` for documentation or functionality that is no longer authoritative or active.
+- `archived` for documentation removed from the active documentation tree and retained as non-authoritative source or historical material;
+- `retired` for documentation whose continuing information value has been fully dispositioned and which is permanently non-authoritative.
 
 Avoid using `will` where `must`, `should`, or `may` would more precisely express the requirement.
 
@@ -644,6 +671,7 @@ Documents must distinguish clearly among:
 - current implementation;
 - legacy behaviour;
 - deprecated behaviour;
+- archived documentation;
 - retired documentation.
 
 A Design Specification should primarily describe intended design.
@@ -677,16 +705,22 @@ When documentation sources disagree:
 3. preserve all meaningful information during investigation;
 4. explicitly record unresolved contradictions;
 5. resolve the contradiction in the authoritative document;
-6. update or retire conflicting lower-authority documents;
+6. update, archive, or retire conflicting lower-authority documents as appropriate;
 7. do not silently discard unique design information.
 
-During consolidation, historical documents should not be deleted until their unique information has been accounted for.
+During consolidation, historical documents must not be retired until their unique information has been accounted for. Documents may be archived before this point so that they no longer create ambiguity in the active documentation tree.
 
 ---
 
-## 18. Documentation Lifecycle
+## 18. Documentation Lifecycle, Archiving, and Retirement
 
-A normative document may move through the following conceptual states:
+The documentation lifecycle must distinguish document authority from document retention.
+
+A document's filesystem location and lifecycle status are related but are not interchangeable. In particular, moving a document into `docs/archive/` removes it from the active authoritative tree but does not by itself mean that its information has been fully migrated or that the document qualifies as retired.
+
+### 18.1 Lifecycle States
+
+The principal lifecycle states are:
 
 ```text
 proposed
@@ -698,16 +732,160 @@ approved
 active
    |
    +------> superseded
+   |             |
+   |             v
+   |          archived
+   |             |
+   |             v
+   |           retired
    |
    +------> deprecated
-                |
-                v
-              retired
+                 |
+                 v
+              archived
+                 |
+                 v
+               retired
 ```
 
-The exact metadata mechanism for representing lifecycle state may be defined separately.
+Archiving may also be applied directly to non-normative historical, audit, roadmap, or reconciliation material when it is intentionally removed from the live documentation tree.
 
-The important requirement is that readers must be able to determine which document is authoritative.
+### 18.2 Active
+
+An active document resides in the live documentation hierarchy and may carry normative authority according to its specification level and relationship to other active documents.
+
+A document that remains authoritative must not be placed beneath `docs/archive/`.
+
+### 18.3 Archived
+
+An archived document:
+
+- resides beneath `docs/archive/`;
+- is no longer authoritative;
+- may still contain unique information awaiting migration or reconciliation;
+- may be retained as historical, audit, provenance, or traceability evidence;
+- must retain its existing filename unless and until it satisfies the retirement criteria;
+- must not be treated as part of the active specification hierarchy.
+
+Archiving is therefore the correct state for a document that must leave the live tree to remove ambiguity but cannot yet be declared fully redundant.
+
+### 18.4 Retired
+
+A retired document is permanently non-authoritative and has completed the information-disposition process.
+
+A document may be marked retired only when every meaningful piece of information that the project intends to preserve has been explicitly accounted for by one or more of the following dispositions:
+
+- incorporated into an active authoritative specification;
+- moved to the appropriate Functional Specification;
+- moved to the appropriate Detailed Design Specification;
+- moved to the appropriate Implementation Specification;
+- retained as an explicit proposal, deferred item, open question, audit finding, or historical record;
+- deliberately classified as obsolete and no longer required.
+
+A document must not be marked retired while it remains the sole source of information that the project intends to preserve.
+
+When these conditions are satisfied, `-retired` must be appended immediately after the version identifier as defined in Section 13.1.
+
+### 18.5 Superseded Canonical Documents
+
+When an active canonical or otherwise authoritative document is replaced, its successor must be explicitly identifiable.
+
+The superseded document must no longer remain ambiguously active. It should be moved to the appropriate archive location once the successor has assumed authority.
+
+If reconciliation is complete, the superseded document may be marked retired. If lower-level or unique information still requires migration, it must remain archived but not retired until that work is complete.
+
+### 18.6 Archive Structure
+
+The archive should mirror the active specification hierarchy where practical:
+
+```text
+docs/
+└── archive/
+    ├── design/
+    ├── functional/
+    ├── detailed_design/
+    └── implementation/
+```
+
+Additional archive categories may be introduced where a stable need exists, but the archive must not become an undifferentiated holding directory.
+
+Archived design material belongs under `docs/archive/design/`, archived Functional Specifications under `docs/archive/functional/`, and so forth.
+
+### 18.7 Status Notices
+
+Archived and retired documents should contain a clear status notice near the beginning of the document.
+
+An archived document should identify at least:
+
+- `Status: Archived`;
+- that it is no longer authoritative;
+- why it is retained where useful;
+- its successor, if one exists.
+
+A retired document should identify at least:
+
+- `Status: Retired`;
+- that it is no longer authoritative;
+- that retained information has been dispositioned;
+- its successor or replacement authority where applicable.
+
+A suitable archived notice is:
+
+```text
+> **Status:** Archived
+>
+> This document is no longer part of the active specification hierarchy and is not authoritative.
+> It is retained for documentation reconciliation, traceability, or historical reference.
+```
+
+A suitable retired notice is:
+
+```text
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative.
+> All information that remains relevant to the project has been dispositioned within the current documentation hierarchy or explicitly retained as historical material.
+```
+
+### 18.8 References to Archived Material
+
+Active specifications should normally reference other active authoritative documents.
+
+References to archived or retired documents should be limited to purposes such as:
+
+- provenance;
+- reconciliation;
+- migration history;
+- audit evidence;
+- historical traceability.
+
+An archived or retired document must not be cited as normative authority for a current requirement or design decision.
+
+### 18.9 Retirement Procedure
+
+Before a document is retired, the following procedure must be completed:
+
+1. identify the document's previous purpose and authority;
+2. identify every meaningful fact, requirement, decision, constraint, example, proposal, implementation observation, and unresolved question that may retain project value;
+3. eliminate duplicated information while preserving the most complete form of each unique item;
+4. resolve or explicitly preserve contradictions;
+5. assign each retained item to its correct destination or explicit disposition;
+6. verify that no information the project intends to preserve exists solely in the document being retired;
+7. identify the successor or replacement authority where applicable;
+8. move the document beneath the appropriate `docs/archive/` category if it is not already archived;
+9. add the `-retired` filename suffix immediately after the version identifier;
+10. add or update the document status notice to state that it is retired;
+11. update active cross-references so they no longer depend upon the retired document as authority.
+
+Classification alone does not complete retirement when the classified information still needs to be transferred. A reconciliation record may identify where information belongs, but the source document must remain archived and unretired until the information intended for preservation has actually reached its destination or has otherwise been explicitly retained.
+
+### 18.10 Git History and Archive Responsibility
+
+Git history is the ultimate source-control record of prior document states, but it does not replace the project archive.
+
+The archive exists to preserve intentionally accessible historical, provenance, reconciliation, and supersession context without forcing readers to reconstruct documentation lineage from repository history.
+
+The archive should therefore retain documents when their continued accessibility provides project value, even when Git could technically recover deleted content.
 
 ---
 
@@ -738,13 +916,14 @@ These sources do not have equal authority.
 
 ### 19.3 Zero Information Loss During Rationalisation
 
-When consolidating or retiring documents:
+When consolidating, archiving, or retiring documents:
 
 - preserve all unique facts, decisions, requirements, constraints, examples, and unresolved questions until they are deliberately classified;
 - consolidate duplication rather than copying repeated material;
 - identify contradictions explicitly;
 - move information to the correct specification level;
-- retire obsolete material only after its continuing value has been accounted for.
+- use archiving to remove non-authoritative material from the live tree while migration remains incomplete;
+- retire obsolete or superseded material only after its continuing value has been fully accounted for.
 
 ### 19.4 AI Must Not Become the Source of Authority
 
@@ -800,6 +979,8 @@ Before a normative document is considered complete, it should be checked for:
 - coherent headings and section order;
 - correct cross-references.
 
+Before an archived document is marked retired, it must additionally be checked against the retirement procedure in Section 18.9.
+
 ---
 
 ## 22. Recommended Root Documentation Set
@@ -820,6 +1001,8 @@ The second defines what AppManager is intended to be.
 
 All other project specifications should refine one of the responsibilities established by those two documents.
 
+Archived documents are intentionally excluded from this authoritative root set.
+
 ---
 
 ## 23. Relationship to Existing Documentation
@@ -837,9 +1020,12 @@ The consolidation process should:
 5. move source-specific observations into Implementation Specifications;
 6. preserve unresolved decisions as explicit proposals or open questions;
 7. eliminate duplication after information has been safely relocated;
-8. retire documents whose authoritative content has been fully superseded.
+8. archive documents that should leave the live tree but still contain information awaiting migration or reconciliation;
+9. retire documents only when their continuing information value has been fully dispositioned according to Section 18.
 
-The current directory structure represents the latest iteration of the documentation and should be treated as substantially valid while this rationalisation takes place. Structural changes should therefore be deliberate, incremental, and justified by improved documentation responsibility rather than cosmetic reorganisation.
+Structural changes should be deliberate, incremental, and justified by improved documentation responsibility rather than cosmetic reorganisation.
+
+Moving a superseded or mixed-authority document into `docs/archive/` is an appropriate way to clean the live documentation tree without prematurely declaring its information redundant.
 
 ---
 
@@ -859,9 +1045,15 @@ The AppManager documentation system is governed by the following core rules:
 10. Design intent and current implementation state must be clearly separated.
 11. TUI, Headless, and GUI interaction modes should share common application capabilities.
 12. Architectural subsystems should not be forced into an artificial layer model.
-13. Historical documentation must not be retired until its unique information has been accounted for.
-14. AI-assisted work must respect specification authority, abstraction level, and evidence quality.
-15. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+13. Archived documents are outside the active specification hierarchy and are non-authoritative.
+14. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+15. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+16. A retired document must use the `-retired` suffix immediately after its version identifier.
+17. A document must not be retired while it remains the sole source of information the project intends to preserve.
+18. Superseded canonical documents must identify their successor or replacement authority.
+19. Active specifications should not rely upon archived or retired documents as normative authority.
+20. AI-assisted work must respect specification authority, abstraction level, evidence quality, and the archive/retirement lifecycle.
+21. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
@@ -883,6 +1075,7 @@ The AppManager documentation system is governed by the following core rules:
 | Filename | lowercase with hyphens | `project-documentation-guide-v01.md` |
 | Project-controlled identifier | lowercase, normally underscores | `active_provider` |
 | Normative document version | `v` plus two digits | `v01` |
+| Retired document | version followed by `-retired` | `document-name-v01-retired.md` |
 
 # Appendix C - Interaction Modes
 
@@ -891,3 +1084,11 @@ The AppManager documentation system is governed by the following core rules:
 | TUI | Guided terminal interaction | Presentation adapter over shared capabilities |
 | Headless | Automation, scripts, CI/CD | Non-interactive adapter over shared capabilities |
 | GUI | Proposed graphical interaction | Graphical adapter over shared capabilities |
+
+# Appendix D - Documentation Lifecycle Quick Reference
+
+| State | Location | Authoritative | Filename treatment | Meaning |
+|---|---|---|---|---|
+| Active | Live documentation tree | According to hierarchy | Normal versioned filename | Current project documentation |
+| Archived | `docs/archive/` | No | Existing filename retained | Removed from live tree; information may still require migration or may be retained for history |
+| Retired | `docs/archive/` | No | Append `-retired` after version | Information-disposition process complete; document permanently superseded or obsolete |
