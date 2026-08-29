@@ -500,7 +500,7 @@ The term `layer` should be used only where a genuine layered relationship exists
 
 The `docs/` tree should reflect specification responsibility rather than historical generation order.
 
-The documentation root should contain the highest-level governing documents, including:
+The documentation root should contain the highest-level governing documents, the specification hierarchy, project-management records, and the archive, including:
 
 ```text
 docs/
@@ -510,12 +510,18 @@ docs/
 ├── functional/
 ├── detailed_design/
 ├── implementation/
+├── project_management/
 └── archive/
     ├── design/
     ├── functional/
     ├── detailed_design/
-    └── implementation/
+    ├── implementation/
+    └── project_management/
 ```
+
+The four principal specification levels are represented by `design/`, `functional/`, `detailed_design/`, and `implementation/` together with the root Design Specification where applicable.
+
+The `project_management/` directory contains project planning, coordination, migration, rationalisation, status, handoff, release-planning, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately incorporated into the appropriate authoritative specification.
 
 The `archive/` tree is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status.
 
@@ -748,7 +754,7 @@ active
                retired
 ```
 
-Archiving may also be applied directly to non-normative historical, audit, roadmap, or reconciliation material when it is intentionally removed from the live documentation tree.
+Archiving may also be applied directly to non-normative historical, audit, roadmap, reconciliation, or project-management material when it is intentionally removed from the live documentation tree.
 
 ### 18.2 Active
 
@@ -779,7 +785,7 @@ A document may be marked retired only when every meaningful piece of information
 - moved to the appropriate Functional Specification;
 - moved to the appropriate Detailed Design Specification;
 - moved to the appropriate Implementation Specification;
-- retained as an explicit proposal, deferred item, open question, audit finding, or historical record;
+- retained as an explicit proposal, deferred item, open question, audit finding, project-management record, or historical record;
 - deliberately classified as obsolete and no longer required.
 
 A document must not be marked retired while it remains the sole source of information that the project intends to preserve.
@@ -796,7 +802,7 @@ If reconciliation is complete, the superseded document may be marked retired. If
 
 ### 18.6 Archive Structure
 
-The archive should mirror the active specification hierarchy where practical:
+The archive should mirror the active documentation categories where practical:
 
 ```text
 docs/
@@ -804,12 +810,13 @@ docs/
     ├── design/
     ├── functional/
     ├── detailed_design/
-    └── implementation/
+    ├── implementation/
+    └── project_management/
 ```
 
 Additional archive categories may be introduced where a stable need exists, but the archive must not become an undifferentiated holding directory.
 
-Archived design material belongs under `docs/archive/design/`, archived Functional Specifications under `docs/archive/functional/`, and so forth.
+Archived design material belongs under `docs/archive/design/`, archived Functional Specifications under `docs/archive/functional/`, and archived project-management artefacts under `docs/archive/project_management/`.
 
 ### 18.7 Status Notices
 
@@ -1025,13 +1032,15 @@ The second defines what AppManager is intended to be.
 
 All other project specifications should refine one of the responsibilities established by those two documents.
 
+Project-management documents are intentionally maintained outside the normative specification hierarchy and therefore do not expand this authoritative root set.
+
 Archived documents are intentionally excluded from this authoritative root set.
 
 ---
 
 ## 23. Relationship to Existing Documentation
 
-The existing AppManager documentation contains valuable design, functional, detailed-design, implementation, audit, and roadmap information that has accumulated at different times and at different abstraction levels.
+The existing AppManager documentation contains valuable design, functional, detailed-design, implementation, audit, roadmap, and project-management information that has accumulated at different times and at different abstraction levels.
 
 That material should be rationalised rather than discarded.
 
@@ -1042,10 +1051,11 @@ The consolidation process should:
 3. move functional requirements into Functional Specifications;
 4. move component and command design into Detailed Design Specifications;
 5. move source-specific observations into Implementation Specifications;
-6. preserve unresolved decisions as explicit proposals or open questions;
-7. eliminate duplication after information has been safely relocated;
-8. archive documents that should leave the live tree but still contain information awaiting migration or reconciliation;
-9. retire documents only when their continuing information value has been fully dispositioned according to Section 18.
+6. move project planning, migration status, coordination, and handoff information into project-management documentation where appropriate;
+7. preserve unresolved decisions as explicit proposals or open questions;
+8. eliminate duplication after information has been safely relocated;
+9. archive documents that should leave the live tree but still contain information awaiting migration or reconciliation;
+10. retire documents only when their continuing information value has been fully dispositioned according to Section 18.
 
 Structural changes should be deliberate, incremental, and justified by improved documentation responsibility rather than cosmetic reorganisation.
 
@@ -1069,15 +1079,16 @@ The AppManager documentation system is governed by the following core rules:
 10. Design intent and current implementation state must be clearly separated.
 11. TUI, Headless, and GUI interaction modes should share common application capabilities.
 12. Architectural subsystems should not be forced into an artificial layer model.
-13. Archived documents are outside the active specification hierarchy and are non-authoritative.
-14. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
-15. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
-16. A retired document must use the `-retired` suffix immediately after its version identifier.
-17. A document must not be retired while it remains the sole source of information the project intends to preserve.
-18. Superseded canonical documents must identify their successor or replacement authority.
-19. Active specifications should not rely upon archived or retired documents as normative authority.
-20. AI-assisted work must respect specification authority, abstraction level, evidence quality, and the archive/retirement lifecycle.
-21. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+13. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
+14. Archived documents are outside the active specification hierarchy and are non-authoritative.
+15. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+16. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+17. A retired document must use the `-retired` suffix immediately after its version identifier.
+18. A document must not be retired while it remains the sole source of information the project intends to preserve.
+19. Superseded canonical documents must identify their successor or replacement authority.
+20. Active specifications should not rely upon archived or retired documents as normative authority.
+21. AI-assisted work must respect specification authority, abstraction level, evidence quality, and the archive/retirement lifecycle.
+22. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
@@ -1089,6 +1100,8 @@ The AppManager documentation system is governed by the following core rules:
 | Functional Specification | What must it do? | Behaviour, requirements, inputs, outputs, validation, workflows |
 | Detailed Design Specification | How should it work internally? | Components, commands, interfaces, algorithms, dependencies, data structures |
 | Implementation Specification | How is it implemented here? | Paths, symbols, libraries, wiring, status, migrations, code-specific constraints |
+
+Project-management documentation is intentionally excluded from this table because it is not a specification level.
 
 # Appendix B - Naming Quick Reference
 
