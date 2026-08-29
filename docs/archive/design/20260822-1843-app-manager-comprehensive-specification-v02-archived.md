@@ -1,3 +1,9 @@
+> **Status:** Archived
+>
+> This document is no longer part of the active specification tree.
+> Its contents are being retained for historical reference and
+> documentation reconciliation.
+
 # App Manager — Comprehensive Specification
 
 *Synthesized from `/docs/developers/specifications/app/` (24 documents, ~336KB) AND a direct source-code audit of `/app/services`, `/app/scanners`, `/app/strategies`, `/app/templates`, `/app/orchestrators`, and `/app/commands`.*

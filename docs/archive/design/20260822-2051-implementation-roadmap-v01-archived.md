@@ -1,3 +1,9 @@
+> **Status:** Archived
+>
+> This document is no longer part of the active specification tree.
+> Its contents are being retained for historical reference and
+> documentation reconciliation.
+
 # App Manager — Implementation Roadmap
 
 *Bridges the design work done so far (`app-manager-command-specs.md`, the architecture audit) to the build-ready component + test specifications the project already has a convention for, in `docs/developers/specifications/`.*

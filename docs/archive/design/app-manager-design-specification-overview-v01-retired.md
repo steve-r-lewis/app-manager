@@ -1,3 +1,9 @@
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative.
+> All retained requirements and design information have been migrated
+> to the current specification hierarchy.
+
 # AppManager
 
 ## System Overview & Architecture
