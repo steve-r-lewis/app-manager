@@ -71,6 +71,22 @@ When permitted to modify the repository, an AI agent must by default:
 
 General permission to work in the repository is not permission to commit directly to `master`.
 
+### AI Commit Attribution
+
+AI-assisted commits should preserve the authenticated human maintainer or contributor as the primary Git author unless the development platform provides and deliberately uses a recognised agent identity as the primary author.
+
+When Codex or ChatGPT materially contributes to a commit and the committing environment permits control of the commit message, include the following trailer:
+
+```text
+Co-authored-by: Codex <noreply@openai.com>
+```
+
+Use `Codex` for OpenAI repository-development attribution rather than a ChatGPT product name or individual model name. Do not invent alternative OpenAI email addresses or GitHub identities.
+
+The trailer records AI participation; it does not transfer project ownership, approval authority, or responsibility away from the human maintainer. Whether GitHub displays Codex as a separate contributor depends on GitHub's identity association and contribution-indexing behaviour and must not be assumed from the trailer alone.
+
+If a repository integration creates commits through an API that fixes the authenticated user's author identity and does not expose commit-message or author controls sufficient to apply this policy, the agent must not falsify attribution metadata. It should preserve the platform-generated authorship and record the limitation where material.
+
 ## Working Method
 
 Before creating, editing, moving, or deleting files:
