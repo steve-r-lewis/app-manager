@@ -461,38 +461,35 @@ Business logic should therefore reside below the presentation layer whenever pra
 
 ## 11. Architectural Terminology
 
-AppManager should not be described using the obsolete `five-layer architecture` terminology.
+AppManager architecture must be described according to the architectural role and relationship of its constituent concerns rather than by treating component families as equivalent architectural layers.
 
-The earlier description was useful when the architecture was primarily viewed through:
+Architectural concerns may include, but are not limited to:
 
-- services;
-- scanners;
-- strategies;
-- templates;
-- orchestrators.
+* services;
+* scanners;
+* strategies;
+* templates;
+* orchestrators;
+* resolvers;
+* License Engine;
+* Template Engine;
+* command infrastructure;
+* configuration infrastructure;
+* presentation and interaction adapters.
 
-The current design includes additional architectural families such as:
-
-- resolvers;
-- license engine;
-- template engine;
-- command infrastructure;
-- configuration infrastructure;
-- presentation and interaction adapters.
-
-These concerns are not all equivalent architectural layers.
+These concerns may represent different kinds of architectural constructs and must not be assumed to occupy equivalent positions within a layered architecture.
 
 The preferred terminology is therefore:
 
-- architectural subsystem;
-- component family;
-- application subsystem;
-- processing stage;
-- command layer;
-- presentation adapter;
-- domain engine;
+* architectural subsystem;
+* component family;
+* application subsystem;
+* processing stage;
+* command layer;
+* presentation adapter;
+* domain engine.
 
-The term `layer` should be used only where a genuine layered relationship exists or where it refers to a Nuxt layer.
+The term `layer` should be used only where a genuine layered relationship exists or where it refers specifically to a Nuxt layer.
 
 ---
 
