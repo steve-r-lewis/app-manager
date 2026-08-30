@@ -75,7 +75,7 @@ General permission to work in the repository is not permission to commit directl
 
 AI-assisted commits should preserve the authenticated human maintainer or contributor as the primary Git author unless the development platform provides and deliberately uses a recognised agent identity as the primary author.
 
-When Codex or ChatGPT materially contributes to a commit and the committing environment permits control of the commit message, include the following trailer:
+Every commit to which Codex or ChatGPT materially contributes should, when the committing environment permits control of the commit message, include the following trailer:
 
 ```text
 Co-authored-by: Codex <noreply@openai.com>
