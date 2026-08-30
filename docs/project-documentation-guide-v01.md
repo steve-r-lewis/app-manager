@@ -554,6 +554,39 @@ docs/
 
 The final directory structure should evolve from the current documentation tree rather than being replaced without analysis.
 
+### 12.1 Repository Documentation and Collaboration Surfaces
+
+AppManager documentation governance extends beyond the `docs/` tree where repository-level documents or collaboration facilities communicate project information, development procedures, contribution requirements, project status, or project decisions.
+
+Repository-level documentation and GitHub collaboration facilities must have clearly defined responsibilities and must not become alternative sources of specification authority.
+
+The governing principle is:
+
+> Repository collaboration and project-management surfaces may propose, discuss, coordinate, track, summarise, or provide provenance for project work, but approved requirements, design decisions, functional behaviour, detailed design, and implementation requirements must be incorporated into the appropriate authoritative AppManager specification.
+
+Repository-root documentation may include, where a defined project need exists:
+
+- `README.md` as the primary repository entry point, providing project orientation, concise status, basic usage or getting-started information, and navigation to authoritative documentation;
+- `CONTRIBUTING.md` for contributor-facing development, review, testing, documentation, and change-proposal procedures;
+- `SECURITY.md` for vulnerability-reporting, security-contact, or responsible-disclosure procedures;
+- `CODE_OF_CONDUCT.md` for formal community-participation standards.
+
+These repository-root documents are governed by this guide where applicable but sit outside the Design → Functional → Detailed Design → Implementation specification hierarchy. They must reference authoritative specifications where necessary rather than independently redefining or duplicating them. Their identification here does not require every listed document to exist before a concrete project need arises.
+
+GitHub collaboration facilities may be used according to the following authority boundaries:
+
+- **Issues** may track defects, enhancements, investigations, documentation work, implementation tasks, proposals, and specification changes. An Issue is a work-tracking and discussion artefact, not an authoritative specification. Resolution or closure of an Issue does not replace updating affected authoritative documentation.
+- **Projects** may support planning, prioritisation, scheduling, coordination, and progress tracking. Project items are project-management information and do not establish specification authority.
+- **Discussions**, if enabled, may support exploratory discussion, questions, proposals, and community consultation. A Discussion may inform a project decision but does not itself establish an authoritative requirement or design decision.
+- **Wiki** content, if enabled, must not be used as an alternative location for authoritative AppManager specifications. It may contain supplementary, explanatory, or community-oriented material where justified, but information required to specify, develop, test, maintain, or govern AppManager must not depend solely upon Wiki content.
+- **Gists** may be used for non-authoritative supplementary material such as temporary examples, experiments, demonstrations, or independently useful snippets. A Gist must not be the sole repository of information required to specify, build, operate, test, maintain, or govern AppManager.
+
+Pull Request and AI-assisted repository workflows are governed separately by Section 19. Discussion, review, provenance, or decisions recorded only in a Pull Request must not substitute for durable project documentation when that information is required for the continuing specification, development, maintenance, or governance of AppManager.
+
+Durable project knowledge should be preserved in appropriate version-controlled repository files. Project knowledge required for continuing work must not depend solely upon Issues, Projects, Discussions, Wiki pages, Gists, Pull Request discussions, commit messages, AI conversation history, or other transient or externally maintained discussion records.
+
+These sources may provide valuable context, provenance, discussion, and project history. When information from them becomes an approved requirement, design decision, implementation requirement, governance rule, or otherwise necessary durable project knowledge, it must be incorporated into the appropriate repository-controlled document.
+
 ---
 
 ## 13. Document Naming
@@ -1077,15 +1110,16 @@ The AppManager documentation system is governed by the following core rules:
 11. TUI, Headless, and GUI interaction modes should share common application capabilities.
 12. Architectural subsystems should not be forced into an artificial layer model.
 13. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
-14. Archived documents are outside the active specification hierarchy and are non-authoritative.
-15. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
-16. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
-17. A retired document must use the `-retired` suffix immediately after its version identifier.
-18. A document must not be retired while it remains the sole source of information the project intends to preserve.
-19. Superseded canonical documents must identify their successor or replacement authority.
-20. Active specifications should not rely upon archived or retired documents as normative authority.
-21. AI-assisted work must respect specification authority, abstraction level, evidence quality, and the archive/retirement lifecycle.
-22. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+14. Repository-level documents and collaboration surfaces must not become alternative sources of specification authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
+15. Archived documents are outside the active specification hierarchy and are non-authoritative.
+16. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+17. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+18. A retired document must use the `-retired` suffix immediately after its version identifier.
+19. A document must not be retired while it remains the sole source of information the project intends to preserve.
+20. Superseded canonical documents must identify their successor or replacement authority.
+21. Active specifications should not rely upon archived or retired documents as normative authority.
+22. AI-assisted work must respect specification authority, abstraction level, evidence quality, and the archive/retirement lifecycle.
+23. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
