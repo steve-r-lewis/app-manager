@@ -20,7 +20,7 @@ AppManager is a domain-oriented application for managing the lifecycle, structur
 
 Its purpose is to provide a coherent management plane above the individual tools normally used to develop and maintain a complex Nuxt application.
 
-Rather than requiring users or automation systems to coordinate package-manager commands, Git operations, repository relationships, configuration files, documentation tooling, quality checks, code transformation, templates, and AI-assisted workflows independently, AppManager provides a unified application model through which those capabilities can be orchestrated consistently.
+Rather than requiring users or automation systems to coordinate package-manager commands, Git operations, repository relationships, configuration files, documentation tooling, quality checks, code transformation, templates, and AI-assisted workflows independently, AppManager provides a unified application model through which those capabilities can be coordinated consistently.
 
 AppManager is intended to support both day-to-day development operations and repeatable project-management workflows while preserving user control over the underlying project and repositories.
 
@@ -40,7 +40,7 @@ AppManager's design scope includes:
 - AI-assisted project workflows;
 - utility and maintenance operations;
 - interactive and automated operation;
-- extensibility through commands, services, strategies, resolvers, templates, domain engines, and related architectural components.
+- extensibility through commands and cooperating architectural subsystems.
 
 ### 1.3 System Boundary
 
@@ -68,7 +68,7 @@ AppManager is not intended to:
 - duplicate business logic independently across TUI, Headless, and GUI modes;
 - make uncontrolled destructive changes to managed projects;
 - make AI-generated output authoritative without validation and project control;
-- force all architectural components into a single artificial layered model.
+- impose a rigid architectural structure where responsibilities do not require one.
 
 ---
 
@@ -155,9 +155,9 @@ An **interaction mode** is a presentation or invocation adapter through which a 
 
 ### 3.8 Architectural Subsystem
 
-An **architectural subsystem** is a coherent family of responsibilities within AppManager, such as services, code intelligence, configuration resolution, templates, licensing, or repository management.
+An **architectural subsystem** is a coherent family of responsibilities that contributes to AppManager's application capabilities.
 
-The term does not imply that all subsystems occupy equivalent architectural layers.
+Architectural subsystems may differ substantially in scope, internal structure, and collaboration patterns. Their responsibilities and relationships are defined by the application architecture rather than by treating them as equivalent tiers.
 
 ---
 
@@ -167,7 +167,7 @@ The term does not imply that all subsystems occupy equivalent architectural laye
 
 AppManager should support the same underlying application capabilities through multiple interaction modes.
 
-The interaction architecture is conceptually:
+The interaction model is conceptually:
 
 ```text
                  AppManager
@@ -179,14 +179,13 @@ The interaction architecture is conceptually:
         +----------+-----------+
                    |
                    v
-          command and use-case layer
+          command and use cases
                    |
                    v
-          application subsystems
-                   |
-                   v
-        target project and providers
+        shared application capabilities
 ```
+
+This diagram describes the interaction boundary only. The internal organisation of shared application capabilities is defined by the application architecture in Section 6.
 
 Presentation modes must not become independent implementations of AppManager business logic.
 
@@ -234,64 +233,70 @@ Presentation-specific concerns should remain at the application boundary whereve
 
 ---
 
-## 5. Command and Application Model
+## 5. Command Model
 
 ### 5.1 Domain-Oriented Command Model
 
 AppManager is organised around functional domains containing commands that represent application use cases.
 
+The command model provides a stable invocation boundary between interaction modes and the shared application capabilities that realise each use case.
+
 Conceptually:
 
 ```text
-interaction adapter
+interaction mode
        |
        v
-command selection and dispatch
+command discovery and dispatch
        |
        v
-application command / use case
+functional domain
        |
-       +-------------------+
-       |                   |
-       v                   v
-application services   domain subsystems
-       |                   |
-       +---------+---------+
-                 |
-                 v
-             target project
+       v
+command / use case
+       |
+       v
+shared application capability
 ```
+
+The architectural subsystems through which commands realise application capabilities are defined in Section 6. The command model does not prescribe their internal structure.
 
 ### 5.2 Command Responsibilities
 
 A command should:
 
 - represent a coherent user or automation intent;
-- validate or resolve the context required for the operation;
-- coordinate appropriate application capabilities;
-- avoid embedding presentation-specific behaviour in domain logic;
+- receive, validate, or resolve sufficient context for the requested use case;
+- invoke the application capabilities required to realise that use case;
+- remain independent of presentation-specific behaviour;
 - provide meaningful success or failure outcomes;
-- respect safety, configuration, and non-destructive-operation principles.
+- respect application-wide safety, configuration, scope, and non-destructive-operation principles.
+
+Commands define application intent and invocation semantics. Detailed command contracts, internal coordination, algorithms, and component interactions belong in lower-level specifications.
 
 ### 5.3 Command Discovery
 
-AppManager should provide a central mechanism through which available commands and their domains can be discovered and dispatched.
+AppManager should provide a central mechanism through which available commands and their functional domains can be discovered and dispatched.
 
-The detailed registry contract and implementation belong to lower-level specifications.
+Command discovery should be available to interaction modes without requiring them to encode domain behaviour independently.
+
+The detailed registry contract, command metadata, and discovery implementation belong to lower-level specifications.
 
 ### 5.4 Shared Execution Semantics
 
-Where a command is available through multiple interaction modes, its domain behaviour should remain consistent.
+A command's application meaning should remain consistent across every interaction mode through which that command is exposed.
 
-TUI, Headless, and GUI modes may differ in how they gather inputs or display results, but they should not redefine the underlying operation.
+TUI, Headless, and GUI modes may differ in how they gather inputs, request confirmation, present progress, or display results, but they should not redefine the underlying use case.
 
-### 5.5 Command Composition
+Inputs supplied interactively, explicitly, or through automation should ultimately be expressed as the context required by the same shared application capability.
 
-Commands may coordinate multiple subsystems when a use case spans several concerns.
+### 5.5 Relationship to Application Architecture
 
-For example, a project synchronisation operation may require repository discovery, configuration resolution, Git operations, logging, validation, and result reporting.
+Commands may require capabilities owned by multiple architectural subsystems, but the command model does not define those subsystem relationships or their internal coordination.
 
-The command layer should orchestrate these capabilities without absorbing their specialised responsibilities.
+Section 6 defines the cooperating architectural responsibilities through which application capabilities are realised. Section 11 describes principal system workflows where coordination across those responsibilities is significant at the system-design level.
+
+This separation keeps command intent independent from architectural implementation while allowing the same command semantics to be reused across interaction modes.
 
 ---
 
@@ -1131,7 +1136,7 @@ This root Design Specification is intentionally organised around the following r
 2. System Vision and Objectives
 3. Terminology and Naming Conventions
 4. Operating Context and Interaction Modes
-5. Command and Application Model
+5. Command Model
 6. Application Architecture
 7. Code-Intelligence and Transformation Architecture
 8. Configuration and State Architecture
