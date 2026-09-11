@@ -40,6 +40,7 @@ AppManager's design scope includes:
 - AI-assisted project workflows;
 - utility and maintenance operations;
 - interactive and automated operation;
+- structured programmatic invocation for interaction adapters and external integrations;
 - extensibility through commands and cooperating architectural subsystems.
 
 ### 1.3 System Boundary
@@ -65,7 +66,7 @@ AppManager is not intended to:
 - conceal project structure behind an opaque proprietary representation;
 - require a graphical interface for core functionality;
 - require interactive operation for automatable workflows;
-- duplicate business logic independently across TUI, Headless, and GUI modes;
+- duplicate business logic independently across interaction modes or integrations;
 - make uncontrolled destructive changes to managed projects;
 - make AI-generated output authoritative without validation and project control;
 - impose a rigid architectural structure where responsibilities do not require one.
@@ -85,18 +86,19 @@ The application should allow a project to be managed as a coherent system rather
 AppManager should:
 
 1. provide one coherent command and use-case model for project-management operations;
-2. support interactive, automated, and graphical presentation modes over shared application capabilities;
-3. understand the structure and relationships of a managed Nuxt monorepo;
-4. coordinate operations across the root application and managed layers;
-5. provide safe and predictable Git and repository workflows;
-6. centralise project-management configuration while supporting project-specific overrides;
-7. inspect and modify supported source files through structured code-intelligence mechanisms rather than fragile global text replacement;
-8. generate new project artefacts from reusable templates;
-9. support repeatable documentation and quality workflows;
-10. provide controlled integration with AI services where those services add value;
-11. support licensing and other domain-specific project-management capabilities through dedicated subsystems;
-12. remain extensible as new commands, file types, providers, project structures, and interaction modes are introduced;
-13. preserve project ownership, transparency, and reversibility wherever practical.
+2. support interactive, automated, graphical, and tool-integrated presentation modes over shared application capabilities;
+3. provide a stable structured invocation boundary through which machine-oriented adapters and integrations can invoke commands without depending on human-oriented terminal output;
+4. understand the structure and relationships of a managed Nuxt monorepo;
+5. coordinate operations across the root application and managed layers;
+6. provide safe and predictable Git and repository workflows;
+7. centralise project-management configuration while supporting project-specific overrides;
+8. inspect and modify supported source files through structured code-intelligence mechanisms rather than fragile global text replacement;
+9. generate new project artefacts from reusable templates;
+10. support repeatable documentation and quality workflows;
+11. provide controlled integration with AI services where those services add value;
+12. support licensing and other domain-specific project-management capabilities through dedicated subsystems;
+13. remain extensible as new commands, file types, providers, project structures, interaction modes, and host-tool integrations are introduced;
+14. preserve project ownership, transparency, and reversibility wherever practical.
 
 ### 2.3 Design Priorities
 
@@ -151,9 +153,15 @@ Commands should express application use cases rather than presentation-specific 
 
 ### 3.7 Interaction Mode
 
-An **interaction mode** is a presentation or invocation adapter through which a user or external automation invokes shared AppManager capabilities.
+An **interaction mode** is a presentation or invocation adapter through which a user, host tool, or external automation invokes shared AppManager capabilities.
 
-### 3.8 Architectural Subsystem
+### 3.8 Application Invocation Contract
+
+The **Application Invocation Contract** is the stable structured boundary through which interaction adapters and external integrations invoke AppManager commands and receive machine-consumable execution information.
+
+The contract defines the conceptual exchange between callers and the command model without prescribing a particular transport, serialization format, network protocol, or process topology.
+
+### 3.9 Architectural Subsystem
 
 An **architectural subsystem** is a coherent family of responsibilities that contributes to AppManager's application capabilities.
 
@@ -165,29 +173,32 @@ Architectural subsystems may differ substantially in scope, internal structure, 
 
 ### 4.1 Operating Model
 
-AppManager should support the same underlying application capabilities through multiple interaction modes.
+AppManager should support the same underlying application capabilities through multiple interaction modes and host-tool integrations.
 
 The interaction model is conceptually:
 
 ```text
-                 AppManager
+                         AppManager
 
-       presentation and interaction
+                 presentation and interaction
 
-       tui      headless      gui
-        |          |           |
-        +----------+-----------+
-                   |
-                   v
-          command and use cases
-                   |
-                   v
-        shared application capabilities
+       tui      headless      gui      ide / tool adapters
+        |          |           |              |
+        +----------+-----------+--------------+
+                           |
+                           v
+              application invocation contract
+                           |
+                           v
+                  command and use cases
+                           |
+                           v
+                shared application capabilities
 ```
 
-This diagram describes the interaction boundary only. The internal organisation of shared application capabilities is defined by the application architecture in Section 6.
+This diagram describes the interaction and invocation boundary only. The internal organisation of shared application capabilities is defined by the application architecture in Section 6.
 
-Presentation modes must not become independent implementations of AppManager business logic.
+Presentation modes and host-tool integrations must not become independent implementations of AppManager business logic.
 
 ### 4.2 TUI
 
@@ -215,6 +226,8 @@ Headless mode provides deterministic non-interactive invocation suitable for:
 
 A capability intended for Headless operation must not depend upon interactive prompts to complete normal execution. Required information must instead be supplied explicitly or resolved from configuration and context.
 
+Headless operation and the Application Invocation Contract are related but distinct concerns. Headless mode defines non-interactive operation; the invocation contract defines the structured machine-facing boundary through which a caller expresses command intent and receives execution information.
+
 ### 4.4 GUI
 
 A Graphical User Interface is proposed as a first-class interaction mode.
@@ -223,13 +236,23 @@ The GUI should expose the same command and application capabilities rather than 
 
 The GUI may provide richer visualisation, navigation, configuration management, status reporting, project inspection, and workflow composition while delegating domain operations to shared application components.
 
-### 4.5 Presentation Independence
+### 4.5 IDE and Host-Tool Integrations
+
+AppManager may be integrated into development environments and other host tools through dedicated interaction adapters.
+
+A WebStorm plugin is proposed as the first IDE integration. Its purpose would be to expose AppManager capabilities using IDE context such as the current project, selected file or directory, active editor, selected Nuxt layer, or repository while delegating application behaviour to shared AppManager capabilities.
+
+IDE and host-tool adapters should remain thin where practical. Host-specific presentation, context acquisition, and lifecycle integration belong in the adapter; AppManager domain behaviour must remain within shared application capabilities.
+
+The architecture should not require an IDE integration to reproduce AppManager command, domain, repository, configuration, code-intelligence, or other application logic in the host environment.
+
+### 4.6 Presentation Independence
 
 A core invariant is:
 
-> Commands and application capabilities must not inherently depend upon a particular presentation mode.
+> Commands and application capabilities must not inherently depend upon a particular presentation mode or host-tool integration.
 
-Presentation-specific concerns should remain at the application boundary wherever practical.
+Presentation-specific and host-specific concerns should remain at the application boundary wherever practical.
 
 ---
 
@@ -239,64 +262,88 @@ Presentation-specific concerns should remain at the application boundary whereve
 
 AppManager is organised around functional domains containing commands that represent application use cases.
 
-The command model provides a stable invocation boundary between interaction modes and the shared application capabilities that realise each use case.
+The command model provides a stable application boundary beneath the Application Invocation Contract and above the shared application capabilities that realise each use case.
 
 Conceptually:
 
 ```text
-interaction mode
-       |
-       v
-command discovery and dispatch
-       |
-       v
-functional domain
-       |
-       v
-command / use case
-       |
-       v
-shared application capability
+interaction adapter / external integration
+                 |
+                 v
+      application invocation contract
+                 |
+                 v
+      command discovery and dispatch
+                 |
+                 v
+          functional domain
+                 |
+                 v
+          command / use case
+                 |
+                 v
+     shared application capability
 ```
 
 The architectural subsystems through which commands realise application capabilities are defined in Section 6. The command model does not prescribe their internal structure.
 
-### 5.2 Command Responsibilities
+### 5.2 Application Invocation Contract
+
+The Application Invocation Contract provides a common structured boundary between callers and the command model.
+
+At the Design Specification level, the contract must be capable of representing:
+
+- command identity;
+- invocation context and scope;
+- caller-supplied inputs and options;
+- resolved project context where relevant;
+- structured success and failure outcomes;
+- diagnostics and machine-consumable result information;
+- progress or execution events where a use case requires them;
+- cancellation where supported by the underlying operation;
+- deterministic behaviour suitable for automation;
+- evolution of the contract without requiring presentation-specific command implementations.
+
+Human-readable presentation is an adapter responsibility and must not be the only representation of an operation's outcome where structured invocation is supported.
+
+This specification deliberately does not prescribe whether the contract is realised through process standard input/output, an in-process interface, IPC, RPC, HTTP, sockets, or another transport. Serialization, transport, versioning mechanics, schemas, and concrete execution protocols belong in lower-level specifications.
+
+### 5.3 Command Responsibilities
 
 A command should:
 
 - represent a coherent user or automation intent;
 - receive, validate, or resolve sufficient context for the requested use case;
 - invoke the application capabilities required to realise that use case;
-- remain independent of presentation-specific behaviour;
-- provide meaningful success or failure outcomes;
+- remain independent of presentation-specific and host-specific behaviour;
+- provide meaningful structured success or failure outcomes;
 - respect application-wide safety, configuration, scope, and non-destructive-operation principles.
 
 Commands define application intent and invocation semantics. Detailed command contracts, internal coordination, algorithms, and component interactions belong in lower-level specifications.
 
-### 5.3 Command Discovery
+### 5.4 Command Discovery
 
 AppManager should provide a central mechanism through which available commands and their functional domains can be discovered and dispatched.
 
-Command discovery should be available to interaction modes without requiring them to encode domain behaviour independently.
+Command discovery should be available through the Application Invocation Contract so interaction modes and integrations do not need to encode domain behaviour independently.
 
-The detailed registry contract, command metadata, and discovery implementation belong to lower-level specifications.
+The detailed registry contract, command metadata, discovery implementation, and machine-readable discovery schema belong to lower-level specifications.
 
-### 5.4 Shared Execution Semantics
+### 5.5 Shared Execution Semantics
 
-A command's application meaning should remain consistent across every interaction mode through which that command is exposed.
+A command's application meaning should remain consistent across every interaction mode or integration through which that command is exposed.
 
-TUI, Headless, and GUI modes may differ in how they gather inputs, request confirmation, present progress, or display results, but they should not redefine the underlying use case.
+TUI, Headless, GUI, IDE, and other adapters may differ in how they gather inputs, derive host context, request confirmation, present progress, or display results, but they should not redefine the underlying use case.
 
-Inputs supplied interactively, explicitly, or through automation should ultimately be expressed as the context required by the same shared application capability.
+Inputs supplied interactively, explicitly, through automation, or by a host tool should ultimately be expressed through the same invocation and command semantics.
 
-### 5.5 Relationship to Application Architecture
+### 5.6 Relationship to Application Architecture
 
 Commands may require capabilities owned by multiple architectural subsystems, but the command model does not define those subsystem relationships or their internal coordination.
 
 Section 6 defines the cooperating architectural responsibilities through which application capabilities are realised. Section 11 describes principal system workflows where coordination across those responsibilities is significant at the system-design level.
 
-This separation keeps command intent independent from architectural implementation while allowing the same command semantics to be reused across interaction modes.
+This separation keeps invocation and command intent independent from architectural implementation while allowing the same command semantics to be reused across interaction modes and integrations.
 
 ---
 
@@ -311,30 +358,35 @@ These subsystems have distinct responsibilities and interact through defined app
 The major conceptual areas are:
 
 ```text
-                    interaction adapters
-                  tui   headless   gui
-                           |
-                           v
-                   command / use cases
-                           |
-        +------------------+------------------+
-        |                  |                  |
-        v                  v                  v
- application services   domain engines   code intelligence
-        |                  |                  |
-        +----------+-------+-------+----------+
-                   |               |
-                   v               v
-               resolvers       generation
-                               and templates
-                   \               /
-                    +-------------+
-                           |
-                           v
-                    managed project
+                       interaction adapters
+              tui   headless   gui   ide / tools
+                              |
+                              v
+                 application invocation contract
+                              |
+                              v
+                      command / use cases
+                              |
+           +------------------+------------------+
+           |                  |                  |
+           v                  v                  v
+    application services   domain engines   code intelligence
+           |                  |                  |
+           +----------+-------+-------+----------+
+                      |               |
+                      v               v
+                  resolvers       generation
+                                  and templates
+                      \               /
+                       +-------------+
+                              |
+                              v
+                       managed project
 ```
 
 The diagram expresses architectural responsibility and collaboration. It does not prescribe a one-to-one source-directory structure or require every capability to pass through every conceptual area.
+
+The Application Invocation Contract is an application-boundary responsibility rather than a domain engine or presentation implementation. It standardises how adapters reach the command model without dictating how application subsystems collaborate after invocation.
 
 ### 6.2 Services
 
@@ -448,7 +500,7 @@ Strategies encapsulate file-type-specific inspection and mutation behaviour.
 
 A strategy should understand the relevant structural conventions of the source type it manages and expose a consistent conceptual interface to higher-level code operations.
 
-Strategies allow AppManager to add support for new file types without embedding format-specific behaviour throughout the command layer.
+Strategies allow AppManager to add support for new file types without embedding format-specific behaviour throughout the command model.
 
 ### 7.5 Orchestrators
 
@@ -511,7 +563,7 @@ Where useful, AppManager should also be able to identify the source from which a
 
 Configuration services and resolvers should remain usable without a user interface.
 
-If a value cannot be resolved and an interactive mode permits prompting, the presentation or interaction layer may request the missing value through an appropriate resolution workflow.
+If a value cannot be resolved and an interactive mode permits prompting, the presentation or interaction adapter may request the missing value through an appropriate resolution workflow.
 
 Headless operation must fail clearly or use an explicitly defined fallback rather than unexpectedly prompting.
 
@@ -754,10 +806,13 @@ Configuration storage and resolution remain subsystem responsibilities; the Sett
 A normal AppManager workflow is conceptually:
 
 ```text
-user / automation
+user / automation / host tool
        |
        v
 interaction adapter
+       |
+       v
+application invocation contract
        |
        v
 command discovery and dispatch
@@ -766,7 +821,7 @@ command discovery and dispatch
 context and configuration resolution
        |
        v
-command orchestration
+application capability coordination
        |
        v
 services / subsystems / domain engines
@@ -775,8 +830,13 @@ services / subsystems / domain engines
 managed project or external provider
        |
        v
-result and diagnostics
+structured result and diagnostics
+       |
+       v
+adapter-specific presentation
 ```
+
+The Application Invocation Contract should preserve command intent, scope, structured outcomes, and relevant execution information independently of how a particular adapter presents them.
 
 ### 11.2 Application Lifecycle Workflow
 
@@ -868,65 +928,71 @@ AI-assisted workflows should:
 
 ### 12.1 Presentation Independence
 
-Application capabilities must not inherently depend on TUI, Headless, or GUI presentation.
+Application capabilities must not inherently depend on TUI, Headless, GUI, IDE, or other host-tool presentation.
 
-### 12.2 Domain Responsibility
+### 12.2 Structured Invocation Boundary
+
+Machine-oriented interaction adapters and integrations should invoke commands through a stable structured Application Invocation Contract rather than depend on parsing human-oriented presentation output.
+
+The contract must remain conceptually independent of any single transport or host environment.
+
+### 12.3 Domain Responsibility
 
 Capabilities should reside in the domain or subsystem that owns their responsibility rather than being duplicated across unrelated commands.
 
-### 12.3 Non-Destructive Operation
+### 12.4 Non-Destructive Operation
 
 AppManager should preserve user-authored content and project structure wherever practical.
 
 Destructive operations must be explicit, scoped, and appropriately safeguarded.
 
-### 12.4 Structured Modification
+### 12.5 Structured Modification
 
 Existing structured files should be modified through structure-aware mechanisms wherever practical.
 
-### 12.5 Generation and Mutation Separation
+### 12.6 Generation and Mutation Separation
 
 Templates generate new artefacts. Source-aware strategies and related code-intelligence components inspect or modify existing artefacts.
 
 These responsibilities should not be conflated.
 
-### 12.6 Configuration over Hard-Coding
+### 12.7 Configuration over Hard-Coding
 
 User, project, repository, provider, and environment-specific values should be resolved from configuration or context rather than embedded into reusable application logic or templates.
 
-### 12.7 Deterministic Headless Operation
+### 12.8 Deterministic Headless Operation
 
 Headless workflows must not unexpectedly require interactive input.
 
-### 12.8 Observable Operations
+### 12.9 Observable Operations
 
 Significant operations should produce sufficient logging, diagnostics, or structured results to explain what occurred and why a failure occurred.
 
-### 12.9 Shared Infrastructure
+### 12.10 Shared Infrastructure
 
 Cross-cutting capabilities such as filesystem access, process execution, Git operations, logging, and configuration should be reusable rather than independently reimplemented by commands.
 
-### 12.10 Explicit Scope
+### 12.11 Explicit Scope
 
 Operations spanning root projects, layers, repositories, files, or environments should have a clearly defined scope.
 
-### 12.11 Extensible Discovery
+### 12.12 Extensible Discovery
 
 Where the system supports multiple commands, strategies, providers, repositories, templates, or similar resources, discovery should be designed to accommodate extension without widespread conditional logic.
 
-### 12.12 AI as an Optional Capability
+### 12.13 AI as an Optional Capability
 
 AI services may enhance AppManager workflows but must not become an implicit requirement for unrelated core operations.
 
-### 12.13 Design Authority
+### 12.14 Design Authority
 
 Implementation must follow approved design and functional requirements. Current source behaviour does not automatically redefine the intended system.
 
-### 12.14 Architectural Responsibility Model
+### 12.15 Architectural Responsibility Model
 
-Services, domain engines, code-intelligence components, resolvers, generators, templates, registries, and adapters represent distinct responsibilities and collaboration patterns rather than equivalent tiers in a uniform stack.
+Services, domain engines, code-intelligence components, resolvers, generators, templates, registries, invocation boundaries, and adapters represent distinct responsibilities and collaboration patterns rather than equivalent tiers in a uniform stack.
 
-### 12.15 Nuxt Layer Terminology
+### 12.16 Nuxt Layer Terminology
 
 Because `layer` has a specific meaning within Nuxt, architectural documentation should avoid using the term ambiguously when `subsystem`, `component family`, `stage`, or `adapter` is more accurate.
 
@@ -960,11 +1026,21 @@ New templates and generators should be introducible without embedding generated 
 
 New sources of configuration or contextual values should be incorporable through resolution mechanisms without requiring presentation-specific access throughout the application.
 
-### 13.7 Interaction Extensibility
+### 13.7 Interaction and Integration Extensibility
 
-The command and application model should permit additional interaction adapters beyond TUI, Headless, and GUI if future requirements justify them.
+The interaction and invocation model should permit additional adapters beyond TUI, Headless, and GUI when future requirements justify them.
 
-### 13.8 Domain Engine Extensibility
+IDE plugins, editor extensions, CI integrations, AI agents, and other development-tool integrations should be able to supply host-specific context and consume structured AppManager results through the Application Invocation Contract without reproducing AppManager domain behaviour.
+
+WebStorm is the first proposed IDE adapter, but the architecture must not make the invocation contract WebStorm-specific or JetBrains-specific.
+
+### 13.8 Invocation Contract Extensibility
+
+The Application Invocation Contract should be capable of evolving as new adapters and automation requirements emerge while preserving stable command identity and semantics.
+
+Concrete compatibility, schema-versioning, transport, and protocol rules belong in lower-level specifications.
+
+### 13.9 Domain Engine Extensibility
 
 Specialised concerns such as licensing may be implemented as dedicated domain engines where they require coherent rules, data, templates, or validation beyond ordinary service responsibilities.
 
@@ -1018,7 +1094,7 @@ Detailed Design Specifications answer:
 
 > How should AppManager realise that functionality internally?
 
-They define command contracts, services, strategies, scanners, orchestrators, resolvers, interfaces, algorithms, data structures, and subsystem interactions.
+They define command contracts, invocation schemas and protocols, services, strategies, scanners, orchestrators, resolvers, interfaces, algorithms, data structures, and subsystem interactions.
 
 ### 14.5 Implementation Specification Responsibility
 
@@ -1076,10 +1152,12 @@ Such information should be captured by Implementation Specifications, implementa
 | managed layer | A Nuxt layer recognised by AppManager as part of the managed project. |
 | command | An invokable AppManager use case within a functional domain. |
 | functional domain | A coherent family of user-facing AppManager capabilities. |
-| interaction mode | An adapter through which a user or automation invokes AppManager capabilities. |
+| interaction mode | An adapter through which a user, host tool, or automation invokes AppManager capabilities. |
+| Application Invocation Contract | The stable structured boundary through which adapters and integrations invoke commands and receive machine-consumable execution information. |
 | TUI | Text User Interface. |
 | Headless | Non-interactive AppManager operation for automation and scripted use. |
 | GUI | Proposed Graphical User Interface over shared AppManager capabilities. |
+| IDE adapter | A host-tool integration that contributes IDE-specific presentation and context while delegating application behaviour to AppManager. |
 | service | A reusable operational capability used by commands or other subsystems. |
 | domain engine | A cohesive specialised subsystem that owns domain-specific rules, concepts, or coordination. |
 | scanner | A component that recognises lexical or structural information in supported source text. |
@@ -1093,39 +1171,42 @@ Such information should be captured by Implementation Specifications, implementa
 ### 15.2 Conceptual System Summary
 
 ```text
-                              AppManager
-                                  |
-                  +---------------+---------------+
-                  |               |               |
-                 tui           headless           gui
-                  |               |               |
-                  +---------------+---------------+
+                                  AppManager
+                                      |
+              +-----------------------+-----------------------+
+              |               |               |              |
+             tui           headless           gui       ide / tools
+              |               |               |              |
+              +---------------+---------------+--------------+
+                                      |
+                                      v
+                         application invocation contract
+                                      |
+                                      v
+                             command / use cases
+                                      |
+                 +--------------------+--------------------+
+                 |                    |                    |
+                 v                    v                    v
+           application services   domain engines     code intelligence
+                 |                    |                    |
+                 |                    |          scanners / strategies /
+                 |                    |              orchestrators
+                 |                    |                    |
+                 +-------------+------+--------------------+
+                               |      |
+                               v      v
+                           resolvers  generation
+                                      and templates
+                               |      |
+                               +--+---+
                                   |
                                   v
-                         command / use cases
+                           managed project
                                   |
-             +--------------------+--------------------+
-             |                    |                    |
-             v                    v                    v
-       application services   domain engines     code intelligence
-             |                    |                    |
-             |                    |          scanners / strategies /
-             |                    |              orchestrators
-             |                    |                    |
-             +-------------+------+--------------------+
-                           |      |
-                           v      v
-                       resolvers  generation
-                                  and templates
-                           |      |
-                           +--+---+
-                              |
-                              v
-                       managed project
-                              |
-                 +------------+------------+
-                 |            |            |
-              root app      layers     repositories
+                     +------------+------------+
+                     |            |            |
+                  root app      layers     repositories
 ```
 
 ### 15.3 Design Specification Structure
