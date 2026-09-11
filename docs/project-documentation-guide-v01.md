@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This document defines the documentation architecture, writing conventions, naming conventions, specification hierarchy, traceability rules, and maintenance principles for the AppManager project.
+This document defines the documentation architecture, writing conventions, naming conventions, specification hierarchy, traceability rules, decision-governance rules, and maintenance principles for the AppManager project.
 
 It is the highest-level documentation authority within the `docs/` tree.
 
@@ -15,7 +15,7 @@ The purpose of this guide is to ensure that project documentation remains:
 - resistant to duplication and contradiction;
 - maintainable as the codebase evolves;
 - suitable for both human and AI-assisted development;
-- traceable from high-level system intent through to concrete implementation;
+- traceable from high-level system intent and significant engineering decisions through to concrete implementation;
 - consistent in terminology, naming, structure, and style.
 
 ---
@@ -37,6 +37,8 @@ The governing principle is:
 A second governing principle is:
 
 > Lower-level specifications may refine higher-level requirements but must not silently redefine them.
+
+Significant engineering decisions may additionally require an Architecture Decision Record as defined by this guide and `docs/decisions/architecture-decision-governance-v01.md`. Architecture Decision Records preserve decision rationale and provenance but do not replace the normative specification hierarchy.
 
 ---
 
@@ -163,6 +165,49 @@ Implementation Specification
 ```
 
 Each level answers a different engineering question and must remain within its intended level of abstraction.
+
+### 4.1 Architecture Decision Governance
+
+Architecture Decision Records, or ADRs, are governed decision-provenance records that operate alongside the four-level specification hierarchy.
+
+They are **not a fifth specification level**.
+
+The governing distinction is:
+
+> An ADR records why a significant decision was made; the specification hierarchy records what the approved system requires as a consequence.
+
+A proposal, investigation, architecture review, Issue, Discussion, Pull Request, experiment, AI conversation, or project-management document may provide evidence or analysis, but none of those sources alone establishes an architectural decision.
+
+Where a decision is sufficiently significant to require an ADR, the normal path is:
+
+```text
+proposal / open question
+        |
+        v
+investigation or architecture review
+        |
+        v
+proposed decision
+        |
+        v
+proposed ADR
+        |
+        v
+review and approval
+        |
+        v
+accepted ADR
+        |
+        v
+update affected authoritative specification(s)
+        |
+        v
+detailed design and implementation
+```
+
+A decision becomes durable when it is deliberately approved, recorded in an ADR where required, and incorporated into the authoritative specification level or levels affected by the decision.
+
+The detailed ADR lifecycle, required structure, acceptance, supersession, retention, and technology-selection rules are defined by `docs/decisions/architecture-decision-governance-v01.md` under the authority of this guide.
 
 ---
 
@@ -399,33 +444,70 @@ Implementation Specification
   service modules
 ```
 
-Traceability may be expressed through document references, requirement identifiers, component names, command identifiers, or structured cross-reference tables.
+Where a significant architectural decision explains why a specification took a particular direction, traceability may additionally include the decision evidence and ADR:
+
+```text
+architecture review / evidence
+            |
+            v
+           ADR
+            |
+            v
+   Design Specification
+            |
+            v
+ Functional Specification
+            |
+            v
+Detailed Design Specification
+            |
+            v
+Implementation Specification
+            |
+            v
+           code
+```
+
+Not every stage is required for every requirement or decision.
+
+Traceability may be expressed through document references, requirement identifiers, ADR identifiers, component names, command identifiers, or structured cross-reference tables.
+
+Specifications should reference the relevant ADR where the rationale would otherwise be difficult to discover, and ADRs must identify the specifications materially affected by the decision.
 
 Traceability should be introduced where it provides engineering value and should not become bureaucratic overhead.
 
 ---
 
-## 10. Interaction Modes
+## 10. Interaction Modes and Invocation Boundary
 
-AppManager is designed to support multiple presentation and interaction modes over the same underlying application capabilities.
+AppManager is designed to support multiple presentation modes, invocation modes, and host-tool integrations over the same underlying application capabilities.
 
-The recognised interaction model is:
+The recognised interaction architecture is conceptually:
 
 ```text
-                 AppManager
+          interaction adapters and integrations
 
-       presentation and interaction
-
-       tui      headless      gui
-        |          |           |
-        +----------+-----------+
+       tui      headless      gui      ide / tools
+        |          |           |           |
+        +----------+-----------+-----------+
+                   |
+          optional transport binding
                    |
                    v
-          command and use-case layer
+       Application Invocation Contract
                    |
                    v
-          application subsystems
+            command / use cases
+                   |
+                   v
+       shared application capabilities
 ```
+
+An adapter that operates in-process may invoke the Application Invocation Contract directly. An out-of-process integration may use an appropriate transport or protocol binding that preserves the same invocation semantics.
+
+The Design Specification defines the architectural role of the Application Invocation Contract. Functional Specifications define required invocation behaviour. Detailed Design Specifications define concrete contracts, lifecycle, schemas, transport abstractions, versioning, events, cancellation, or related internal design. Implementation Specifications record exact transports, serialisation formats, modules, libraries, and wiring.
+
+Headless operation and the Application Invocation Contract are distinct concepts. Headless describes non-interactive operation; the invocation contract defines the structured semantic boundary through which adapters or external integrations invoke AppManager capabilities.
 
 ### 10.1 Text User Interface
 
@@ -441,21 +523,31 @@ Headless mode provides non-interactive operation for:
 - repeatable command execution;
 - machine-controlled workflows.
 
+Headless workflows must not unexpectedly depend upon interactive prompting. Machine-facing structured invocation may be exposed through a transport binding to the Application Invocation Contract rather than by requiring external tools to parse human-oriented terminal output.
+
 ### 10.3 Graphical User Interface
 
 The GUI is a proposed first-class interaction mode providing graphical access to AppManager capabilities.
 
 Its introduction must not require duplication of underlying application logic.
 
-### 10.4 Presentation Independence
+### 10.4 IDE and Host-Tool Integrations
+
+AppManager may support integrations with IDEs, editors, CI/CD systems, AI agents, project-management tools, and other host applications.
+
+Such integrations should act as thin adapters over shared AppManager capabilities. Host-specific context, navigation, presentation, and lifecycle integration may belong in the adapter, but domain behaviour must not be reimplemented independently merely because the host provides a richer interface.
+
+A WebStorm plugin is the first proposed IDE integration. Its consideration does not make JetBrains products a mandatory dependency of the AppManager architecture or prevent future integrations with other IDEs or tools.
+
+### 10.5 Presentation and Integration Independence
 
 A core architectural principle is:
 
-> Commands and application capabilities must not inherently depend upon a particular presentation mode.
+> Commands and application capabilities must not inherently depend upon a particular presentation mode or host integration.
 
-TUI, Headless, and GUI interfaces should act as adapters into shared application capabilities rather than becoming independent implementations of those capabilities.
+TUI, Headless, GUI, IDE, and other integration adapters should invoke shared application capabilities rather than becoming independent implementations of those capabilities.
 
-Business logic should therefore reside below the presentation layer whenever practical.
+Business logic should therefore reside below the interaction boundary wherever practical.
 
 ---
 
@@ -465,29 +557,37 @@ AppManager architecture must be described according to the architectural role an
 
 Architectural concerns may include, but are not limited to:
 
-* services;
-* scanners;
-* strategies;
-* templates;
-* orchestrators;
-* resolvers;
-* License Engine;
-* Template Engine;
-* command infrastructure;
-* configuration infrastructure;
-* presentation and interaction adapters.
+- services;
+- scanners;
+- strategies;
+- templates;
+- orchestrators;
+- resolvers;
+- domain engines, including specialised concerns such as licensing where justified;
+- generation and template capabilities, including responsibilities historically described as a Template Engine;
+- command and use-case infrastructure;
+- configuration infrastructure;
+- registries;
+- code-intelligence components;
+- the Application Invocation Contract;
+- presentation, interaction, and host-integration adapters.
+
+Earlier material may refer specifically to a `License Engine`, `Template Engine`, or `command layer`. Those terms remain useful historical or specialised concepts where their meaning is precise, but they must not imply that all such concerns are equivalent architectural tiers or that a rigid layered stack is required.
 
 These concerns may represent different kinds of architectural constructs and must not be assumed to occupy equivalent positions within a layered architecture.
 
-The preferred terminology is therefore:
+Preferred terminology therefore includes:
 
-* architectural subsystem;
-* component family;
-* application subsystem;
-* processing stage;
-* command layer;
-* presentation adapter;
-* domain engine.
+- architectural subsystem;
+- component family;
+- application subsystem;
+- processing stage;
+- command or use-case model;
+- presentation adapter;
+- integration adapter;
+- invocation contract;
+- transport binding;
+- domain engine.
 
 The term `layer` should be used only where a genuine layered relationship exists or where it refers specifically to a Nuxt layer.
 
@@ -497,18 +597,20 @@ The term `layer` should be used only where a genuine layered relationship exists
 
 The `docs/` tree should reflect specification responsibility rather than historical generation order.
 
-The documentation root should contain the highest-level governing documents, the specification hierarchy, project-management records, and the archive, including:
+The documentation root should contain the highest-level governing documents, the specification hierarchy, decision records, project-management records, and the archive, including:
 
 ```text
 docs/
 ├── project-documentation-guide-v01.md
 ├── appmanager-design-specification-v01.md
+├── decisions/
 ├── design/
 ├── functional/
 ├── detailed_design/
 ├── implementation/
 ├── project_management/
 └── archive/
+    ├── decisions/
     ├── design/
     ├── functional/
     ├── detailed_design/
@@ -518,9 +620,11 @@ docs/
 
 The four principal specification levels are represented by `design/`, `functional/`, `detailed_design/`, and `implementation/` together with the root Design Specification where applicable.
 
-The `project_management/` directory contains project planning, coordination, migration, rationalisation, status, handoff, release-planning, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately incorporated into the appropriate authoritative specification.
+The `decisions/` directory contains the Architecture Decision Record governance document, ADR template, and durable Architecture Decision Records. ADRs are governed decision-provenance records and are outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. They must not become a parallel specification system.
 
-The `archive/` tree is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status.
+The `project_management/` directory contains project planning, coordination, migration, rationalisation, status, handoff, release-planning, architecture investigations and reviews, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification. Where an investigation results in a significant architectural decision, the decision should additionally be recorded through the ADR process when required.
+
+The `archive/` tree is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status. Archived decision material may preserve ADR identifiers and provenance where required by the ADR governance rules.
 
 This tree is a target documentation model rather than an instruction to immediately move every existing document.
 
@@ -558,11 +662,13 @@ The final directory structure should evolve from the current documentation tree 
 
 AppManager documentation governance extends beyond the `docs/` tree where repository-level documents or collaboration facilities communicate project information, development procedures, contribution requirements, project status, or project decisions.
 
-Repository-level documentation and GitHub collaboration facilities must have clearly defined responsibilities and must not become alternative sources of specification authority.
+Repository-level documentation and GitHub collaboration facilities must have clearly defined responsibilities and must not become alternative sources of specification or decision authority.
 
 The governing principle is:
 
-> Repository collaboration and project-management surfaces may propose, discuss, coordinate, track, summarise, or provide provenance for project work, but approved requirements, design decisions, functional behaviour, detailed design, and implementation requirements must be incorporated into the appropriate authoritative AppManager specification.
+> Repository collaboration and project-management surfaces may propose, discuss, investigate, coordinate, track, summarise, or provide provenance for project work, but approved requirements, architectural decisions, functional behaviour, detailed design, and implementation requirements must be incorporated into the appropriate durable AppManager documentation.
+
+For a significant architectural decision, durable documentation normally means both the appropriate ADR and the affected authoritative specification or specifications. The ADR records why the decision was made; the specification records the normative consequence.
 
 Repository-root documentation may include, where a defined project need exists:
 
@@ -575,17 +681,47 @@ These repository-root documents are governed by this guide where applicable but 
 
 GitHub collaboration facilities may be used according to the following authority boundaries:
 
-- **Issues** may track defects, enhancements, investigations, documentation work, implementation tasks, proposals, and specification changes. An Issue is a work-tracking and discussion artefact, not an authoritative specification. Resolution or closure of an Issue does not replace updating affected authoritative documentation.
-- **Projects** may support planning, prioritisation, scheduling, coordination, and progress tracking. Project items are project-management information and do not establish specification authority.
-- **Discussions**, if enabled, may support exploratory discussion, questions, proposals, and community consultation. A Discussion may inform a project decision but does not itself establish an authoritative requirement or design decision.
-- **Wiki** content, if enabled, must not be used as an alternative location for authoritative AppManager specifications. It may contain supplementary, explanatory, or community-oriented material where justified, but information required to specify, develop, test, maintain, or govern AppManager must not depend solely upon Wiki content.
+- **Issues** may track defects, enhancements, investigations, documentation work, implementation tasks, proposals, ADR work, and specification changes. An Issue is a work-tracking and discussion artefact, not an authoritative specification or accepted architectural decision. Resolution or closure of an Issue does not replace updating affected durable documentation.
+- **Projects** may support planning, prioritisation, scheduling, coordination, and progress tracking. Project items are project-management information and do not establish specification or decision authority.
+- **Discussions**, if enabled, may support exploratory discussion, questions, proposals, and community consultation. A Discussion may inform a project decision but does not itself establish an authoritative requirement or accepted architectural decision.
+- **Wiki** content, if enabled, must not be used as an alternative location for authoritative AppManager specifications or required decision records. It may contain supplementary, explanatory, or community-oriented material where justified, but information required to specify, develop, test, maintain, or govern AppManager must not depend solely upon Wiki content.
 - **Gists** may be used for non-authoritative supplementary material such as temporary examples, experiments, demonstrations, or independently useful snippets. A Gist must not be the sole repository of information required to specify, build, operate, test, maintain, or govern AppManager.
 
 Pull Request and AI-assisted repository workflows are governed separately by Section 19. Discussion, review, provenance, or decisions recorded only in a Pull Request must not substitute for durable project documentation when that information is required for the continuing specification, development, maintenance, or governance of AppManager.
 
 Durable project knowledge should be preserved in appropriate version-controlled repository files. Project knowledge required for continuing work must not depend solely upon Issues, Projects, Discussions, Wiki pages, Gists, Pull Request discussions, commit messages, AI conversation history, or other transient or externally maintained discussion records.
 
-These sources may provide valuable context, provenance, discussion, and project history. When information from them becomes an approved requirement, design decision, implementation requirement, governance rule, or otherwise necessary durable project knowledge, it must be incorporated into the appropriate repository-controlled document.
+These sources may provide valuable context, provenance, discussion, evidence, and project history. When information from them becomes an approved requirement, accepted architectural decision, implementation requirement, governance rule, or otherwise necessary durable project knowledge, it must be incorporated into the appropriate repository-controlled document.
+
+### 12.2 Architecture Decision Records
+
+Active ADRs reside under:
+
+```text
+docs/decisions/
+```
+
+The governance document is:
+
+```text
+docs/decisions/architecture-decision-governance-v01.md
+```
+
+New ADRs should use:
+
+```text
+docs/decisions/adr-template.md
+```
+
+The detailed ADR rules are delegated to the governance document, but this guide establishes the following higher-order constraints:
+
+- ADRs are not a fifth specification level;
+- accepted ADRs must not become the sole normative source for required system behaviour or architecture;
+- significant project-wide technology and platform choices must be deliberate rather than inherited automatically from historical implementation or developer familiarity;
+- architecture investigations and reviews are evidence, not decision authority;
+- accepted ADRs preserve historical decision rationale and should be superseded rather than rewritten when the architectural decision changes materially;
+- ADR identifiers must remain durable and must not be reused;
+- ADR decisions must be traceable to the specifications they materially affect.
 
 ---
 
@@ -640,6 +776,19 @@ appmanager-design-specification-v02-retired.md
 
 Archiving alone must not add the `-retired` suffix. An archived document that has not completed retirement retains its existing filename.
 
+### 13.2 Architecture Decision Record Filenames
+
+ADRs use a stable sequential identifier and descriptive slug rather than the ordinary normative-document version suffix:
+
+```text
+adr-0001-primary-application-runtime.md
+adr-0002-example-decision.md
+```
+
+ADR numbers must never be reused, including after rejection or supersession.
+
+The ADR identifier is the durable identity of the decision record. Renaming an accepted ADR should be avoided unless necessary to correct a misleading title.
+
 ---
 
 ## 14. Document Versioning
@@ -661,6 +810,8 @@ Minor wording corrections need not automatically create a new document version i
 When a new document version supersedes an old one, the older version must be made unambiguously non-authoritative when it leaves active use. It may first be archived while reconciliation remains incomplete and subsequently marked retired when the retirement criteria in Section 18 have been satisfied.
 
 The project should avoid multiple apparently current specifications covering the same responsibility.
+
+ADRs use sequential decision identifiers rather than ordinary document-version succession. A materially changed accepted architectural decision must normally be represented by a new ADR that supersedes or modifies the earlier ADR instead of rewriting the historical decision to appear current.
 
 ---
 
@@ -697,6 +848,8 @@ Use terms deliberately:
 
 Avoid using `will` where `must`, `should`, or `may` would more precisely express the requirement.
 
+ADR status terms such as `Proposed`, `Accepted`, `Rejected`, `Deprecated`, and `Superseded` have the specific meanings defined in the architecture-decision governance document and should not be used ambiguously when referring to ADR lifecycle state.
+
 ### 15.3 Current State Versus Intended State
 
 Documents must distinguish clearly among:
@@ -710,9 +863,20 @@ Documents must distinguish clearly among:
 - archived documentation;
 - retired documentation.
 
+Where decision governance applies, documents and discussions should also distinguish among:
+
+- evidence;
+- inference;
+- proposal;
+- recommendation;
+- accepted decision;
+- normative specification consequence.
+
 A Design Specification should primarily describe intended design.
 
 An Implementation Specification may describe actual current state and implementation gaps.
+
+An ADR records the decision and rationale but must not substitute for the specification update that makes the consequence normative.
 
 ---
 
@@ -730,19 +894,24 @@ For example, the root Design Specification may identify the Git command domain a
 
 Likewise, the Detailed Design Specification may define a service interface, while the Implementation Specification records the exact module path and concrete implementation.
 
+Architecture reviews and ADRs should follow the same principle. A review may contain detailed comparative analysis; the ADR should preserve the decision, decisive rationale, consequences, and references rather than copying the entire research report. The affected specification should contain the approved normative consequence rather than reproducing the complete ADR rationale.
+
 ---
 
 ## 17. Conflict Resolution
 
 When documentation sources disagree:
 
-1. identify the abstraction level of each source;
+1. identify the abstraction level and document type of each source;
 2. determine which document has authority for the disputed subject;
 3. preserve all meaningful information during investigation;
 4. explicitly record unresolved contradictions;
 5. resolve the contradiction in the authoritative document;
-6. update, archive, or retire conflicting lower-authority documents as appropriate;
-7. do not silently discard unique design information.
+6. update any affected ADR status, successor relationship, or specification reference where a significant architectural decision changes;
+7. update, archive, or retire conflicting lower-authority documents as appropriate;
+8. do not silently discard unique design information.
+
+An ADR must not silently override a conflicting higher-authority specification. If an accepted decision requires a specification change, that change must be made deliberately. Where the ADR and specification cannot be updated atomically, the discrepancy must be explicit and short-lived.
 
 During consolidation, historical documents must not be retired until their unique information has been accounted for. Documents may be archived before this point so that they no longer create ambiguity in the active documentation tree.
 
@@ -756,7 +925,7 @@ A document's filesystem location and lifecycle status are related but are not in
 
 ### 18.1 Lifecycle States
 
-The principal lifecycle states are:
+The principal lifecycle states for ordinary project documents are:
 
 ```text
 proposed
@@ -784,13 +953,17 @@ active
                retired
 ```
 
-Archiving may also be applied directly to non-normative historical, audit, roadmap, reconciliation, or project-management material when it is intentionally removed from the live documentation tree.
+Architecture Decision Records use their own status model under `docs/decisions/architecture-decision-governance-v01.md` because Accepted, Rejected, Deprecated, and Superseded ADRs may remain valuable as durable architectural history.
+
+Archiving may also be applied directly to non-normative historical, audit, roadmap, reconciliation, investigation, or project-management material when it is intentionally removed from the live documentation tree.
 
 ### 18.2 Active
 
 An active document resides in the live documentation hierarchy and may carry normative authority according to its specification level and relationship to other active documents.
 
 A document that remains authoritative must not be placed beneath `docs/archive/`.
+
+An accepted ADR may remain active as decision provenance while the normative consequence resides in an authoritative specification.
 
 ### 18.3 Archived
 
@@ -815,12 +988,14 @@ A document may be marked retired only when every meaningful piece of information
 - moved to the appropriate Functional Specification;
 - moved to the appropriate Detailed Design Specification;
 - moved to the appropriate Implementation Specification;
-- retained as an explicit proposal, deferred item, open question, audit finding, project-management record, or historical record;
+- retained as an explicit ADR, proposal, deferred item, open question, audit finding, project-management record, or historical record;
 - deliberately classified as obsolete and no longer required.
 
 A document must not be marked retired while it remains the sole source of information that the project intends to preserve.
 
 When these conditions are satisfied, `-retired` must be appended immediately after the version identifier as defined in Section 13.1.
+
+ADRs are not automatically retired merely because they are Rejected or Superseded. Their retention is governed separately because the rationale and successor relationship may retain durable architectural value.
 
 ### 18.5 Superseded Canonical Documents
 
@@ -837,6 +1012,7 @@ The archive should mirror the active documentation categories where practical:
 ```text
 docs/
 └── archive/
+    ├── decisions/
     ├── design/
     ├── functional/
     ├── detailed_design/
@@ -847,6 +1023,8 @@ docs/
 Additional archive categories may be introduced where a stable need exists, but the archive must not become an undifferentiated holding directory.
 
 Archived design material belongs under `docs/archive/design/`, archived Functional Specifications under `docs/archive/functional/`, and archived project-management artefacts under `docs/archive/project_management/`.
+
+If ADRs are archived in future, `docs/archive/decisions/` should preserve their identifiers, status, successor relationships, and traceability. Decision history must not be deleted merely because a newer decision exists.
 
 ### 18.7 Status Notices
 
@@ -884,6 +1062,8 @@ A suitable retired notice is:
 > All information that remains relevant to the project has been dispositioned within the current documentation hierarchy or explicitly retained as historical material.
 ```
 
+ADRs use the status and successor metadata defined by the ADR governance rules rather than the ordinary archived/retired notice as their primary decision status.
+
 ### 18.8 References to Archived Material
 
 Active specifications should normally reference other active authoritative documents.
@@ -898,6 +1078,8 @@ References to archived or retired documents should be limited to purposes such a
 
 An archived or retired document must not be cited as normative authority for a current requirement or design decision.
 
+Superseded or rejected ADRs may be cited for historical rationale or provenance but must not be cited as current normative authority.
+
 ### 18.9 Retirement Procedure
 
 Before a document is retired, the following procedure must be completed:
@@ -906,7 +1088,7 @@ Before a document is retired, the following procedure must be completed:
 2. identify every meaningful fact, requirement, decision, constraint, example, proposal, implementation observation, and unresolved question that may retain project value;
 3. eliminate duplicated information while preserving the most complete form of each unique item;
 4. resolve or explicitly preserve contradictions;
-5. assign each retained item to its correct destination or explicit disposition;
+5. assign each retained item to its correct destination or explicit disposition, including an ADR where decision rationale warrants durable retention;
 6. verify that no information the project intends to preserve exists solely in the document being retired;
 7. identify the successor or replacement authority where applicable;
 8. move the document beneath the appropriate `docs/archive/` category if it is not already archived;
@@ -918,7 +1100,7 @@ Classification alone does not complete retirement when the classified informatio
 
 ### 18.10 Git History and Archive Responsibility
 
-Git history is the ultimate source-control record of prior document states, but it does not replace the project archive.
+Git history is the ultimate source-control record of prior document states, but it does not replace the project archive or ADR history.
 
 The archive exists to preserve intentionally accessible historical, provenance, reconciliation, and supersession context without forcing readers to reconstruct documentation lineage from repository history.
 
@@ -928,21 +1110,25 @@ The archive should therefore retain documents when their continued accessibility
 
 ## 19. AI-Assisted Documentation and Development
 
-AppManager explicitly permits AI-assisted engineering, but AI-generated output must remain subordinate to the project's specification hierarchy and source-control review process.
+AppManager explicitly permits AI-assisted engineering, but AI-generated output must remain subordinate to the project's specification hierarchy, decision-governance process, and source-control review process.
 
 ### 19.1 Abstraction Discipline
 
-An AI system working on project documentation should be told which specification level it is modifying.
+An AI system working on project documentation should be told which specification level or governed document type it is modifying.
 
 It should not silently introduce lower-level implementation assumptions into higher-level documents.
 
 It should not rewrite approved higher-level requirements merely because the current implementation differs.
+
+It should not treat a recommendation, architecture review, or draft ADR as an accepted decision unless the project has deliberately approved it.
 
 ### 19.2 Source Authority
 
 When consolidating information, AI systems should distinguish among:
 
 - approved specifications;
+- accepted ADRs;
+- architecture reviews and investigations;
 - source-code evidence;
 - legacy documentation;
 - implementation audits;
@@ -951,27 +1137,33 @@ When consolidating information, AI systems should distinguish among:
 
 These sources do not have equal authority.
 
+An accepted ADR records an approved decision and rationale, but the normative system consequence must still reside in the appropriate authoritative specification. Architecture reviews and investigations are evidence and analysis, not decision authority.
+
 ### 19.3 Zero Information Loss During Rationalisation
 
-When consolidating, archiving, or retiring documents:
+When consolidating, archiving, retiring, or converting material into ADRs and specifications:
 
-- preserve all unique facts, decisions, requirements, constraints, examples, and unresolved questions until they are deliberately classified;
+- preserve all unique facts, decisions, requirements, constraints, examples, alternatives, rationale, and unresolved questions until they are deliberately classified;
 - consolidate duplication rather than copying repeated material;
 - identify contradictions explicitly;
-- move information to the correct specification level;
+- move information to the correct specification or governance level;
+- preserve decision rationale in an ADR where required rather than discarding the alternatives and reasoning after updating a specification;
 - use archiving to remove non-authoritative material from the live tree while migration remains incomplete;
 - retire obsolete or superseded material only after its continuing value has been fully accounted for.
 
 ### 19.4 AI Must Not Become the Source of Authority
 
-An AI-generated statement is not authoritative merely because it appears detailed or plausible.
+An AI-generated statement, recommendation, architecture comparison, or ADR draft is not authoritative merely because it appears detailed or plausible.
 
 Authority comes from:
 
 - approved project specifications;
-- deliberate project decisions;
+- deliberate project decisions recorded through the applicable governance process;
+- accepted ADRs as decision provenance where required;
 - verified implementation evidence where implementation state is relevant;
 - reviewed and accepted changes.
+
+AI systems may assist with investigation, comparison, drafting, challenge, synthesis, and traceability, but project approval remains distinct from AI recommendation.
 
 ### 19.5 AI GitHub Branch and Pull Request Workflow
 
@@ -987,7 +1179,7 @@ Unless the user explicitly authorises a specific direct integration-branch opera
 4. keep related changes for the same coherent task on the same branch and Pull Request where practical rather than creating unnecessary branches or Pull Requests for individual edits;
 5. create a new branch and Pull Request when beginning a materially separate unit of work;
 6. open a Pull Request targeting the appropriate integration branch when the proposed work is ready for review;
-7. describe the purpose of the change, the significant files or areas affected, material design or documentation consequences, and any validation performed in the Pull Request description;
+7. describe the purpose of the change, the significant files or areas affected, material design, decision-governance, or documentation consequences, and any validation performed in the Pull Request description;
 8. leave acceptance and merging of the Pull Request to the user or to an explicitly approved project review or automation process;
 9. not merge its own Pull Request unless the user explicitly instructs it to do so;
 10. not force-push, rewrite shared history, or directly modify a protected or integration branch unless the user explicitly authorises that specific operation;
@@ -1001,14 +1193,21 @@ Repository branch protection or rulesets should be used where practical to reinf
 
 ## 20. Design and Implementation Separation
 
-The documentation system should preserve a strong distinction between design authority and implementation observation.
+The documentation system should preserve a strong distinction between design authority, decision rationale, and implementation observation.
 
 Examples of Design Specification content:
 
 - AppManager supports repository-management capabilities.
 - AppManager supports TUI and Headless operation and proposes GUI operation.
-- presentation modes share common application capabilities.
+- AppManager supports a presentation- and integration-independent Application Invocation Contract.
+- presentation and integration modes share common application capabilities.
 - source mutation should be non-destructive where practical.
+
+Examples of ADR content:
+
+- why one primary runtime, language, framework, protocol family, or packaging approach was selected over credible alternatives;
+- which decision drivers were decisive;
+- what consequences and migration obligations follow from the accepted decision.
 
 Examples of Implementation Specification content:
 
@@ -1018,7 +1217,7 @@ Examples of Implementation Specification content:
 - an existing path needs migration;
 - a particular library provides Git functionality.
 
-This distinction allows implementation to evolve without making the Design Specification obsolete after every code change.
+This distinction allows implementation to evolve without making the Design Specification obsolete after every code change while preserving the rationale for consequential architectural choices.
 
 ---
 
@@ -1036,9 +1235,22 @@ Before a normative document is considered complete, it should be checked for:
 - unresolved legacy references;
 - obsolete architectural terminology;
 - traceability where it is useful;
+- relevant ADR references where a significant architectural decision materially explains the document;
 - clear lifecycle and authority status;
 - coherent headings and section order;
 - correct cross-references.
+
+Before an ADR is accepted, it should additionally be checked for:
+
+- a clear problem and decision context;
+- explicit decision drivers;
+- credible alternatives where meaningful alternatives existed;
+- a precise decision statement;
+- material positive and negative consequences;
+- specification impact;
+- references to deeper investigation where appropriate;
+- correct status and supersession metadata;
+- confirmation that normative consequences are incorporated into, or explicitly scheduled for incorporation into, the appropriate authoritative specification.
 
 Before an archived document is marked retired, it must additionally be checked against the retirement procedure in Section 18.9.
 
@@ -1062,6 +1274,8 @@ The second defines what AppManager is intended to be.
 
 All other project specifications should refine one of the responsibilities established by those two documents.
 
+The `docs/decisions/` stream is intentionally separate from this authoritative root set because ADRs are decision-provenance records rather than a specification level. Its governance document remains subordinate to this Project Documentation Guide.
+
 Project-management documents are intentionally maintained outside the normative specification hierarchy and therefore do not expand this authoritative root set.
 
 Archived documents are intentionally excluded from this authoritative root set.
@@ -1070,7 +1284,7 @@ Archived documents are intentionally excluded from this authoritative root set.
 
 ## 23. Relationship to Existing Documentation
 
-The existing AppManager documentation contains valuable design, functional, detailed-design, implementation, audit, roadmap, and project-management information that has accumulated at different times and at different abstraction levels.
+The existing AppManager documentation contains valuable design, functional, detailed-design, implementation, audit, roadmap, decision, and project-management information that has accumulated at different times and at different abstraction levels.
 
 That material should be rationalised rather than discarded.
 
@@ -1078,18 +1292,21 @@ The consolidation process should:
 
 1. identify the purpose and abstraction level of each existing document;
 2. extract durable design intent;
-3. move functional requirements into Functional Specifications;
-4. move component and command design into Detailed Design Specifications;
-5. move source-specific observations into Implementation Specifications;
-6. move project planning, migration status, coordination, and handoff information into project-management documentation where appropriate;
-7. preserve unresolved decisions as explicit proposals or open questions;
-8. eliminate duplication after information has been safely relocated;
-9. archive documents that should leave the live tree but still contain information awaiting migration or reconciliation;
-10. retire documents only when their continuing information value has been fully dispositioned according to Section 18.
+3. identify significant architectural decisions and preserve their rationale through ADRs where the decision-governance criteria are met;
+4. move functional requirements into Functional Specifications;
+5. move component and command design into Detailed Design Specifications;
+6. move source-specific observations into Implementation Specifications;
+7. move project planning, migration status, coordination, architecture investigation, and handoff information into project-management documentation where appropriate;
+8. preserve unresolved decisions as explicit proposals or open questions rather than silently resolving them;
+9. eliminate duplication after information has been safely relocated;
+10. archive documents that should leave the live tree but still contain information awaiting migration or reconciliation;
+11. retire documents only when their continuing information value has been fully dispositioned according to Section 18.
 
 Structural changes should be deliberate, incremental, and justified by improved documentation responsibility rather than cosmetic reorganisation.
 
 Moving a superseded or mixed-authority document into `docs/archive/` is an appropriate way to clean the live documentation tree without prematurely declaring its information redundant.
+
+Existing implementation choices, including language, runtime, framework, library, or process topology, are evidence and migration context rather than automatic design authority. When such a choice materially constrains future architecture, it should be evaluated deliberately under the architecture-decision governance process.
 
 ---
 
@@ -1106,20 +1323,26 @@ The AppManager documentation system is governed by the following core rules:
 7. Lower-level documents refine but do not silently redefine higher-level documents.
 8. Information belongs at the highest appropriate level of abstraction.
 9. Duplication should be replaced by cross-reference and traceability.
-10. Design intent and current implementation state must be clearly separated.
-11. TUI, Headless, and GUI interaction modes should share common application capabilities.
-12. Architectural subsystems should not be forced into an artificial layer model.
-13. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
-14. Repository-level documents and collaboration surfaces must not become alternative sources of specification authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
-15. Archived documents are outside the active specification hierarchy and are non-authoritative.
-16. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
-17. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
-18. A retired document must use the `-retired` suffix immediately after its version identifier.
-19. A document must not be retired while it remains the sole source of information the project intends to preserve.
-20. Superseded canonical documents must identify their successor or replacement authority.
-21. Active specifications should not rely upon archived or retired documents as normative authority.
-22. AI-assisted work must respect specification authority, abstraction level, evidence quality, and the archive/retirement lifecycle.
-23. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+10. Design intent, decision rationale, and current implementation state must be clearly distinguished.
+11. TUI, Headless, GUI, IDE, and other integration adapters should share common application capabilities rather than duplicate domain behaviour.
+12. Headless operation and the Application Invocation Contract are distinct architectural concepts.
+13. Architectural subsystems should not be forced into an artificial layer model.
+14. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
+15. ADRs are governed decision-provenance records and are not a fifth specification level.
+16. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
+17. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
+18. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
+19. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
+20. Archived documents are outside the active specification hierarchy and are non-authoritative.
+21. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+22. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+23. A retired document must use the `-retired` suffix immediately after its version identifier.
+24. A document must not be retired while it remains the sole source of information the project intends to preserve.
+25. Superseded canonical documents must identify their successor or replacement authority.
+26. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
+27. Active specifications should not rely upon archived or retired documents as normative authority.
+28. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, and the archive/retirement lifecycle.
+29. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
@@ -1132,7 +1355,11 @@ The AppManager documentation system is governed by the following core rules:
 | Detailed Design Specification | How should it work internally? | Components, commands, interfaces, algorithms, dependencies, data structures |
 | Implementation Specification | How is it implemented here? | Paths, symbols, libraries, wiring, status, migrations, code-specific constraints |
 
-Project-management documentation is intentionally excluded from this table because it is not a specification level.
+Project-management documentation and Architecture Decision Records are intentionally excluded from this table because neither is a specification level.
+
+Architecture Decision Records answer a different question:
+
+> What significant decision was made, why was it made, which alternatives were considered, and what consequences follow from it?
 
 # Appendix B - Naming Quick Reference
 
@@ -1144,14 +1371,17 @@ Project-management documentation is intentionally excluded from this table becau
 | Project-controlled identifier | lowercase, normally underscores | `active_provider` |
 | Normative document version | `v` plus two digits | `v01` |
 | Retired document | version followed by `-retired` | `document-name-v01-retired.md` |
+| ADR | `adr-` plus four-digit sequence and descriptive slug | `adr-0001-primary-application-runtime.md` |
 
-# Appendix C - Interaction Modes
+# Appendix C - Interaction and Integration Modes
 
-| Mode | Role | Principle |
+| Mode or adapter | Role | Principle |
 |---|---|---|
 | TUI | Guided terminal interaction | Presentation adapter over shared capabilities |
-| Headless | Automation, scripts, CI/CD | Non-interactive adapter over shared capabilities |
+| Headless | Automation, scripts, CI/CD | Non-interactive adapter; not itself the machine invocation contract |
 | GUI | Proposed graphical interaction | Graphical adapter over shared capabilities |
+| IDE / host integration | IDEs, editors, CI/CD, AI agents, and other tools | Thin integration adapter over shared AppManager capabilities |
+| Application Invocation Contract | Structured semantic invocation boundary | Shared, presentation-independent contract; transport choices belong at lower specification levels |
 
 # Appendix D - Documentation Lifecycle Quick Reference
 
@@ -1160,3 +1390,38 @@ Project-management documentation is intentionally excluded from this table becau
 | Active | Live documentation tree | According to hierarchy | Normal versioned filename | Current project documentation |
 | Archived | `docs/archive/` | No | Existing filename retained | Removed from live tree; information may still require migration or may be retained for history |
 | Retired | `docs/archive/` | No | Append `-retired` after version | Information-disposition process complete; document permanently superseded or obsolete |
+
+ADRs use the separate decision lifecycle defined in the architecture-decision governance document and may remain available after rejection or supersession because the decision history itself can retain engineering value.
+
+# Appendix E - Architecture Decision Quick Reference
+
+| ADR Status | Meaning |
+|---|---|
+| Proposed | Under consideration; does not redefine an approved specification |
+| Accepted | Records an approved significant decision; normative consequences belong in affected specifications |
+| Rejected | Records a proposed decision deliberately not adopted where the rationale retains value |
+| Deprecated | Accepted decision still relevant to compatibility or implementation but intentionally being phased out |
+| Superseded | Historical decision replaced by a newer ADR; successor must be identifiable |
+
+Typical decision flow:
+
+```text
+proposal / open question
+        |
+        v
+architecture review / investigation
+        |
+        v
+ADR decision
+        |
+        v
+authoritative specification
+        |
+        v
+detailed design
+        |
+        v
+implementation
+```
+
+Architecture reviews may contain detailed comparative analysis, prototypes, benchmarks, risks, migration implications, and recommendations. ADRs preserve the durable decision and rationale. Specifications carry the resulting normative requirements.
