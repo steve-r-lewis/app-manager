@@ -266,6 +266,22 @@ The primary AppManager Design Specification should act as the root design author
 
 Its purpose is to describe the intended AppManager system rather than to audit the current source tree.
 
+### 5.6 Enduring Target-System Test
+
+The root Design Specification must describe the enduring target system rather than the journey from the current or legacy implementation to that target.
+
+A proposed statement belongs in the root Design Specification only when it describes enduring target-system architecture, intent, constraints, principles, or relationships and remains useful and true after the current implementation and any migration required to reach the target architecture have ceased to matter.
+
+The governing test is:
+
+> Would this statement remain useful and true after the current implementation and any migration required to reach the target architecture have ceased to matter?
+
+If the answer is no, the statement does not belong in the root Design Specification. It should instead be placed at the Functional, Detailed Design, Implementation, ADR, or project-management level according to its actual responsibility.
+
+The root Design Specification must therefore not describe migration sequencing, transitional architecture, temporary compatibility arrangements, file-by-file conversion, current-language replacement steps, or other reduction-to-practice detail merely because those matters are necessary to reach the target design.
+
+A technology, runtime, protocol family, subsystem boundary, or other concrete choice may be named in the Design Specification when an accepted decision makes that choice an enduring architectural characteristic or constraint of the target system. The Design Specification should state the resulting architectural consequence, not the historical migration path or implementation mechanics that produced it.
+
 ---
 
 ## 6. Level 2 - Functional Specification
@@ -366,6 +382,27 @@ Detailed Design Specification:
 
 The exact implementation paths and concrete wiring remain the responsibility of the Implementation Specification.
 
+### 7.5 Permanent Design Versus Migration Design
+
+A Detailed Design Specification should describe the permanent technical design by which AppManager realises approved Functional and Design requirements.
+
+Migration concerns may legitimately influence Detailed Design when safe transformation to the target architecture imposes a durable design constraint. Examples include preserving a stable subsystem boundary, requiring compatibility at a contract seam, or ensuring that an independently replaceable capability remains isolated.
+
+However, transient migration execution does not become permanent Detailed Design merely because architectural work depends upon it.
+
+The following normally belong below or outside Detailed Design:
+
+- file-by-file or component-by-component conversion order;
+- temporary shims that exist only during migration;
+- transitional source locations;
+- temporary build arrangements;
+- implementation work packages;
+- milestone sequencing;
+- migration progress and status;
+- temporary compatibility steps that cease to matter once the target design is established.
+
+Where such information is necessary, the permanent technical constraint should be captured in Detailed Design, while the concrete reduction to practice belongs in Implementation Specifications and transient sequencing, coordination, and progress belong in project-management documentation.
+
 ---
 
 ## 8. Level 4 - Implementation Specification
@@ -410,6 +447,16 @@ Statements such as the following belong at this level:
 > `repository_registry.json` has no runtime consumer in the present implementation.
 
 These are useful implementation observations but should not pollute the system Design Specification.
+
+### 8.4 Reduction to Practice and Migration Execution
+
+Implementation Specifications own the concrete reduction of approved design into the repository and runtime environment.
+
+Where a migration is required, Implementation Specifications may define the implementation-specific mechanics necessary to move from the current codebase to the approved Detailed Design, including concrete modules, source paths, build changes, compatibility wiring, replacement steps, tests, and retirement of superseded implementation structures.
+
+Implementation Specifications should distinguish permanent implementation requirements from temporary migration mechanics where that distinction affects maintenance or traceability.
+
+Project-management documentation remains the appropriate location for execution order, workstream coordination, milestone planning, progress tracking, handoff state, and other transient management information associated with the migration.
 
 ---
 
@@ -622,7 +669,9 @@ The four principal specification levels are represented by `design/`, `functiona
 
 The `decisions/` directory contains the Architecture Decision Record governance document, ADR template, and durable Architecture Decision Records. ADRs are governed decision-provenance records and are outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. They must not become a parallel specification system.
 
-The `project_management/` directory contains project planning, coordination, migration, rationalisation, status, handoff, release-planning, architecture investigations and reviews, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification. Where an investigation results in a significant architectural decision, the decision should additionally be recorded through the ADR process when required.
+The `project_management/` directory contains project planning, coordination, migration planning and sequencing, migration status, rationalisation, status, handoff, release-planning, architecture investigations and reviews, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification. Where an investigation results in a significant architectural decision, the decision should additionally be recorded through the ADR process when required.
+
+Temporary migration states, workstream order, milestone sequencing, component-by-component conversion plans, progress, and handoff information belong in project-management documentation unless a permanent system requirement or design constraint is identified and deliberately incorporated into the appropriate normative specification.
 
 The `archive/` tree is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status. Archived decision material may preserve ADR identifiers and provenance where required by the ADR governance rules.
 
@@ -1122,6 +1171,10 @@ It should not rewrite approved higher-level requirements merely because the curr
 
 It should not treat a recommendation, architecture review, or draft ADR as an accepted decision unless the project has deliberately approved it.
 
+When modifying the root Design Specification, an AI system must apply the enduring target-system test in Section 5.6 and exclude migration journey, transitional implementation state, and reduction-to-practice detail unless the information expresses a permanent target-system architectural constraint.
+
+When modifying Detailed Design, an AI system must distinguish permanent internal design from transient migration execution. Permanent constraints required to support safe migration may be designed there, but temporary sequencing, component conversion order, progress, and transitional work arrangements must be placed at the Implementation Specification or project-management level as appropriate.
+
 ### 19.2 Source Authority
 
 When consolidating information, AI systems should distinguish among:
@@ -1193,7 +1246,32 @@ Repository branch protection or rulesets should be used where practical to reinf
 
 ## 20. Design and Implementation Separation
 
-The documentation system should preserve a strong distinction between design authority, decision rationale, and implementation observation.
+The documentation system should preserve a strong distinction between design authority, decision rationale, permanent technical design, implementation reduction to practice, and transient migration management.
+
+The governing separation is:
+
+```text
+ADR
+  why a significant decision was made
+        |
+        v
+Design Specification
+  enduring target-system architecture and constraints
+        |
+        v
+Functional Specification
+  required system behaviour
+        |
+        v
+Detailed Design Specification
+  permanent technical design that realises those requirements
+        |
+        v
+Implementation Specification
+  concrete reduction to practice in the codebase and runtime
+```
+
+Project-management documentation operates outside that normative chain and owns transient migration sequencing, coordination, milestones, status, and handoff information.
 
 Examples of Design Specification content:
 
@@ -1209,15 +1287,33 @@ Examples of ADR content:
 - which decision drivers were decisive;
 - what consequences and migration obligations follow from the accepted decision.
 
+Examples of Detailed Design content:
+
+- the permanent responsibility boundary between two architectural subsystems;
+- a stable internal contract required to keep a specialist runtime independently replaceable;
+- lifecycle, cancellation, failure, and compatibility semantics that remain part of the finished architecture.
+
 Examples of Implementation Specification content:
 
 - a particular command is currently a stub;
 - a service is currently unused;
 - an exact method is not yet wired into a command;
 - an existing path needs migration;
-- a particular library provides Git functionality.
+- a particular library provides Git functionality;
+- a concrete module is replaced or rewired as part of migration.
 
-This distinction allows implementation to evolve without making the Design Specification obsolete after every code change while preserving the rationale for consequential architectural choices.
+Examples of project-management migration content:
+
+- which component is migrated first;
+- the order of migration workstreams;
+- temporary milestone dependencies;
+- migration completion percentages;
+- handoff and execution status;
+- temporary sequencing required only while the current implementation is being transformed.
+
+The root Design Specification must describe the target architecture, not the journey from the legacy implementation to that target. Detailed Design must describe the permanent internal design, not a temporary implementation programme. Implementation Specifications may describe the concrete reduction to practice, while project-management documentation coordinates the transient execution of that work.
+
+This distinction allows implementation to evolve without making the Design Specification obsolete after every code change while preserving the rationale for consequential architectural choices and preventing temporary migration state from becoming permanent design authority.
 
 ---
 
@@ -1231,6 +1327,9 @@ Before a normative document is considered complete, it should be checked for:
 - duplicated requirements;
 - contradictions with higher-level specifications;
 - accidental implementation leakage into higher-level documents;
+- migration or transitional detail placed above its appropriate specification or project-management level;
+- confirmation that root Design Specification statements pass the enduring target-system test in Section 5.6;
+- confirmation that Detailed Design describes permanent technical design rather than transient migration execution;
 - ambiguous normative language;
 - unresolved legacy references;
 - obsolete architectural terminology;
@@ -1322,27 +1421,31 @@ The AppManager documentation system is governed by the following core rules:
 6. Higher-level specifications govern lower-level specifications.
 7. Lower-level documents refine but do not silently redefine higher-level documents.
 8. Information belongs at the highest appropriate level of abstraction.
-9. Duplication should be replaced by cross-reference and traceability.
-10. Design intent, decision rationale, and current implementation state must be clearly distinguished.
-11. TUI, Headless, GUI, IDE, and other integration adapters should share common application capabilities rather than duplicate domain behaviour.
-12. Headless operation and the Application Invocation Contract are distinct architectural concepts.
-13. Architectural subsystems should not be forced into an artificial layer model.
-14. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
-15. ADRs are governed decision-provenance records and are not a fifth specification level.
-16. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
-17. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
-18. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
-19. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
-20. Archived documents are outside the active specification hierarchy and are non-authoritative.
-21. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
-22. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
-23. A retired document must use the `-retired` suffix immediately after its version identifier.
-24. A document must not be retired while it remains the sole source of information the project intends to preserve.
-25. Superseded canonical documents must identify their successor or replacement authority.
-26. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
-27. Active specifications should not rely upon archived or retired documents as normative authority.
-28. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, and the archive/retirement lifecycle.
-29. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+9. The root Design Specification describes enduring target-system architecture and constraints, not the migration journey or reduction to practice.
+10. A root Design Specification statement must remain useful and true after the current implementation and migration to the target architecture have ceased to matter.
+11. Detailed Design describes the permanent internal technical design; transient migration execution does not become permanent design authority.
+12. Implementation Specifications own concrete reduction to practice, while project-management documentation owns migration sequencing, coordination, progress, and temporary states.
+13. Duplication should be replaced by cross-reference and traceability.
+14. Design intent, decision rationale, current implementation state, and migration state must be clearly distinguished.
+15. TUI, Headless, GUI, IDE, and other integration adapters should share common application capabilities rather than duplicate domain behaviour.
+16. Headless operation and the Application Invocation Contract are distinct architectural concepts.
+17. Architectural subsystems should not be forced into an artificial layer model.
+18. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
+19. ADRs are governed decision-provenance records and are not a fifth specification level.
+20. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
+21. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
+22. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
+23. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
+24. Archived documents are outside the active specification hierarchy and are non-authoritative.
+25. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+26. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+27. A retired document must use the `-retired` suffix immediately after its version identifier.
+28. A document must not be retired while it remains the sole source of information the project intends to preserve.
+29. Superseded canonical documents must identify their successor or replacement authority.
+30. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
+31. Active specifications should not rely upon archived or retired documents as normative authority.
+32. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, target-system permanence, and the archive/retirement lifecycle.
+33. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
@@ -1350,12 +1453,14 @@ The AppManager documentation system is governed by the following core rules:
 
 | Documentation Level | Primary Question | Typical Content |
 |---|---|---|
-| Design Specification | What system are we building? | Vision, scope, architecture, principles, major domains, interaction model |
+| Design Specification | What system are we building? | Enduring target-system vision, scope, architecture, principles, major domains, interaction model |
 | Functional Specification | What must it do? | Behaviour, requirements, inputs, outputs, validation, workflows |
-| Detailed Design Specification | How should it work internally? | Components, commands, interfaces, algorithms, dependencies, data structures |
-| Implementation Specification | How is it implemented here? | Paths, symbols, libraries, wiring, status, migrations, code-specific constraints |
+| Detailed Design Specification | How should it work internally? | Permanent components, commands, interfaces, algorithms, dependencies, data structures |
+| Implementation Specification | How is it implemented here? | Paths, symbols, libraries, wiring, status, migration mechanics, code-specific constraints |
 
 Project-management documentation and Architecture Decision Records are intentionally excluded from this table because neither is a specification level.
+
+Project-management documentation owns transient migration planning, sequencing, coordination, progress, temporary states, and handoff information.
 
 Architecture Decision Records answer a different question:
 
