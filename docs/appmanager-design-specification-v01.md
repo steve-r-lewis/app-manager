@@ -299,9 +299,9 @@ The command layer should orchestrate these capabilities without absorbing their 
 
 ### 6.1 Architectural Model
 
-AppManager should be described as a domain-oriented command application with multiple cooperating architectural subsystems.
+AppManager is a domain-oriented command application composed of multiple cooperating architectural subsystems.
 
-It should not be described as a fixed five-layer architecture.
+These subsystems have distinct responsibilities and interact through defined application capabilities. They form a conceptual responsibility model rather than a rigid architectural stack or mandatory source-directory structure.
 
 The major conceptual areas are:
 
@@ -329,11 +329,11 @@ The major conceptual areas are:
                     managed project
 ```
 
-This is a conceptual responsibility model rather than a mandatory source-directory map.
+The diagram expresses architectural responsibility and collaboration. It does not prescribe a one-to-one source-directory structure or require every capability to pass through every conceptual area.
 
 ### 6.2 Services
 
-Services provide reusable operational capabilities required by commands and other subsystems.
+Services provide reusable operational capabilities required by commands, domain engines, and other subsystems.
 
 Service responsibilities may include:
 
@@ -344,34 +344,21 @@ Service responsibilities may include:
 - logging;
 - AI-provider access;
 - code coordination;
-- licensing support;
 - other cross-cutting application capabilities.
 
-Services should expose coherent capabilities and avoid unnecessary presentation dependencies.
+Services should expose coherent reusable capabilities, avoid unnecessary presentation dependencies, and should not absorb specialised domain behaviour merely because multiple commands require it.
 
-### 6.3 Scanners
+### 6.3 Domain Engines
 
-Scanners provide lexical or structural recognition of supported source formats where AppManager requires controlled understanding of existing files.
+Domain engines encapsulate cohesive, specialised application capabilities that have their own rules, concepts, or internal coordination requirements.
 
-Their purpose is to convert source text into information that higher-level code-intelligence components can reason about safely.
+A domain engine may coordinate services, resolvers, registries, configuration, templates, and other shared infrastructure while retaining responsibility for the behaviour of its domain.
 
-Scanners are not intended to be general-purpose compiler replacements.
+Examples may include licensing, repository-management capabilities, generation, code intelligence, or other sufficiently cohesive concerns identified as AppManager evolves.
 
-### 6.4 Strategies
+Domain engines should expose reusable application capabilities rather than presentation-specific workflows.
 
-Strategies encapsulate file-type-specific inspection and mutation behaviour.
-
-A strategy should understand the relevant structural conventions of the source type it manages and expose a consistent conceptual interface to higher-level code operations.
-
-Strategies allow AppManager to add support for new file types without embedding format-specific behaviour throughout the command layer.
-
-### 6.5 Orchestrators
-
-Orchestrators coordinate multiple lower-level code-intelligence capabilities where a file, artefact, or workflow spans more than one specialised representation.
-
-They should compose existing capabilities rather than duplicate them.
-
-### 6.6 Resolvers
+### 6.4 Resolvers
 
 Resolvers determine context-dependent values or resources from available project state, configuration, registries, environment information, or user-supplied input.
 
@@ -379,31 +366,19 @@ Resolvers are particularly important where AppManager must separate the question
 
 Resolution should be deterministic in Headless operation and may be augmented by interactive prompting in presentation modes that permit it.
 
-### 6.7 Template Engine
+### 6.5 Generation and Templates
 
-The Template Engine is responsible for producing new project artefacts from controlled templates and resolved project data.
+The generation subsystem is responsible for producing new project artefacts from controlled generators or templates and resolved project data.
 
 Templates are intended primarily for creation and scaffolding rather than arbitrary mutation of existing source files.
 
-Template generation should avoid hard-coded user-specific or environment-specific assumptions where those values can be resolved through configuration.
+Generation should avoid hard-coded user-specific or environment-specific assumptions where those values can be resolved through configuration.
 
-### 6.8 License Engine
+Generation of new artefacts remains conceptually distinct from inspection and mutation of existing source, which belongs to the code-intelligence subsystem.
 
-The License Engine is a dedicated domain subsystem responsible for licensing-related project capabilities.
+### 6.6 Registries
 
-Its design may include:
-
-- license metadata;
-- license templates;
-- license selection and resolution;
-- project license generation;
-- validation or compatibility capabilities where subsequently specified.
-
-Detailed licensing behaviour belongs in lower-level specifications.
-
-### 6.9 Registries
-
-Registries provide discoverable mappings of configured or supported resources.
+Registries provide discoverable mappings of configured or supported resources used across AppManager subsystems.
 
 Potential registry concerns include:
 
@@ -414,7 +389,7 @@ Potential registry concerns include:
 - strategies;
 - other extensible resource families.
 
-A registry should define identity and discovery, while specialised services or resolvers should own operational behaviour.
+A registry should define identity and discovery. Specialised services, resolvers, domain engines, or other responsible subsystems should own operational behaviour.
 
 ---
 
@@ -454,7 +429,29 @@ existing source
 
 Not every supported file type must use every stage.
 
-### 7.3 Inspection and Mutation Separation
+### 7.3 Scanners
+
+Scanners provide lexical or structural recognition of supported source formats where AppManager requires controlled understanding of existing files.
+
+Their purpose is to convert source text into information that higher-level code-intelligence components can reason about safely.
+
+Scanners are not intended to be general-purpose compiler replacements.
+
+### 7.4 Strategies
+
+Strategies encapsulate file-type-specific inspection and mutation behaviour.
+
+A strategy should understand the relevant structural conventions of the source type it manages and expose a consistent conceptual interface to higher-level code operations.
+
+Strategies allow AppManager to add support for new file types without embedding format-specific behaviour throughout the command layer.
+
+### 7.5 Orchestrators
+
+Orchestrators coordinate multiple lower-level code-intelligence capabilities where a file, artefact, or workflow spans more than one specialised representation.
+
+They should compose existing capabilities rather than duplicate them.
+
+### 7.6 Inspection and Mutation Separation
 
 Where practical, AppManager should distinguish between:
 
@@ -465,21 +462,21 @@ Where practical, AppManager should distinguish between:
 
 This separation supports safer automation and future preview or dry-run capabilities.
 
-### 7.4 Non-Destructive Transformation
+### 7.7 Non-Destructive Transformation
 
 Source transformation should preserve unrelated user content, formatting, comments, and configuration wherever practical.
 
 AppManager should avoid full-file regeneration when a bounded structural edit can safely achieve the intended result.
 
-### 7.5 Structured Formats
+### 7.8 Structured Formats
 
 Structured configuration formats should be modified through structure-aware mechanisms where available rather than through unrestricted textual replacement.
 
-### 7.6 Composite Source Files
+### 7.9 Composite Source Files
 
 Where a source file contains multiple embedded languages or structural regions, AppManager should favour extraction, delegation, and controlled recomposition over creating monolithic format-specific logic.
 
-### 7.7 Future Language Support
+### 7.10 Future Language Support
 
 The architecture should allow additional source formats and language variants to be introduced through appropriate scanners, strategies, orchestrators, or external parser integrations without redesigning the command system.
 
@@ -920,9 +917,9 @@ AI services may enhance AppManager workflows but must not become an implicit req
 
 Implementation must follow approved design and functional requirements. Current source behaviour does not automatically redefine the intended system.
 
-### 12.14 No Artificial Layer Model
+### 12.14 Architectural Responsibility Model
 
-Services, scanners, strategies, orchestrators, resolvers, templates, registries, and domain engines are not to be described as equivalent layers merely for diagrammatic convenience.
+Services, domain engines, code-intelligence components, resolvers, generators, templates, registries, and adapters represent distinct responsibilities and collaboration patterns rather than equivalent tiers in a uniform stack.
 
 ### 12.15 Nuxt Layer Terminology
 
@@ -1079,12 +1076,12 @@ Such information should be captured by Implementation Specifications, implementa
 | Headless | Non-interactive AppManager operation for automation and scripted use. |
 | GUI | Proposed Graphical User Interface over shared AppManager capabilities. |
 | service | A reusable operational capability used by commands or other subsystems. |
+| domain engine | A cohesive specialised subsystem that owns domain-specific rules, concepts, or coordination. |
 | scanner | A component that recognises lexical or structural information in supported source text. |
 | strategy | A component encapsulating file-type-specific inspection and mutation behaviour. |
 | orchestrator | A component that composes multiple specialised capabilities for a composite operation or artefact. |
 | resolver | A component responsible for determining a context-dependent value or resource. |
-| template engine | The subsystem responsible for generating new artefacts from templates and resolved data. |
-| license engine | The specialised subsystem responsible for licensing-related capabilities. |
+| generation subsystem | The subsystem responsible for generating new artefacts from generators or templates and resolved data. |
 | registry | A discoverable mapping of configured or supported resources. |
 | code intelligence | AppManager capabilities for structured inspection, understanding, documentation, and controlled transformation of existing source. |
 
@@ -1107,16 +1104,14 @@ Such information should be captured by Implementation Specifications, implementa
              v                    v                    v
        application services   domain engines     code intelligence
              |                    |                    |
-             |                license engine     scanners
-             |                                     |
-             |                                  strategies
-             |                                     |
-             |                                orchestrators
-             |                                        |
-             +-------------+------+---------------------+
+             |                    |          scanners / strategies /
+             |                    |              orchestrators
+             |                    |                    |
+             +-------------+------+--------------------+
                            |      |
                            v      v
-                       resolvers  template engine
+                       resolvers  generation
+                                  and templates
                            |      |
                            +--+---+
                               |
