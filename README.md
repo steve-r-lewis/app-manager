@@ -1,175 +1,328 @@
-# Nuxt 4+ Monorepo Manager
+# AppManager
 
-**App Manager** is a domain-driven CLI tool designed to orchestrate complex workflows in Nuxt 4 monorepos. It abstracts Git synchronization, layer management, code quality gates, and AI-assisted documentation into a unified interface, simplifying the management of multi-repository architectures.
+AppManager is a management application for complex Nuxt monorepo projects and their constituent Nuxt layers.
 
----
+It provides a coherent application model for coordinating lifecycle operations, project and repository management, configuration, documentation, quality workflows, source-aware transformation, generation, licensing, AI-assisted workflows, and future host-tool integrations without requiring each interface or integration to reimplement the same application behaviour.
 
-## 🚀 Core Architecture
-
-The application utilizes a **Dual-Routing System** to serve both automated pipelines and developer workflows:
-
-* **Headless Mode:** Direct CLI command execution optimized for CI/CD pipelines and automation scripts (e.g., `am git sync`).
-* **Interactive Mode:** A menu-driven Text User Interface (TUI) powered by `@clack/prompts` for day-to-day operations, offering guided workflows and AI assistance.
-
-## ✨ Key Features
-
-* **🧠 Context Aware:** Intelligently distinguishes between the "Tool Root" (the CLI itself) and the "Target Root" (your project), enabling safe execution anywhere.
-* **🤖 AI Integrated:** Leverages LLMs to intelligently generate semantic commit messages, write JSDoc documentation, and analyze codebase health.
-* **⚡ Nuxt Specialized:** Native commands to scaffold Nuxt Layers, synchronize environment variables across layers, and manage builds.
-* **🛡️ Quality Gates:** Unified wrappers for Vitest, ESLint, and type-checking ensure code standards are maintained across the monorepo.
-* **📦 Git Orchestration:** robust tools to synchronize multiple repositories, manage remote upstreams, initialize layer repositories, and handle submodules.
+> **Project status:** the **Version 1 root Design Specification is complete** and is the authoritative high-level description of the target AppManager architecture. The current TypeScript implementation predates parts of that architecture and is being progressively reconciled with the specification. Existing source structure or behaviour should therefore not be treated as authoritative where it conflicts with the approved design.
 
 ---
 
-## 🛠️ Installation & Usage
+## What AppManager Is
 
-**1. Development (via `tsx`)**
-The most direct method for contributors and local testing.
+AppManager is intended to act as a management plane above the individual tools normally used to maintain a Nuxt monorepo.
 
-```bash
-# Interactive Menu
-npx tsx index.ts
+Rather than making developers or automation coordinate package-manager commands, Git repositories, Nuxt layers, configuration files, documentation tooling, quality checks, code transformation, templates, and AI services independently, AppManager provides one application-level command and workflow model through which those capabilities can be invoked consistently.
 
-# Headless Command Examples
-npx tsx index.ts app dev
-npx tsx index.ts git status
+AppManager does **not** replace Nuxt, Git, the package manager, test tooling, the operating system, external providers, or repository hosts. It coordinates those systems while retaining AppManager-level authority over command semantics, workflow policy, managed scope, safety constraints, and final application outcomes.
+
+---
+
+## Architectural Model
+
+The Version 1 architecture is centred on a single authoritative **Application Engine**.
+
+```text
+interaction modes / host integrations
+                |
+                v
+       interaction adapters
+                |
+                v
+ Application Invocation Contract
+                |
+                v
+       Application Engine
+                |
+                v
+       commands / use cases
+                |
+                v
+ application capability coordination
+                |
+        +-------+-------+
+        |               |
+        v               v
+ AppManager-owned   capability
+ capabilities       boundaries
+                        |
+                        v
+                 capability providers
+                        |
+                        v
+             external/ecosystem mechanics
 ```
 
-**2. Standard Usage (via Package Scripts)**
-If using the provided `package.json` scripts:
+The important architectural rule is:
 
-```bash
-pnpm dev   # Starts the interactive TUI
-# OR
-pnpm start
+> **Delegated execution does not mean delegated application authority.**
+
+A service, domain engine, parser, generator, external tool, AI provider, repository provider, or other specialist capability may perform bounded work, but the Application Engine retains authority over what an AppManager operation means, what it may affect, and whether its result is accepted as successful.
+
+The diagram expresses responsibility and authority, not a required process, package, deployment, or runtime topology.
+
+---
+
+## Interaction Modes and Integrations
+
+AppManager is designed so that multiple interaction modes can expose the same underlying application semantics.
+
+### TUI
+
+The Text User Interface provides guided interactive operation for developers. It may collect input, request confirmation, present progress, and display human-readable results, but it must not own a separate implementation of AppManager business logic.
+
+### Headless
+
+Headless operation provides deterministic non-interactive invocation suitable for scripts, CI/CD, scheduled workflows, and automation. It uses the same command and application semantics as interactive operation and must not depend on unexpected prompts.
+
+### GUI
+
+A graphical interface is a proposed first-class interaction mode over the same application architecture rather than a separate application implementation.
+
+### IDE and Host Tools
+
+AppManager is designed to support thin adapters for IDEs, editors, CI systems, automation agents, and other host tools. A WebStorm integration is the first proposed IDE adapter.
+
+All interaction modes and integrations should ultimately invoke AppManager through the shared **Application Invocation Contract** and receive structured results without parsing presentation-oriented terminal output.
+
+---
+
+## Managed Projects
+
+AppManager treats a Nuxt project as a structured managed system rather than merely a current working directory or one Git repository.
+
+A managed project may contain:
+
+- a root Nuxt application;
+- one or more managed Nuxt layers;
+- source code, tests, and documentation;
+- project and package configuration;
+- one or more Git repositories and repository relationships;
+- AppManager-owned configuration, state, registries, templates, reports, and logs;
+- generated artefacts and other resources relevant to supported workflows.
+
+For each operation, AppManager resolves a **managed project context** and an explicit **managed scope**. Discovering or understanding a resource does not automatically grant AppManager permission to modify it.
+
+This is a core safety principle of the architecture.
+
+---
+
+## Functional Domains
+
+The AppManager command surface is organised into **functional domains**. Domains group related product-facing commands and use cases; they are not independent architectural subsystems or implementation stacks.
+
+The current intended Version 1 domains are:
+
+- **`app`** — application lifecycle, build, development, cleanup, initialisation, and creation workflows;
+- **`docs`** — documentation generation and maintenance;
+- **`git`** — source-control and multi-repository workflows;
+- **`ai`** — workflows where AI capability is itself the primary subject;
+- **`nuxt`** — Nuxt application, layer, and framework-specific management;
+- **`quality`** — tests, coverage, linting, type checking, validation, and quality gates;
+- **`utils`** — bounded maintenance tasks that do not justify a more specific product domain;
+- **`settings`** — user-facing and automation-facing AppManager configuration management.
+
+A command in one domain may reuse capabilities supplied by several architectural subsystems. Shared capabilities should not be duplicated simply because multiple domains depend on them.
+
+---
+
+## Code Intelligence and Safe Transformation
+
+AppManager is intended to inspect and modify supported source through structure-aware mechanisms rather than unrestricted global text replacement.
+
+The conceptual transformation flow is:
+
+```text
+recognition / inspection
+        |
+        v
+  structural facts
+        |
+        v
+ transformation strategy
+        |
+        v
+bounded transformation plan
+        |
+        v
+ Application Engine policy / approval
+        |
+        v
+ transformation mechanism
+        |
+        v
+ source-level validation
+        |
+        v
+ application-level acceptance
 ```
 
-**3. Global Simulation (Simulating `am`)**
-To run commands using the shorthand `am` binary as referenced in documentation:
+Source-level technical validity and AppManager-level acceptance are deliberately separate. A technically valid edit can still be rejected if it violates command intent, managed scope, application policy, or safety constraints.
+
+Generation of new artefacts from templates is likewise kept conceptually separate from mutation of existing user-authored source.
+
+---
+
+## Extensibility
+
+AppManager distinguishes between several different forms of extension rather than forcing all extensibility through one generic plugin mechanism.
+
+### Declarative and Resource-Driven Extensions
+
+Resources such as licence definitions and templates can be added to an owning engine or subsystem without changing unrelated AppManager source code where the required behaviour fits the supported declarative model.
+
+For example:
+
+```text
+License Engine
+    |
+    +-- licence catalogue
+    +-- validated licence definitions
+```
+
+and:
+
+```text
+Generation / Template Engine
+    |
+    +-- template catalogue
+    +-- validated template specifications
+```
+
+These are extensions, but they are not arbitrary executable plugins.
+
+### Capability Implementations
+
+Specialised provider or ecosystem-native implementations may sit behind stable capability boundaries. They can change how bounded work is performed without redefining AppManager command semantics or application authority.
+
+### Application-Surface Extensions
+
+New commands, functional domains, interaction adapters, and architectural subsystems may extend the product surface while still participating in the same Application Engine, invocation, safety, scope, and outcome model.
+
+A general executable plugin framework, runtime code loading model, sandbox, marketplace, or package format is **not** mandated by the Version 1 root design.
+
+---
+
+## AI
+
+AI is a bounded, optional capability where practical.
+
+AI services may assist documentation, commit preparation, analysis, and future development workflows, but model output does not become authoritative project state, source code, configuration, documentation, or repository history merely because a model produced it.
+
+Consequential use of AI-generated output remains subject to AppManager policy, validation, managed scope, safety constraints, and application-level acceptance.
+
+---
+
+## Current Implementation Status
+
+The repository currently contains an evolving **Node.js / TypeScript** implementation.
+
+The present entry point still reflects the earlier implementation architecture: it initialises services, registers a limited set of commands, and dispatches between interactive and Headless execution. That code remains useful implementation material, but it is being reconciled with the Version 1 target architecture rather than defining that architecture itself.
+
+The current package metadata declares:
+
+- Node.js `>=20`;
+- pnpm `11.5.2`;
+- TypeScript;
+- Vitest;
+- `app/index.ts` as the application entry point;
+- `app-manager` as the currently declared package binary name.
+
+The executable interface and command surface may change as the implementation is brought into line with the Functional, Detailed Design, and Implementation Specifications.
+
+---
+
+## Development Setup
+
+### Requirements
+
+- Node.js 20 or later;
+- pnpm 11.x.
+
+Install dependencies:
 
 ```bash
-pnpm link --global
-am           # Launches Interactive Mode
-am app dev   # Launches Headless Mode
+pnpm install
 ```
----
 
-## Modes of Operation
+### Run the current development entry point
 
-**App Manager** operates in two distinct modes designed to suit different workflows. **Interactive Mode** is the default experience for developers; running the application without arguments launches a rich Text User Interface (TUI) powered by `@clack/prompts`. This mode guides you through complex workflows with menus, interactive forms, and AI assistance, making it ideal for day-to-day development tasks where discovery and guidance are helpful.
+The current repository is development-oriented. The TypeScript entry point can be run directly with `tsx`:
 
-**Headless Mode** serves as the automation layer for CI/CD pipelines and scripting. By passing specific arguments directly to the `am` command, the application bypasses the interactive UI entirely and routes the instruction straight to the underlying service logic. This allows for instant, non-blocking execution of core tasks, enabling you to integrate App Manager's capabilities directly into your build scripts or GitHub Actions.
+```bash
+npx tsx app/index.ts
+```
 
----
+With no command arguments, the current implementation launches its interactive mode.
 
-## ❓ What is "headless" mode (am)?
+The current Headless dispatcher uses the general form:
 
-**"am"** is the command-line abstraction and interface for **App Manager**. It serves as the specific utility that exposes the App Manager's core logic to the terminal, allowing developers to execute workflows for the specific use case of managing Nuxt 4 monorepos.
+```bash
+npx tsx app/index.ts <domain> <action> [arguments] [--options]
+```
 
-It allows you to interact with the App Manager system in two ways:
+Only commands actually registered by the current implementation are available. The Version 1 domain and capability descriptions in this README describe the approved target product architecture and should not be interpreted as evidence that every command has already been implemented.
 
-* **Headless Abstraction:** Passing arguments directly to `am` (e.g., `am git sync`) pipes commands straight to the underlying service logic, optimized for automation and CI/CD.
-* **Interactive Abstraction:** Running `am` without arguments launches the TUI, abstracting complex domain logic behind a user-friendly menu system.
+### Build and validation
 
-### Core Capabilities
+```bash
+pnpm build
+pnpm typecheck
+pnpm vitest:run
+```
 
-Through the `am` interface, you access the App Manager's structured domains:
-
-* **🚀 App Domain:** Lifecycle management (`dev`, `build`).
-* **🐙 Git Domain:** Version control orchestration (`sync`, `push`, `smart commit`).
-* **💚 Nuxt Domain:** Framework-specific tooling (`create layer`, `manage env`).
-* **💎 Quality Domain:** Code health enforcement (`run tests/lint`).
-* **🛠️ Utils Domain:** Maintenance scripts (`clean`, `headers`, `autodoc`).
-
----
-
-## ⌨️ CLI Command Reference
-
-Below are the specific commands available in **Headless Mode**. These commands can be executed using `npx tsx index.ts <command>` or via the global `am` alias if configured.
-
-### App Commands
-
-* `am app dev`
-  Starts the Nuxt development server in the target root.
-* `am app build`
-  Compiles the application for production.
-
-### Git Commands
-
-* `am git sync`
-  Synchronizes all tracked repositories by pulling changes from their configured remotes.
-* `am git push`
-  Push committed changes to the remote repository.
-* `am git commit "<message>"`
-  Stages changes and creates a commit with the provided message string.
-* `am git init [FORCE]`
-  Initializes Git repositories for local layers. Append `FORCE` to re-initialize existing ones.
-* `am git delete <repo_name>`
-  **Dangerous:** Deletes the specified repository from the remote GitHub account.
-
-### Utility Commands
-
-* `am utils headers`
-  Scans source files and validates/updates copyright headers.
-* `am utils clean`
-  Removes temporary log files from the `app_manager` directory.
-* `am utils contributor <name> <email>`
-  Adds a new contributor entry to the project's `package.json`.
+Additional test scripts are defined in `package.json` for unit tests, end-to-end tests, coverage, watch mode, and the Vitest UI.
 
 ---
 
-## Text User Interface (TUI)
+## Documentation
 
-### 📂 Domain Reference
+The root README is an orientation document. It is **not** the authoritative architectural or behavioural specification.
 
-The application is organized into specific **Domains**, each handling a distinct set of responsibilities.
+The project documentation hierarchy is governed by [`docs/project-documentation-guide-v01.md`](docs/project-documentation-guide-v01.md).
 
-### 🚀 App Domain
+The principal specification chain is:
 
-Manages the execution and build processes of the target application.
+```text
+Project Documentation Guide
+            |
+            v
+Root Design Specification
+            |
+            v
+Functional Specifications
+            |
+            v
+Detailed Design Specifications
+            |
+            v
+Implementation Specifications
+            |
+            v
+Implementation
+```
 
-* **`dev`**: Starts the Nuxt development server for the target application.
-* **`build`**: Compiles the application for production deployment.
+The authoritative Version 1 architectural baseline is:
 
-### 🐙 Git Domain
+- [`docs/appmanager-design-specification-v01.md`](docs/appmanager-design-specification-v01.md) — what AppManager is intended to be;
+- [`docs/project-documentation-guide-v01.md`](docs/project-documentation-guide-v01.md) — documentation authority, hierarchy, governance, and placement rules.
 
-Handles version control operations across the monorepo and its sub-repositories.
-
-* **`commit`**: runs an AI-assisted "Smart Commit" flow that analyzes staged changes and generates semantic commit messages.
-* **`sync`**: Synchronizes all tracked repositories by pulling the latest changes from remotes.
-* **`push`**: Pushes committed changes to the configured remote repository.
-* **`init`**: Initializes Git repositories for Nuxt layers that are currently just local directories.
-* **`submodules`**: scans the project and registers any nested repositories as Git submodules.
-* **`delete`**: (Dangerous) Deletes a specified remote repository from GitHub.
-
-### 💚 Nuxt Domain
-
-Provides tools specific to Nuxt 4 architecture and Layer management.
-
-* **`create`**: Scaffolds a new Nuxt Layer with a standard directory structure.
-* **`env`**: Manages `.env` files, allowing secure synchronization or updates across layers.
-* **`docs`**: Extracts inline documentation from Nuxt components and composables.
-
-### 💎 Quality Domain
-
-Enforces code standards.
-
-* **`run`**: Executes the full suite of linters, formatters, and unit tests.
-
-### 📚 Docs Domain
-
-* **`generate`**: Builds static documentation sites or READMEs from source.
-
-### 🛠️ Utils Domain
-
-General-purpose maintenance and system hygiene tools.
-
-* **`clean`**: Wipes log directories (`app_manager/`) to free up space clearing logs and temporary caches.
-* **`headers`**: Validates and updates standard file headers (copyright/license) across source files.
-* **`autodoc`**: Uses AI to automatically write JSDoc comments for functions and classes.
-* **`autoversion`**: Bumps package versions based on recent commit history (Semantic Versioning).
-* **`contributor`**: Adds a new contributor to the `package.json` file.
+Significant architectural decisions may additionally be supported by Architecture Reviews and recorded through ADRs. Those decision records preserve rationale; the resulting requirements remain authoritative through the appropriate specification level.
 
 ---
 
+## Project Governance and Contributions
 
+AppManager is being developed specification-first from the approved Version 1 root design.
+
+Changes should respect the repository documentation hierarchy and should not silently treat current implementation behaviour as authority over approved design.
+
+Repository changes are developed through dedicated branches and pull requests rather than direct edits to `master` unless explicitly authorised.
+
+As the Functional Specifications are developed, they will define the authoritative observable behaviour of domains, commands, workflows, validation, structured outcomes, and failure semantics. Detailed Design and Implementation Specifications will then refine those requirements into technical contracts and concrete source-level implementation.
+
+---
+
+## Licence
+
+This repository is licensed under the **MIT License**.
