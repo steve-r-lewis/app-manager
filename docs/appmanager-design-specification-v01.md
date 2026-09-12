@@ -874,55 +874,128 @@ Concrete file names, schemas, serializers, secret stores, environment-variable c
 
 ---
 
-## 9. Managed Project and Directory Model
+## 9. Managed Project and Project Context Model
 
-### 9.1 Managed Project
+### 9.1 Managed Project Model
 
-AppManager treats the target project as a structured application system rather than an arbitrary working directory.
+AppManager treats the target project as a structured application system whose relevant resources and relationships are resolved into an AppManager **managed project context** for the operation being performed.
 
-A managed project may contain:
+A managed project is not defined merely by the current working directory, a single Git repository, or the presence of one framework file. It is the AppManager-oriented model of the target project's relevant application structure, management metadata, repository relationships, and operation scope.
+
+A managed project may include:
 
 - a root Nuxt application;
-- Nuxt layers;
-- source code;
-- tests;
-- documentation;
-- package configuration;
-- Nuxt configuration;
-- Git repositories or repository relationships;
-- AppManager-owned configuration and state;
-- generated artefacts.
+- one or more managed Nuxt layers;
+- source code, tests, and documentation;
+- package and Nuxt configuration;
+- one or more Git repositories or repository relationships;
+- AppManager-owned configuration, state, registries, templates, reports, and other management resources;
+- generated artefacts and other resources relevant to supported AppManager capabilities.
 
-### 9.2 Root Application and Layers
+The exact physical layout of those resources may vary. AppManager should reason from their project meaning and relationships rather than assuming that all managed resources form one uniform directory or repository tree.
 
-The root application and its layers should be manageable individually and collectively where the relevant operation supports both scopes.
+### 9.2 Managed Project Context
 
-This is particularly important for:
+The **managed project context** is the resolved AppManager view of the target project that is relevant to a particular invocation or operation.
 
-- repository synchronisation;
-- dependency management;
-- documentation;
-- testing;
-- quality operations;
-- project generation;
-- versioning;
-- configuration.
+Conceptually:
 
-### 9.3 Repository Relationships
+```text
+invocation / host context / configuration / project metadata
+                         |
+                         v
+             project discovery and resolution
+                         |
+                         v
+               managed project context
+                         |
+                         v
+             Application Engine / capabilities
+```
 
-A managed project may span multiple Git repositories.
+The managed project context should make the relevant project identity, root application, managed layers, repository relationships, configuration scope, and operation targets available in AppManager-oriented terms without requiring commands or adapters to infer them independently.
 
-AppManager should therefore model repository relationships explicitly enough to support root-project and layer-level operations without assuming that every project is a single repository.
+The Application Engine remains responsible for interpreting that context according to command semantics, policy, scope, and safety requirements.
 
-### 9.4 Project Discovery
+### 9.3 Root Application and Managed Layers
 
-AppManager should be capable of discovering or resolving the relevant target project context from invocation location, supplied arguments, configuration, or managed-project metadata.
+The root Nuxt application and its managed layers are distinct but related project entities.
 
-The detailed discovery rules belong in lower-level specifications.
+AppManager should be able to address the root application, all managed layers, or a selected subset of those entities where the relevant use case supports such scope.
 
-### 9.5 Non-Destructive Ownership
+A managed layer may have its own source structure, package metadata, configuration, documentation, tests, repository relationship, and lifecycle operations. The fact that a layer is structurally part of the Nuxt application does not require it to share the same repository, configuration origin, or management lifecycle as the root application.
 
-AppManager-owned management data should coexist with the target project without unnecessarily restructuring or taking ownership of unrelated project files.
+Likewise, repository boundaries must not be used as a substitute for Nuxt application structure. Project topology and repository topology are related but distinct concerns.
+
+### 9.4 Project Topology and Resource Relationships
+
+AppManager should model the relationships among root application, managed layers, repositories, AppManager-owned management resources, and other managed project entities explicitly enough for commands to operate on the intended targets without reconstructing those relationships independently.
+
+This conceptual **project topology** should express AppManager-relevant relationships rather than expose incidental filesystem or provider-specific implementation details as the authoritative project model.
+
+A physical directory hierarchy may contribute evidence to project discovery, but directory containment alone should not define every semantic relationship within the managed project.
+
+### 9.5 Repository Relationships
+
+A managed project may span one repository, multiple repositories, nested repository relationships, or other supported source-control arrangements.
+
+Repository relationships should therefore be represented as properties and relationships of managed project entities rather than treated as the identity of the managed project itself.
+
+AppManager should be able to determine which repository or repositories are relevant to a project-wide, root-application, layer-specific, or otherwise scoped operation without assuming that every managed entity belongs to one repository.
+
+The detailed repository model, Git-worktree handling, submodule behaviour, remote topology, synchronisation rules, and repository discovery algorithms belong in lower-level specifications.
+
+### 9.6 Project Discovery and Context Resolution
+
+AppManager should be capable of discovering or resolving the relevant target project context from appropriate evidence such as:
+
+- explicit invocation context or supplied target information;
+- invocation location;
+- host-tool context;
+- effective configuration;
+- AppManager-owned project metadata;
+- recognised Nuxt application or layer structure;
+- repository information where relevant.
+
+Discovery inputs provide candidate project information. They do not independently become authoritative merely because they were supplied by an adapter, filesystem location, repository, or host tool.
+
+Project discovery and context resolution should produce one coherent AppManager managed project context before a command depends on project identity or scope. Ambiguous, conflicting, or insufficient context should be handled explicitly rather than resolved through hidden assumptions.
+
+Headless operation must resolve project context deterministically or fail clearly. Interactive adapters may help a user disambiguate candidate context, but they must not redefine AppManager project semantics.
+
+Detailed discovery precedence, markers, filesystem traversal, metadata formats, and validation algorithms belong in Functional and Detailed Design Specifications.
+
+### 9.7 Managed Scope and Operation Targeting
+
+The **managed scope** of an operation is the resolved set of project entities to which that operation is intended to apply.
+
+Depending on the command, scope may include the complete managed project, the root application, all managed layers, selected layers, selected repositories, selected files, or another bounded set of project entities.
+
+Consequential operations should resolve and make their managed scope clear before mutation or external side effects occur. A project-wide operation must still respect the command's semantics, exclusions, safety rules, and ownership boundaries rather than assuming that every discoverable resource is an eligible target.
+
+Scope selection may be informed by interaction or host context, but the meaning and permitted effect of that scope remain AppManager application responsibilities.
+
+### 9.8 AppManager-Owned Management Area and Project Coexistence
+
+The AppManager-owned management area defined in Section 8 is part of the management context associated with a target project; it is not a replacement for the target project's own structure.
+
+AppManager-owned configuration, state, registries, templates, reports, and other management resources should coexist with user-authored project resources without requiring the project to be reorganised around AppManager internals.
+
+The presence of AppManager-owned data does not grant AppManager ownership of adjacent project files, directories, repositories, or framework resources.
+
+### 9.9 Non-Destructive Ownership and Unmanaged Content
+
+Recognition, discovery, or inclusion in a managed project context does not by itself grant AppManager authority to modify a resource.
+
+AppManager should distinguish between understanding a resource, including it within project context, targeting it for a supported operation, and owning AppManager-generated or AppManager-maintained data.
+
+Operations must preserve unrelated user-authored content and unmanaged resources wherever practical and should modify only resources permitted by the command's resolved managed scope, application policy, and safety constraints.
+
+### 9.10 Independence from Incidental Physical Layout
+
+AppManager should support the enduring structural concepts of a Nuxt application, managed layers, repositories, and AppManager-owned management resources without making command semantics depend on incidental source-tree arrangements that are not part of those concepts.
+
+Concrete directory names other than explicitly adopted architectural conventions, path-search algorithms, workspace layouts, repository markers, project-discovery heuristics, and source-tree assumptions belong in lower-level specifications.
 
 ---
 
@@ -1418,6 +1491,9 @@ Such information should be captured by Implementation Specifications, implementa
 | project root | The root directory of the target project. |
 | tool root | The AppManager application environment from which global resources and defaults may be resolved. |
 | managed layer | A Nuxt layer recognised by AppManager as part of the managed project. |
+| managed project context | The resolved AppManager view of the target project relevant to a particular invocation or operation, including the project entities, relationships, configuration scope, and operation targets needed by that use case. |
+| project topology | The AppManager-relevant relationships among the root application, managed layers, repositories, AppManager-owned management resources, and other managed project entities. |
+| managed scope | The resolved set of project entities to which a particular AppManager operation is intended and permitted to apply. |
 | command | An invokable AppManager use case within a functional domain. |
 | functional domain | A coherent family of user-facing AppManager capabilities. |
 | interaction mode | A user-facing or automation-facing mode in which AppManager is operated, such as TUI, Headless, or GUI. |
@@ -1504,7 +1580,7 @@ This root Design Specification is intentionally organised around the following r
 6. Application Architecture
 7. Code-Intelligence and Transformation Architecture
 8. Configuration and State Architecture
-9. Managed Project and Directory Model
+9. Managed Project and Project Context Model
 10. Functional Domains
 11. Core System Workflows
 12. Design Principles and Architectural Invariants
