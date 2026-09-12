@@ -166,15 +166,53 @@ Commands should express application use cases rather than presentation-specific 
 
 ### 3.7 Interaction Mode
 
-An **interaction mode** is a presentation or invocation adapter through which a user, host tool, or external automation invokes shared AppManager capabilities.
+An **interaction mode** is a user-facing or automation-facing mode in which AppManager is operated, such as TUI, Headless, or GUI operation.
 
-### 3.8 Application Invocation Contract
+Interaction modes expose shared AppManager application semantics and must not define independent application policy or business logic.
+
+### 3.8 Interaction Adapter
+
+An **interaction adapter** is an application-boundary component or integration that translates user, automation, or host-tool interaction into AppManager invocation semantics and translates structured AppManager execution information into an appropriate presentation or host representation.
+
+An interaction adapter may realise an interaction mode or integrate AppManager into a host tool. It should contribute presentation, context acquisition, and host-specific integration behaviour without becoming the owner of AppManager application policy or workflow authority.
+
+### 3.9 Application Invocation Contract
 
 The **Application Invocation Contract** is the stable structured boundary through which interaction adapters and external integrations invoke AppManager commands and receive machine-consumable execution information.
 
 The contract defines the conceptual exchange between callers and the command model without prescribing a particular transport, serialization format, network protocol, or process topology.
 
-### 3.9 Architectural Subsystem
+### 3.10 Application Engine
+
+The **Application Engine** is the authoritative application-level responsibility that owns AppManager command and use-case coordination, application policy, workflow orchestration, safety constraints, and interpretation of application-level outcomes.
+
+The Application Engine may use specialised subsystems and capability providers to perform delegated work while retaining authority over how that work participates in an AppManager operation. The term describes an architectural responsibility and does not prescribe an implementation language, process boundary, module structure, or deployment topology.
+
+### 3.11 Application Capability
+
+An **application capability** is a coherent function available to AppManager for realising an application use case or supporting another application responsibility.
+
+A capability may be implemented directly within AppManager or delegated to a specialised subsystem, capability provider, external tool, or external provider. Its use within an AppManager workflow remains governed by AppManager application semantics, policy, scope, and safety requirements.
+
+### 3.12 Capability Boundary
+
+A **capability boundary** is a defined architectural separation between AppManager application-level semantics and authority and the specialised mechanisms used to realise a capability.
+
+A capability boundary allows implementation-specific, ecosystem-native, or provider-specific mechanics to remain encapsulated while AppManager consumes stable application-oriented behaviour. The existence of such a boundary does not imply a separate process, network protocol, serialization format, or other particular implementation mechanism.
+
+### 3.13 Capability Provider
+
+A **capability provider** is a component, subsystem, integration, or other bounded mechanism that supplies one or more specialised capabilities to AppManager through an appropriate capability boundary.
+
+A capability provider owns the specialist mechanics required to perform its delegated work but does not thereby acquire authority over AppManager command semantics, application policy, workflow coordination, safety decisions, or final application-level outcomes.
+
+### 3.14 External Provider
+
+An **external provider** is a service or platform outside AppManager's architectural ownership that AppManager may use to realise or support a capability, such as an AI service or repository-hosting service.
+
+External providers are distinct from the AppManager capability-provider abstraction: an AppManager capability provider may encapsulate access to one or more external providers while preserving AppManager-oriented semantics and boundaries.
+
+### 3.15 Architectural Subsystem
 
 An **architectural subsystem** is a coherent family of responsibilities that contributes to AppManager's application capabilities.
 
