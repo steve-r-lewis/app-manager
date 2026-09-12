@@ -1001,13 +1001,56 @@ Concrete directory names other than explicitly adopted architectural conventions
 
 ## 10. Functional Domains
 
-AppManager's user-facing capabilities are organised into functional domains.
+### 10.1 Functional-Domain Model
+
+AppManager's user-facing command surface is organised into **functional domains**: coherent product-facing groupings of related commands and use cases within the Application Engine command model.
+
+A functional domain describes **what family of AppManager operations is exposed**. It does not prescribe the internal component, service, provider, process, package, or source-code module that realises those operations.
+
+Functional domains and architectural subsystems are therefore distinct concepts:
+
+```text
+functional domain
+(product / use-case organisation)
+        |
+        v
+commands / use cases
+        |
+        v
+application capability coordination
+        |
+        +---------------------------+
+        |                           |
+        v                           v
+AppManager-owned capabilities   capability boundaries
+                                    |
+                                    v
+                            capability providers
+```
+
+Commands in different domains may reuse the same application capabilities, services, resolvers, code-intelligence mechanisms, generation facilities, domain engines, registries, or capability providers. A shared mechanism should not be duplicated merely because several domains expose use cases that depend on it.
 
 The domain list may evolve, but the following domains represent the current intended product surface.
 
-### 10.1 App Domain
+### 10.2 Cross-Domain Invariants
 
-The `app` domain manages application lifecycle operations.
+Every functional domain should preserve the shared AppManager application model established elsewhere in this specification.
+
+In particular, domain commands should:
+
+- execute through the shared Application Invocation Contract and Application Engine command model;
+- operate against a resolved managed project context and managed scope where project resources are involved;
+- reuse shared application capabilities rather than create domain-local replacements for cross-cutting infrastructure;
+- preserve AppManager application policy, safety constraints, diagnostics, observability, and application-level outcome authority;
+- remain independent of interaction-adapter presentation behaviour;
+- avoid exposing provider-specific or ecosystem-specific implementation representations as general command semantics;
+- delegate specialist mechanics through appropriate architectural subsystems or capability boundaries without transferring command or workflow authority.
+
+A functional domain may coordinate several architectural responsibilities for one use case without thereby owning those responsibilities as domain-private infrastructure.
+
+### 10.3 App Domain
+
+The `app` domain manages lifecycle-oriented use cases for the managed application and its applicable project entities.
 
 Its responsibilities may include:
 
@@ -1016,39 +1059,46 @@ Its responsibilities may include:
 - build;
 - preview;
 - local development execution;
-- cleaning generated state;
-- controlled emptying or reset operations;
-- reinitialisation;
+- cleaning generated or recoverable state;
+- controlled emptying, reset, or reinitialisation operations;
 - creation of new applications;
-- creation of new layers.
+- creation of new managed layers.
 
-### 10.2 Docs Domain
+App-domain commands should respect the resolved managed scope and distinguish generated or recoverable state from user-authored project resources before consequential changes are made.
 
-The `docs` domain manages project documentation operations.
+Package-manager execution, process control, generation, filesystem access, configuration resolution, and other underlying mechanisms remain shared capabilities rather than App-domain-specific infrastructure.
+
+### 10.4 Docs Domain
+
+The `docs` domain manages documentation-oriented use cases across the managed project.
 
 Its responsibilities may include documenting:
 
-- the complete application;
+- the complete managed application;
 - application source;
-- all layers;
-- a selected layer;
+- all managed layers;
+- a selected layer or other bounded managed scope;
 - tests;
 - selected files;
-- code structures identified through the code-intelligence subsystem.
+- source structures identified through code intelligence;
+- project or application metadata where documentation workflows require it.
 
-### 10.3 Git Domain
+Documentation commands may coordinate project discovery, code intelligence, generation, configuration, transformation, and validation capabilities, but the Docs domain does not become the architectural owner of those mechanisms.
 
-The `git` domain manages source-control and repository workflows.
+Documentation updates to existing source should preserve the inspection, transformation-planning, transformation-execution, and validation separation defined in Section 7.
+
+### 10.5 Git Domain
+
+The `git` domain manages source-control and repository-management use cases over the repository relationships represented by the managed project context.
 
 Its responsibilities may include:
 
 - repository initialisation;
-- configuration inspection;
-- commits;
-- AI-assisted commit generation;
-- commit management;
+- repository configuration inspection;
+- commits and commit management;
+- AI-assisted commit preparation where enabled;
 - remote management;
-- submodule or managed-repository relationships;
+- submodule or other managed-repository relationships;
 - layer repository initialisation;
 - repository synchronisation;
 - scoped synchronisation;
@@ -1056,87 +1106,118 @@ Its responsibilities may include:
 - project-wide repository operations;
 - controlled remote-repository lifecycle operations.
 
-Destructive Git or remote operations must receive appropriate safeguards.
+Git-domain commands must operate against explicit repository relationships and managed scope rather than assume that the target project is one repository.
 
-### 10.4 AI Domain
+Git mechanics may be supplied through reusable services, domain engines, capability providers, or external repository-hosting integrations. Those mechanisms do not independently own AppManager repository policy, operation scope, safety decisions, or final application outcomes.
 
-The `ai` domain manages AI-related project capabilities.
+Destructive Git operations, history-changing operations, remote mutations, and other consequential side effects must receive appropriate safeguards and explicit scope handling.
+
+### 10.6 AI Domain
+
+The `ai` domain manages AppManager use cases in which AI capabilities are themselves the primary subject or requested workflow.
 
 Its responsibilities may include:
 
 - AI-provider selection and resolution;
 - project AI instruction documents;
-- AI-assisted documentation;
-- AI-assisted commits;
-- future AI-supported development workflows.
+- AI-assisted documentation workflows;
+- AI-assisted commit workflows;
+- future bounded AI-supported development workflows.
 
-AI integration must remain optional where practical and must not make an external model the source of project authority.
+AI capabilities may also support commands in other functional domains without moving those commands into the AI domain. Domain placement should follow the primary user intent rather than the presence of an AI-assisted implementation step.
 
-### 10.5 Nuxt Domain
+AI integration must remain optional where practical. External model output must not become project, configuration, source, or application authority merely because it participates in a command.
 
-The `nuxt` domain manages Nuxt-specific project concerns.
+Provider-specific SDKs, model APIs, transport details, credentials, and external-service representations should remain behind appropriate services or capability boundaries.
+
+### 10.7 Nuxt Domain
+
+The `nuxt` domain manages framework-specific use cases whose primary subject is the Nuxt application model or managed Nuxt layers.
 
 Its responsibilities may include:
 
 - Nuxt application creation;
-- layer creation and management;
+- managed-layer creation and management;
 - Nuxt configuration inspection;
-- configuration addition and removal;
+- controlled Nuxt configuration addition, removal, or transformation;
 - layer-aware project operations;
-- other framework-specific management capabilities.
+- framework-specific project inspection and management capabilities.
 
-### 10.6 Quality Domain
+Nuxt-domain commands should operate in terms of AppManager's managed project context, root application, managed layers, and managed scope rather than require interaction adapters or unrelated domains to understand framework internals independently.
 
-The `quality` domain manages verification and quality-control workflows.
+Where Nuxt-specific work depends on ecosystem-native parsers, package metadata, compiler or framework tooling, those implementation representations should remain behind appropriate capability boundaries rather than become general AppManager command semantics.
+
+### 10.8 Quality Domain
+
+The `quality` domain manages verification, assurance, and quality-control use cases for the managed project.
 
 Its responsibilities may include:
 
-- complete test-suite execution;
+- complete or scoped test-suite execution;
 - unit tests;
 - end-to-end tests;
 - coverage;
-- test user interfaces;
-- future linting, type checking, validation, and quality gates.
+- test user interfaces where supported;
+- linting;
+- type checking;
+- source, configuration, or project validation;
+- quality gates and other repeatable verification workflows.
 
-Quality operations should be reusable in both interactive and automated workflows.
+Quality commands should respect managed scope and produce structured outcomes suitable for interactive presentation, Headless automation, CI/CD, host-tool integrations, and wider AppManager workflows.
 
-### 10.7 Utils Domain
+Test runners, linters, type checkers, process execution, compiler integrations, and similar tooling remain shared or delegated capabilities rather than Quality-domain-private implementations.
 
-The `utils` domain contains cross-project maintenance operations that do not warrant a more specific functional domain.
+### 10.9 Utils Domain
+
+The `utils` domain contains bounded maintenance use cases that do not form a sufficiently coherent product concept to justify a more specific functional domain.
 
 Its responsibilities may include:
 
 - source-header inspection;
 - source-header repair;
 - contributor maintenance;
-- automated documentation operations;
-- automated versioning operations;
+- bounded documentation maintenance operations;
+- bounded versioning maintenance operations;
 - log maintenance;
 - header validation;
-- other bounded maintenance utilities.
+- other explicitly scoped maintenance utilities.
 
-The domain should not become a dumping ground for capabilities that have a clearer architectural owner.
+The Utils domain must not become a catch-all for commands whose primary intent belongs in another functional domain or for reusable mechanisms that belong to an architectural subsystem.
 
-### 10.8 Settings Domain
+A reusable transformation, validation, logging, repository, configuration, or filesystem capability does not belong in Utils merely because several commands use it.
 
-The `settings` domain provides user-facing management of AppManager configuration.
+### 10.10 Settings Domain
+
+The `settings` domain provides user-facing and automation-facing use cases for inspecting and managing AppManager configuration.
 
 Its responsibilities may include:
 
 - application defaults;
-- author information;
+- author and contributor information;
 - funding information;
 - issue-reporting metadata;
 - repository metadata;
 - application metadata;
 - licensing defaults;
 - keywords;
-- environment variables;
+- environment-related configuration;
 - contributors;
-- templates;
+- templates and template-selection configuration;
 - other configurable AppManager behaviour.
 
-Configuration storage and resolution remain subsystem responsibilities; the Settings domain provides use cases for managing them.
+Settings-domain commands operate on configuration intent and management use cases. They do not redefine the configuration architecture established in Section 8.
+
+Configuration sources, precedence, effective configuration, sensitive-value handling, storage mechanisms, and resolution remain shared architectural responsibilities. The Settings domain may coordinate those capabilities without owning separate configuration semantics.
+
+### 10.11 Cross-Domain Workflows
+
+A single AppManager workflow may involve commands or capabilities associated with more than one functional domain.
+
+For example, an application-lifecycle operation may require repository, quality, documentation, configuration, generation, or AI-assisted capabilities. Such collaboration does not require one functional domain to become the architectural owner of another domain's commands or of the shared mechanisms they use.
+
+Cross-domain coordination remains an Application Engine responsibility. Domains organise the command surface; they do not form an independent chain of authority or a mandatory execution stack.
+
+Detailed command placement, domain boundaries, command identifiers, behavioural requirements, and cross-domain workflow rules belong in Functional Specifications where they require greater precision.
 
 ---
 
@@ -1495,7 +1576,7 @@ Such information should be captured by Implementation Specifications, implementa
 | project topology | The AppManager-relevant relationships among the root application, managed layers, repositories, AppManager-owned management resources, and other managed project entities. |
 | managed scope | The resolved set of project entities to which a particular AppManager operation is intended and permitted to apply. |
 | command | An invokable AppManager use case within a functional domain. |
-| functional domain | A coherent family of user-facing AppManager capabilities. |
+| functional domain | A coherent product-facing grouping of related AppManager commands and use cases; it organises the command surface but is not itself an architectural subsystem or implementation boundary. |
 | interaction mode | A user-facing or automation-facing mode in which AppManager is operated, such as TUI, Headless, or GUI. |
 | interaction adapter | An application-boundary component or integration that translates user, automation, or host-tool interaction into AppManager invocation semantics and structured execution information into an appropriate presentation or host representation. |
 | Application Invocation Contract | The stable structured boundary through which interaction adapters and external integrations invoke commands and receive machine-consumable execution information. |
