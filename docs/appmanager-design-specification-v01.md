@@ -414,44 +414,71 @@ This separation keeps invocation and command intent independent from architectur
 
 ### 6.1 Architectural Model
 
-AppManager is a domain-oriented command application composed of multiple cooperating architectural subsystems.
+AppManager is organised around an authoritative **Application Engine** that owns application-level semantics while coordinating both AppManager-owned capabilities and specialised capabilities supplied through defined boundaries.
 
-These subsystems have distinct responsibilities and interact through defined application capabilities. They form a conceptual responsibility model rather than a rigid architectural stack or mandatory source-directory structure.
+The Application Engine is a responsibility boundary rather than a prescribed process, package, module, runtime, or deployment unit. Its purpose is to keep command semantics, application policy, workflow coordination, safety constraints, scope, and final application-level outcomes under one coherent authority even when specialised work is delegated.
 
-The major conceptual areas are:
+The conceptual architecture is:
 
 ```text
-                       interaction adapters
-              tui   headless   gui   ide / tools
-                              |
-                              v
                  application invocation contract
                               |
                               v
-                      command / use cases
+                    +-------------------+
+                    | Application Engine |
+                    |                   |
+                    | command / use-case|
+                    | coordination      |
+                    | policy / safety   |
+                    | outcome authority |
+                    +---------+---------+
                               |
-           +------------------+------------------+
-           |                  |                  |
-           v                  v                  v
-    application services   domain engines   code intelligence
-           |                  |                  |
-           +----------+-------+-------+----------+
-                      |               |
-                      v               v
-                  resolvers       generation
-                                  and templates
-                      \               /
-                       +-------------+
+               application capability coordination
+                              |
+              +---------------+---------------+
+              |                               |
+              v                               v
+   AppManager-owned capabilities       capability boundaries
+              |                               |
+              |                               v
+              |                       capability providers
+              |                       / external tools
+              |                               |
+              +---------------+---------------+
                               |
                               v
-                       managed project
+                   managed project / providers
 ```
 
-The diagram expresses architectural responsibility and collaboration. It does not prescribe a one-to-one source-directory structure or require every capability to pass through every conceptual area.
+This diagram expresses authority, responsibility, and delegation rather than implementation topology. A capability boundary may be realised within the same runtime and process as the Application Engine or through another mechanism; that choice belongs in lower-level design and implementation specifications.
 
-The Application Invocation Contract is an application-boundary responsibility rather than a domain engine or presentation implementation. It standardises how adapters reach the command model without dictating how application subsystems collaborate after invocation.
+### 6.2 Application Engine Authority
 
-### 6.2 Services
+The Application Engine is responsible for preserving one coherent AppManager application model across commands, architectural subsystems, capability providers, external providers, and interaction adapters.
+
+It owns or governs, at the application level:
+
+- command and use-case semantics;
+- application policy;
+- workflow coordination and sequencing;
+- scope and context interpretation;
+- safety and non-destructive-operation constraints;
+- interpretation of capability results;
+- final application-level success, failure, and diagnostic outcomes.
+
+Delegating work does not delegate these responsibilities. A specialised subsystem or provider may determine how to perform its bounded task, but it must not independently redefine whether an AppManager operation is allowed, what the operation means, how it participates in a wider workflow, or what the final AppManager outcome represents.
+
+### 6.3 Application Capabilities and Architectural Subsystems
+
+Application capabilities are the coherent functions through which the Application Engine realises commands and workflows.
+
+A capability may be provided by an AppManager-owned architectural subsystem, by shared operational infrastructure, or through a capability boundary to a specialised provider. The architecture should classify capabilities by responsibility rather than forcing them into equivalent tiers.
+
+Services, domain engines, resolvers, generation, registries, and code-intelligence components therefore represent different responsibility families and collaboration patterns. They may cooperate within one use case without implying a uniform stack or mandatory dependency sequence.
+
+An architectural subsystem should expose AppManager-oriented capability semantics appropriate to its responsibility and should avoid leaking unrelated implementation-specific representations into the command model.
+
+### 6.4 Services
 
 Services provide reusable operational capabilities required by commands, domain engines, and other subsystems.
 
@@ -468,25 +495,41 @@ Service responsibilities may include:
 
 Services should expose coherent reusable capabilities, avoid unnecessary presentation dependencies, and should not absorb specialised domain behaviour merely because multiple commands require it.
 
-### 6.3 Domain Engines
+Where a service encapsulates ecosystem-specific, provider-specific, or external mechanics, those mechanics should remain behind an appropriate capability boundary rather than becoming part of AppManager's general application model.
 
-Domain engines encapsulate cohesive, specialised application capabilities that have their own rules, concepts, or internal coordination requirements.
+### 6.5 Domain Engines
 
-A domain engine may coordinate services, resolvers, registries, configuration, templates, and other shared infrastructure while retaining responsibility for the behaviour of its domain.
+Domain engines encapsulate cohesive specialised application responsibilities that have their own rules, concepts, policy, or coordination requirements within the authority of the Application Engine.
 
-Examples may include licensing, repository-management capabilities, generation, code intelligence, or other sufficiently cohesive concerns identified as AppManager evolves.
+A domain engine may coordinate services, resolvers, registries, configuration, templates, capability providers, and other shared infrastructure while retaining responsibility for its domain-specific application behaviour.
 
-Domain engines should expose reusable application capabilities rather than presentation-specific workflows.
+Examples may include licensing, repository-management capabilities, or other sufficiently cohesive concerns identified as AppManager evolves.
 
-### 6.4 Resolvers
+Generation and code intelligence may collaborate with domain engines but are not assumed to be domain engines merely because they are specialised. Their architectural classification should follow the responsibility they actually own.
 
-Resolvers determine context-dependent values or resources from available project state, configuration, registries, environment information, or user-supplied input.
+Domain engines should expose reusable AppManager-oriented capabilities rather than presentation-specific workflows or provider-specific representations.
+
+### 6.6 Capability Boundaries and Providers
+
+Where AppManager depends on specialised ecosystem-native, provider-specific, external-tool, or otherwise implementation-specific mechanics, those mechanics should be encapsulated behind an appropriate capability boundary.
+
+The Application Engine should interact with such capabilities in AppManager-oriented terms. A capability provider may own specialist execution mechanics, including use of external tools or external providers, while AppManager retains application policy and outcome authority.
+
+Capability boundaries should be sufficiently explicit that specialised implementations can evolve without requiring command semantics or interaction adapters to inherit their internal representations.
+
+A capability boundary does not by itself require a separate runtime, process, protocol, transport, or deployment unit. Concrete interfaces, schemas, lifecycle rules, process relationships, and communication mechanisms belong in lower-level specifications.
+
+### 6.7 Resolvers
+
+Resolvers determine context-dependent values or resources from available project state, configuration, registries, environment information, provider availability, or user-supplied input.
 
 Resolvers are particularly important where AppManager must separate the question of **what value is required** from **where that value comes from**.
 
+Resolution participates in AppManager application semantics when the selected value affects command meaning, policy, scope, or safety. The mechanism used to obtain a candidate value may itself depend on a specialised capability provider.
+
 Resolution should be deterministic in Headless operation and may be augmented by interactive prompting in presentation modes that permit it.
 
-### 6.5 Generation and Templates
+### 6.8 Generation and Templates
 
 The generation subsystem is responsible for producing new project artefacts from controlled generators or templates and resolved project data.
 
@@ -494,22 +537,25 @@ Templates are intended primarily for creation and scaffolding rather than arbitr
 
 Generation should avoid hard-coded user-specific or environment-specific assumptions where those values can be resolved through configuration.
 
-Generation of new artefacts remains conceptually distinct from inspection and mutation of existing source, which belongs to the code-intelligence subsystem.
+Generation of new artefacts remains conceptually distinct from inspection and mutation of existing source. Code-intelligence capabilities may support either internal or delegated specialised mechanics as described in Section 7; the distinction between generation and mutation is based on responsibility, not implementation technology.
 
-### 6.6 Registries
+### 6.9 Registries
 
-Registries provide discoverable mappings of configured or supported resources used across AppManager subsystems.
+Registries provide discoverable mappings of configured or supported resources used across AppManager subsystems and capability boundaries.
 
 Potential registry concerns include:
 
 - commands;
 - repositories;
-- AI providers;
+- external providers;
+- capability providers;
 - templates;
 - strategies;
 - other extensible resource families.
 
-A registry should define identity and discovery. Specialised services, resolvers, domain engines, or other responsible subsystems should own operational behaviour.
+A registry should define identity and discovery rather than assume operational authority. Commands, services, domain engines, resolvers, capability providers, or other responsible subsystems should own the behaviour associated with registered resources.
+
+Registries should not cause provider-specific representations or implementation topology to become part of the authoritative AppManager application model.
 
 ---
 
