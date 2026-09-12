@@ -600,12 +600,18 @@ AppManager transformation / inspection intent
        source recognition / inspection
                     |
                     v
-     structured facts or proposed change
+             structural facts
                     |
           +---------+---------+
           |                   |
           v                   v
-     inspection result   bounded transformation
+   inspection result   transformation strategy
+                              |
+                              v
+                 bounded transformation plan
+                              |
+                              v
+                 transformation mechanism
                               |
                               v
                          validation
@@ -619,80 +625,94 @@ AppManager transformation / inspection intent
              Application Engine
 ```
 
-Within a code-intelligence implementation, scanners, strategies, orchestrators, parser integrations, or other specialised mechanisms may participate as required. Not every supported source type or operation must use every mechanism.
+Within a code-intelligence implementation, scanners or ecosystem-native parsers may recognise structure; strategies may determine valid source-aware transformation policy; transformation mechanisms may execute bounded edits; and orchestrators may compose these responsibilities where required. Not every supported source type or operation must use every mechanism.
 
 ### 7.4 Scanners
 
 Scanners provide lexical or structural recognition of supported source formats where AppManager requires controlled understanding of existing files.
 
-Their purpose is to convert source text into information that higher-level code-intelligence components can reason about safely.
+Their purpose is to convert source text into structural information that higher-level code-intelligence components can reason about safely.
+
+A scanner recognises and describes source structure. It should not, merely by virtue of recognition, own transformation policy or apply source mutations.
 
 Scanners are not intended to be general-purpose compiler replacements. Where a compiler, parser, or language service provides the appropriate specialist understanding, a scanner may delegate or be unnecessary.
 
 ### 7.5 Strategies
 
-Strategies encapsulate source-type-specific inspection and mutation behaviour.
+Strategies encapsulate source-type-specific transformation policy and planning.
 
-A strategy should understand the relevant structural conventions of the source type it manages and expose consistent AppManager-oriented behaviour to higher-level code operations.
+A strategy consumes the structural understanding required by a use case and determines how an AppManager transformation intent can be represented as a safe, bounded transformation plan for the relevant source type.
 
-Strategies allow AppManager to add support for new source types without embedding format-specific behaviour throughout the command model.
+Strategies allow AppManager to add source-aware transformation behaviour without embedding format-specific policy throughout the command model.
+
+A strategy does not need to execute the resulting edit itself. Transformation execution is a distinct responsibility, allowing the same transformation policy to be realised through different appropriate mechanisms where necessary.
 
 A strategy should not require commands or interaction adapters to understand parser-specific, compiler-specific, or provider-specific internal representations.
 
-### 7.6 Orchestrators
+### 7.6 Transformation Mechanisms
+
+A transformation mechanism applies an approved bounded transformation plan to the target source.
+
+It owns the mechanics of performing the edit accurately within the supplied scope, but it does not independently determine AppManager application policy, transformation intent, or whether a consequential change is permitted.
+
+Transformation mechanisms may use direct structural editing, ecosystem-native parser or compiler facilities, specialised capability providers, or other source-aware techniques appropriate to the source type and transformation.
+
+The mechanism should return sufficient structured information for the resulting source and transformation outcome to be validated without requiring higher-level AppManager consumers to depend on its internal representation.
+
+### 7.7 Orchestrators
 
 Orchestrators coordinate multiple lower-level code-intelligence capabilities where a file, artefact, or workflow spans more than one specialised representation or operation.
 
-They should compose existing capabilities rather than duplicate them and should preserve AppManager-oriented semantics across the composed operation.
+They should compose recognition, strategy, transformation, validation, and other existing capabilities rather than duplicate them, and should preserve AppManager-oriented semantics across the composed operation.
 
 An orchestrator is a code-intelligence composition responsibility; it does not thereby become the owner of application-level workflow policy outside that bounded capability.
 
-### 7.7 Inspection and Mutation Separation
+### 7.8 Inspection and Mutation Separation
 
 Where practical, AppManager should distinguish between:
 
-- inspecting existing source;
-- identifying a proposed change;
-- applying the change;
+- inspecting and recognising existing source;
+- determining transformation intent and a bounded transformation plan;
+- applying the approved change;
 - validating the resulting source.
 
-This separation supports safer automation, structured diagnostics, reviewable transformation intent, and future preview or dry-run capabilities.
+This separation supports safer automation, structured diagnostics, reviewable transformation intent, independent validation, and future preview or dry-run capabilities.
 
-The decision to apply a consequential transformation remains subject to AppManager application policy and safety constraints rather than being implicit in the inspection mechanism.
+The decision to apply a consequential transformation remains subject to AppManager application policy and safety constraints rather than being implicit in the inspection, strategy, or transformation mechanism.
 
-### 7.8 Non-Destructive Transformation
+### 7.9 Non-Destructive Transformation
 
 Source transformation should preserve unrelated user content, formatting, comments, and configuration wherever practical.
 
 AppManager should avoid full-file regeneration when a bounded structural edit can safely achieve the intended result.
 
-A specialised parser or transformation provider may determine the mechanics of a bounded edit, but AppManager retains authority over transformation intent, permitted scope, and acceptance of the resulting application-level outcome.
+A specialised transformation mechanism or provider may determine the mechanics of a bounded edit, but AppManager retains authority over transformation intent, permitted scope, and acceptance of the resulting application-level outcome.
 
-### 7.9 Structured Formats
+### 7.10 Structured Formats
 
 Structured configuration formats should be modified through structure-aware mechanisms where available rather than through unrestricted textual replacement.
 
 The use of a structure-aware mechanism does not require its native representation to escape the code-intelligence capability boundary. AppManager-level consumers should depend on the structural meaning required by the use case rather than on a particular parser or library object model.
 
-### 7.10 Composite Source Files
+### 7.11 Composite Source Files
 
 Where a source file contains multiple embedded languages or structural regions, AppManager should favour extraction, delegation, and controlled recomposition over creating monolithic format-specific logic.
 
-Different specialised mechanisms may therefore participate in one code-intelligence operation, provided that their results are coordinated through a coherent capability and unrelated source content remains protected.
+Different specialised recognition and transformation mechanisms may therefore participate in one code-intelligence operation, provided that their results are coordinated through a coherent capability and unrelated source content remains protected.
 
-### 7.11 Ecosystem-Native and External Parsing
+### 7.12 Ecosystem-Native and External Parsing
 
-Code intelligence may rely on ecosystem-native parsers, compilers, language services, or other external parsing mechanisms where they provide more reliable understanding than AppManager-owned lexical analysis.
+Code intelligence may rely on ecosystem-native parsers, compilers, language services, or other external parsing mechanisms where they provide more reliable understanding or transformation support than AppManager-owned lexical analysis.
 
 Such mechanisms should be treated as specialised capability implementations or dependencies rather than as the authoritative AppManager application model. Their native trees, symbols, handles, or other implementation representations should remain encapsulated unless a lower-level design explicitly requires a bounded internal use of them.
 
-This allows AppManager to use the most appropriate source-aware tooling without coupling command semantics, interaction adapters, or unrelated subsystems to a particular parser ecosystem.
+This allows AppManager to use the most appropriate source-aware tooling without coupling command semantics, transformation policy, interaction adapters, or unrelated subsystems to a particular parser ecosystem.
 
-### 7.12 Future Language Support
+### 7.13 Future Language Support
 
-The architecture should allow additional source formats and language variants to be introduced through appropriate scanners, strategies, orchestrators, capability providers, or parser integrations without redesigning the command system or Application Engine.
+The architecture should allow additional source formats and language variants to be introduced through appropriate scanners, strategies, transformation mechanisms, orchestrators, capability providers, or parser integrations without redesigning the command system or Application Engine.
 
-New language support should preserve the same architectural separation between AppManager-oriented code-intelligence semantics and language-specific implementation representations.
+New language support should preserve the same architectural separation between recognition, transformation policy, transformation execution, validation, AppManager-oriented code-intelligence semantics, and language-specific implementation representations.
 
 ---
 
@@ -1324,8 +1344,9 @@ Such information should be captured by Implementation Specifications, implementa
 | IDE adapter | A host-tool interaction adapter that contributes IDE-specific presentation and context while delegating application behaviour to AppManager. |
 | service | A reusable operational capability used by commands or other subsystems. |
 | domain engine | A cohesive specialised subsystem that owns domain-specific rules, concepts, or coordination. |
-| scanner | A component that recognises lexical or structural information in supported source text. |
-| strategy | A component encapsulating file-type-specific inspection and mutation behaviour. |
+| scanner | A component that recognises lexical or structural information in supported source text without inherently owning transformation policy or mutation. |
+| strategy | A component that encapsulates source-type-specific transformation policy and maps transformation intent into a bounded transformation plan. |
+| transformation mechanism | A component or delegated capability that applies an approved bounded transformation plan to source without independently owning AppManager transformation policy. |
 | orchestrator | A component that composes multiple specialised capabilities for a composite operation or artefact. |
 | resolver | A component responsible for determining a context-dependent value or resource. |
 | generation subsystem | The subsystem responsible for generating new artefacts from generators or templates and resolved data. |
