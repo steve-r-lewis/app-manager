@@ -1781,49 +1781,156 @@ Because `layer` has a specific meaning within Nuxt, architectural documentation 
 
 ## 13. Extensibility Model
 
-### 13.1 Command Extensibility
+### 13.1 Extensibility Contract
 
-New application capabilities should be introducible as commands within an appropriate functional domain without requiring presentation-specific reimplementation.
+AppManager should be extensible by adding or substituting commands, functional domains, source-aware capabilities, generators, templates, configuration or context sources, interaction adapters, capability providers, external-provider integrations, domain engines, and other architectural responsibilities where the product requires them.
 
-### 13.2 Domain Extensibility
+Extensibility does not create an alternative application architecture. An extension participates through the same AppManager command model, Application Engine authority, managed project context, managed scope, effective configuration semantics, capability boundaries, safety rules, structured outcomes, and application-level acceptance as built-in capabilities.
 
-New functional domains may be introduced where a coherent family of use cases cannot be represented cleanly within existing domains.
+Conceptually:
 
-Domains should remain meaningful product concepts rather than arbitrary source-code groupings.
+```text
+new or substituted capability / integration
+                |
+                v
+       discovery / resolution
+                |
+                v
+ established AppManager boundary
+                |
+                v
+ Application Engine coordinated use
+                |
+                v
+ AppManager-oriented result / acceptance
+```
 
-### 13.3 Source-Type Extensibility
+The existence of an extension point does not prescribe a plugin system, dynamic loading mechanism, package format, runtime boundary, process model, automatic discovery algorithm, or third-party extension marketplace. Those decisions belong in lower-level specifications or separate architectural decisions where they become significant.
 
-New file types should be supportable through appropriate scanner, strategy, transformation mechanism, validator, orchestrator, or parser integration.
+All extensions must preserve the architectural invariants defined in Section 12.
 
-### 13.4 Provider Extensibility
+### 13.2 Command Extensibility
 
-External providers, particularly AI providers and repository-related services, should be abstracted sufficiently that support can evolve without rewriting commands that depend only on their common capabilities.
+New application use cases should be introducible as commands within an appropriate functional domain without requiring presentation-specific or provider-specific reimplementation.
 
-### 13.5 Template Extensibility
+A new command should participate in the shared Application Invocation Contract and Application Engine command model and should use managed project context, managed scope, effective configuration, shared capabilities, and structured outcome semantics where relevant to its use case.
 
-New templates and generators should be introducible without embedding generated content directly into unrelated command logic.
+Adding a command extends the authoritative command surface; it must not create an adapter-local command model, bypass application policy, or embed specialist provider representations into general command semantics.
 
-### 13.6 Resolver Extensibility
+The detailed command-registration mechanism, metadata model, identifier rules, discovery schema, and implementation wiring belong in lower-level specifications.
 
-New sources of configuration or contextual values should be incorporable through resolution mechanisms without requiring presentation-specific access throughout the application.
+### 13.3 Functional-Domain Extensibility
 
-### 13.7 Interaction and Integration Extensibility
+New functional domains may be introduced where a coherent family of product-facing use cases cannot be represented cleanly within existing domains.
 
-The interaction and invocation model should permit additional adapters beyond TUI, Headless, and GUI when future requirements justify them.
+A domain should correspond to meaningful user or automation intent rather than to a source-code package, external provider, technical library, host environment, or incidental implementation boundary.
 
-IDE plugins, editor extensions, CI integrations, AI agents, and other development-tool integrations should be able to supply host-specific context and consume structured AppManager results through the Application Invocation Contract without reproducing AppManager domain behaviour.
+Introducing a new domain does not create a new application authority or private infrastructure stack. Its commands remain governed by the Application Engine and should reuse shared architectural capabilities where appropriate.
 
-WebStorm is the first proposed IDE adapter, but the architecture must not make the invocation contract WebStorm-specific or JetBrains-specific.
+### 13.4 Source-Type and Code-Intelligence Extensibility
 
-### 13.8 Invocation Contract Extensibility
+New source formats, language variants, embedded-language regions, and source-aware operations should be supportable without redesigning the command system or Application Engine.
 
-The Application Invocation Contract should be capable of evolving as new adapters and automation requirements emerge while preserving stable command identity and semantics.
+Source-type support may extend the code-intelligence responsibility through suitable recognition, strategies, transformation plans, transformation mechanisms, validation, orchestration, parser or compiler integrations, or specialised capability providers. Not every source type is required to use every mechanism.
 
-Concrete compatibility, schema-versioning, transport, and protocol rules belong in lower-level specifications.
+New source support must preserve the Section 7 separation between recognition, transformation policy and planning, transformation execution, source-level validation, and application-level acceptance.
 
-### 13.9 Domain Engine Extensibility
+Parser-, compiler-, language-service-, or provider-native representations should remain encapsulated behind appropriate boundaries. Higher-level AppManager consumers should continue to receive structural facts, bounded plans, diagnostics, outcomes, and other AppManager-oriented information rather than become coupled to the new implementation representation.
 
-Specialised concerns such as licensing may be implemented as dedicated domain engines where they require coherent rules, data, templates, or validation beyond ordinary service responsibilities.
+### 13.5 Capability-Provider and External-Provider Extensibility
+
+Capability providers and external providers are distinct extension concerns.
+
+AppManager should be able to introduce or substitute capability providers for specialised execution while preserving the AppManager-oriented semantics of the capability they implement. A replacement provider may change how bounded work is performed but must not independently redefine command meaning, application policy, managed scope, safety requirements, or final application-level outcomes.
+
+External services or platforms, including AI services and repository-hosting services, should be integrated through appropriate AppManager capabilities or provider boundaries so that their native contracts, SDKs, availability models, credentials, and result representations do not become the general AppManager application model.
+
+Provider selection and availability may be resolved from effective configuration, context, registries, or other defined sources. Exact provider contracts, compatibility rules, fallback behaviour, retry policy, and selection algorithms belong in lower-level specifications.
+
+### 13.6 Generation and Template Extensibility
+
+New generators and templates should be introducible without embedding generated content or generator-specific behaviour into unrelated command logic.
+
+A new generator or template may expand the artefact types AppManager can create, but it must preserve configuration resolution, destination and ownership safety, structured outcomes, and the architectural separation between generation and mutation.
+
+Templates describe or contribute generated content; their discoverability or selection does not give them authority to overwrite, restructure, or mutate existing user-authored resources outside the command's managed scope and policy.
+
+Concrete template formats, generator interfaces, template metadata, registry structures, and rendering technologies belong in lower-level specifications.
+
+### 13.7 Resolver and Configuration-Source Extensibility
+
+New sources of configuration, context, provider availability, project metadata, or other resolvable values should be incorporable without requiring presentation-specific access or ad hoc reads throughout the application.
+
+An additional configuration source supplies candidate values; it does not acquire authority over precedence, applicability, validity, or AppManager configuration policy. New resolvers or resolution inputs must continue to contribute to deterministic effective configuration and context resolution according to AppManager semantics.
+
+Interactive adapters may help obtain otherwise unresolved values where the interaction mode permits it, but an extension must not make Headless operation unexpectedly dependent on prompting.
+
+Detailed precedence, resolver contracts, source formats, credential-store integrations, and persistence mechanisms belong in lower-level specifications.
+
+### 13.8 Managed-Project and Topology Extensibility
+
+AppManager should be able to evolve its understanding of supported project structures, Nuxt layer arrangements, repository relationships, managed metadata, and other project-topology evidence without requiring each command or adapter to reconstruct those structures independently.
+
+New discovery evidence or topology representations should resolve into the shared managed project context rather than create competing project models. A newly recognised resource or relationship does not automatically become writable, owned, or part of every managed scope.
+
+Extension of project or repository discovery must preserve explicit context resolution, scope, ownership, non-destructive-operation, and deterministic Headless behaviour.
+
+Concrete discovery markers, traversal rules, workspace handling, repository mechanisms, and topology data structures belong in lower-level specifications.
+
+### 13.9 Interaction and Host-Integration Extensibility
+
+The interaction architecture should permit additional interaction modes and host-tool adapters when future requirements justify them.
+
+IDE plugins, editor extensions, CI integrations, AI agents, automation systems, and other host integrations should translate host-specific context and user interaction into the shared Application Invocation Contract and consume AppManager-oriented structured results.
+
+An adapter may add presentation, host lifecycle integration, context acquisition, navigation, or confirmation behaviour appropriate to its environment, but it must not reproduce or redefine AppManager command semantics, configuration policy, repository policy, code-intelligence policy, safety rules, workflow authority, or final outcomes.
+
+WebStorm remains the first proposed IDE integration, but neither the Application Invocation Contract nor the Application Engine may become WebStorm-specific or JetBrains-specific.
+
+### 13.10 Application Invocation Contract Evolution
+
+The Application Invocation Contract should be capable of evolving as commands, adapters, automation requirements, structured outcomes, diagnostics, events, and cancellation needs evolve while preserving coherent AppManager command identity and application semantics.
+
+Contract evolution must not require presentation-specific command implementations or make one transport, serialization format, process topology, or host environment part of the enduring application model merely because a particular integration uses it.
+
+Concrete compatibility guarantees, schema versions, transport bindings, protocol negotiation, deprecation rules, and migration mechanics belong in Functional and Detailed Design Specifications unless an architectural decision elevates a particular constraint into the target design.
+
+### 13.11 Registry and Discovery Extensibility
+
+Registries and discovery mechanisms should support extensible families such as commands, repositories, strategies, templates, capability providers, and external providers without widespread conditional logic or adapter-specific copies of the same catalogue.
+
+Discovery establishes identity and availability; it does not grant operational authority. A discoverable item must still be selected, resolved, scoped, authorised, and interpreted by the responsibility that owns the relevant AppManager semantics.
+
+This Design Specification requires extensible discovery where appropriate but does not mandate automatic filesystem scanning, reflection, convention-based registration, dynamic plugin loading, or any other specific discovery mechanism.
+
+### 13.12 Domain-Engine and Architectural-Subsystem Extensibility
+
+New domain engines or other architectural subsystems may be introduced when a concern has sufficiently cohesive rules, concepts, policy, state, or coordination responsibilities to justify a distinct architectural responsibility.
+
+A new subsystem should expose reusable AppManager-oriented capabilities and collaborate through the established application architecture rather than create a parallel command system, adapter-specific business logic, or provider-specific application model.
+
+Not every new feature requires a new subsystem. Architectural decomposition should follow enduring responsibility and cohesion rather than feature count, directory structure, implementation language, or organisational convenience.
+
+### 13.13 Extension Acceptance and Compatibility
+
+Being loadable, discoverable, configured, or technically callable does not by itself make an extension acceptable for use in an AppManager workflow.
+
+An extension must preserve the applicable architectural invariants, including:
+
+- Application Engine authority;
+- stable command and use-case semantics;
+- managed project context and managed scope;
+- effective configuration semantics;
+- capability-boundary and representation encapsulation;
+- non-destructive operation and ownership rules;
+- deterministic Headless behaviour where applicable;
+- structured outcomes and diagnostics;
+- validation and application-level acceptance;
+- sensitive-information minimisation.
+
+Compatibility should be evaluated at the AppManager semantic boundary, not solely by whether an implementation can be loaded or invoked. A technically compatible provider, adapter, parser, generator, or other extension may still be rejected when its behaviour cannot satisfy required AppManager policy, safety, scope, observability, or information-handling constraints.
+
+Detailed extension compatibility matrices, version negotiation, trust policy, packaging, installation, enablement, isolation, sandboxing, lifecycle, and failure-recovery mechanisms belong in lower-level specifications. A proposed extension mechanism that materially changes AppManager's architectural boundaries or technology commitments should be evaluated through the governed architectural-decision process before becoming authoritative design.
 
 ---
 
