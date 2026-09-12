@@ -747,33 +747,71 @@ New language support should preserve the same architectural separation between r
 
 ### 8.1 Configuration Model
 
-AppManager should support configuration at more than one scope so that reusable defaults can coexist with target-project-specific settings.
+AppManager configuration should be treated as an application-level model assembled from one or more configuration sources rather than as the direct contents of any single file, environment, adapter, or provider.
 
-At a minimum, the conceptual model includes:
+The conceptual model includes configuration sources at scopes such as:
 
-- tool-level configuration and defaults;
-- project-level configuration and overrides;
-- runtime or explicitly supplied values where applicable.
+- tool-level configuration and reusable defaults;
+- target-project configuration and overrides;
+- explicitly supplied invocation values and options;
+- environment-derived values where supported;
+- provider-derived or externally supplied values where an AppManager capability legitimately depends on them.
 
-### 8.2 Resolution
+A configuration source supplies candidate values. It does not become an independent authority over AppManager configuration semantics merely because a value originates there.
 
-Configuration should be resolved through defined precedence rather than through ad hoc access to unrelated files.
+### 8.2 Configuration Resolution and Effective Configuration
 
-The exact precedence chain is a Functional and Detailed Design concern, but the design must support deterministic identification of the effective value.
+AppManager should resolve candidate values through defined, deterministic configuration semantics to produce the **effective configuration** used by the Application Engine and application capabilities for a particular scope or operation.
 
-Where useful, AppManager should also be able to identify the source from which a resolved value originated.
+Conceptually:
 
-### 8.3 Separation of Resolution and Interaction
+```text
+configuration sources
+        |
+        +-- tool-level defaults
+        +-- project configuration
+        +-- invocation-supplied values
+        +-- environment / external sources
+        |
+        v
+configuration resolution
+        |
+        v
+ effective configuration
+        |
+        v
+Application Engine / capabilities
+```
 
-Configuration services and resolvers should remain usable without a user interface.
+Resolution should determine precedence, applicability, scope, validity, and provenance according to AppManager rules rather than through ad hoc reads from unrelated storage locations.
 
-If a value cannot be resolved and an interactive mode permits prompting, the presentation or interaction adapter may request the missing value through an appropriate resolution workflow.
+Where useful, AppManager should be able to identify the configuration source from which an effective value originated.
 
-Headless operation must fail clearly or use an explicitly defined fallback rather than unexpectedly prompting.
+The exact precedence chain, configuration schema, persistence format, and resolution algorithm belong in Functional and Detailed Design Specifications. This Design Specification requires only that resolution be deterministic, explainable where practical, and independent of presentation-specific behaviour.
 
-### 8.4 AppManager-Owned Project Data
+### 8.3 Configuration Authority and Resolution Responsibilities
 
-AppManager may maintain an application-owned directory within both the tool environment and managed project.
+The Application Engine retains application-level authority over how effective configuration influences command semantics, policy, workflow coordination, safety, and outcomes.
+
+Resolvers may determine candidate or effective values from available configuration sources, project state, invocation context, registries, provider availability, or environment information. Services or capability providers may supply access to those sources.
+
+Neither a configuration source, resolver, service, interaction adapter, external provider, nor capability provider should independently redefine AppManager configuration policy merely because it participates in obtaining a value.
+
+This separation allows configuration storage and retrieval mechanisms to evolve without making their representation or location part of the authoritative AppManager application model.
+
+### 8.4 Separation of Resolution and Interaction
+
+Configuration resolution must remain usable without a user interface.
+
+If a required value cannot be resolved and an interactive mode permits prompting, an interaction adapter may obtain additional user input and return that value through the normal invocation or resolution flow.
+
+The adapter supplies information; it does not acquire authority over configuration precedence, validity, or application policy.
+
+Headless operation must resolve required values deterministically, use an explicitly defined fallback where permitted, or fail clearly. It must not unexpectedly require interactive input.
+
+### 8.5 AppManager-Owned Management Area
+
+AppManager may maintain a recognisable application-owned management area within the tool environment and managed project for AppManager-owned resources.
 
 The current design uses the directory name:
 
@@ -781,11 +819,11 @@ The current design uses the directory name:
 app_manager/
 ```
 
-This directory may contain configuration, registries, templates, logs, reports, and other AppManager-owned resources appropriate to its scope.
+This management area may contain resources such as durable configuration, registries, templates, operational state, logs, reports, and other AppManager-owned data appropriate to its scope.
 
-The precise contents may evolve through lower-level design work while preserving the principle of a recognisable AppManager-owned management area.
+The existence of one recognisable management area does not imply that every resource within it has the same lifecycle, authority, sensitivity, portability, or source-control policy. The precise internal structure and physical storage mechanisms belong in lower-level specifications.
 
-### 8.5 Configuration Categories
+### 8.6 Configuration Categories
 
 Configuration may include concerns such as:
 
@@ -800,13 +838,39 @@ Configuration may include concerns such as:
 - command defaults;
 - environment-related values.
 
-Sensitive values should be separated from ordinary shared project configuration where appropriate.
+Configuration values should be classified according to their scope, authority, sensitivity, and expected portability rather than treated as one uniform data set.
 
-### 8.6 State and Logs
+### 8.7 Sensitive Configuration
 
-Operational state, generated reports, and logs should be distinguishable from durable project configuration.
+Sensitive configuration includes secrets, credentials, tokens, private keys, or other values whose disclosure would create security or privacy risk.
 
-Generated or machine-local state should not become source-controlled project authority accidentally.
+Sensitive configuration should remain logically distinct from ordinary shareable project configuration even where both participate in producing effective configuration.
+
+AppManager should avoid making sensitive values part of source-controlled project authority or exposing them unnecessarily through logs, diagnostics, generated reports, structured results, or presentation surfaces.
+
+The concrete secret-storage technology, encryption mechanism, credential provider, and platform integration belong in lower-level specifications.
+
+### 8.8 Configuration, State, Reports, and Logs
+
+AppManager-managed information should distinguish at least the following conceptual categories:
+
+- **durable configuration** — intended settings or metadata that may influence future AppManager behaviour;
+- **sensitive configuration** — protected configuration requiring stricter handling than ordinary shared settings;
+- **operational state** — machine-maintained information describing or supporting current or prior AppManager operations;
+- **generated reports and derived artefacts** — outputs produced from project or operational information rather than authoritative configuration inputs;
+- **logs and diagnostics** — observational records intended to explain execution behaviour and failures.
+
+These categories may have different persistence, portability, retention, sharing, source-control, and security requirements. They should not acquire configuration authority merely because they are stored near configuration data or under the same AppManager-owned management area.
+
+Operational state, generated reports, derived artefacts, logs, and machine-local data should not accidentally become durable or source-controlled project authority.
+
+### 8.9 Configuration Independence from Physical Representation
+
+AppManager application semantics should depend on resolved configuration meaning rather than on a particular physical storage representation.
+
+Configuration may ultimately be persisted in files, environment facilities, host-managed settings, secure stores, provider-backed mechanisms, or other appropriate sources, but those mechanisms should remain subordinate to AppManager configuration semantics.
+
+Concrete file names, schemas, serializers, secret stores, environment-variable conventions, caches, persistence APIs, and storage layouts belong in lower-level specifications unless an enduring architectural decision explicitly elevates one of them into the target-system design.
 
 ---
 
@@ -1379,6 +1443,10 @@ Such information should be captured by Implementation Specifications, implementa
 | application-level acceptance | The Application Engine responsibility that determines whether a validated capability result satisfies command intent, application policy, scope, safety requirements, and the overall workflow outcome. |
 | orchestrator | A component that composes multiple specialised capabilities for a composite operation or artefact. |
 | resolver | A component responsible for determining a context-dependent value or resource. |
+| configuration source | A source that supplies candidate configuration values to AppManager resolution without independently owning configuration policy or authority. |
+| effective configuration | The resolved AppManager configuration produced from applicable candidate values according to defined configuration semantics for a particular scope or operation. |
+| sensitive configuration | Configuration such as secrets, credentials, tokens, or private keys requiring stricter handling than ordinary shareable settings. |
+| operational state | Machine-maintained information describing or supporting current or prior AppManager operations, distinct from durable configuration authority. |
 | generation subsystem | The subsystem responsible for generating new artefacts from generators or templates and resolved data. |
 | registry | A discoverable mapping of configured or supported resources. |
 | code intelligence | AppManager capabilities for structured inspection, understanding, documentation, controlled transformation, and source-level validation of existing source. |
