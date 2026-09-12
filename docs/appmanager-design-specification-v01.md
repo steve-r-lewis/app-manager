@@ -563,61 +563,91 @@ Registries should not cause provider-specific representations or implementation 
 
 ### 7.1 Purpose
 
-AppManager requires controlled inspection and modification of existing source files for capabilities such as documentation, metadata maintenance, header management, configuration manipulation, and future code-aware automation.
+AppManager requires controlled inspection, understanding, documentation, and modification of existing source files for capabilities such as documentation, metadata maintenance, header management, configuration manipulation, and future code-aware automation.
+
+Code intelligence is a specialised application capability used by the Application Engine and other AppManager responsibilities. It does not own command semantics, application policy, workflow authority, or final application-level outcomes.
 
 This responsibility is distinct from generating new files from templates.
 
-### 7.2 Conceptual Pipeline
+### 7.2 Architectural Position and Capability Boundary
 
-The code-intelligence subsystem is conceptually:
+Code-intelligence capabilities may be realised through AppManager-owned components, specialised capability providers, external parsers or language tooling, or a combination of those mechanisms.
+
+Where code intelligence depends on ecosystem-native or implementation-specific representations such as parser trees, compiler models, symbols, nodes, or language-service objects, those representations should remain encapsulated behind an appropriate capability boundary rather than becoming part of AppManager's general application model.
+
+Code-intelligence capabilities should expose AppManager-oriented information such as:
+
+- structural facts about supported source;
+- diagnostics and validation information;
+- identified documentable or manageable regions;
+- proposed bounded transformations;
+- transformation outcomes;
+- validation results.
+
+The Application Engine and consuming AppManager subsystems remain responsible for deciding how those results participate in a command, workflow, policy decision, or final application outcome.
+
+### 7.3 Conceptual Pipeline
+
+The code-intelligence architecture is conceptually:
 
 ```text
-existing source
-      |
-      v
-   scanner
-      |
-      v
- file strategy
-      |
-      +-----------> inspection / metadata
-      |
-      +-----------> documentable regions
-      |
-      +-----------> controlled mutation
-      |
-      v
- orchestrator where composition is required
-      |
-      v
- validated source output
+AppManager transformation / inspection intent
+                    |
+                    v
+          code-intelligence capability
+                    |
+                    v
+       source recognition / inspection
+                    |
+                    v
+     structured facts or proposed change
+                    |
+          +---------+---------+
+          |                   |
+          v                   v
+     inspection result   bounded transformation
+                              |
+                              v
+                         validation
+          |                   |
+          +---------+---------+
+                    |
+                    v
+       AppManager-oriented result
+                    |
+                    v
+             Application Engine
 ```
 
-Not every supported file type must use every stage.
+Within a code-intelligence implementation, scanners, strategies, orchestrators, parser integrations, or other specialised mechanisms may participate as required. Not every supported source type or operation must use every mechanism.
 
-### 7.3 Scanners
+### 7.4 Scanners
 
 Scanners provide lexical or structural recognition of supported source formats where AppManager requires controlled understanding of existing files.
 
 Their purpose is to convert source text into information that higher-level code-intelligence components can reason about safely.
 
-Scanners are not intended to be general-purpose compiler replacements.
+Scanners are not intended to be general-purpose compiler replacements. Where a compiler, parser, or language service provides the appropriate specialist understanding, a scanner may delegate or be unnecessary.
 
-### 7.4 Strategies
+### 7.5 Strategies
 
-Strategies encapsulate file-type-specific inspection and mutation behaviour.
+Strategies encapsulate source-type-specific inspection and mutation behaviour.
 
-A strategy should understand the relevant structural conventions of the source type it manages and expose a consistent conceptual interface to higher-level code operations.
+A strategy should understand the relevant structural conventions of the source type it manages and expose consistent AppManager-oriented behaviour to higher-level code operations.
 
-Strategies allow AppManager to add support for new file types without embedding format-specific behaviour throughout the command model.
+Strategies allow AppManager to add support for new source types without embedding format-specific behaviour throughout the command model.
 
-### 7.5 Orchestrators
+A strategy should not require commands or interaction adapters to understand parser-specific, compiler-specific, or provider-specific internal representations.
 
-Orchestrators coordinate multiple lower-level code-intelligence capabilities where a file, artefact, or workflow spans more than one specialised representation.
+### 7.6 Orchestrators
 
-They should compose existing capabilities rather than duplicate them.
+Orchestrators coordinate multiple lower-level code-intelligence capabilities where a file, artefact, or workflow spans more than one specialised representation or operation.
 
-### 7.6 Inspection and Mutation Separation
+They should compose existing capabilities rather than duplicate them and should preserve AppManager-oriented semantics across the composed operation.
+
+An orchestrator is a code-intelligence composition responsibility; it does not thereby become the owner of application-level workflow policy outside that bounded capability.
+
+### 7.7 Inspection and Mutation Separation
 
 Where practical, AppManager should distinguish between:
 
@@ -626,25 +656,43 @@ Where practical, AppManager should distinguish between:
 - applying the change;
 - validating the resulting source.
 
-This separation supports safer automation and future preview or dry-run capabilities.
+This separation supports safer automation, structured diagnostics, reviewable transformation intent, and future preview or dry-run capabilities.
 
-### 7.7 Non-Destructive Transformation
+The decision to apply a consequential transformation remains subject to AppManager application policy and safety constraints rather than being implicit in the inspection mechanism.
+
+### 7.8 Non-Destructive Transformation
 
 Source transformation should preserve unrelated user content, formatting, comments, and configuration wherever practical.
 
 AppManager should avoid full-file regeneration when a bounded structural edit can safely achieve the intended result.
 
-### 7.8 Structured Formats
+A specialised parser or transformation provider may determine the mechanics of a bounded edit, but AppManager retains authority over transformation intent, permitted scope, and acceptance of the resulting application-level outcome.
+
+### 7.9 Structured Formats
 
 Structured configuration formats should be modified through structure-aware mechanisms where available rather than through unrestricted textual replacement.
 
-### 7.9 Composite Source Files
+The use of a structure-aware mechanism does not require its native representation to escape the code-intelligence capability boundary. AppManager-level consumers should depend on the structural meaning required by the use case rather than on a particular parser or library object model.
+
+### 7.10 Composite Source Files
 
 Where a source file contains multiple embedded languages or structural regions, AppManager should favour extraction, delegation, and controlled recomposition over creating monolithic format-specific logic.
 
-### 7.10 Future Language Support
+Different specialised mechanisms may therefore participate in one code-intelligence operation, provided that their results are coordinated through a coherent capability and unrelated source content remains protected.
 
-The architecture should allow additional source formats and language variants to be introduced through appropriate scanners, strategies, orchestrators, or external parser integrations without redesigning the command system.
+### 7.11 Ecosystem-Native and External Parsing
+
+Code intelligence may rely on ecosystem-native parsers, compilers, language services, or other external parsing mechanisms where they provide more reliable understanding than AppManager-owned lexical analysis.
+
+Such mechanisms should be treated as specialised capability implementations or dependencies rather than as the authoritative AppManager application model. Their native trees, symbols, handles, or other implementation representations should remain encapsulated unless a lower-level design explicitly requires a bounded internal use of them.
+
+This allows AppManager to use the most appropriate source-aware tooling without coupling command semantics, interaction adapters, or unrelated subsystems to a particular parser ecosystem.
+
+### 7.12 Future Language Support
+
+The architecture should allow additional source formats and language variants to be introduced through appropriate scanners, strategies, orchestrators, capability providers, or parser integrations without redesigning the command system or Application Engine.
+
+New language support should preserve the same architectural separation between AppManager-oriented code-intelligence semantics and language-specific implementation representations.
 
 ---
 
