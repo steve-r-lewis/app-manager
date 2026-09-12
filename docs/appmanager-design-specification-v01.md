@@ -1203,12 +1203,19 @@ Such information should be captured by Implementation Specifications, implementa
 | managed layer | A Nuxt layer recognised by AppManager as part of the managed project. |
 | command | An invokable AppManager use case within a functional domain. |
 | functional domain | A coherent family of user-facing AppManager capabilities. |
-| interaction mode | An adapter through which a user, host tool, or automation invokes AppManager capabilities. |
-| Application Invocation Contract | The stable structured boundary through which adapters and integrations invoke commands and receive machine-consumable execution information. |
+| interaction mode | A user-facing or automation-facing mode in which AppManager is operated, such as TUI, Headless, or GUI. |
+| interaction adapter | An application-boundary component or integration that translates user, automation, or host-tool interaction into AppManager invocation semantics and structured execution information into an appropriate presentation or host representation. |
+| Application Invocation Contract | The stable structured boundary through which interaction adapters and external integrations invoke commands and receive machine-consumable execution information. |
+| Application Engine | The authoritative application-level responsibility that owns command and use-case coordination, application policy, workflow orchestration, safety constraints, and interpretation of application-level outcomes. |
+| application capability | A coherent function available to AppManager for realising an application use case or supporting another application responsibility. |
+| capability boundary | A defined architectural separation between AppManager application-level semantics and authority and the specialised mechanisms used to realise a capability. |
+| capability provider | A bounded component, subsystem, integration, or mechanism that supplies specialised capabilities to AppManager without acquiring AppManager application policy or workflow authority. |
+| external provider | A service or platform outside AppManager's architectural ownership that AppManager may use to realise or support a capability. |
+| architectural subsystem | A coherent family of responsibilities that contributes to AppManager's application capabilities. |
 | TUI | Text User Interface. |
 | Headless | Non-interactive AppManager operation for automation and scripted use. |
 | GUI | Proposed Graphical User Interface over shared AppManager capabilities. |
-| IDE adapter | A host-tool integration that contributes IDE-specific presentation and context while delegating application behaviour to AppManager. |
+| IDE adapter | A host-tool interaction adapter that contributes IDE-specific presentation and context while delegating application behaviour to AppManager. |
 | service | A reusable operational capability used by commands or other subsystems. |
 | domain engine | A cohesive specialised subsystem that owns domain-specific rules, concepts, or coordination. |
 | scanner | A component that recognises lexical or structural information in supported source text. |
