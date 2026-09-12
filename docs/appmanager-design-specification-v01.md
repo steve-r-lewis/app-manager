@@ -224,36 +224,38 @@ Architectural subsystems may differ substantially in scope, internal structure, 
 
 ### 4.1 Operating Model
 
-AppManager should support the same underlying application capabilities through multiple interaction modes and host-tool integrations.
+AppManager should expose one coherent set of application semantics through multiple interaction modes and host-tool integrations.
+
+Interaction modes and host integrations are realised through interaction adapters at the application boundary. Those adapters translate user, automation, or host context into AppManager invocation semantics and translate structured execution information back into the representation appropriate to the caller.
 
 The interaction model is conceptually:
 
 ```text
-                         AppManager
+                          AppManager
 
-                 presentation and interaction
+             interaction modes / host integrations
 
-       tui      headless      gui      ide / tool adapters
-        |          |           |              |
-        +----------+-----------+--------------+
+       tui      headless      gui      ide / tools
+        |          |           |            |
+        +----------+-----------+------------+
+                           |
+                           v
+                 interaction adapters
                            |
                            v
               application invocation contract
                            |
                            v
-                  command and use cases
-                           |
-                           v
-                shared application capabilities
+                   application engine
 ```
 
-This diagram describes the interaction and invocation boundary only. The internal organisation of shared application capabilities is defined by the application architecture in Section 6.
+This diagram intentionally stops at the Application Engine boundary. Section 5 defines the command and use-case model within that boundary, while Section 6 defines the internal application architecture through which capabilities are coordinated and realised.
 
-Presentation modes and host-tool integrations must not become independent implementations of AppManager business logic.
+Interaction adapters may differ in presentation, input collection, contextual information, and host integration, but they must not become independent owners of AppManager command semantics, application policy, workflow authority, safety rules, or application-level outcomes.
 
 ### 4.2 TUI
 
-The Text User Interface provides guided interactive terminal operation.
+The Text User Interface is an interactive terminal mode realised through a terminal-facing interaction adapter.
 
 It should support:
 
@@ -264,9 +266,11 @@ It should support:
 - confirmation of consequential operations;
 - human-readable results and errors.
 
+The TUI may gather information and confirmations interactively, but the resulting operation must use the same AppManager invocation and application semantics as other interaction modes.
+
 ### 4.3 Headless Mode
 
-Headless mode provides deterministic non-interactive invocation suitable for:
+Headless mode provides deterministic non-interactive operation suitable for:
 
 - scripts;
 - automation;
@@ -277,33 +281,35 @@ Headless mode provides deterministic non-interactive invocation suitable for:
 
 A capability intended for Headless operation must not depend upon interactive prompts to complete normal execution. Required information must instead be supplied explicitly or resolved from configuration and context.
 
-Headless operation and the Application Invocation Contract are related but distinct concerns. Headless mode defines non-interactive operation; the invocation contract defines the structured machine-facing boundary through which a caller expresses command intent and receives execution information.
+Headless operation should expose structured invocation and execution information suitable for machine consumption without requiring callers to interpret human-oriented presentation.
+
+Headless operation and the Application Invocation Contract are related but distinct concerns. Headless mode defines non-interactive operation; the invocation contract defines the structured application boundary through which callers express command intent and receive execution information.
 
 ### 4.4 GUI
 
 A Graphical User Interface is proposed as a first-class interaction mode.
 
-The GUI should expose the same command and application capabilities rather than creating a separate application architecture.
+The GUI should expose the same AppManager invocation and application semantics rather than creating a separate application architecture or independent business-logic implementation.
 
-The GUI may provide richer visualisation, navigation, configuration management, status reporting, project inspection, and workflow composition while delegating domain operations to shared application components.
+The GUI may provide richer visualisation, navigation, configuration management, status reporting, project inspection, and workflow composition while delegating application behaviour through the shared invocation boundary to the Application Engine.
 
 ### 4.5 IDE and Host-Tool Integrations
 
 AppManager may be integrated into development environments and other host tools through dedicated interaction adapters.
 
-A WebStorm plugin is proposed as the first IDE integration. Its purpose would be to expose AppManager capabilities using IDE context such as the current project, selected file or directory, active editor, selected Nuxt layer, or repository while delegating application behaviour to shared AppManager capabilities.
+A WebStorm plugin is proposed as the first IDE integration. Its purpose would be to expose AppManager capabilities using host context such as the current project, selected file or directory, active editor, selected Nuxt layer, or repository while delegating application behaviour to AppManager.
 
-IDE and host-tool adapters should remain thin where practical. Host-specific presentation, context acquisition, and lifecycle integration belong in the adapter; AppManager domain behaviour must remain within shared application capabilities.
+IDE and host-tool adapters should remain thin where practical. Host-specific presentation, context acquisition, and lifecycle integration belong in the adapter. Host-derived context should be translated into AppManager invocation context rather than becoming an alternative application model.
 
-The architecture should not require an IDE integration to reproduce AppManager command, domain, repository, configuration, code-intelligence, or other application logic in the host environment.
+An IDE or host-tool integration must not reproduce, bypass, or redefine AppManager command semantics, application policy, repository policy, configuration semantics, code-intelligence policy, safety constraints, or workflow authority in the host environment.
 
 ### 4.6 Presentation Independence
 
 A core invariant is:
 
-> Commands and application capabilities must not inherently depend upon a particular presentation mode or host-tool integration.
+> Interaction adapters may vary in presentation, context acquisition, and host integration, but AppManager application semantics and authority remain independent of those adapters.
 
-Presentation-specific and host-specific concerns should remain at the application boundary wherever practical.
+Commands and application capabilities must not inherently depend upon a particular presentation mode or host-tool integration. Presentation-specific and host-specific concerns should remain at the application boundary wherever practical.
 
 ---
 
