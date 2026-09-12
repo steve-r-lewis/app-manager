@@ -2021,96 +2021,268 @@ Detailed extension compatibility matrices, version negotiation, trust policy, pa
 
 ---
 
-## 14. Specification Hierarchy and Traceability
+## 14. Specification Hierarchy, Decision Provenance, and Traceability
 
-### 14.1 Documentation Authority
+### 14.1 Documentation Authority and Normative Hierarchy
 
-The project documentation hierarchy is governed by `project-documentation-guide-v01.md`.
+The project documentation hierarchy is governed by `project-documentation-guide-v01.md`, which remains the highest documentation authority for classification, ownership, naming, precedence, and maintenance of project documentation.
 
-The hierarchy is:
+The normative specification-refinement chain is:
 
 ```text
 project documentation guide
           |
           v
-design specification
+root Design Specification
           |
           v
-functional specification
+Functional Specifications
           |
           v
-detailed design specification
+Detailed Design Specifications
           |
           v
-implementation specification
+Implementation Specifications
+          |
+          v
+implementation
 ```
 
-This document occupies the Design Specification level.
+Each lower level refines the approved intent of the level above it. A lower-level specification may add the precision required by its responsibility, but it must not silently weaken, contradict, or redefine a higher-level requirement.
 
-### 14.2 Design Specification Responsibility
+This document occupies the root **Design Specification** level.
 
-This document answers:
+### 14.2 Decision Provenance: Architecture Reviews and ADRs
 
-> What is AppManager intended to be?
+Significant architectural choices may require an **Architecture Review** followed by an **Architecture Decision Record (ADR)** before the resulting decision is incorporated into the authoritative specification hierarchy.
 
-It defines system intent and architecture without attempting to specify every command, component, method, or implementation path.
+Conceptually:
 
-### 14.3 Functional Specification Responsibility
+```text
+proposal / significant architectural question
+                 |
+                 v
+        Architecture Review
+      alternatives / evidence /
+          recommendation
+                 |
+                 v
+               ADR
+       decision / rationale /
+             status
+                 |
+                 v
+      authoritative specification
+       at the owning abstraction level
+```
+
+Architecture Reviews and ADRs are governed decision records; they are not additional levels inserted into the normative Design → Functional → Detailed Design → Implementation hierarchy.
+
+An Architecture Review explains the alternatives considered and the reasoning behind a recommendation where that analysis is warranted. An ADR records a significant architectural decision and preserves why it was made, including its status and supersession history where applicable.
+
+An accepted ADR does not substitute for the specification that owns the resulting architectural requirement. The decision must be propagated into the appropriate authoritative specification before implementation is treated as conforming to the new design. Likewise, specifications should preserve the decision outcome without duplicating the full historical rationale that belongs in the ADR.
+
+Not every refinement or implementation choice requires an Architecture Review or ADR. Their use should follow the governance criteria defined by the project documentation and architectural-decision process.
+
+### 14.3 Root Design Specification Responsibility
+
+The root Design Specification answers:
+
+> What is AppManager intended to be as an enduring system and architecture?
+
+It defines durable system intent, including matters such as:
+
+- purpose, scope, and system boundaries;
+- major application concepts and architectural responsibilities;
+- authority and responsibility boundaries;
+- interaction and invocation architecture;
+- managed-project and configuration concepts;
+- major capability relationships and subsystem families;
+- system-level workflows where their coordination is architecturally significant;
+- architectural invariants;
+- enduring extensibility principles.
+
+The root Design Specification should remain useful after a particular migration, source-tree arrangement, package structure, process topology, or temporary implementation has ceased to matter.
+
+It may name a technology or platform where an accepted architectural decision makes that choice part of the enduring target architecture, but it should not normally prescribe concrete source paths, package names, classes, executable names, build tasks, wire schemas, serialization formats, startup algorithms, library wiring, migration phases, or other reduction-to-practice detail.
+
+### 14.4 Functional Specification Responsibility
 
 Functional Specifications answer:
 
-> What must AppManager do?
+> What must AppManager do to satisfy the approved design?
 
-They refine the domains and capabilities defined here into behavioural requirements, inputs, outputs, validation, failure behaviour, and user-visible workflows.
+They refine Design-level capabilities, domains, workflows, and invariants into observable behavioural requirements such as:
 
-### 14.4 Detailed Design Specification Responsibility
+- supported commands and use cases;
+- required inputs and outputs;
+- managed-scope behaviour;
+- validation and acceptance requirements;
+- safety and confirmation behaviour;
+- failure, cancellation, and partial-success behaviour where functionally significant;
+- deterministic Headless behaviour;
+- structured diagnostics and outcomes;
+- capability availability and externally observable compatibility requirements.
+
+Functional Specifications define required behaviour without unnecessarily prescribing the internal package, class, process, library, or source-tree structure used to realise it.
+
+### 14.5 Detailed Design Specification Responsibility
 
 Detailed Design Specifications answer:
 
-> How should AppManager realise that functionality internally?
+> How should AppManager's approved functionality and architecture be realised internally?
 
-They define command contracts, invocation schemas and protocols, services, strategies, scanners, transformation mechanisms, validators, orchestrators, resolvers, interfaces, algorithms, data structures, and subsystem interactions.
+They define the permanent technical design needed to satisfy the Functional Specifications and root Design, including where appropriate:
 
-### 14.5 Implementation Specification Responsibility
+- internal responsibility and component decomposition;
+- command and capability contracts;
+- Application Invocation Contract request, result, event, and compatibility design;
+- capability-boundary and provider contracts;
+- interfaces between architectural responsibilities;
+- process topology and lifecycle where architecturally relevant to the implementation design;
+- concurrency, cancellation, sequencing, and transaction design;
+- error propagation and partial-failure handling;
+- validation and application-acceptance coordination;
+- data structures and persistent conceptual models;
+- extension compatibility and lifecycle design;
+- testing and observability architecture;
+- algorithms where they form part of the durable technical design.
+
+Detailed Design may define concrete technical contracts and relationships, but should avoid collapsing into a file-by-file implementation description when those details belong in the Implementation Specification.
+
+### 14.6 Implementation Specification Responsibility
 
 Implementation Specifications answer:
 
-> How does the current codebase realise the approved design?
+> How does the approved Detailed Design map to concrete code, build, runtime, and repository artefacts?
 
-They contain source paths, concrete symbols, dependencies, wiring, implementation status, migration requirements, and code-specific constraints.
+They may define matters such as:
 
-### 14.6 Traceability
+- concrete modules, packages, namespaces, and source paths;
+- classes, functions, interfaces, entry points, and executable artefacts;
+- selected libraries and dependency wiring;
+- build-system, package-manager, and workspace configuration;
+- concrete serialization schemas and transport bindings;
+- runtime and process wiring;
+- concrete configuration files and storage paths;
+- test implementation and fixtures;
+- implementation-specific migration or compatibility steps where required to reduce the approved design to practice.
 
-Specifications should support useful traceability from system intent through implementation.
+An Implementation Specification may describe the intended concrete implementation as well as relevant implementation constraints; it is not merely an audit of whatever code happens to exist today.
 
-Example:
+Current source behaviour, existing package structure, or historical implementation choices do not acquire specification authority merely because they are already implemented. Where current code conflicts with an approved higher-level specification, that conflict must be resolved through the governed design or implementation process rather than silently redefining the intended system.
+
+### 14.7 Project Management, Migration, and Implementation Status
+
+Project-management documents sit outside the normative specification hierarchy.
+
+They may record and coordinate matters such as:
+
+- migration sequencing and implementation phases;
+- workstreams, milestones, dependencies, and ownership;
+- backlogs and outstanding decisions;
+- implementation progress and coverage;
+- temporary or transitional states;
+- handover and session status;
+- audits of the current codebase;
+- issue and pull-request planning.
+
+These documents may reference authoritative specifications and ADRs, but project schedule, migration convenience, temporary implementation state, or issue-tracker status must not silently redefine the target architecture or requirements.
+
+Similarly, statements about incomplete wiring, stubs, unused components, temporary source paths, or current implementation coverage belong in Implementation Specifications, implementation audits, project-management documents, roadmaps, or issue tracking as appropriate—not in this root Design Specification unless the condition is itself an enduring architectural constraint.
+
+### 14.8 Information Allocation and Abstraction Rules
+
+Information should be placed at the **highest appropriate abstraction level** and refined downward only as additional precision becomes necessary.
+
+A useful allocation test is:
+
+> Would this statement still be useful and true after the current migration is complete and today's implementation structure has ceased to matter?
+
+If yes, it may belong in the root Design Specification, subject to the responsibility tests above. If no, it usually belongs in a lower-level specification or project-management document.
+
+Additional allocation rules are:
+
+- Design defines enduring system intent and architecture;
+- Functional Specifications define observable required behaviour;
+- Detailed Design defines permanent internal technical realisation;
+- Implementation Specifications define concrete reduction to code, build, runtime, and repository structure;
+- ADRs preserve the rationale for significant decisions;
+- Architecture Reviews preserve significant alternatives and evaluation;
+- project-management documents track how and when approved change is carried out.
+
+Duplication across levels should be minimised. Where repetition is necessary for readability, the lower-level document should preserve the higher-level meaning and make clear which authority it refines.
+
+### 14.9 Traceability
+
+Specifications should provide sufficient traceability to show how approved system intent is refined into behaviour, technical design, concrete implementation, and verification.
+
+A typical traceability chain is:
+
+```text
+Architecture Review / ADR      when applicable
+            |
+            v
+Design responsibility / invariant
+            |
+            v
+Functional requirement
+            |
+            v
+Detailed Design responsibility / contract
+            |
+            v
+Implementation Specification mapping
+            |
+            v
+implementation and verification
+```
+
+For example:
 
 ```text
 Design
-  repository management
+  managed projects may contain multiple repository relationships
        |
        v
 Functional
-  synchronise managed repositories
+  synchronise the repositories within an explicitly resolved managed scope
+  and report structured per-target outcomes
        |
        v
 Detailed Design
-  sync command
-  repository resolver
-  git service
+  repository coordination, scope resolution, provider contracts,
+  result aggregation, and partial-failure semantics
        |
        v
-Implementation
-  concrete command, resolver and service modules
+Implementation Specification
+  concrete modules, provider adapters, source paths, build/runtime wiring,
+  schemas, and tests
+       |
+       v
+Implementation / Verification
+  code and automated tests demonstrating the required behaviour
 ```
 
-Lower-level specifications should reference the higher-level requirement or design responsibility they refine where that relationship would otherwise be unclear.
+Traceability should be proportional to the significance and complexity of the requirement. The root Design Specification does not require every sentence to carry a unique identifier, but important architectural responsibilities, functional requirements, decisions, and implementation mappings should be linkable where their relationship would otherwise be unclear.
 
-### 14.7 Implementation Status
+### 14.10 Conflict Resolution and Change Propagation
 
-Statements about incomplete wiring, stubs, unused components, temporary source paths, migration work, or current implementation coverage do not belong in this root Design Specification unless they materially constrain the intended design.
+When documents at different levels conflict, the higher authoritative specification prevails until the conflict is deliberately resolved through the governed documentation process.
 
-Such information should be captured by Implementation Specifications, implementation audits, roadmaps, or issue tracking as appropriate.
+A lower-level discovery that reveals a necessary change to a higher-level requirement must be escalated rather than silently normalised. The higher-level specification should be amended first or as part of the same governed change, after any required Architecture Review or ADR, and dependent lower-level specifications should then be brought back into alignment.
+
+Likewise, a significant accepted ADR that changes the target architecture should trigger updates to the authoritative specifications it affects. Until that propagation is complete, the documentation set contains an identified inconsistency rather than two equally authoritative alternatives.
+
+Implementation must not be used as the mechanism by which architectural policy is changed implicitly.
+
+### 14.11 Specification Evolution and Compliance
+
+Specifications are expected to evolve as AppManager develops, but evolution should preserve clear authority and provenance.
+
+A change should be evaluated for its correct abstraction level, its effect on existing higher- and lower-level documents, and whether it requires an architectural decision record. Changes that alter enduring system boundaries, technology commitments, authority models, major responsibility allocation, or other expensive architectural choices should follow the governed architecture-review and ADR process where applicable.
+
+A conforming implementation is one that satisfies the currently approved Design, Functional, Detailed Design, and Implementation Specifications relevant to that implementation. Temporary implementation divergence should be explicitly tracked; it must not become architectural precedent solely through continued existence.
 
 ---
 
