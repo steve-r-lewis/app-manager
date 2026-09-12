@@ -317,17 +317,17 @@ Commands and application capabilities must not inherently depend upon a particul
 
 ### 5.1 Domain-Oriented Command Model
 
-AppManager is organised around functional domains containing commands that represent application use cases.
+Within the Application Engine, AppManager is organised around functional domains containing commands that represent application use cases.
 
-The command model provides a stable application boundary beneath the Application Invocation Contract and above the shared application capabilities that realise each use case.
+The command model is the primary expression of AppManager command identity, use-case semantics, and application intent. It sits behind the Application Invocation Contract and coordinates the application capabilities required to realise each use case without exposing presentation-specific or provider-specific mechanics as command semantics.
 
 Conceptually:
 
 ```text
-interaction adapter / external integration
+      application invocation contract
                  |
                  v
-      application invocation contract
+          application engine
                  |
                  v
       command discovery and dispatch
@@ -339,14 +339,14 @@ interaction adapter / external integration
           command / use case
                  |
                  v
-     shared application capability
+  application capability coordination
 ```
 
-The architectural subsystems through which commands realise application capabilities are defined in Section 6. The command model does not prescribe their internal structure.
+The command model defines application intent and authority, not the internal topology of the capabilities that realise an operation. Section 6 defines those architectural responsibilities and boundaries.
 
 ### 5.2 Application Invocation Contract
 
-The Application Invocation Contract provides a common structured boundary between callers and the command model.
+The Application Invocation Contract provides the common structured boundary between interaction adapters or external integrations and the Application Engine command model.
 
 At the Design Specification level, the contract must be capable of representing:
 
@@ -361,6 +361,8 @@ At the Design Specification level, the contract must be capable of representing:
 - deterministic behaviour suitable for automation;
 - evolution of the contract without requiring presentation-specific command implementations.
 
+The contract carries invocation intent and structured execution information, but it does not become the owner of application policy, workflow coordination, safety decisions, or capability-specific implementation mechanics.
+
 Human-readable presentation is an adapter responsibility and must not be the only representation of an operation's outcome where structured invocation is supported.
 
 This specification deliberately does not prescribe whether the contract is realised through process standard input/output, an in-process interface, IPC, RPC, HTTP, sockets, or another transport. Serialization, transport, versioning mechanics, schemas, and concrete execution protocols belong in lower-level specifications.
@@ -371,36 +373,40 @@ A command should:
 
 - represent a coherent user or automation intent;
 - receive, validate, or resolve sufficient context for the requested use case;
-- invoke the application capabilities required to realise that use case;
+- apply or participate in the AppManager application policy, safety, and scope rules relevant to the use case;
+- coordinate the application capabilities required to realise that use case;
 - remain independent of presentation-specific and host-specific behaviour;
+- avoid making provider-specific or ecosystem-specific implementation representations part of its general application semantics;
 - provide meaningful structured success or failure outcomes;
-- respect application-wide safety, configuration, scope, and non-destructive-operation principles.
+- respect application-wide configuration, non-destructive-operation, and observability principles.
 
-Commands define application intent and invocation semantics. Detailed command contracts, internal coordination, algorithms, and component interactions belong in lower-level specifications.
+Commands define application intent and invocation semantics within the authority of the Application Engine. Detailed command contracts, internal coordination, algorithms, capability interfaces, and component interactions belong in lower-level specifications.
 
 ### 5.4 Command Discovery
 
-AppManager should provide a central mechanism through which available commands and their functional domains can be discovered and dispatched.
+The Application Engine should provide a central mechanism through which its available commands and functional domains can be discovered and dispatched.
 
-Command discovery should be available through the Application Invocation Contract so interaction modes and integrations do not need to encode domain behaviour independently.
+Command discovery should be available through the Application Invocation Contract so interaction modes and integrations do not need to encode domain behaviour independently. The discoverable command surface should represent the authoritative AppManager command model rather than an adapter-specific or capability-provider-specific view of the system.
 
 The detailed registry contract, command metadata, discovery implementation, and machine-readable discovery schema belong to lower-level specifications.
 
 ### 5.5 Shared Execution Semantics
 
-A command's application meaning should remain consistent across every interaction mode or integration through which that command is exposed.
+A command's application meaning and application-level outcome semantics should remain consistent across every interaction mode or integration through which that command is exposed.
 
-TUI, Headless, GUI, IDE, and other adapters may differ in how they gather inputs, derive host context, request confirmation, present progress, or display results, but they should not redefine the underlying use case.
+TUI, Headless, GUI, IDE, and other adapters may differ in how they gather inputs, derive host context, request confirmation, present progress, or display results, but they must not redefine the underlying use case.
+
+Similarly, a specialised subsystem, capability provider, external provider, or other delegated mechanism may vary in how work is performed, but it must not redefine the command's AppManager-level meaning, policy, safety constraints, or final application outcome.
 
 Inputs supplied interactively, explicitly, through automation, or by a host tool should ultimately be expressed through the same invocation and command semantics.
 
 ### 5.6 Relationship to Application Architecture
 
-Commands may require capabilities owned by multiple architectural subsystems, but the command model does not define those subsystem relationships or their internal coordination.
+The command model is an Application Engine responsibility. Commands may coordinate capabilities owned by multiple architectural subsystems or supplied through capability boundaries, but command semantics must remain expressed in AppManager application terms.
 
-Section 6 defines the cooperating architectural responsibilities through which application capabilities are realised. Section 11 describes principal system workflows where coordination across those responsibilities is significant at the system-design level.
+Section 6 defines the cooperating architectural responsibilities, capability boundaries, and collaboration model through which application capabilities are realised. Section 11 describes principal system workflows where coordination across those responsibilities is significant at the system-design level.
 
-This separation keeps invocation and command intent independent from architectural implementation while allowing the same command semantics to be reused across interaction modes and integrations.
+This separation keeps invocation and command intent independent from architectural implementation and provider-specific representations while allowing the same command semantics to be reused across interaction modes, integrations, and capability implementations.
 
 ---
 
