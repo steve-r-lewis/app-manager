@@ -1223,9 +1223,19 @@ Detailed command placement, domain boundaries, command identifiers, behavioural 
 
 ## 11. Core System Workflows
 
-### 11.1 Command Invocation
+### 11.1 Workflow Model and Authority
 
-A normal AppManager workflow is conceptually:
+Core workflows describe how AppManager coordinates application intent, context, policy, capabilities, external effects, validation, and results across the major use-case families defined by the command model.
+
+The Application Engine is the application-level workflow authority. It determines how command intent, managed project context, managed scope, effective configuration, application policy, safety constraints, delegated capability results, and final outcomes fit together.
+
+A capability provider, service, domain engine, resolver, generator, code-intelligence component, external tool, or external provider may own the mechanics of a bounded operation. Participation in a workflow does not transfer application-level workflow authority to that mechanism.
+
+At the Design Specification level, workflows therefore express enduring coordination responsibilities and decision boundaries rather than concrete call sequences, classes, process topology, transaction APIs, or implementation-specific control flow.
+
+### 11.2 Command Invocation Workflow
+
+A normal AppManager command invocation is conceptually:
 
 ```text
 user / automation / host tool
@@ -1234,115 +1244,388 @@ user / automation / host tool
 interaction adapter
        |
        v
-application invocation contract
+Application Invocation Contract
        |
        v
-command discovery and dispatch
+Application Engine
+       |
+       +--> command discovery / dispatch
+       |
+       +--> managed project context resolution
+       |
+       +--> effective configuration resolution
+       |
+       +--> managed scope / policy / safety evaluation
        |
        v
-context and configuration resolution
+command / use case
        |
        v
 application capability coordination
        |
-       v
-services / subsystems / domain engines
-       |
-       v
-managed project or external provider
-       |
-       v
-structured result and diagnostics
-       |
-       v
-adapter-specific presentation
+       +-----------------------------+
+       |                             |
+       v                             v
+AppManager-owned capabilities   capability boundaries
+                                     |
+                                     v
+                             capability providers /
+                             external tools/providers
+       |                             |
+       +-------------+---------------+
+                     |
+                     v
+          AppManager-oriented results
+                     |
+                     v
+            Application Engine
+                     |
+                     v
+         application-level acceptance
+                     |
+                     v
+ structured result / diagnostics / events
+                     |
+                     v
+       interaction-adapter presentation
 ```
 
-The Application Invocation Contract should preserve command intent, scope, structured outcomes, and relevant execution information independently of how a particular adapter presents them.
+The Application Invocation Contract carries command intent and structured execution information; it does not own the workflow. The Application Engine coordinates the workflow and retains authority over scope, policy, safety, sequencing, interpretation of capability results, and final application-level outcome.
 
-### 11.2 Application Lifecycle Workflow
+Project context, effective configuration, and managed scope need not always be resolved as isolated sequential steps. They may be interdependent, but they must converge on an explicit, coherent invocation context before a consequential operation depends upon them.
 
-Application lifecycle commands may coordinate package-manager execution, project cleanup, generation, configuration, and validation.
+A delegated capability may return a technically successful result while the overall command still fails application-level acceptance because the result does not satisfy the requested intent, managed scope, policy, safety constraints, or wider workflow conditions.
 
-Consequential cleanup or reset operations must distinguish recoverable generated state from user-authored project content.
+### 11.3 Common Workflow Invariants
 
-### 11.3 Repository Synchronisation Workflow
+Core workflows should preserve the following invariants:
 
-Repository synchronisation should support the fact that a managed project may contain multiple repositories.
+- **explicit intent** — the workflow begins from an identifiable command or use-case intent;
+- **resolved context** — project-dependent operations use a coherent managed project context rather than ad hoc filesystem or repository assumptions;
+- **explicit scope** — consequential effects are bounded by a resolved managed scope;
+- **effective configuration** — configuration-dependent behaviour uses resolved configuration semantics rather than direct reads from arbitrary sources;
+- **central application authority** — the Application Engine retains policy, safety, workflow, and application-level outcome authority;
+- **bounded delegation** — specialised mechanisms own execution mechanics only within their delegated responsibility;
+- **non-destructive behaviour** — unrelated user-authored or unmanaged content is preserved wherever practical;
+- **structured outcomes** — significant capability results, failures, diagnostics, and relevant execution information are represented in AppManager-oriented terms;
+- **validation and acceptance** — capability-level validation and application-level acceptance remain distinct where both are required;
+- **presentation independence** — the workflow is not defined by TUI, GUI, IDE, or other adapter-specific presentation behaviour;
+- **deterministic automation** — Headless workflows do not depend on unexpected interactive resolution.
 
-The workflow may operate at project-wide, local, selected, or otherwise explicitly defined scope.
+Lower-level specifications may define transaction boundaries, retries, partial-failure handling, cancellation semantics, rollback behaviour, concurrency, ordering constraints, and concrete result structures where individual workflows require them.
 
-The system should favour safe, comprehensible defaults and make the selected scope observable to the user or automation caller.
+### 11.4 Application Lifecycle Workflow
 
-### 11.4 Documentation Workflow
+Application lifecycle workflows may coordinate project context, effective configuration, package-management capabilities, process execution, generation, cleanup, validation, quality operations, and repository capabilities according to the requested command.
 
-Documentation workflows should use structural code understanding where documentation depends on existing source.
-
-A conceptual flow is:
+A conceptual lifecycle flow is:
 
 ```text
-select scope
-    |
-    v
-discover files
-    |
-    v
-select appropriate strategy
-    |
-    v
-inspect documentable structures
-    |
-    v
-generate documentation content
-    |
-    v
-apply controlled updates
-    |
-    v
-validate and report
+lifecycle intent
+      |
+      v
+resolve project context / scope / configuration
+      |
+      v
+apply lifecycle policy and safety constraints
+      |
+      v
+coordinate required capabilities
+      |
+      v
+perform bounded lifecycle effects
+      |
+      v
+validate relevant resulting state
+      |
+      v
+application-level acceptance
+      |
+      v
+structured outcome
 ```
 
-### 11.5 Source Transformation Workflow
+Cleanup, reset, emptying, reinitialisation, or similar consequential operations must distinguish generated or recoverable state from user-authored or otherwise protected project resources before destructive effects occur.
 
-Where AppManager modifies existing source, it should:
+A lifecycle command may coordinate several functional domains or architectural capabilities without transferring workflow authority to a package manager, process runner, generator, filesystem mechanism, or other delegated implementation.
 
-1. identify the target and transformation intent;
-2. select the appropriate source-aware mechanism;
-3. inspect the existing structure;
-4. calculate bounded changes;
-5. apply changes in an order that avoids invalidating later targets;
-6. preserve unrelated source content;
-7. validate or re-inspect the result where practical;
-8. report the outcome.
+### 11.5 Repository Synchronisation Workflow
 
-### 11.6 Generation Workflow
+Repository synchronisation operates over repository relationships represented by the managed project context rather than assuming a one-project/one-repository topology.
 
-Where AppManager creates a new artefact, it should:
+A conceptual synchronisation workflow is:
 
-1. determine the requested artefact type;
-2. resolve required project and user values;
-3. select the appropriate template or generator;
-4. render the new content;
-5. validate destination safety;
-6. write the artefact;
-7. report the result.
+```text
+synchronisation intent
+       |
+       v
+resolve managed project context
+       |
+       v
+resolve managed scope
+       |
+       v
+identify relevant repository relationships
+       |
+       v
+apply repository policy and safeguards
+       |
+       v
+coordinate bounded Git / provider operations
+       |
+       v
+collect per-repository outcomes
+       |
+       v
+application-level acceptance
+       |
+       v
+structured project-level result
+```
 
-Generation of new content and mutation of existing content should remain conceptually distinct.
+The scope may represent the complete managed project, root application, selected layers, selected repositories, or another supported bounded set. Project-wide scope does not imply that every discovered repository must be mutated; command semantics, exclusions, ownership boundaries, and safety policy still apply.
 
-### 11.7 Quality Workflow
+Repository mechanics may be performed through Git services, repository domain engines, capability providers, or external repository-hosting providers, but those mechanisms do not independently determine AppManager synchronisation policy or the meaning of overall success.
 
-Quality commands should delegate process execution through shared application capabilities and produce results that can be consumed both by humans and automated environments.
+Where a workflow affects multiple repositories, lower-level specifications must define partial-failure, ordering, retry, rollback or recovery semantics appropriate to the operation rather than relying on accidental tool behaviour.
 
-### 11.8 AI-Assisted Workflow
+### 11.6 Documentation Workflow
 
-AI-assisted workflows should:
+Documentation workflows may inspect project structure, source, tests, configuration, metadata, or other managed information and may either generate new documentation artefacts or update existing documentation-bearing source.
 
-- resolve an available configured provider;
-- construct bounded project context;
-- request a clearly defined result;
-- validate or constrain the result where practical;
-- provide deterministic fallback behaviour where the capability supports it;
-- avoid treating model output as authoritative project truth without review or validation.
+A documentation workflow should first distinguish between **generation** and **mutation** because those paths have different architectural responsibilities.
+
+Conceptually:
+
+```text
+documentation intent
+        |
+        v
+resolve project context and managed scope
+        |
+        v
+discover relevant documentation targets
+        |
+        v
+inspect project / source structure as required
+        |
+        +-----------------------------+
+        |                             |
+        v                             v
+new documentation artefact     existing source update
+        |                             |
+        v                             v
+generation capability       transformation strategy
+        |                             |
+        |                             v
+        |                  bounded transformation plan
+        |                             |
+        |                  application policy / approval
+        |                             |
+        |                             v
+        |                  transformation mechanism
+        |                             |
+        |                             v
+        |                  source-level validation
+        |                             |
+        +-------------+---------------+
+                      |
+                      v
+            AppManager-oriented result
+                      |
+                      v
+             application-level acceptance
+```
+
+Where documentation depends on code understanding, source recognition and structural facts should be supplied through code-intelligence capabilities rather than duplicated inside documentation commands.
+
+Where existing source is changed, documentation workflows must preserve the recognition, transformation-strategy, bounded-plan, transformation-mechanism, source-validation, and application-acceptance separation defined in Section 7.
+
+AI assistance may contribute bounded documentation content where enabled, but model output remains an input to the workflow rather than authoritative project truth.
+
+### 11.7 Source Transformation Workflow
+
+Where AppManager modifies existing source, the workflow should preserve the explicit responsibility boundaries established by the code-intelligence architecture.
+
+Conceptually:
+
+```text
+AppManager transformation intent
+            |
+            v
+resolve target / project context / managed scope
+            |
+            v
+source recognition / inspection
+            |
+            v
+structural facts
+            |
+            v
+transformation strategy
+            |
+            v
+bounded transformation plan
+            |
+            v
+Application Engine policy / safety / approval decision
+            |
+            v
+transformation mechanism
+            |
+            v
+source-level validation
+            |
+            v
+AppManager-oriented transformation result
+            |
+            v
+Application Engine application-level acceptance
+            |
+            v
+structured outcome / diagnostics
+```
+
+Recognition determines what exists. Strategy determines how the requested intent can be represented as a bounded plan. The transformation mechanism executes an approved plan. Source-level validation determines whether the resulting source satisfies the relevant technical constraints. The Application Engine determines whether the validated result satisfies the AppManager command intent, policy, scope, safety requirements, and wider workflow outcome.
+
+A technically valid transformation must not be treated as automatically acceptable at the application level.
+
+The workflow should preserve unrelated source content and should support preview, dry-run, review, or equivalent pre-application visibility where required by the relevant Functional Specification and command risk profile.
+
+### 11.8 Generation Workflow
+
+Generation workflows create new artefacts from controlled generators or templates and resolved data rather than mutating existing source as though it were generated content.
+
+A conceptual generation workflow is:
+
+```text
+generation intent
+      |
+      v
+resolve project context / destination scope
+      |
+      v
+resolve effective configuration and required values
+      |
+      v
+select generator / template
+      |
+      v
+produce proposed artefact
+      |
+      v
+validate destination / overwrite / ownership safety
+      |
+      v
+write approved artefact
+      |
+      v
+validate or inspect result where required
+      |
+      v
+application-level acceptance
+      |
+      v
+structured outcome
+```
+
+Destination validation must distinguish creation of a new AppManager-managed artefact from overwriting or restructuring existing user-authored content. Overwrite, merge, replacement, or collision behaviour must be explicit rather than an accidental consequence of the generator or filesystem mechanism.
+
+Generation and transformation remain separate responsibilities even when they share configuration, templates, code-intelligence, filesystem, validation, or provider capabilities.
+
+### 11.9 Quality Workflow
+
+Quality workflows verify a resolved managed scope using one or more testing, linting, type-checking, coverage, validation, or other assurance capabilities.
+
+Conceptually:
+
+```text
+quality intent
+      |
+      v
+resolve project context / managed scope / configuration
+      |
+      v
+select required quality capabilities
+      |
+      v
+execute bounded checks
+      |
+      v
+collect structured check results / diagnostics
+      |
+      v
+apply quality policy / gates where applicable
+      |
+      v
+application-level acceptance
+      |
+      v
+structured outcome
+```
+
+External test runners, linters, compilers, type checkers, or similar tools may determine their own technical results, but they do not independently define whether an AppManager quality workflow succeeds according to the requested scope and policy.
+
+Quality results should remain consumable by humans, Headless automation, CI/CD, IDE integrations, and other AppManager workflows without requiring those callers to parse presentation-oriented output.
+
+### 11.10 AI-Assisted Workflow
+
+AI-assisted workflows use an AI capability as a bounded contributor to an AppManager command rather than as an independent workflow authority.
+
+A conceptual AI-assisted flow is:
+
+```text
+AppManager command intent
+        |
+        v
+resolve project context / managed scope / configuration
+        |
+        v
+determine bounded AI task and permitted context
+        |
+        v
+resolve AI capability / configured provider
+        |
+        v
+request candidate result
+        |
+        v
+constrain / inspect / validate candidate result as appropriate
+        |
+        v
+apply AppManager policy and command-specific acceptance
+        |
+        v
+approved use, fallback, rejection, or failure
+        |
+        v
+structured outcome
+```
+
+AI-provider selection, credentials, model APIs, transport mechanics, and provider-specific representations remain behind appropriate configuration, service, or capability boundaries.
+
+Project context supplied to an AI capability should be bounded to what the use case requires and should respect sensitive-configuration and project-ownership constraints.
+
+AI-generated output must not become authoritative project state, configuration, source, documentation, repository history, or application truth merely because a model produced it. Consequential use of AI output remains subject to AppManager validation, policy, safety, scope, and application-level acceptance.
+
+Where AI is optional for a workflow, deterministic non-AI behaviour, explicit unavailability, or another defined fallback should be preferred over hidden degradation or unexpected interactive resolution.
+
+### 11.11 Workflow Results, Failure, and Acceptance
+
+Capability-level success and application-level workflow success are distinct concepts.
+
+A core workflow may involve multiple capabilities, targets, repositories, generated artefacts, transformations, checks, or external providers. The Application Engine should interpret their AppManager-oriented results together with command intent, managed scope, effective configuration, application policy, and safety constraints before determining the final application-level outcome.
+
+Structured workflow results should provide enough information for callers to understand, where relevant:
+
+- whether the requested operation succeeded, failed, was rejected, was cancelled, or completed only partially;
+- which managed targets were affected or left unchanged;
+- which delegated capabilities or external operations produced material results;
+- relevant diagnostics, validation results, warnings, and recoverable failures;
+- whether consequential side effects occurred;
+- what follow-up or recovery information is required by the use case.
+
+The exact result schema, error taxonomy, partial-success model, event stream, cancellation protocol, transaction semantics, and recovery representation belong in Functional and Detailed Design Specifications.
 
 ---
 
