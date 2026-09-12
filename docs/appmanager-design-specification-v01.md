@@ -2332,47 +2332,101 @@ A conforming implementation is one that satisfies the currently approved Design,
 | generation subsystem | The subsystem responsible for generating new artefacts from generators or templates and resolved data. |
 | registry | A discoverable mapping of configured or supported resources. |
 | code intelligence | AppManager capabilities for structured inspection, understanding, documentation, controlled transformation, and source-level validation of existing source. |
+| declarative extension | Validated data, metadata, rules, content, or bounded instructions interpreted by an owning AppManager engine or subsystem without becoming arbitrary executable application code. |
+| capability implementation extension | An executable implementation that supplies specialised mechanics behind an established AppManager capability boundary while preserving AppManager-level semantics and authority. |
+| application-surface extension | An extension that changes the discoverable AppManager application surface, such as commands, functional domains, interaction adapters, or architectural subsystems. |
+| plugin | A concrete executable-extension mechanism, if one is adopted; declarative resources such as licence definitions or templates are not plugins merely because they can be added without rebuilding AppManager. |
+| Architecture Review | A governed record of significant alternatives, evidence, trade-offs, and recommendation used to support an architectural decision where formal review is warranted. |
+| Architecture Decision Record (ADR) | A governed record of a significant architectural decision, its rationale, status, and supersession history; it preserves decision provenance but does not replace the authoritative specification that owns the resulting requirement. |
 
 ### 15.2 Conceptual System Summary
 
+The following summary compresses the architecture defined throughout this specification. It expresses authority, responsibility, context, and delegation rather than prescribing runtime, process, package, or deployment topology.
+
 ```text
-                                  AppManager
-                                      |
-              +-----------------------+-----------------------+
-              |               |               |              |
-             tui           headless           gui       ide / tools
-              |               |               |              |
-              +---------------+---------------+--------------+
-                                      |
-                                      v
-                         application invocation contract
-                                      |
-                                      v
-                             command / use cases
-                                      |
-                 +--------------------+--------------------+
-                 |                    |                    |
-                 v                    v                    v
-           application services   domain engines     code intelligence
-                 |                    |                    |
-                 |                    |          scanners / strategies /
-                 |                    |              orchestrators
-                 |                    |                    |
-                 +-------------+------+--------------------+
-                               |      |
-                               v      v
-                           resolvers  generation
-                                      and templates
-                               |      |
-                               +--+---+
-                                  |
-                                  v
-                           managed project
-                                  |
-                     +------------+------------+
-                     |            |            |
-                  root app      layers     repositories
+                                   AppManager
+                                       |
+                   interaction modes / host integrations
+                                       |
+            +--------------------------+--------------------------+
+            |              |               |                    |
+           TUI          Headless           GUI              IDE / tools
+            |              |               |                    |
+            +--------------+---------------+--------------------+
+                                       |
+                                       v
+                             interaction adapters
+                                       |
+                                       v
+                        Application Invocation Contract
+                                       |
+                                       v
+                              Application Engine
+                     command / workflow / policy authority
+                                       |
+                   +-------------------+-------------------+
+                   |                                       |
+                   v                                       v
+         command discovery / use cases          context and configuration
+                   |                            resolution responsibilities
+                   |                                       |
+                   |                           +-----------+-----------+
+                   |                           |                       |
+                   |                           v                       v
+                   |                 managed project context   effective configuration
+                   |                           |
+                   |                           v
+                   |                     managed scope
+                   |                           |
+                   +---------------------------+-------------------+
+                                       |
+                                       v
+                         application capability coordination
+                                       |
+             +-------------------------+-------------------------+
+             |                                                   |
+             v                                                   v
+   AppManager-owned capabilities                         capability boundaries
+             |                                                   |
+   +---------+----------+---------+---------+                     v
+   |         |          |         |         |             capability providers /
+services  domain     resolvers  generation  registries    external tools/providers
+          engines              and templates                      |
+   |         |          |         |         |                      |
+   +---------+----------+---------+---------+----------------------+
+                                       |
+                          +------------+-------------+
+                          |                          |
+                          v                          v
+                 code-intelligence             managed project
+                    capability                     context
+                          |                          |
+                 recognition / facts       +--------+---------+
+                          |                 |        |         |
+                 strategy / bounded      root app  layers  repositories
+                 transformation plan                |
+                          |                         other managed
+                 transformation mechanism          resources
+                          |
+                 source-level validation
+                          |
+                          v
+                AppManager-oriented results
+                          |
+                          v
+                   Application Engine
+                          |
+                          v
+                application-level acceptance
+                          |
+                          v
+           structured outcome / diagnostics / events
+                          |
+                          v
+               interaction-adapter presentation
 ```
+
+Specialised capabilities may be implemented in-process, out-of-process, through external tools, or through provider integrations. Those implementation choices do not alter the authority model shown above: delegated execution remains subordinate to AppManager command semantics, policy, scope, safety, and application-level acceptance.
 
 ### 15.3 Design Specification Structure
 
@@ -2391,22 +2445,39 @@ This root Design Specification is intentionally organised around the following r
 11. Core System Workflows
 12. Design Principles and Architectural Invariants
 13. Extensibility Model
-14. Specification Hierarchy and Traceability
+14. Specification Hierarchy, Decision Provenance, and Traceability
 15. Glossary and Appendices
 
 This structure should remain relatively stable. Detailed capability growth should normally occur in lower-level specifications rather than causing the root Design Specification to expand into component or implementation documentation.
 
 ### 15.4 Relationship to Legacy Design Documents
 
-Earlier AppManager design, architecture, command, roadmap, and implementation-audit documents remain useful source material during documentation rationalisation.
+The documentation rationalisation that produced this Version 1 root Design Specification has classified the earlier AppManager design, architecture, command, roadmap, and implementation-audit material according to the governed documentation hierarchy.
 
-They should not be retired until their unique information has been classified and either:
+Earlier documents may remain valuable as historical context, source material, implementation evidence, or records of superseded thinking, but they no longer override this root Design Specification where they conflict with its approved system intent.
 
-- incorporated into this Design Specification where it represents durable system intent;
-- transferred into a Functional Specification;
-- transferred into a Detailed Design Specification;
-- transferred into an Implementation Specification or implementation audit;
-- recorded as an explicit proposal or unresolved design question;
-- deliberately rejected as obsolete.
+Information originating in legacy material should now be handled according to its proper authority:
 
-Once that accounting is complete, superseded documents should be clearly retired so that the project has one authoritative specification for each responsibility.
+- durable high-level system intent belongs in this root Design Specification;
+- observable required behaviour belongs in Functional Specifications;
+- permanent internal technical realisation belongs in Detailed Design Specifications;
+- concrete source, build, runtime, and repository mappings belong in Implementation Specifications;
+- significant architectural rationale belongs in Architecture Reviews and ADRs;
+- migration status, sequencing, backlog, and implementation progress belong in project-management documentation;
+- obsolete or rejected concepts should remain identifiable as historical rather than silently re-entering the authoritative design.
+
+If future review discovers unique legacy information that was not previously carried forward, that information must be evaluated through the current governance model before becoming authoritative. Historical presence alone does not give it precedence over the Version 1 baseline.
+
+Superseded legacy documents should therefore remain clearly archived or marked non-authoritative so that each documentation responsibility has one current source of authority.
+
+### 15.5 Version 1 Baseline
+
+This document constitutes the **Version 1 root Design Specification baseline for AppManager** once approved and merged through the project governance workflow.
+
+Version 1 completion means that the project has an internally coherent, authoritative high-level description of what AppManager is intended to be, including its system boundaries, application authority model, interaction and invocation architecture, capability and subsystem responsibilities, code-intelligence model, configuration model, managed-project model, functional domains, system workflows, architectural invariants, extensibility model, and specification governance.
+
+It does **not** mean that every downstream Functional Specification, Detailed Design Specification, Implementation Specification, ADR, implementation task, or migration activity has already been completed. Those artefacts should now be developed from, traced to, and kept consistent with this baseline.
+
+Future changes to this root Design Specification remain possible, but they must be deliberate, governed changes evaluated at the correct abstraction level. Material changes to enduring boundaries, authority models, technology commitments, or major responsibility allocation should follow the Architecture Review and ADR process where required and should propagate through affected lower-level specifications.
+
+The intended next stage after this baseline is to derive and rationalise the **Functional Specifications** that define what AppManager must do while preserving the architecture and invariants established here.
