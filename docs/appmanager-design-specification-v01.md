@@ -20,7 +20,7 @@ AppManager is a domain-oriented application for managing the lifecycle, structur
 
 Its purpose is to provide a coherent management plane above the individual tools normally used to develop and maintain a complex Nuxt application.
 
-Rather than requiring users or automation systems to coordinate package-manager commands, Git operations, repository relationships, configuration files, documentation tooling, quality checks, code transformation, templates, and AI-assisted workflows independently, AppManager provides a unified application model through which those capabilities can be coordinated consistently.
+Rather than requiring users or automation systems to coordinate package-manager commands, Git operations, repository relationships, configuration files, documentation tooling, quality checks, code transformation, templates, and AI-assisted workflows independently, AppManager provides a unified application model through which those capabilities can be invoked, governed, and coordinated consistently. AppManager retains application-level authority over the policies, workflows, safety constraints, and outcomes through which those capabilities participate in managed operations.
 
 AppManager is intended to support both day-to-day development operations and repeatable project-management workflows while preserving user control over the underlying project and repositories.
 
@@ -41,18 +41,21 @@ AppManager's design scope includes:
 - utility and maintenance operations;
 - interactive and automated operation;
 - structured programmatic invocation for interaction adapters and external integrations;
-- extensibility through commands and cooperating architectural subsystems.
+- coordination of ecosystem-native capabilities through defined application boundaries;
+- extensibility through commands, interaction adapters, capability providers, and cooperating architectural subsystems.
 
 ### 1.3 System Boundary
 
 AppManager operates as a management application around a target project.
 
-It does not replace Nuxt, Git, the package manager, the test framework, the operating system, source repositories, AI providers, or other underlying development tools. Instead, it coordinates and augments those systems through defined application capabilities.
+It does not replace Nuxt, Git, the package manager, the test framework, the operating system, source repositories, AI providers, or other underlying development tools. Instead, it coordinates and augments those systems through defined application capabilities and boundaries. The delegation of specialised work to an external tool, service, provider, or ecosystem-native capability does not transfer ownership of AppManager application policy or workflow authority to that dependency.
 
 AppManager should preserve a clear distinction between:
 
 - the AppManager application itself;
+- AppManager application semantics and policy;
 - AppManager-owned configuration, state, templates, and logs;
+- specialised capabilities delegated to external tools, services, or capability providers;
 - the target project being managed;
 - external tools and services used by AppManager;
 - remote repositories and external providers.
@@ -66,7 +69,9 @@ AppManager is not intended to:
 - conceal project structure behind an opaque proprietary representation;
 - require a graphical interface for core functionality;
 - require interactive operation for automatable workflows;
-- duplicate business logic independently across interaction modes or integrations;
+- duplicate application policy or business logic independently across interaction modes, integrations, or capability providers;
+- couple application-level semantics to a particular interaction adapter, host environment, or ecosystem-specific implementation mechanism;
+- expose ecosystem-specific implementation representations as the general AppManager application model;
 - make uncontrolled destructive changes to managed projects;
 - make AI-generated output authoritative without validation and project control;
 - impose a rigid architectural structure where responsibilities do not require one.
