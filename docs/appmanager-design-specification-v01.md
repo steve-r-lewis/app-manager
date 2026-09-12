@@ -86,6 +86,8 @@ AppManager should provide a dependable, extensible, and progressively automatabl
 
 The application should allow a project to be managed as a coherent system rather than as a loose collection of scripts and unrelated development tools.
 
+AppManager should remain a coherent application system even where its capabilities depend on specialised subsystems, ecosystem-native mechanisms, external tools, or providers. Such capabilities should participate through defined architectural boundaries without fragmenting application policy, workflow authority, or the user-facing application model.
+
 ### 2.2 Primary Objectives
 
 AppManager should:
@@ -93,17 +95,20 @@ AppManager should:
 1. provide one coherent command and use-case model for project-management operations;
 2. support interactive, automated, graphical, and tool-integrated presentation modes over shared application capabilities;
 3. provide a stable structured invocation boundary through which machine-oriented adapters and integrations can invoke commands without depending on human-oriented terminal output;
-4. understand the structure and relationships of a managed Nuxt monorepo;
-5. coordinate operations across the root application and managed layers;
-6. provide safe and predictable Git and repository workflows;
-7. centralise project-management configuration while supporting project-specific overrides;
-8. inspect and modify supported source files through structured code-intelligence mechanisms rather than fragile global text replacement;
-9. generate new project artefacts from reusable templates;
-10. support repeatable documentation and quality workflows;
-11. provide controlled integration with AI services where those services add value;
-12. support licensing and other domain-specific project-management capabilities through dedicated subsystems;
-13. remain extensible as new commands, file types, providers, project structures, interaction modes, and host-tool integrations are introduced;
-14. preserve project ownership, transparency, and reversibility wherever practical.
+4. maintain a single coherent application authority for command semantics, application policy, workflow coordination, safety constraints, and application-level outcomes;
+5. separate application-level semantics from specialised ecosystem-native mechanisms through defined capability boundaries;
+6. prevent interaction adapters, host integrations, external providers, and specialist capability implementations from becoming independent owners of AppManager business logic;
+7. understand the structure and relationships of a managed Nuxt monorepo;
+8. coordinate operations across the root application and managed layers;
+9. provide safe and predictable Git and repository workflows;
+10. centralise project-management configuration while supporting project-specific overrides;
+11. inspect and modify supported source files through structured code-intelligence mechanisms rather than fragile global text replacement;
+12. generate new project artefacts from reusable templates;
+13. support repeatable documentation and quality workflows;
+14. provide controlled integration with AI services where those services add value;
+15. support licensing and other domain-specific project-management capabilities through dedicated subsystems;
+16. remain extensible as new commands, file types, capability providers, external providers, project structures, interaction modes, and host-tool integrations are introduced;
+17. preserve project ownership, transparency, and reversibility wherever practical.
 
 ### 2.3 Design Priorities
 
@@ -113,9 +118,12 @@ When design choices conflict, AppManager should generally favour:
 - explicit behaviour over hidden behaviour;
 - non-destructive operations over destructive shortcuts;
 - shared capabilities over duplicated implementations;
+- defined architectural boundaries over incidental implementation coupling;
+- application-level semantics over implementation-specific representations;
+- delegated capability execution without delegated application authority;
 - structured transformation over unbounded textual mutation;
 - configuration resolution over hard-coded assumptions;
-- reusable abstractions over command-specific duplication;
+- reusable capabilities and abstractions over command-specific or adapter-specific duplication;
 - observable operations over silent side effects;
 - deterministic automation over interaction-dependent behaviour;
 - documented architectural responsibility over accidental coupling.
