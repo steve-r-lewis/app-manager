@@ -409,13 +409,13 @@ Where such information is necessary, the permanent technical constraint should b
 
 ### 8.1 Purpose
 
-The Implementation Specification records how the approved design is realised in the actual AppManager codebase.
+The Implementation Specification defines the concrete reduction of approved Detailed Design into the AppManager codebase, build, runtime, and repository artefacts, and may also record the current implementation state where that state is relevant to implementation work.
 
 This is intentionally implementation-specific.
 
 ### 8.2 Primary Question
 
-> How does the current codebase implement the approved design?
+> How does the approved Detailed Design map to concrete code, build, runtime, and repository artefacts, and what is the current implementation state where that matters?
 
 ### 8.3 Appropriate Content
 
@@ -429,6 +429,9 @@ Implementation Specifications may define or record:
 - bootstrap and registration wiring;
 - configuration file locations;
 - runtime paths;
+- build tasks and concrete build wiring;
+- concrete entry points;
+- serialisation and transport bindings;
 - migration steps;
 - source-level dependencies;
 - implementation constraints;
@@ -447,6 +450,8 @@ Statements such as the following belong at this level:
 > `repository_registry.json` has no runtime consumer in the present implementation.
 
 These are useful implementation observations but should not pollute the system Design Specification.
+
+Implementation Specifications may therefore be both **prescriptive**, by defining the concrete implementation required to realise approved Detailed Design, and **descriptive**, by recording relevant current implementation state, deviations, migration obligations, or implementation evidence.
 
 ### 8.4 Reduction to Practice and Migration Execution
 
@@ -527,16 +532,19 @@ Traceability should be introduced where it provides engineering value and should
 
 ## 10. Interaction Modes and Invocation Boundary
 
-AppManager is designed to support multiple presentation modes, invocation modes, and host-tool integrations over the same underlying application capabilities.
+AppManager is designed to support multiple presentation modes, invocation modes, and host-tool integrations over the same authoritative application semantics.
 
 The recognised interaction architecture is conceptually:
 
 ```text
-          interaction adapters and integrations
+          interaction modes and host integrations
 
        tui      headless      gui      ide / tools
         |          |           |           |
         +----------+-----------+-----------+
+                   |
+                   v
+          interaction adapters
                    |
           optional transport binding
                    |
@@ -544,15 +552,29 @@ The recognised interaction architecture is conceptually:
        Application Invocation Contract
                    |
                    v
+           Application Engine
+                   |
+                   v
             command / use cases
                    |
                    v
-       shared application capabilities
+     application capability coordination
+                   |
+          +--------+--------+
+          |                 |
+          v                 v
+ AppManager-owned       capability
+   capabilities         boundaries
+                            |
+                            v
+                    capability providers
 ```
 
-An adapter that operates in-process may invoke the Application Invocation Contract directly. An out-of-process integration may use an appropriate transport or protocol binding that preserves the same invocation semantics.
+The **Application Engine** is the authoritative application boundary. It owns or governs command and use-case semantics, application policy, workflow coordination, managed-scope interpretation, safety constraints, interpretation of delegated capability results, and final application-level outcomes. Delegating specialist execution through a service, subsystem, domain engine, code-intelligence mechanism, capability boundary, provider, or external tool does not delegate that application authority.
 
-The Design Specification defines the architectural role of the Application Invocation Contract. Functional Specifications define required invocation behaviour. Detailed Design Specifications define concrete contracts, lifecycle, schemas, transport abstractions, versioning, events, cancellation, or related internal design. Implementation Specifications record exact transports, serialisation formats, modules, libraries, and wiring.
+An adapter that operates in-process may invoke the Application Invocation Contract directly. An out-of-process integration may use an appropriate transport or protocol binding that preserves the same invocation semantics. Neither arrangement implies a required process, package, runtime, or deployment topology at the Design level.
+
+The Design Specification defines the architectural roles of the Application Invocation Contract, Application Engine, application capabilities, capability boundaries, and providers. Functional Specifications define required invocation and application behaviour. Detailed Design Specifications define concrete contracts, lifecycle, dependency direction, versioning, events, cancellation, capability discovery, error propagation, provider interaction, or related permanent internal design. Implementation Specifications record exact transports, serialisation formats, modules, packages, libraries, entry points, and wiring.
 
 Headless operation and the Application Invocation Contract are distinct concepts. Headless describes non-interactive operation; the invocation contract defines the structured semantic boundary through which adapters or external integrations invoke AppManager capabilities.
 
@@ -582,7 +604,7 @@ Its introduction must not require duplication of underlying application logic.
 
 AppManager may support integrations with IDEs, editors, CI/CD systems, AI agents, project-management tools, and other host applications.
 
-Such integrations should act as thin adapters over shared AppManager capabilities. Host-specific context, navigation, presentation, and lifecycle integration may belong in the adapter, but domain behaviour must not be reimplemented independently merely because the host provides a richer interface.
+Such integrations should act as thin adapters over the shared Application Invocation Contract and Application Engine. Host-specific context, navigation, presentation, and lifecycle integration may belong in the adapter, but command semantics, workflow policy, safety rules, managed-scope interpretation, and application outcome authority must not be reimplemented independently merely because the host provides a richer interface.
 
 A WebStorm plugin is the first proposed IDE integration. Its consideration does not make JetBrains products a mandatory dependency of the AppManager architecture or prevent future integrations with other IDEs or tools.
 
@@ -592,9 +614,9 @@ A core architectural principle is:
 
 > Commands and application capabilities must not inherently depend upon a particular presentation mode or host integration.
 
-TUI, Headless, GUI, IDE, and other integration adapters should invoke shared application capabilities rather than becoming independent implementations of those capabilities.
+TUI, Headless, GUI, IDE, and other integration adapters should invoke the shared Application Invocation Contract and Application Engine rather than becoming independent implementations of AppManager domain behaviour.
 
-Business logic should therefore reside below the interaction boundary wherever practical.
+Application semantics and authority should therefore reside below the interaction boundary wherever practical.
 
 ---
 
@@ -604,19 +626,22 @@ AppManager architecture must be described according to the architectural role an
 
 Architectural concerns may include, but are not limited to:
 
+- the Application Engine as the authoritative application boundary;
+- the Application Invocation Contract;
+- commands and use cases;
+- application capabilities;
+- capability boundaries and capability providers;
 - services;
-- scanners;
-- strategies;
-- templates;
+- scanners and source-recognition mechanisms;
+- transformation strategies and bounded transformation plans;
+- transformation mechanisms and source-level validation;
+- templates and generation capabilities;
 - orchestrators;
 - resolvers;
 - domain engines, including specialised concerns such as licensing where justified;
-- generation and template capabilities, including responsibilities historically described as a Template Engine;
-- command and use-case infrastructure;
-- configuration infrastructure;
 - registries;
+- configuration infrastructure;
 - code-intelligence components;
-- the Application Invocation Contract;
 - presentation, interaction, and host-integration adapters.
 
 Earlier material may refer specifically to a `License Engine`, `Template Engine`, or `command layer`. Those terms remain useful historical or specialised concepts where their meaning is precise, but they must not imply that all such concerns are equivalent architectural tiers or that a rigid layered stack is required.
@@ -625,6 +650,11 @@ These concerns may represent different kinds of architectural constructs and mus
 
 Preferred terminology therefore includes:
 
+- Application Engine;
+- Application Invocation Contract;
+- application capability;
+- capability boundary;
+- capability provider;
 - architectural subsystem;
 - component family;
 - application subsystem;
@@ -632,7 +662,6 @@ Preferred terminology therefore includes:
 - command or use-case model;
 - presentation adapter;
 - integration adapter;
-- invocation contract;
 - transport binding;
 - domain engine.
 
@@ -923,7 +952,7 @@ Where decision governance applies, documents and discussions should also disting
 
 A Design Specification should primarily describe intended design.
 
-An Implementation Specification may describe actual current state and implementation gaps.
+An Implementation Specification may prescribe the concrete implementation required by approved design and may also describe actual current state, implementation gaps, deviations, and migration obligations where relevant.
 
 An ADR records the decision and rationale but must not substitute for the specification update that makes the consequence normative.
 
@@ -1278,7 +1307,8 @@ Examples of Design Specification content:
 - AppManager supports repository-management capabilities.
 - AppManager supports TUI and Headless operation and proposes GUI operation.
 - AppManager supports a presentation- and integration-independent Application Invocation Contract.
-- presentation and integration modes share common application capabilities.
+- AppManager has one authoritative Application Engine governing command semantics, workflow policy, managed scope, safety, and final application outcomes.
+- specialist execution may be delegated through capability boundaries without delegating application authority.
 - source mutation should be non-destructive where practical.
 
 Examples of ADR content:
@@ -1290,11 +1320,13 @@ Examples of ADR content:
 Examples of Detailed Design content:
 
 - the permanent responsibility boundary between two architectural subsystems;
+- the concrete contract between the Application Engine and a capability provider;
 - a stable internal contract required to keep a specialist runtime independently replaceable;
 - lifecycle, cancellation, failure, and compatibility semantics that remain part of the finished architecture.
 
 Examples of Implementation Specification content:
 
+- exact modules, packages, source paths, entry points, build tasks, libraries, and runtime wiring required to realise approved Detailed Design;
 - a particular command is currently a stub;
 - a service is currently unused;
 - an exact method is not yet wired into a command;
@@ -1311,7 +1343,7 @@ Examples of project-management migration content:
 - handoff and execution status;
 - temporary sequencing required only while the current implementation is being transformed.
 
-The root Design Specification must describe the target architecture, not the journey from the legacy implementation to that target. Detailed Design must describe the permanent internal design, not a temporary implementation programme. Implementation Specifications may describe the concrete reduction to practice, while project-management documentation coordinates the transient execution of that work.
+The root Design Specification must describe the target architecture, not the journey from the legacy implementation to that target. Detailed Design must describe the permanent internal design, not a temporary implementation programme. Implementation Specifications define the concrete reduction to practice and may record relevant implementation state, while project-management documentation coordinates the transient execution of that work.
 
 This distinction allows implementation to evolve without making the Design Specification obsolete after every code change while preserving the rationale for consequential architectural choices and preventing temporary migration state from becoming permanent design authority.
 
@@ -1424,28 +1456,29 @@ The AppManager documentation system is governed by the following core rules:
 9. The root Design Specification describes enduring target-system architecture and constraints, not the migration journey or reduction to practice.
 10. A root Design Specification statement must remain useful and true after the current implementation and migration to the target architecture have ceased to matter.
 11. Detailed Design describes the permanent internal technical design; transient migration execution does not become permanent design authority.
-12. Implementation Specifications own concrete reduction to practice, while project-management documentation owns migration sequencing, coordination, progress, and temporary states.
+12. Implementation Specifications own concrete reduction to practice and may record relevant current implementation state; project-management documentation owns migration sequencing, coordination, progress, and temporary states.
 13. Duplication should be replaced by cross-reference and traceability.
 14. Design intent, decision rationale, current implementation state, and migration state must be clearly distinguished.
-15. TUI, Headless, GUI, IDE, and other integration adapters should share common application capabilities rather than duplicate domain behaviour.
+15. TUI, Headless, GUI, IDE, and other interaction or host-integration adapters should share the Application Invocation Contract and authoritative Application Engine rather than duplicate domain behaviour.
 16. Headless operation and the Application Invocation Contract are distinct architectural concepts.
-17. Architectural subsystems should not be forced into an artificial layer model.
-18. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
-19. ADRs are governed decision-provenance records and are not a fifth specification level.
-20. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
-21. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
-22. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
-23. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
-24. Archived documents are outside the active specification hierarchy and are non-authoritative.
-25. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
-26. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
-27. A retired document must use the `-retired` suffix immediately after its version identifier.
-28. A document must not be retired while it remains the sole source of information the project intends to preserve.
-29. Superseded canonical documents must identify their successor or replacement authority.
-30. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
-31. Active specifications should not rely upon archived or retired documents as normative authority.
-32. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, target-system permanence, and the archive/retirement lifecycle.
-33. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+17. The Application Engine retains application authority when specialist execution is delegated through capabilities, subsystems, providers, or external tools.
+18. Architectural subsystems should not be forced into an artificial layer model.
+19. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
+20. ADRs are governed decision-provenance records and are not a fifth specification level.
+21. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
+22. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
+23. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
+24. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
+25. Archived documents are outside the active specification hierarchy and are non-authoritative.
+26. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+27. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+28. A retired document must use the `-retired` suffix immediately after its version identifier.
+29. A document must not be retired while it remains the sole source of information the project intends to preserve.
+30. Superseded canonical documents must identify their successor or replacement authority.
+31. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
+32. Active specifications should not rely upon archived or retired documents as normative authority.
+33. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, target-system permanence, and the archive/retirement lifecycle.
+34. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
@@ -1456,7 +1489,7 @@ The AppManager documentation system is governed by the following core rules:
 | Design Specification | What system are we building? | Enduring target-system vision, scope, architecture, principles, major domains, interaction model |
 | Functional Specification | What must it do? | Behaviour, requirements, inputs, outputs, validation, workflows |
 | Detailed Design Specification | How should it work internally? | Permanent components, commands, interfaces, algorithms, dependencies, data structures |
-| Implementation Specification | How is it implemented here? | Paths, symbols, libraries, wiring, status, migration mechanics, code-specific constraints |
+| Implementation Specification | How does approved Detailed Design map to concrete implementation? | Paths, symbols, libraries, build/runtime wiring, implementation status, migration mechanics, code-specific constraints |
 
 Project-management documentation and Architecture Decision Records are intentionally excluded from this table because neither is a specification level.
 
@@ -1482,11 +1515,14 @@ Architecture Decision Records answer a different question:
 
 | Mode or adapter | Role | Principle |
 |---|---|---|
-| TUI | Guided terminal interaction | Presentation adapter over shared capabilities |
-| Headless | Automation, scripts, CI/CD | Non-interactive adapter; not itself the machine invocation contract |
-| GUI | Proposed graphical interaction | Graphical adapter over shared capabilities |
-| IDE / host integration | IDEs, editors, CI/CD, AI agents, and other tools | Thin integration adapter over shared AppManager capabilities |
+| TUI | Guided terminal interaction | Interaction mode presented through an adapter over shared application semantics |
+| Headless | Automation, scripts, CI/CD | Non-interactive interaction mode; not itself the machine invocation contract |
+| GUI | Proposed graphical interaction | Graphical interaction mode over shared application semantics |
+| IDE / host integration | IDEs, editors, CI/CD, AI agents, and other tools | Thin integration adapter; must not duplicate AppManager application authority |
 | Application Invocation Contract | Structured semantic invocation boundary | Shared, presentation-independent contract; transport choices belong at lower specification levels |
+| Application Engine | Authoritative application boundary | Owns or governs command semantics, policy, workflow coordination, managed scope, safety, and final application outcomes |
+| Capability boundary | Boundary for specialist or provider-backed execution | Encapsulates implementation-specific mechanics without transferring application authority |
+| Capability provider | Implementation of bounded specialist capability | Performs delegated work in AppManager-oriented terms under Application Engine authority |
 
 # Appendix D - Documentation Lifecycle Quick Reference
 
