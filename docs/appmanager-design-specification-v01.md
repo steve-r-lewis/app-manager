@@ -1631,75 +1631,151 @@ The exact result schema, error taxonomy, partial-success model, event stream, ca
 
 ## 12. Design Principles and Architectural Invariants
 
-### 12.1 Presentation Independence
+Section 12 defines cross-cutting constraints that the rest of the specification hierarchy must preserve. Functional, Detailed Design, Implementation, and integration-specific specifications may refine these principles but must not silently weaken, bypass, or contradict them.
 
-Application capabilities must not inherently depend on TUI, Headless, GUI, IDE, or other host-tool presentation.
+These invariants describe enduring architectural obligations rather than particular classes, packages, processes, libraries, protocols, or source-tree arrangements.
 
-### 12.2 Structured Invocation Boundary
+### 12.1 Single Application Authority
 
-Machine-oriented interaction adapters and integrations should invoke commands through a stable structured Application Invocation Contract rather than depend on parsing human-oriented presentation output.
+The Application Engine is the authoritative application-level responsibility for AppManager command and use-case semantics, application policy, workflow coordination, context and scope interpretation, safety constraints, interpretation of capability results, and final application-level outcomes.
 
-The contract must remain conceptually independent of any single transport or host environment.
+No interaction adapter, functional domain, service, domain engine, resolver, registry, capability provider, external provider, generator, code-intelligence component, or external tool may become an independent source of AppManager application authority merely because it participates in an operation.
 
-### 12.3 Domain Responsibility
+### 12.2 Presentation Independence
 
-Capabilities should reside in the domain or subsystem that owns their responsibility rather than being duplicated across unrelated commands.
+Application semantics and capabilities must not inherently depend on TUI, Headless, GUI, IDE, or other host-tool presentation.
 
-### 12.4 Non-Destructive Operation
+Interaction adapters may gather context, inputs, confirmations, and presentation-specific information, but they must translate those concerns into the shared AppManager invocation model rather than reproduce or redefine application behaviour.
 
-AppManager should preserve user-authored content and project structure wherever practical.
+### 12.3 Structured Invocation Boundary
 
-Destructive operations must be explicit, scoped, and appropriately safeguarded.
+Machine-oriented interaction adapters and integrations should invoke commands through the shared Application Invocation Contract rather than depend on parsing human-oriented presentation output or bypass the command model.
 
-### 12.5 Structured Modification
+The contract must preserve AppManager invocation semantics while remaining conceptually independent of any single transport, serialization mechanism, process topology, or host environment.
 
-Existing structured files should be modified through structure-aware mechanisms wherever practical.
+### 12.4 Functional Domains and Architectural Responsibility
 
-### 12.6 Generation and Mutation Separation
+Functional domains organise the product-facing command and use-case surface. They are not architectural subsystems, provider boundaries, source-code modules, or independent execution authorities.
 
-Templates generate new artefacts. Source-aware strategies, transformation mechanisms, validators, and related code-intelligence components inspect, plan, modify, or validate existing artefacts.
+Application capabilities should reside with the architectural responsibility that owns their semantics or mechanics and should be reusable by commands across functional domains where appropriate. Domain placement must not cause shared capabilities to be duplicated or unrelated responsibilities to be collapsed together.
 
-These responsibilities should not be conflated.
+### 12.5 Capability Boundaries and Representation Encapsulation
 
-### 12.7 Configuration over Hard-Coding
+Specialised ecosystem-native, provider-specific, external-tool, parser, compiler, framework, or host representations should remain behind appropriate capability boundaries unless a lower-level design has a bounded internal reason to expose them.
 
-User, project, repository, provider, and environment-specific values should be resolved from configuration or context rather than embedded into reusable application logic or templates.
+The Application Engine, command model, interaction adapters, and unrelated subsystems should consume AppManager-oriented semantics rather than inherit implementation-specific object models or provider contracts as the general application model.
 
-### 12.8 Deterministic Headless Operation
+### 12.6 Delegated Execution Without Delegated Authority
 
-Headless workflows must not unexpectedly require interactive input.
+A capability provider, external provider, service, domain engine, generator, code-intelligence mechanism, or other specialist may own how a bounded task is executed within its responsibility.
 
-### 12.9 Observable Operations
+Delegating execution does not delegate AppManager command semantics, workflow authority, application policy, managed scope, safety decisions, or final application-level acceptance.
 
-Significant operations should produce sufficient logging, diagnostics, or structured results to explain what occurred and why a failure occurred.
+### 12.7 Managed Project Context
 
-### 12.10 Shared Infrastructure
+Project-dependent operations must use a coherent resolved managed project context rather than independently infer project meaning from the current directory, one repository, incidental filesystem structure, or adapter-specific host state.
 
-Cross-cutting capabilities such as filesystem access, process execution, Git operations, logging, and configuration should be reusable rather than independently reimplemented by commands.
+Filesystem, repository, framework, metadata, configuration, and host context may provide evidence during discovery, but no individual evidence source becomes authoritative merely because it identifies a candidate project resource.
 
-### 12.11 Explicit Scope
+### 12.8 Explicit Managed Scope
 
-Operations spanning root projects, layers, repositories, files, or environments should have a clearly defined scope.
+Consequential operations must operate against a resolved managed scope that identifies the project entities the command is intended and permitted to affect.
 
-### 12.12 Extensible Discovery
+Discovery, recognition, repository membership, directory containment, or inclusion in managed project context does not by itself grant permission to modify a resource. Scope selection may be informed by an adapter or caller, but AppManager retains authority over the meaning and permitted effects of that scope.
 
-Where the system supports multiple commands, strategies, providers, repositories, templates, or similar resources, discovery should be designed to accommodate extension without widespread conditional logic.
+### 12.9 Effective Configuration and Configuration Authority
 
-### 12.13 AI as an Optional Capability
+Configuration-dependent behaviour must use AppManager's resolved effective configuration semantics rather than ad hoc reads from arbitrary files, environment values, host settings, provider state, or adapter-local preferences.
 
-AI services may enhance AppManager workflows but must not become an implicit requirement for unrelated core operations.
+Configuration sources supply candidate values. They do not independently own precedence, applicability, validity, or application policy. User-, project-, repository-, provider-, and environment-specific values should be resolved from appropriate configuration or context rather than embedded into reusable application logic or templates.
 
-### 12.14 Design Authority
+### 12.10 Authoritative, Derived, and Operational Information
 
-Implementation must follow approved design and functional requirements. Current source behaviour does not automatically redefine the intended system.
+AppManager must preserve the conceptual distinction between durable configuration, sensitive configuration, operational state, generated or derived artefacts, reports, logs, and diagnostics.
 
-### 12.15 Architectural Responsibility Model
+Operational state, generated outputs, caches, reports, logs, diagnostics, or machine-local observations must not silently acquire durable configuration or project authority merely because they are stored near authoritative data, reused by later operations, or located within an AppManager-owned management area.
 
-Services, domain engines, code-intelligence components, resolvers, generators, templates, registries, invocation boundaries, and adapters represent distinct responsibilities and collaboration patterns rather than equivalent tiers in a uniform stack.
+### 12.11 Non-Destructive Operation and Ownership
 
-### 12.16 Nuxt Layer Terminology
+AppManager should preserve unrelated user-authored content, unmanaged resources, and project structure wherever practical.
 
-Because `layer` has a specific meaning within Nuxt, architectural documentation should avoid using the term ambiguously when `subsystem`, `component family`, `stage`, or `adapter` is more accurate.
+Destructive, history-changing, overwriting, remote-mutating, or otherwise consequential operations must be explicit, bounded by managed scope, and appropriately safeguarded. Recognition or management awareness of a resource does not imply AppManager ownership of that resource.
+
+### 12.12 Structured Source Modification
+
+Existing structured source and configuration should be inspected and modified through source-aware or structure-aware mechanisms wherever practical rather than through unrestricted global textual replacement.
+
+Consequential source modification should be representable as bounded intent and, where the operation requires it, a reviewable transformation plan before mutation occurs. Unrelated source content, formatting, comments, and configuration should be preserved wherever practical.
+
+### 12.13 Generation and Mutation Separation
+
+Generation creates new artefacts from generators or templates and resolved data. Mutation inspects and modifies existing artefacts through source-aware transformation responsibilities.
+
+These responsibilities must remain conceptually distinct even where they share configuration, filesystem, validation, code-intelligence, template, or provider capabilities. A generator must not acquire unrestricted authority to rewrite existing user-authored source merely because it can produce similar content.
+
+### 12.14 Validation and Application-Level Acceptance
+
+Technical or capability-level validation and AppManager application-level acceptance are distinct responsibilities.
+
+A parser, compiler, validator, test runner, provider, transformation mechanism, or other delegated capability may report technical success, but the Application Engine remains responsible for determining whether the result satisfies command intent, policy, managed scope, safety requirements, and the overall workflow outcome.
+
+### 12.15 Structured Outcomes and Observability
+
+Significant operations should produce AppManager-oriented structured results, diagnostics, warnings, validation information, and relevant execution information sufficient to explain what occurred and to support both human and machine consumers.
+
+Human-readable presentation may be derived from those results, but it should not be the only authoritative representation of outcome information where structured invocation is supported. Consequential side effects, partial completion, or failures should not be hidden behind presentation-only success signals.
+
+### 12.16 Deterministic Headless Operation
+
+Headless workflows must not unexpectedly depend on interactive prompts, presentation state, or human interpretation to complete normal operation.
+
+Required values must be supplied explicitly, resolved deterministically from context or effective configuration, handled through a defined non-interactive fallback where permitted, or cause a clear failure.
+
+### 12.17 Shared Capability Reuse
+
+Cross-cutting and reusable capabilities such as filesystem access, process execution, Git mechanics, logging, configuration access, code intelligence, validation, and provider integration should be shared through the responsibility that owns them rather than independently reimplemented by commands or functional domains.
+
+Reuse must not erase meaningful responsibility boundaries: a capability should not be moved into a generic utility abstraction merely because several consumers need it.
+
+### 12.18 Extensible Discovery with Stable Semantics
+
+Where AppManager supports extensible families such as commands, strategies, repositories, templates, external providers, or capability providers, discovery should accommodate extension without widespread conditional logic or adapter-specific registries.
+
+Adding a newly discoverable implementation must not silently redefine the AppManager-level semantics, authority, policy, or safety constraints of the capability or command that consumes it.
+
+### 12.19 External Providers and AI as Bounded Capabilities
+
+External providers may supply specialised execution or information, but they remain outside AppManager's application authority. Their native contracts, availability, and outputs should be mediated through appropriate AppManager capabilities and boundaries.
+
+AI services may enhance AppManager workflows but must remain optional where practical and must not become an implicit dependency of unrelated core operations. AI-generated output is candidate input to an AppManager workflow, not authoritative project, configuration, source, documentation, repository, or application truth merely because a model produced it.
+
+### 12.20 Sensitive Information Minimisation
+
+Sensitive configuration and private project information should be exposed only to the components, providers, logs, diagnostics, reports, results, and presentation surfaces that legitimately require them for the requested operation.
+
+AppManager should avoid unnecessary propagation of secrets, credentials, tokens, private keys, or sensitive project context across capability boundaries or into durable, shareable, or source-controlled artefacts.
+
+### 12.21 Architectural Responsibility Model
+
+The Application Engine, functional domains, commands, interaction adapters, the Application Invocation Contract, services, domain engines, resolvers, generation, registries, code-intelligence responsibilities, capability boundaries, capability providers, and external providers represent distinct responsibilities and collaboration patterns.
+
+They must not be interpreted as equivalent tiers in a uniform stack or as requiring a fixed dependency sequence. Architectural responsibility does not by itself prescribe a package, module, process, runtime, deployment unit, transport, or technology boundary.
+
+### 12.22 Independence from Incidental Implementation Topology
+
+AppManager-level semantics should depend on enduring application concepts and defined architectural responsibilities rather than incidental source-tree structure, package layout, current-process boundaries, provider object models, or temporary implementation arrangements.
+
+Concrete interfaces, package names, module decomposition, process topology, runtime wiring, schemas, algorithms, and storage mechanisms belong in lower-level specifications unless an accepted architectural decision explicitly elevates one into the enduring target design.
+
+### 12.23 Design Authority and Specification Compliance
+
+Implementation must conform to the approved documentation hierarchy and the authoritative requirements defined by higher-level specifications.
+
+Current source behaviour, historical implementation structure, provider limitations, or accidental conventions do not automatically redefine the intended system. Material deviations should be recorded, evaluated, and resolved through the governed specification and architectural-decision process rather than silently normalised into design authority.
+
+### 12.24 Nuxt Layer Terminology
+
+Because `layer` has a specific meaning within Nuxt, architectural documentation should avoid using the term ambiguously when `subsystem`, `component family`, `stage`, `boundary`, or `adapter` is more accurate.
 
 ---
 
