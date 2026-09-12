@@ -1783,33 +1783,114 @@ Because `layer` has a specific meaning within Nuxt, architectural documentation 
 
 ### 13.1 Extensibility Contract
 
-AppManager should be extensible by adding or substituting commands, functional domains, source-aware capabilities, generators, templates, configuration or context sources, interaction adapters, capability providers, external-provider integrations, domain engines, and other architectural responsibilities where the product requires them.
+AppManager should be extensible by adding or substituting commands, functional domains, source-aware capabilities, generators, templates, configuration or context sources, interaction adapters, capability providers, external-provider integrations, domain engines, declarative resources, and other architectural responsibilities where the product requires them.
 
 Extensibility does not create an alternative application architecture. An extension participates through the same AppManager command model, Application Engine authority, managed project context, managed scope, effective configuration semantics, capability boundaries, safety rules, structured outcomes, and application-level acceptance as built-in capabilities.
 
 Conceptually:
 
 ```text
-new or substituted capability / integration
-                |
-                v
-       discovery / resolution
-                |
-                v
- established AppManager boundary
-                |
-                v
- Application Engine coordinated use
-                |
-                v
- AppManager-oriented result / acceptance
+new or substituted extension
+           |
+           v
+ discovery / resolution
+           |
+           v
+established AppManager boundary
+           |
+           v
+Application Engine coordinated use
+           |
+           v
+AppManager-oriented result / acceptance
 ```
 
-The existence of an extension point does not prescribe a plugin system, dynamic loading mechanism, package format, runtime boundary, process model, automatic discovery algorithm, or third-party extension marketplace. Those decisions belong in lower-level specifications or separate architectural decisions where they become significant.
+The existence of an extension point does not by itself prescribe a general executable plugin framework, dynamic code loading mechanism, package format, runtime boundary, process model, automatic discovery algorithm, or third-party extension marketplace. Those choices belong in lower-level specifications or separate architectural decisions where they become significant.
 
 All extensions must preserve the architectural invariants defined in Section 12.
 
-### 13.2 Command Extensibility
+### 13.2 Extension Classes
+
+AppManager should distinguish at least three materially different forms of extensibility:
+
+```text
+AppManager extensions
+        |
+        +-- declarative / resource-driven extensions
+        |      licence definitions, templates, profiles,
+        |      and other engine-owned specifications
+        |
+        +-- capability implementation extensions
+        |      specialised providers or ecosystem-native
+        |      implementations behind capability boundaries
+        |
+        +-- application-surface extensions
+               commands, functional domains,
+               interaction adapters, and subsystems
+```
+
+These extension classes differ in authority, trust, compatibility, lifecycle, and security implications and should not be forced through one universal plugin mechanism merely because each can extend system behaviour.
+
+A **declarative extension** contributes validated data, metadata, rules, content, or bounded instructions interpreted by an existing AppManager engine or subsystem. A **capability implementation extension** supplies executable mechanics behind an established capability boundary. An **application-surface extension** changes the discoverable AppManager command, domain, interaction, or subsystem surface.
+
+The term **plugin** should be reserved for a concrete executable-extension mechanism if AppManager later adopts one. Declarative resources such as licence definitions and templates are extensions, but they are not executable plugins merely because they can be added without rebuilding AppManager.
+
+### 13.3 Declarative and Resource-Driven Extensibility
+
+Where an AppManager engine or subsystem is designed to be resource-driven, new supported resources should be addable without application source-code changes.
+
+A declarative extension should normally be:
+
+- interpreted through an owning engine or subsystem rather than executed as arbitrary application code;
+- discoverable through an extensible registry, catalogue, or equivalent resource model;
+- validated before use according to the semantics of the owning engine;
+- unable to bypass Application Engine policy, managed scope, safety, or application-level acceptance;
+- limited to the bounded semantics intentionally exposed by the owning engine;
+- independent of interaction-adapter presentation logic.
+
+Resource discovery is an architectural requirement where resource-driven extensibility is supported, but the physical discovery mechanism is not prescribed here. A lower-level design may use explicit registries, configured locations, generated catalogues, embedded resources, filesystem discovery, provider-backed catalogues, or another suitable mechanism provided the AppManager-level semantics remain stable.
+
+The distinction between runtime resource loading and runtime executable code loading must remain explicit:
+
+```text
+runtime resource extension
+        !=
+runtime executable plugin loading
+```
+
+A declarative format that evolves to permit arbitrary executable code, unrestricted hooks, direct application-capability access, or equivalent unconstrained behaviour has crossed the architectural boundary into executable extensibility. Such a change must be treated as an executable-extension design problem with corresponding trust, compatibility, security, isolation, lifecycle, and architectural-decision requirements.
+
+### 13.4 Engine, Registry, and Declarative-Resource Pattern
+
+Specialised engines and subsystems may intentionally combine stable executable behaviour with extensible declarative resources.
+
+Conceptually:
+
+```text
+Application Engine
+        |
+        v
+specialised engine / subsystem
+        |
+        +-- registry / catalogue
+        |
+        +-- declarative resource definitions
+        |
+        +-- validation / interpretation
+        |
+        v
+AppManager-oriented capability result
+```
+
+The **License Engine** is an example of this pattern. Licensing rules and rendering behaviour belong to the engine, while individual licence definitions should be representable as validated resources that can be added to the licence catalogue without requiring changes to the AppManager codebase where the licence falls within the supported licence-definition model.
+
+Likewise, the template/generation architecture should support templates as validated declarative resources interpreted by the generation subsystem or template engine. A new template specification should be capable of extending the artefacts AppManager can generate without requiring unrelated command or application code changes where the requested template behaviour falls within the supported template model.
+
+In both cases, adding a resource extends **what the engine can operate on**, not the authority of the resource itself. The engine remains responsible for its domain or generation semantics, and the Application Engine remains responsible for application policy, scope, safety, workflow coordination, and final acceptance.
+
+This pattern may be reused by other cohesive subsystems where data-driven extension is appropriate, but adopting it for one engine does not require all AppManager extensibility to use the same resource format, registry, or loading mechanism.
+
+### 13.5 Command Extensibility
 
 New application use cases should be introducible as commands within an appropriate functional domain without requiring presentation-specific or provider-specific reimplementation.
 
@@ -1817,9 +1898,9 @@ A new command should participate in the shared Application Invocation Contract a
 
 Adding a command extends the authoritative command surface; it must not create an adapter-local command model, bypass application policy, or embed specialist provider representations into general command semantics.
 
-The detailed command-registration mechanism, metadata model, identifier rules, discovery schema, and implementation wiring belong in lower-level specifications.
+The detailed command-registration mechanism, metadata model, identifier rules, discovery schema, and implementation wiring belong in lower-level specifications. The requirement for central command discovery does not imply automatic filesystem discovery or runtime plugin loading.
 
-### 13.3 Functional-Domain Extensibility
+### 13.6 Functional-Domain Extensibility
 
 New functional domains may be introduced where a coherent family of product-facing use cases cannot be represented cleanly within existing domains.
 
@@ -1827,7 +1908,7 @@ A domain should correspond to meaningful user or automation intent rather than t
 
 Introducing a new domain does not create a new application authority or private infrastructure stack. Its commands remain governed by the Application Engine and should reuse shared architectural capabilities where appropriate.
 
-### 13.4 Source-Type and Code-Intelligence Extensibility
+### 13.7 Source-Type and Code-Intelligence Extensibility
 
 New source formats, language variants, embedded-language regions, and source-aware operations should be supportable without redesigning the command system or Application Engine.
 
@@ -1837,7 +1918,7 @@ New source support must preserve the Section 7 separation between recognition, t
 
 Parser-, compiler-, language-service-, or provider-native representations should remain encapsulated behind appropriate boundaries. Higher-level AppManager consumers should continue to receive structural facts, bounded plans, diagnostics, outcomes, and other AppManager-oriented information rather than become coupled to the new implementation representation.
 
-### 13.5 Capability-Provider and External-Provider Extensibility
+### 13.8 Capability-Provider and External-Provider Extensibility
 
 Capability providers and external providers are distinct extension concerns.
 
@@ -1845,19 +1926,21 @@ AppManager should be able to introduce or substitute capability providers for sp
 
 External services or platforms, including AI services and repository-hosting services, should be integrated through appropriate AppManager capabilities or provider boundaries so that their native contracts, SDKs, availability models, credentials, and result representations do not become the general AppManager application model.
 
-Provider selection and availability may be resolved from effective configuration, context, registries, or other defined sources. Exact provider contracts, compatibility rules, fallback behaviour, retry policy, and selection algorithms belong in lower-level specifications.
+Provider selection and availability may be resolved from effective configuration, context, registries, or other defined sources. Exact provider contracts, compatibility rules, fallback behaviour, retry policy, selection algorithms, and whether implementations are statically linked, configured, or dynamically loadable belong in lower-level specifications unless an architectural decision elevates them into the enduring design.
 
-### 13.6 Generation and Template Extensibility
+### 13.9 Generation and Template Extensibility
 
 New generators and templates should be introducible without embedding generated content or generator-specific behaviour into unrelated command logic.
+
+Template resources should be addable without application code changes where their required behaviour can be expressed within the supported declarative template model. A new generator that introduces new executable generation semantics is a different extension class and may require a new capability implementation or subsystem design.
 
 A new generator or template may expand the artefact types AppManager can create, but it must preserve configuration resolution, destination and ownership safety, structured outcomes, and the architectural separation between generation and mutation.
 
 Templates describe or contribute generated content; their discoverability or selection does not give them authority to overwrite, restructure, or mutate existing user-authored resources outside the command's managed scope and policy.
 
-Concrete template formats, generator interfaces, template metadata, registry structures, and rendering technologies belong in lower-level specifications.
+Concrete template formats, generator interfaces, template metadata, registry structures, rendering technologies, and resource-loading mechanisms belong in lower-level specifications.
 
-### 13.7 Resolver and Configuration-Source Extensibility
+### 13.10 Resolver and Configuration-Source Extensibility
 
 New sources of configuration, context, provider availability, project metadata, or other resolvable values should be incorporable without requiring presentation-specific access or ad hoc reads throughout the application.
 
@@ -1867,7 +1950,7 @@ Interactive adapters may help obtain otherwise unresolved values where the inter
 
 Detailed precedence, resolver contracts, source formats, credential-store integrations, and persistence mechanisms belong in lower-level specifications.
 
-### 13.8 Managed-Project and Topology Extensibility
+### 13.11 Managed-Project and Topology Extensibility
 
 AppManager should be able to evolve its understanding of supported project structures, Nuxt layer arrangements, repository relationships, managed metadata, and other project-topology evidence without requiring each command or adapter to reconstruct those structures independently.
 
@@ -1877,7 +1960,7 @@ Extension of project or repository discovery must preserve explicit context reso
 
 Concrete discovery markers, traversal rules, workspace handling, repository mechanisms, and topology data structures belong in lower-level specifications.
 
-### 13.9 Interaction and Host-Integration Extensibility
+### 13.12 Interaction and Host-Integration Extensibility
 
 The interaction architecture should permit additional interaction modes and host-tool adapters when future requirements justify them.
 
@@ -1887,7 +1970,7 @@ An adapter may add presentation, host lifecycle integration, context acquisition
 
 WebStorm remains the first proposed IDE integration, but neither the Application Invocation Contract nor the Application Engine may become WebStorm-specific or JetBrains-specific.
 
-### 13.10 Application Invocation Contract Evolution
+### 13.13 Application Invocation Contract Evolution
 
 The Application Invocation Contract should be capable of evolving as commands, adapters, automation requirements, structured outcomes, diagnostics, events, and cancellation needs evolve while preserving coherent AppManager command identity and application semantics.
 
@@ -1895,25 +1978,27 @@ Contract evolution must not require presentation-specific command implementation
 
 Concrete compatibility guarantees, schema versions, transport bindings, protocol negotiation, deprecation rules, and migration mechanics belong in Functional and Detailed Design Specifications unless an architectural decision elevates a particular constraint into the target design.
 
-### 13.11 Registry and Discovery Extensibility
+### 13.14 Registry and Discovery Extensibility
 
-Registries and discovery mechanisms should support extensible families such as commands, repositories, strategies, templates, capability providers, and external providers without widespread conditional logic or adapter-specific copies of the same catalogue.
+Registries and discovery mechanisms should support extensible families such as commands, repositories, strategies, templates, licence definitions, declarative resources, capability providers, and external providers without widespread conditional logic or adapter-specific copies of the same catalogue.
 
-Discovery establishes identity and availability; it does not grant operational authority. A discoverable item must still be selected, resolved, scoped, authorised, and interpreted by the responsibility that owns the relevant AppManager semantics.
+Discovery establishes identity and availability; it does not grant operational authority. A discoverable item must still be selected, resolved, scoped, authorised, validated where appropriate, and interpreted by the responsibility that owns the relevant AppManager semantics.
 
-This Design Specification requires extensible discovery where appropriate but does not mandate automatic filesystem scanning, reflection, convention-based registration, dynamic plugin loading, or any other specific discovery mechanism.
+Where a subsystem explicitly supports declarative/resource-driven extensibility, resource discovery is part of its required extensibility model. This Design Specification does not, however, mandate automatic filesystem scanning, reflection, convention-based code registration, dynamic executable plugin loading, or any other single physical discovery mechanism.
 
-### 13.12 Domain-Engine and Architectural-Subsystem Extensibility
+### 13.15 Domain-Engine and Architectural-Subsystem Extensibility
 
 New domain engines or other architectural subsystems may be introduced when a concern has sufficiently cohesive rules, concepts, policy, state, or coordination responsibilities to justify a distinct architectural responsibility.
 
 A new subsystem should expose reusable AppManager-oriented capabilities and collaborate through the established application architecture rather than create a parallel command system, adapter-specific business logic, or provider-specific application model.
 
+A domain engine may itself be designed around a stable executable engine plus extensible declarative resources, as described in Sections 13.3 and 13.4. That pattern supports codebase-independent addition of new resource definitions without implying that the engine itself is dynamically replaceable or that AppManager has adopted a general executable plugin framework.
+
 Not every new feature requires a new subsystem. Architectural decomposition should follow enduring responsibility and cohesion rather than feature count, directory structure, implementation language, or organisational convenience.
 
-### 13.13 Extension Acceptance and Compatibility
+### 13.16 Extension Acceptance and Compatibility
 
-Being loadable, discoverable, configured, or technically callable does not by itself make an extension acceptable for use in an AppManager workflow.
+Being loadable, discoverable, configured, parsed, or technically callable does not by itself make an extension acceptable for use in an AppManager workflow.
 
 An extension must preserve the applicable architectural invariants, including:
 
@@ -1928,9 +2013,11 @@ An extension must preserve the applicable architectural invariants, including:
 - validation and application-level acceptance;
 - sensitive-information minimisation.
 
-Compatibility should be evaluated at the AppManager semantic boundary, not solely by whether an implementation can be loaded or invoked. A technically compatible provider, adapter, parser, generator, or other extension may still be rejected when its behaviour cannot satisfy required AppManager policy, safety, scope, observability, or information-handling constraints.
+Declarative resources must additionally satisfy the validation and bounded-semantics requirements of their owning engine. Executable extensions or plugin mechanisms must additionally address trust, compatibility, security, failure isolation, lifecycle, and any permissions required to access AppManager capabilities or managed project resources.
 
-Detailed extension compatibility matrices, version negotiation, trust policy, packaging, installation, enablement, isolation, sandboxing, lifecycle, and failure-recovery mechanisms belong in lower-level specifications. A proposed extension mechanism that materially changes AppManager's architectural boundaries or technology commitments should be evaluated through the governed architectural-decision process before becoming authoritative design.
+Compatibility should be evaluated at the AppManager semantic boundary, not solely by whether an implementation or resource can be loaded or invoked. A technically compatible provider, adapter, parser, generator, declarative resource, or other extension may still be rejected when its behaviour cannot satisfy required AppManager policy, safety, scope, observability, or information-handling constraints.
+
+Detailed extension compatibility matrices, version negotiation, trust policy, packaging, installation, enablement, isolation, sandboxing, lifecycle, and failure-recovery mechanisms belong in lower-level specifications. A proposed executable plugin mechanism or other extension mechanism that materially changes AppManager's architectural boundaries or technology commitments should be evaluated through the governed architectural-decision process before becoming authoritative design.
 
 ---
 
