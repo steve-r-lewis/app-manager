@@ -237,9 +237,52 @@ The field-shape overlap (`kind`, identity/subject, provenance, confidence/suppor
 
 **External finding:** Repository Capability states constraints on Source Intelligence without reciprocal acknowledgement.
 
-**Required decision:** ensure dependency direction is explicit and one-sided assertions cannot silently become undocumented obligations.
+**Classification:** **clarification required; no duplicate ownership or required direct capability dependency was found.**
 
-**Current status:** open.
+**Verified live evidence:**
+
+- DD-2.3 §41.1 contains a one-sided downstream statement: Source Intelligence may consume repository/resource context where needed but shall not treat repository status as source-transformation authority;
+- DD-2.4 already names Repository Capability as a related Detailed Design authority, but its architectural-position section defines its operational dependencies through the owning use case, bounded source references/snapshots and Resource Access rather than a mandatory Repository Capability dependency;
+- the DD-2 decomposition plan defines Repository Capability and Source Intelligence as separate sibling shared capabilities: DD-2.3 owns repository primitives/facts, while DD-2.4 owns read-only structural source analysis;
+- DD-2.3 repository status/revision/diff evidence and DD-2.4 source snapshot/structural facts therefore have distinct semantic ownership and need not share one provider, revision model or implementation path.
+
+**Decision:** the one-sided DD-2.3 statement expresses a valid authority guardrail but is too easy to read as Repository Capability defining a downstream Source Intelligence obligation. The permanent relationship is instead:
+
+```text
+Application Engine / owning use case
+        |
+        +--> Repository Capability, where repository evidence is required
+        +--> Source Intelligence, where source-structure evidence is required
+        |
+        v
+owning-use-case composition / interpretation
+```
+
+Repository Capability and Source Intelligence are sibling capabilities. A workflow may deliberately supply bounded repository evidence as contextual/provenance/freshness evidence to source analysis, but that is not a mandatory DD-2.3 -> DD-2.4 implementation dependency. Repository diff/status/revision evidence does not become source-structural fact authority, and Source Intelligence does not acquire repository workflow or mutation authority.
+
+Repository revision identity and Source Intelligence snapshot/revision identity may correlate but are not universally identical: uncommitted worktree content, non-repository sources and embedded source regions demonstrate why one universal revision contract would be incorrect.
+
+**Normative resolution:** `docs/detailed_design/repository-source-intelligence-relationship-clarification-v01.md` now owns the cross-capability clarification. It states explicitly that:
+
+- neither capability is the semantic parent of the other;
+- neither capability may impose provider-native/internal-model obligations on the other;
+- repository evidence remains repository evidence until deliberately composed by an owning use case;
+- source structural interpretation remains DD-2.4-owned;
+- repository workflow/primitives remain DD-2.3-owned;
+- repository revision and source snapshot identity remain distinguishable where their semantics differ;
+- workflows requiring both capabilities compose them explicitly above or through another documented owning capability boundary;
+- no common provider abstraction, shared revision type, class/package/process topology or direct mutual invocation is required.
+
+**Modularity/coupling assessment:**
+
+- **single owner:** satisfied — repository semantics remain DD-2.3-owned and source-structural semantics remain DD-2.4-owned;
+- **explicit consumer/dependency:** clarified — optional evidence composition is explicit without inventing a mandatory capability-to-capability dependency;
+- **authority boundary:** satisfied — neither recognition path grants mutation or application authority;
+- **replaceability:** preserved — repository and source-analysis providers remain independently replaceable;
+- **coupling:** reduced — the clarification prevents repository-native revision/diff models from becoming implicit Source Intelligence contracts;
+- **dependency-cycle safety:** satisfied — sibling evidence can be composed by the owning use case without Repository Capability and Source Intelligence recursively depending on one another.
+
+**Current status:** **resolved — clarification applied**.
 
 ### R-07 — App / Settings environment-file ownership
 
@@ -403,4 +446,4 @@ The reconciliation gate remains:
 
 > **DD-2 RECONCILIATION ACTIVE — DD-3 PAUSED**
 
-R-01 through R-05 are resolved. R-06 through R-08 remain open or partially open. DD-3 shall not resume until the remaining material findings are classified/resolved and the final horizontal reconciliation audit records the resulting state.
+R-01 through R-06 are resolved. R-07 through R-08 remain open or partially open. DD-3 shall not resume until the remaining material findings are classified/resolved and the final horizontal reconciliation audit records the resulting state.
