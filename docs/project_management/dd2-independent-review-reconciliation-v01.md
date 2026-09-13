@@ -130,24 +130,59 @@ Nuxt-specific scaffold validation
 Application Engine / Nuxt-use-case acceptance
 ```
 
-**Normative clarification:** `docs/detailed_design/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md` records this ownership model.
+**Resolution evidence:**
 
-The clarification establishes in particular that:
+- PR #89 added `docs/detailed_design/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`;
+- the primary Nuxt Functional Specification now states that inclusion of an artefact class in a layer profile creates Nuxt baseline/orchestration intent rather than transferring semantic ownership;
+- DD-2.10 now distinguishes scaffold orchestration from cross-owned artefact semantics, rendering and persistence/mutation;
+- DD-2.10 explicitly binds README/documentation semantics to DD-2.9 where required, licence/settings semantics outside Nuxt, DD-2.6 to reusable resource/template resolution and rendering, DD-2.1 to authorized creation, and DD-2.5 to existing-resource modification;
+- horizontal verification against DD-2.6, DD-2.9, DD-2.1 and Settings found compatible existing ownership statements and no remaining normative contradiction.
 
-- a README/introduction requirement may contribute to Nuxt profile completeness without creating a second Nuxt documentation subsystem;
-- deterministic declarative README rendering may be supplied by DD-2.6, while documentation-specific modeling/generation remains DD-2.9-owned;
-- licence material may be required by a Nuxt profile without transferring Settings/application licence-management semantics or DD-2.6 licence-resource semantics to Nuxt;
-- content production never creates persistence authority; new resources remain DD-2.1 effects and existing-resource modification remains DD-2.5 where applicable.
-
-**Current status:** **clarified subject to merge and propagation into the primary Nuxt Functional/DD-2.10 specifications**.
+**Current status:** **resolved**.
 
 ### R-04 — Bootstrap configuration / managed-project sequence
 
 **External finding:** the dedicated bootstrap clarification is not fully propagated into the documents and diagrams whose sequencing it refines.
 
-**Required decision:** make the clarification discoverable from all affected Detailed Designs and ensure diagrams/lifecycle prose agree with the staged semantic sequence.
+**Classification:** confirmed propagation defect.
 
-**Current status:** open.
+The live `application-core-bootstrap-resolution-clarification-v01.md` already defines a coherent staged sequence:
+
+```text
+invocation / host context
+        -> context-independent configuration candidates
+        -> bootstrap effective configuration
+        -> target-project / managed-project resolution
+        -> managed-project context
+        -> project/scope-dependent configuration resolution
+        -> operation effective-configuration snapshot
+        -> managed scope / policy / use-case execution
+```
+
+However, DD-1.5 Application Engine §8 still presents the generic lifecycle as:
+
+```text
+...
+-> invocation/domain validation
+-> managed scope resolved
+-> effective configuration established
+-> policy/safety evaluated
+...
+```
+
+Read literally, that ordering conflicts with the bootstrap clarification because project/scope-dependent effective configuration becomes eligible after sufficient managed-project context exists and before the operation's managed scope/policy/use-case execution is finalized.
+
+The defect is therefore not the underlying architectural model; it is that the primary lifecycle and related-document discovery still permit an independent implementer to infer the wrong dependency order.
+
+**Required correction:**
+
+- add the bootstrap clarification as an explicit related authority/backlink in DD-1.3 Managed Project, DD-1.4 Configuration Resolution and DD-1.5 Application Engine;
+- revise the DD-1.5 orchestration lifecycle so it represents staged bootstrap configuration, managed-project resolution, operation-effective configuration and managed-scope establishment without implying one circular configuration/project dependency;
+- ensure DD-1.3 wording distinguishes bootstrap configuration evidence from later project/scope-dependent configuration;
+- ensure DD-1.4 remains the single owner of precedence/effective-configuration semantics while acknowledging the bootstrap phase;
+- perform a final horizontal check of diagrams and prose after propagation.
+
+**Current status:** confirmed; primary-specification correction is the next focused normative step.
 
 ### R-05 — Structural fact model
 
@@ -271,7 +306,7 @@ R-03 applies the same rule across composed artefacts:
 - Settings/application licence contracts and DD-2.6 retain licence semantics rather than having licence management copied into Nuxt;
 - DD-2.6 retains declarative resource/template rendering semantics;
 - DD-2.1/DD-2.5 retain persistence/mutation mechanics;
-- DD-2.10 should retain only the Nuxt-specific profile/orchestration delta and concise bindings to those owners.
+- DD-2.10 retains the Nuxt-specific profile/orchestration delta and concise bindings to those owners.
 
 This separates reasons to change: documentation changes do not require redesigning Nuxt semantics, licence-resource policy changes do not require changing the Nuxt provider contract, and filesystem/transformation mechanics remain independently replaceable.
 
@@ -332,6 +367,6 @@ Current project-management gate state:
 
 > **DD-2 RECONCILIATION ACTIVE — DD-3 PAUSED**
 
-R-01 and R-02 are resolved. R-03 is clarified subject to merge and primary-specification propagation. R-04 through R-08 remain active.
+R-01, R-02 and R-03 are resolved. R-04 is confirmed and is the next normative correction. R-05 through R-08 remain active.
 
 The gate may return to PASS only when all material R-01 through R-08 findings are classified, confirmed defects/clarifications are resolved, and the final cross-document audit explicitly records the resulting state.

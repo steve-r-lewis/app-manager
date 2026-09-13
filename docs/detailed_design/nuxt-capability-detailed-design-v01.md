@@ -6,7 +6,7 @@
 >
 > **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/project_management/detailed-design-decomposition-plan-v01.md`, `docs/decisions/adr-0001-primary-application-runtime.md`
 >
-> **Related Detailed Design authorities:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/managed-project-detailed-design-v01.md`, `docs/detailed_design/configuration-resolution-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/resource-access-detailed-design-v01.md`, `docs/detailed_design/process-execution-detailed-design-v01.md`, `docs/detailed_design/repository-capability-detailed-design-v01.md`, `docs/detailed_design/source-intelligence-detailed-design-v01.md`, `docs/detailed_design/source-transformation-detailed-design-v01.md`, `docs/detailed_design/resource-registry-and-template-detailed-design-v01.md`, `docs/detailed_design/ai-capability-detailed-design-v01.md`, `docs/detailed_design/quality-capability-detailed-design-v01.md`, `docs/detailed_design/documentation-capability-detailed-design-v01.md`
+> **Related Detailed Design authorities:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/managed-project-detailed-design-v01.md`, `docs/detailed_design/configuration-resolution-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/resource-access-detailed-design-v01.md`, `docs/detailed_design/process-execution-detailed-design-v01.md`, `docs/detailed_design/repository-capability-detailed-design-v01.md`, `docs/detailed_design/source-intelligence-detailed-design-v01.md`, `docs/detailed_design/source-transformation-detailed-design-v01.md`, `docs/detailed_design/resource-registry-and-template-detailed-design-v01.md`, `docs/detailed_design/ai-capability-detailed-design-v01.md`, `docs/detailed_design/quality-capability-detailed-design-v01.md`, `docs/detailed_design/documentation-capability-detailed-design-v01.md`, `docs/detailed_design/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`
 >
 > **Primary Functional authority:** `docs/functional/nuxt-functional-specification-v01.md`, together with owning-domain Functional Specifications where Nuxt facts or Nuxt-generated resources are consumed by another workflow.
 
@@ -25,6 +25,8 @@ The governing rules are:
 > **Nuxt configuration mutation must flow through Source Transformation; Nuxt Capability may define the semantic change but does not bypass transformation planning, preservation or stale-state safety.**
 
 > **Layer creation and layer integration are distinct operations, and a Git repository relationship is distinct from a Nuxt composition relationship.**
+
+> **Nuxt layer creation may orchestrate a composed scaffold without acquiring the permanent semantic authority of every artefact class required by that scaffold.**
 
 This capability provides one coherent Nuxt-specific technical boundary beneath Nuxt-domain use cases and other approved workflows that consume Nuxt facts.
 
@@ -46,8 +48,9 @@ This design owns permanent contracts for:
 - standalone versus host-integrated layer state;
 - layer creation profile identity;
 - Nuxt layer baseline requirements;
-- scaffold content/resource requests supplied to Resource Registry and Template;
-- generated Nuxt artefact semantics;
+- scaffold orchestration and required/optional artefact-class selection for a Nuxt layer profile;
+- scaffold content/resource requests supplied to the semantic/rendering owner appropriate to each artefact class;
+- Nuxt-specific interpretation of generated artefact contribution to the layer baseline;
 - Nuxt-specific creation validation;
 - Nuxt integration and detachment semantic plans;
 - Nuxt relationship preconditions and postconditions;
@@ -74,9 +77,11 @@ Nuxt Capability shall not own:
 - repository initialization, commit, push, remote or submodule semantics;
 - application build, dev, preview, reset, reinstall or cleanup lifecycle;
 - documentation generation semantics;
+- licence-management semantics merely because a licence artefact participates in a Nuxt scaffold;
+- user-facing settings CRUD or environment-definition CRUD;
+- declarative registry/template rendering semantics outside the Nuxt-specific selection/binding intent supplied to DD-2.6;
 - test/lint/typecheck/gate semantics;
 - generic arbitrary-file generation;
-- user-facing settings CRUD;
 - AI-provider selection or AI acceptance;
 - final AppManager success, failure, partial-success or cancellation acceptance outside the bounded Nuxt result contract.
 
@@ -105,17 +110,18 @@ Application Engine / owning Nuxt use case
 | Nuxt recognition / identity facts                |
 | config semantic interpretation                   |
 | layer relationship interpretation                |
-| semantic change intent / validation               |
-| layer-profile / scaffold semantics               |
+| semantic change intent / validation              |
+| layer-profile / scaffold orchestration           |
 | Nuxt provider normalization                      |
 +--------------------------+-----------------------+
                            |
-          +----------------+----------------+
-          |                |                |
-          v                v                v
- Source Intelligence  Source Transformation  Registry/Templates
-          |                |                |
-          +----------------+----------------+
+          +----------------+----------------+----------------+
+          |                |                |                |
+          v                v                v                v
+ Source Intelligence  Source Transformation  Registry/Templates  cross-owned semantics
+                                                                  (Docs / Settings / etc.)
+          |                |                |                |
+          +----------------+----------------+----------------+
                            |
                  other bounded capabilities
                  (Resource Access / Git / Process)
@@ -351,7 +357,7 @@ Repository linkage may coexist with integrated/unintegrated Nuxt states and shal
 
 ## 15. Layer Creation Profile
 
-A creation profile is a declarative Nuxt capability contract describing the functional baseline to generate, not a hidden template filename set.
+A creation profile is a declarative Nuxt capability contract describing the functional baseline to orchestrate, not a hidden template filename set and not a transfer of semantic ownership for every included artefact class.
 
 A profile may define classes such as:
 
@@ -365,14 +371,16 @@ A profile may define classes such as:
 - test configuration;
 - optional repository follow-on expectations.
 
+For each class, the profile may specify that the artefact is required/optional for the selected Nuxt baseline and provide Nuxt-specific binding inputs. Where another domain/capability owns the artefact's internal semantics, Nuxt Capability consumes that contract rather than recreating it.
+
 **DD-NUXTCAP-040 — Profile identity is semantic**  
 Profiles shall be identified by documented capability intent rather than incidental template ordering or implementation filenames.
 
-**DD-NUXTCAP-041 — Profile does not grant file authority**  
-A profile specifies expected generated classes but does not authorize overwrite of existing resources.
+**DD-NUXTCAP-041 — Profile does not grant file or semantic authority**  
+A profile specifies expected generated classes but does not authorize overwrite of existing resources and does not grant Nuxt Capability independent semantic ownership of cross-owned documentation, licence, settings, quality or repository concerns.
 
 **DD-NUXTCAP-042 — Effective configuration supplies values**  
-Author, licence, naming, repository and similar configurable creation inputs shall consume explicit invocation values/effective configuration instead of hard-coded implementation defaults that compete with DD-1.4.
+Author, licence, naming, repository and similar configurable creation inputs shall consume explicit invocation values/effective configuration instead of hard-coded implementation defaults that compete with DD-1.4. Where Settings or another functional contract owns the user-facing meaning of a value, Nuxt receives the resolved choice as input rather than establishing a private alternative.
 
 **DD-NUXTCAP-043 — No fabricated secrets**  
 Required secret-bearing values shall be represented as absent, references or explicit placeholders according to policy; Nuxt Capability shall not invent real credentials.
@@ -381,32 +389,39 @@ Required secret-bearing values shall be represented as absent, references or exp
 
 ## 16. Layer Scaffolding and Resource Registry
 
-Layer scaffolding composes declarative resources from DD-2.6 under Nuxt semantics.
+Layer scaffolding composes cross-owned semantics and declarative resources under one Nuxt layer-creation orchestration.
 
 ```text
 selected Nuxt layer profile
         + effective inputs
         + validated target
-            -> resolve required resource/template descriptors
+            -> classify required artefact classes
+            -> obtain cross-owned semantic content/evidence where required
+               (for example Documentation or Settings-owned semantics)
+            -> DD-2.6 resolve resource/template descriptors
             -> bind parameters
-            -> deterministic render
+            -> deterministic non-mutating render
             -> proposed layer artefacts
             -> creation authorization / collision checks
-            -> Resource Access creation OR Source Transformation where existing
-            -> Nuxt-specific validation
+            -> DD-2.1 Resource Access create new resource
+               OR DD-2.5 Source Transformation modify existing resource
+            -> Nuxt-specific baseline validation
+            -> owning Nuxt use case / Application Engine acceptance
 ```
 
+This sequence is a delegation composition. It does not require every profile class to pass through every specialist capability; the relevant semantic owner is invoked only where its contract is materially required.
+
 **DD-NUXTCAP-044 — Templates remain subordinate**  
-Template availability or rendering does not determine Nuxt use-case intent, target scope, overwrite policy or final acceptance.
+Template availability or rendering does not determine Nuxt use-case intent, artefact semantic ownership, target scope, overwrite policy or final acceptance.
 
 **DD-NUXTCAP-045 — Generated content is proposed content**  
-Rendering a layer artefact does not itself persist the artefact.
+Rendering a layer artefact does not itself persist the artefact. Content produced by a cross-owned semantic capability remains proposed content until the authorized persistence path completes.
 
 **DD-NUXTCAP-046 — Existing target changes path**  
 If a target artefact already exists, the owning use case shall apply explicit collision/update policy and route bounded modification through Source Transformation where applicable.
 
-**DD-NUXTCAP-047 — No generic generator authority**  
-The fact that template infrastructure can render arbitrary resources shall not cause Nuxt Capability to own arbitrary project-file generation.
+**DD-NUXTCAP-047 — No generic generator or semantic authority**  
+The fact that template infrastructure can render arbitrary resources, or that Nuxt layer creation can request several artefact classes, shall not cause Nuxt Capability to own arbitrary project-file generation or the independent semantics of those artefact classes.
 
 ---
 
@@ -418,6 +433,7 @@ Possible stages include:
 
 - target validation;
 - profile resolution;
+- artefact-class semantic delegation where required;
 - template/resource resolution;
 - rendering;
 - resource creation;
@@ -430,10 +446,10 @@ Possible stages include:
 If the layer scaffold is successfully created but an optional Git/remote/documentation follow-on fails, the result shall retain the created-layer fact and report the later failure separately.
 
 **DD-NUXTCAP-049 — No universal atomicity claim**  
-Nuxt Capability shall not imply transactional rollback across filesystem, Git and remote-provider effects unless lower-level contracts explicitly guarantee it.
+Nuxt Capability shall not imply transactional rollback across filesystem, transformation, documentation, settings/licence, Git and remote-provider effects unless lower-level contracts explicitly guarantee it.
 
 **DD-NUXTCAP-050 — Partial creation is structured**  
-Creation results shall identify completed stages, failed/skipped stages, created resources and recommended remaining actions where material.
+Creation results shall identify completed stages, failed/skipped stages, created resources and recommended remaining actions where material. Evidence from cross-owned artefact semantics shall remain distinguishable from Nuxt baseline validation and final application acceptance.
 
 ---
 
@@ -445,7 +461,7 @@ AI may assist descriptive/generated content but cannot define the layer baseline
 A valid supported layer profile shall not require AI merely for descriptive enrichment if the deterministic baseline can be produced without it.
 
 **DD-NUXTCAP-052 — AI output remains proposal**  
-AI-generated README/description/other content shall pass the same scope, generation, validation and acceptance boundaries as deterministic generated content.
+AI-generated README/description/other content shall pass the same scope, generation, semantic-owner, validation and acceptance boundaries as deterministic generated content.
 
 **DD-NUXTCAP-053 — Nuxt facts outrank generated claims**  
 AI content shall not replace reliably recognized Nuxt/project facts with contradictory generated assertions.
@@ -554,13 +570,13 @@ Nuxt-generated state observations shall not create a duplicate clean/install/res
 ## 24. Generic File Generation Boundary
 
 **DD-NUXTCAP-071 — Nuxt-specific semantic purpose required**  
-Nuxt Capability may request generation of resources only where the resource class participates in a defined Nuxt use case/profile.
+Nuxt Capability may request generation of resources only where the resource class participates in a defined Nuxt use case/profile. Participation establishes Nuxt orchestration/baseline purpose, not necessarily permanent artefact semantics.
 
 **DD-NUXTCAP-072 — Deployment/provider files are not Nuxt by default**  
 A hosting/deployment provider artefact does not become Nuxt-owned merely because it is used by a Nuxt application.
 
 **DD-NUXTCAP-073 — Generator capability does not define domain ownership**  
-Technical ability to render/create a file does not determine that Nuxt owns the application intent.
+Technical ability to render/create a file does not determine that Nuxt owns the application intent or the artefact's internal semantic contract.
 
 ---
 
@@ -569,11 +585,11 @@ Technical ability to render/create a file does not determine that Nuxt owns the 
 **DD-NUXTCAP-074 — Nuxt may supply facts to Docs**  
 Nuxt-specific facts may be consumed by DD-2.9 Documentation Capability without transferring Nuxt semantic authority.
 
-**DD-NUXTCAP-075 — Documentation intent remains Docs-owned**  
-When the primary intent is generate/extract/update documentation, the Docs domain/capability owns documentation semantics even when Nuxt facts are central inputs.
+**DD-NUXTCAP-075 — Documentation semantics remain Docs-owned**  
+When the primary intent is generate/extract/update documentation, the Docs domain/capability owns documentation intent and semantics even when Nuxt facts are central inputs. When README/introduction documentation is a subordinate required artefact of a Nuxt layer profile, Nuxt retains profile-completeness/orchestration authority while delegating documentation-specific modeling/generation semantics to DD-2.9 where those semantics are required.
 
 **DD-NUXTCAP-076 — No duplicate Nuxt documentation subsystem**  
-Nuxt Capability shall not establish a parallel documentation generator for use cases already owned by Documentation Capability.
+Nuxt Capability shall not establish a parallel documentation generator for use cases already owned by Documentation Capability or replicate Documentation Capability semantics merely to satisfy a scaffold profile.
 
 ---
 
@@ -645,6 +661,7 @@ The capability shall protect against at least:
 - relationship duplication/conflict;
 - repository relationship being mistaken for Nuxt integration;
 - generated/AI text acquiring Nuxt authority;
+- cross-owned scaffold artefacts transferring semantic authority into Nuxt by implication;
 - provider-native structures escaping as application contracts.
 
 **DD-NUXTCAP-086 — Non-empty target safety**  
@@ -664,13 +681,13 @@ Where relevant source changed after inspection/planning, the transformation/use 
 Cancellation shall stop future Nuxt stages and propagate to active delegated provider/process work where supported.
 
 **DD-NUXTCAP-090 — Completed effects remain truthful**  
-Cancellation/failure shall not erase already created resources, applied transformations, repository effects or remote effects from the result.
+Cancellation/failure shall not erase already created resources, applied transformations, documentation/settings-generated content, repository effects or remote effects from the result.
 
 **DD-NUXTCAP-091 — Progress identifies semantic stage**  
 Long/composed Nuxt operations should expose stage/target progress where useful without making one UI/event transport normative.
 
 **DD-NUXTCAP-092 — Partial state is not rollback**  
-Partial Nuxt/Git/resource effects shall be represented as actual consequential state unless rollback is explicitly guaranteed by lower-level contracts.
+Partial Nuxt/cross-owned-semantic/resource/Git effects shall be represented as actual consequential state unless rollback is explicitly guaranteed by lower-level contracts.
 
 ---
 
@@ -693,10 +710,10 @@ Presentation labels for layers/profiles/config entries shall not substitute for 
 Nuxt recognition/validation/generation/integration results shall be supplied to the owning use case/Application Engine for final interpretation under DD-1.2.
 
 **DD-NUXTCAP-097 — Mixed outcomes stay mixed**  
-Composed operations shall preserve generated/modified resources, Nuxt relationship state, Git relationship state and failed/unattempted stages rather than collapsing prematurely.
+Composed operations shall preserve generated/modified resources, cross-owned artefact-semantic stages, Nuxt relationship state, Git relationship state and failed/unattempted stages rather than collapsing prematurely.
 
 **DD-NUXTCAP-098 — No Boolean collapse**  
-Recognition, transformation, Nuxt validation, repository coordination and final application acceptance shall remain distinguishable where workflow decisions depend on them.
+Recognition, semantic delegation, rendering, persistence/transformation, Nuxt validation, repository coordination and final application acceptance shall remain distinguishable where workflow decisions depend on them.
 
 ---
 
@@ -752,6 +769,8 @@ Deterministic tests should cover at least:
 - layer creation into empty target;
 - refusal/safe mode for non-empty target;
 - profile-driven scaffold classes;
+- README/documentation artefact delegated through documentation semantics where required while remaining part of Nuxt profile acceptance;
+- licence artefact rendered from governed licence/configuration input without Nuxt inventing licence-management semantics;
 - missing effective config input;
 - no fabricated secret behavior;
 - optional AI enrichment unavailable;
@@ -795,22 +814,24 @@ A conforming DD-2.10 implementation shall preserve all of the following:
 18. Nuxt validation does not absorb general Quality authority.
 19. Standalone layers remain valid independent of host integration.
 20. Creation profiles are semantic capability sets, not hidden file lists.
-21. Template rendering does not persist by implication.
-22. Existing resources do not get overwritten without explicit collision/update policy.
-23. Nuxt does not become a generic file-generation authority.
-24. AI enrichment remains optional/non-authoritative where deterministic baseline exists.
-25. Git/repository semantics remain Git-owned.
-26. Scaffold success is preserved even if optional Git/remote follow-on fails.
-27. No universal atomicity is claimed across filesystem/Git/remote effects.
-28. Integration requires an existing eligible layer and explicit host.
-29. Already integrated and conflicting integration states remain distinct.
-30. Detachment does not imply layer/repository deletion.
-31. App lifecycle remains App-owned.
-32. Docs intent remains Docs-owned.
-33. Provider/process completion is technical evidence, not Nuxt acceptance.
-34. Provider-native parser/CLI objects remain below normalized contracts.
-35. Headless execution does not prompt or guess unresolved Nuxt identity.
-36. Current templates/strategies/service topology do not define permanent architecture.
+21. Profile orchestration does not transfer cross-owned artefact semantic authority to Nuxt.
+22. Template rendering does not persist by implication.
+23. Existing resources do not get overwritten without explicit collision/update policy.
+24. Nuxt does not become a generic file-generation authority.
+25. Documentation-specific scaffold semantics remain Documentation-owned where required.
+26. Licence/settings semantics remain governed outside Nuxt; Nuxt consumes resolved inputs and resource contracts.
+27. AI enrichment remains optional/non-authoritative where deterministic baseline exists.
+28. Git/repository semantics remain Git-owned.
+29. Scaffold success is preserved even if optional Git/remote follow-on fails.
+30. No universal atomicity is claimed across filesystem/Git/remote effects.
+31. Integration requires an existing eligible layer and explicit host.
+32. Already integrated and conflicting integration states remain distinct.
+33. Detachment does not imply layer/repository deletion.
+34. App lifecycle remains App-owned.
+35. Provider/process completion is technical evidence, not Nuxt acceptance.
+36. Provider-native parser/CLI objects remain below normalized contracts.
+37. Headless execution does not prompt or guess unresolved Nuxt identity.
+38. Current templates/strategies/service topology do not define permanent architecture.
 
 ---
 
@@ -822,10 +843,10 @@ A conforming DD-2.10 implementation shall preserve all of the following:
 | Nuxt facts/recognition | `FR-NUXT-013`–`020`; DD-1.3; DD-2.4 |
 | config inspection/listing | `FR-NUXT-021`–`033`; DD-2.4 Source Intelligence |
 | config add/remove | `FR-NUXT-034`–`050`; DD-2.5 Source Transformation |
-| layer creation | `FR-NUXT-051`–`070`; DD-2.1, DD-2.6, DD-2.7, Repository/Git boundaries |
+| layer creation/scaffold orchestration | `FR-NUXT-051`–`070`; DD-2.1, DD-2.5, DD-2.6, DD-2.7, DD-2.9, Settings/application semantic boundaries, Repository/Git boundaries; scaffold ownership clarification |
 | integration/detachment | `FR-NUXT-071`–`088`; DD-2.5; Repository/Git boundaries |
 | lifecycle facts | `FR-NUXT-089`–`092`; DD-1.3 managed-project model |
-| generic file/docs/app boundaries | `FR-NUXT-093`–`102`; DD-2.6, DD-2.9, App ownership |
+| generic file/docs/app boundaries | `FR-NUXT-093`–`102`; DD-2.6, DD-2.9, Settings and App ownership |
 | safety/transformation | `FR-NUXT-103`–`109`; DD-2.1, DD-2.5 |
 | interaction modes | `FR-NUXT-110`–`113`; DD-1.1 |
 | process/provider normalization | DD-2.2; ACG-007 |
@@ -839,11 +860,11 @@ A conforming DD-2.10 implementation shall preserve all of the following:
 
 The later Nuxt-domain Detailed Design shall define concrete Nuxt application use cases and orchestration using DD-2.10 rather than duplicating recognition, config semantics, layer models or provider contracts.
 
-App, Git, Docs, Quality and other domain Detailed Designs may consume Nuxt facts/results while retaining their own workflow authority.
+App, Git, Docs, Settings, Quality and other domain Detailed Designs may participate in or consume Nuxt workflows while retaining their own semantic/workflow authority. The Nuxt domain may coordinate those contracts for a layer-creation result but shall not absorb their internal semantics.
 
 ### 37.2 Implementation Specification
 
-Implementation planning shall determine concrete Nuxt source adapters, supported configuration classes, parser libraries, template/resource mappings, creation profiles, process/tool integration, config serializers, Nuxt validation adapters, generated file paths, package-manager integration, version support and migration from current strategies/templates/services.
+Implementation planning shall determine concrete Nuxt source adapters, supported configuration classes, parser libraries, template/resource mappings, creation profiles, cross-owned artefact delegation adapters, process/tool integration, config serializers, Nuxt validation adapters, generated file paths, package-manager integration, version support and migration from current strategies/templates/services.
 
 ---
 
@@ -876,7 +897,7 @@ These belong to Implementation Specification, effective configuration or a later
 
 The permanent Version 1 position is:
 
-> **Nuxt Capability owns provider-independent Nuxt recognition, supported configuration semantics, Nuxt layer modeling, Nuxt-specific generation intent and Nuxt validity evidence; managed scope, source mutation mechanics, repository semantics, generic lifecycle, documentation, quality and final application acceptance remain outside it.**
+> **Nuxt Capability owns provider-independent Nuxt recognition, supported configuration semantics, Nuxt layer modeling, Nuxt-specific scaffold orchestration intent and Nuxt validity evidence; cross-owned artefact semantics, managed scope, persistence/mutation mechanics, repository semantics, generic lifecycle, documentation, settings/licence management, quality and final application acceptance remain outside it.**
 
 The canonical model is:
 
@@ -888,16 +909,20 @@ owning Nuxt use case / managed target / effective policy
                     |
       recognize Nuxt identity and facts
       interpret supported config/layer semantics
-      derive bounded semantic change/generation intent
+      derive bounded semantic change/scaffold intent
                     |
-      +-------------+-------------+
-      |             |             |
-      v             v             v
- Source         Registry/       Repository/
- Transformation Templates       Process/etc.
-      |             |             |
-      +-------------+-------------+
+      +-------------+-------------+----------------+
+      |             |             |                |
+      v             v             v                v
+ Source         Registry/       Repository/      cross-owned
+ Transformation Templates       Process/etc.    artefact semantics
+                                                (Docs/Settings/etc.)
+      |             |             |                |
+      +-------------+-------------+----------------+
                     |
+         authorized resource persistence
+                    |
+                    v
            Nuxt-specific validation
                     |
                     v
@@ -909,4 +934,4 @@ owning Nuxt use case / managed target / effective policy
 
 The central non-drift rule is:
 
-> **Nuxt-specific knowledge may determine what a supported Nuxt change means; it does not grant authority to change unrelated project state or decide what AppManager does next.**
+> **Nuxt-specific knowledge may determine what a supported Nuxt change or scaffold baseline means; it does not grant Nuxt authority over unrelated project state or over the independent semantics of every artefact required to realize that baseline.**
