@@ -842,7 +842,7 @@ Two capabilities using the same executable/process mechanism shall not be merged
 
 ## 28. Package Managers and Tool Selection
 
-The current implementation and historical technical specifications contain package-manager detection near process execution. That is implementation evidence, not normative ownership.
+Package-manager recognition and selection are implementation and owning-use-case concerns, not Process Execution authority merely because package managers are executable tools.
 
 ### DD-PROC-092 — Process Execution does not own package-manager policy by default
 
@@ -876,13 +876,11 @@ Provider-specific features may be exposed only as bounded capability detail wher
 
 ---
 
-## 30. Current Implementation Reconciliation
+## 30. Implementation Boundary
 
-The current TypeScript implementation contains `app/services/processService.ts`, historically described by `docs/archive/specification/architecture/services/spec-services-processService-v02.md`.
+The Detailed Design defines the permanent Process Execution contract independently of incidental implementation structure.
 
-That implementation is evidence of existing behavior, not the normative source of approved architecture.
-
-Useful existing concepts retained by this Detailed Design include:
+The design requires:
 
 - centralizing process mechanics behind a shared capability;
 - explicit working-directory control;
@@ -893,22 +891,22 @@ Useful existing concepts retained by this Detailed Design include:
 - signal evidence;
 - avoiding false zero exit for signal-killed processes.
 
-The following historical/current details are **not** promoted automatically into permanent architecture:
+The following are implementation choices rather than permanent architecture:
 
-- one singleton `ProcessService` class;
-- the exact `execute()` / `spawn()` / proposed `spawnChecked()` method split;
-- `node:child_process.exec` or `spawn` as the permanent provider API;
-- `stdio: 'inherit'` as the universal streaming model;
-- automatic shell use on Windows;
-- raw `Record<string,string>` environment representation;
+- one singleton Process Execution service class;
+- any particular `execute()` / `spawn()` / checked-wrapper method split;
+- a particular Node.js child-process API as the permanent provider API;
+- inherited standard I/O as the universal streaming model;
+- automatic shell use on a particular operating system;
+- a particular environment-map representation;
 - treating non-zero exit as an exception in a generic checked wrapper;
 - package-manager detection as a Process Execution responsibility;
 - synchronous lockfile checks;
 - direct logger calls as the canonical event/diagnostic contract.
 
-### DD-PROC-098 — Implementation migration follows approved contract
+### DD-PROC-098 — Implementation conforms to the approved contract
 
-Future Implementation Specifications shall reconcile the current service with this Detailed Design rather than altering this Detailed Design merely to preserve incidental current method shapes.
+Implementation Specifications shall map concrete process-execution code to this Detailed Design rather than altering this Detailed Design to preserve incidental implementation method shapes.
 
 ---
 
