@@ -447,45 +447,7 @@ Domain Functional Specifications own the source-changing use cases themselves, i
 
 They may add stricter transformation requirements but shall not weaken the shared separation between recognition, planning, execution, source validation, and application-level acceptance.
 
-## 23. Legacy Requirement Disposition
-
-The following legacy code-intelligence, scanner, strategy, and transformation concepts are retained at the Functional level:
-
-| Legacy concept | Functional disposition |
-|---|---|
-| existing source and generated source require different mechanisms | `FR-XFORM-044`–`FR-XFORM-047` |
-| scanners recognise structure but do not own mutation policy | `FR-XFORM-004`–`FR-XFORM-010` |
-| strategies determine bounded source-aware transformation intent/plans | `FR-XFORM-011`–`FR-XFORM-020` |
-| transformation mechanism applies approved change but does not own application policy | `FR-XFORM-033`–`FR-XFORM-038` |
-| inspection and mutation are separate | `FR-XFORM-004`–`FR-XFORM-005`, `FR-XFORM-015`–`FR-XFORM-017` |
-| transformation plans should be reviewable before mutation | `FR-XFORM-015`–`FR-XFORM-020`, `FR-XFORM-026`–`FR-XFORM-029` |
-| preserve unaffected source where practical | `FR-XFORM-039`–`FR-XFORM-043` |
-| structured formats should use source-aware mechanisms | `FR-XFORM-035`–`FR-XFORM-038` |
-| transformed source requires validation | `FR-XFORM-048`–`FR-XFORM-053` |
-| source-valid result may still fail at application level | `FR-XFORM-054`–`FR-XFORM-058` |
-| multi-target operations require explicit atomicity/partial reporting semantics | `FR-XFORM-063`–`FR-XFORM-067` |
-| unsupported and ambiguous structures must be explicit | `FR-XFORM-008`–`FR-XFORM-010`, `FR-XFORM-071` |
-| AI output is non-authoritative until validated and controlled | `FR-XFORM-059`–`FR-XFORM-062` |
-
-The following legacy material is not propagated as Functional authority:
-
-- scanner class hierarchies;
-- exact token contracts and token enums;
-- concrete strategy classes and source-type registries;
-- exact parser or AST libraries;
-- exact edit-plan object structures;
-- concrete code-service APIs;
-- TypeScript interfaces and method signatures;
-- concrete orchestrator classes;
-- source-module paths;
-- concrete parser/compiler/language-service representations;
-- exact file-writing, temporary-file, backup, rollback, or formatting mechanisms;
-- concrete validation toolchains;
-- provider-specific AI patch formats.
-
-Those concerns require deliberate Detailed Design or Implementation treatment.
-
-## 24. Traceability
+## 23. Traceability
 
 This specification primarily refines the following root Design Specification areas:
 
@@ -501,11 +463,9 @@ This specification primarily refines the following root Design Specification are
 - Section 12 — recognition-versus-action, bounded delegation, non-destructive operation, AI non-authority, and authoritative-versus-derived information;
 - Section 14 — Functional Specification responsibility and downward traceability.
 
-This specification also reconciles the source-inspection and transformation Functional material identified in `docs/archive/design/appmanager-design-reconciliation-audit-v01.md` and retains useful behavioural principles from the historical scanner and strategy documentation without treating those legacy files as current architectural authority.
-
 ADR-0001 selects the Version 1 primary implementation technology but does not alter these technology-independent Functional requirements.
 
-## 25. Conformance Criteria
+## 24. Conformance Criteria
 
 An implementation conforms to this Functional Specification only if all of the following are true:
 
@@ -530,7 +490,7 @@ An implementation conforms to this Functional Specification only if all of the f
 19. interaction modes and host integrations do not redefine transformation policy;
 20. specialist capability providers do not acquire AppManager application authority merely by executing transformations.
 
-## 26. Downstream Specification Requirements
+## 25. Downstream Specification Requirements
 
 Detailed Design Specifications may define, among other things:
 
@@ -552,4 +512,4 @@ Detailed Design Specifications may define, among other things:
 - formatting-preservation policy;
 - AI proposal normalization and validation boundaries.
 
-Implementation Specifications may then map those Detailed Designs to Version 1 Node.js/TypeScript modules, parser libraries, file-writing mechanisms, source formats, language tooling, tests, concrete diagnostics, provider integrations, and migration state.
+Implementation Specifications may then map those Detailed Designs to Version 1 Node.js/TypeScript modules, parser libraries, file-writing mechanisms, source formats, language tooling, tests, concrete diagnostics, and provider integrations.
