@@ -57,7 +57,7 @@ The family number is an organisational identity, not an additional specification
 | ID | Detailed Design | Status |
 |---|---|---|
 | DD-3.1 | [App Domain](./dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md) | Complete |
-| DD-3.2 | Git Domain | Planned — next domain Detailed Design after structural-refactoring closeout |
+| DD-3.2 | Git Domain | Planned — next Detailed Design |
 | DD-3.3 | Nuxt Domain | Planned |
 | DD-3.4 | Docs Domain | Planned |
 
@@ -79,5 +79,6 @@ The DD-4 family directory is established in the repository, but no DD-4 normativ
 - [Project Documentation Guide](./project-documentation-guide-v01.md)
 - [Detailed Design Decomposition Plan and Canonical Register](./project_management/detailed-design-decomposition-plan-v01.md)
 - [Domain Detailed Design Authoring Guide](./project_management/domain-detailed-design-authoring-guide-v01.md)
+- [Detailed Design Structure Refactoring Closeout](./project_management/detailed-design-structure-refactoring-closeout-v01.md)
 
 When this navigation index and a normative source disagree, the normative source governs.
