@@ -1,14 +1,14 @@
 # AppManager Archive-Absence Conformance Audit
 
-> **Status:** In progress
+> **Status:** Complete — PASS
 >
 > **Authority:** Non-normative project-management audit. This document records conformance findings and corrective work; it does not create product requirements or architectural authority.
 >
-> **Baseline:** `master` at `dcf15a31fd4f75b694831222823f23c0513159d7` after merge of PR #66.
+> **Final baseline:** `master` at `181f800ed1baef35c6e24d694cf22efc5ef5e06c`, after merge of PR #78.
 
 ## 1. Purpose
 
-This audit tests the complete live AppManager documentation set produced so far against the archive-absence criterion:
+This audit tests the live AppManager documentation set produced so far against the archive-absence criterion:
 
 > **If `docs/archive/` were unavailable, the current live documentation must remain sufficient to understand the approved AppManager architecture, functional requirements, detailed design, decision authority, and the implementation obligations defined so far.**
 
@@ -25,7 +25,7 @@ The audit covers the live documentation and closely related repository guidance 
 - `docs/detailed_design/`;
 - live project-management documents where they affect interpretation of current work;
 - `README.md` and `AGENTS.md` where they direct readers or AI agents to documentation authority;
-- implementation-adjacent metadata that currently cites archived specifications, including `app_manager/templates/template-repository.json`.
+- implementation-adjacent metadata that may retain historical references, including `app_manager/templates/template-repository.json`.
 
 The contents of `docs/archive/` are not treated as required reading for the conformance decision.
 
@@ -41,46 +41,128 @@ A live document conforms when:
 6. historical or migration narrative is kept outside normative specifications unless it is itself necessary to state an enduring constraint;
 7. implementation-adjacent metadata is self-contained or points to current authority rather than requiring an archived specification.
 
-## 4. Initial Findings
+## 4. Corrective Work Completed
 
-### 4.1 Documentation governance
+### 4.1 Functional Specifications
 
-The Project Documentation Guide already establishes that the archive is outside the active specification hierarchy and that active specifications should normally reference active authority. The audit will verify whether the live corpus actually satisfies that policy and will strengthen wording only where a concrete ambiguity remains.
+The Functional Specification remediation was completed through the isolated PR sequence ending at PR #78.
 
-### 4.2 Root Design and ADRs
+The work removed archive-derived governing-source references, historical reconciliation/disposition sections and legacy-only traceability from live normative Functional Specifications while preserving the current requirements and authority boundaries.
 
-Initial search found no direct `docs/archive/` dependency in the root Design Specification or live ADR documents. These remain subject to semantic review for historical statements that would make the archive necessary to interpret the approved design.
+The resulting Functional Specification set is declarative and interpretable from current authority. The remediation includes the specifications for:
 
-### 4.3 Functional Specifications
+- Application Invocation;
+- Managed Project;
+- Configuration;
+- Source Transformation;
+- App;
+- Git;
+- Nuxt;
+- Docs;
+- Quality;
+- Settings;
+- AI;
+- Utils.
 
-**Non-conforming; corrective work required.** Direct archive references and/or legacy-reconciliation framing remain in several live Functional Specifications after PR #66, including AI, Docs, Quality, Settings, Utils, Managed Project, Configuration, and Source Transformation. Application Invocation and App also retain legacy-disposition sections even where they do not directly link to `docs/archive/`.
+Fresh reads of the remediated current files confirm that archived documents are no longer required to interpret their normative requirements.
 
-PR #66 successfully cleaned Git and Nuxt; those specifications will still be reviewed semantically as part of this audit.
+### 4.2 Detailed Design Specifications
 
-Corrective rule: preserve every current functional requirement and enduring boundary, but remove historical derivation/provenance from the normative specification when that provenance is not necessary to state the current requirement.
+The completed Detailed Design set was reviewed semantically rather than by treating every use of words such as `historical`, `current implementation` or `reconciliation` as a defect.
 
-### 4.4 Detailed Design Specifications
+Several DD documents deliberately retain current-implementation evidence and implementation-reconciliation sections. These sections conform because:
 
-No direct `docs/archive/` path dependency was found in the current Detailed Design set. However, several DD documents retain `Current Implementation Reconciliation`, `historical specifications`, or similar evidence sections. These require semantic review because archive-absence conformance is not merely a broken-link test: any permanent contract derived from that evidence must stand independently in the DD itself.
+- they identify current implementation facts as evidence rather than architectural authority;
+- permanent capability contracts are independently stated in current `DD-*` requirements, invariants, traceability sections and final design positions;
+- the evidence sections are self-contained where they record current implementation facts;
+- no current DD requires a reader to consult `docs/archive/` to understand a permanent contract;
+- current implementation must converge on the approved DD contract rather than the DD inheriting accidental implementation structure.
 
-### 4.5 Implementation-adjacent template metadata
+Accordingly, deleting the archive would not remove a required DD definition, responsibility boundary, provider contract, state distinction, sequencing rule or implementation obligation from the completed DD set.
 
-**Non-conforming; corrective work required.** `app_manager/templates/template-repository.json` still contains notes that cite `spec-templates-full-v01.md`, including direct `docs/archive/...` references. These notes must be made self-contained or redirected to current authority without changing the template catalogue or runtime-relevant data.
+### 4.3 Root Design and documentation governance
 
-## 5. Incremental Audit Plan
+The root Design Specification remains self-contained and establishes the authoritative architecture independently of historical material.
 
-The PR will be updated incrementally in this order:
+The Project Documentation Guide already establishes that:
 
-1. establish this audit record and open PR #67;
-2. Functional Specifications — remove archive dependencies and historical derivation while preserving all normative requirements;
-3. Detailed Design — verify every completed DD contract is self-contained and remove/reframe non-normative reconciliation narrative where necessary;
-4. root Design, Documentation Guide, ADRs, README and AGENTS — verify authority-chain completeness and consistency;
-5. implementation-adjacent metadata — remove archived-spec dependencies with minimal, non-semantic edits;
-6. perform a final repository-wide search and semantic conformance pass;
-7. record the final PASS / PASS WITH CORRECTIONS / FAIL result in this audit.
+- the Design → Functional → Detailed Design → Implementation chain is the normative specification hierarchy;
+- ADRs are decision-provenance records rather than a parallel specification system;
+- project-management documentation is non-normative;
+- `docs/archive/` is outside the active specification hierarchy and archived documents are non-authoritative.
 
-## 6. Current Result
+No additional normative governance edit is required for the archive-absence criterion.
 
-**IN PROGRESS — not yet conformant.**
+### 4.4 ADRs
 
-The initial repository-wide evaluation has identified live Functional Specification and template-metadata dependencies that would leave the documentation corpus referring to unavailable historical material if `docs/archive/` were removed. These are now the first corrective targets for PR #67.
+ADR governance and the accepted ADR set were reviewed for dependency on archived material.
+
+ADR-0001 and current ADR governance are self-contained for their current decision purpose. Historical/current implementation context is used as rationale or evidence and does not make archived documents normative dependencies.
+
+### 4.5 README and AGENTS guidance
+
+Repository-level guidance was reviewed for authority drift.
+
+README/AGENTS guidance does not make archived documentation authoritative. `AGENTS.md` explicitly directs repository work toward current repository state, authoritative specifications and current implementation rather than remembered or historical documentation.
+
+### 4.6 Implementation-adjacent template metadata
+
+`app_manager/templates/template-repository.json` retains several citations to historical template specifications in descriptive `notes` fields.
+
+These citations do **not** prevent conformance because the notes are self-contained:
+
+- the `vitest-config` note states directly that the scaffolded version uses Nuxt's `@nuxt/test-utils/config` wrapper and distinguishes the internal duplicate;
+- the `vitest-setup` note states directly what it mocks and that it is retained data rather than a current scaffold-consumption decision;
+- the layer-installation note states directly that the generated section assumes a host-consumed layer and lacks a standalone variant;
+- the JSON metadata note states directly which schema shape `JsonStrategy` recognizes and how it differs from the flat registry envelopes.
+
+The historical citations therefore provide provenance only. Removing `docs/archive/` would make those provenance pointers unresolved, but would not remove the technical facts needed to understand the metadata or current implementation obligations.
+
+This satisfies acceptance criterion 7 because the metadata is self-contained and does not **require** the archived specification.
+
+Removing those provenance citations may be undertaken later as metadata hygiene, but it is not required to achieve semantic archive-absence conformance and must not be mistaken for a runtime or architectural correction.
+
+### 4.7 Temporary audit tooling
+
+The temporary `scripts/` directory is absent from current `master`. No temporary Python audit helper remains part of the live repository state considered by this final audit.
+
+## 5. Final Semantic Test
+
+The final acceptance question is:
+
+> **If `docs/archive/` were deleted entirely, could a competent developer or AI agent understand the approved AppManager architecture, requirements, boundaries and intended implementation solely from the live documentation produced so far?**
+
+**Yes.**
+
+A competent reader can now establish, without consulting the archive:
+
+- documentation authority and governance;
+- root application architecture and invariants;
+- the shared Application Invocation Contract and Application Engine authority model;
+- managed-project and managed-scope semantics;
+- effective-configuration semantics;
+- shared source-inspection and transformation semantics;
+- the current Functional requirements for every completed functional domain;
+- the DD-1 Application Core contracts;
+- the completed DD-2 shared-capability contracts through Resource Registry and Template;
+- accepted technology/runtime decisions recorded by current ADRs;
+- the distinction between normative authority, current implementation evidence and non-normative project-management history;
+- the implementation obligations and gaps identified so far.
+
+The archive remains useful historical provenance, but it is not required to interpret the approved live architecture or requirements.
+
+## 6. Conformance Result
+
+**PASS.**
+
+The live AppManager documentation produced so far satisfies the archive-absence criterion at the final baseline stated above.
+
+This result means:
+
+- `docs/archive/` is historical provenance rather than interpretive authority;
+- current normative specifications do not depend on archived material for completeness or conformance;
+- completed Detailed Design contracts stand independently of historical evidence;
+- remaining historical citations outside normative specifications do not carry required semantic content that exists only in the archive;
+- removal or temporary unavailability of `docs/archive/` would not prevent a competent developer or AI agent from continuing the approved design and implementation work.
+
+DD-2.7 AI Capability is therefore unblocked from an archive-absence governance perspective.
