@@ -38,7 +38,7 @@ A second governing principle is:
 
 > Lower-level specifications may refine higher-level requirements but must not silently redefine them.
 
-Significant engineering decisions may additionally require an Architecture Decision Record as defined by this guide and `docs/decisions/architecture-decision-governance-v01.md`. Architecture Decision Records preserve decision rationale and provenance but do not replace the normative specification hierarchy.
+Significant engineering decisions may additionally require an Architecture Decision Record as defined by this guide and [Architecture Decision Governance](project_management/decisions/architecture-decision-governance-v01.md). Architecture Decision Records preserve decision rationale and provenance but do not replace the normative specification hierarchy.
 
 ---
 
@@ -207,7 +207,7 @@ detailed design and implementation
 
 A decision becomes durable when it is deliberately approved, recorded in an ADR where required, and incorporated into the authoritative specification level or levels affected by the decision.
 
-The detailed ADR lifecycle, required structure, acceptance, supersession, retention, and technology-selection rules are defined by `docs/decisions/architecture-decision-governance-v01.md` under the authority of this guide.
+The detailed ADR lifecycle, required structure, acceptance, supersession, retention, and technology-selection rules are defined by [Architecture Decision Governance](project_management/decisions/architecture-decision-governance-v01.md) under the authority of this guide.
 
 ---
 
@@ -403,6 +403,140 @@ The following normally belong below or outside Detailed Design:
 
 Where such information is necessary, the permanent technical constraint should be captured in Detailed Design, while the concrete reduction to practice belongs in Implementation Specifications and transient sequencing, coordination, and progress belong in project-management documentation.
 
+### 7.6 Stable Detailed Design Identification
+
+Every primary normative Detailed Design Specification must have a stable hierarchical identifier of the form:
+
+```text
+DD-<family>.<item>
+```
+
+Examples include:
+
+```text
+DD-1.1
+DD-1.3
+DD-2.10
+DD-3.1
+```
+
+The family number identifies the approved Detailed Design family or workstream and the item number identifies the normative document within that family.
+
+`DD-1`, `DD-2`, `DD-3`, `DD-4`, and future equivalent families are **not additional specification levels**. They are subdivisions of **Level 3 — Detailed Design Specification** and do not create an authority hierarchy between one Detailed Design family and another. Authority continues to derive from responsibility ownership and the governing Design/Functional specifications, not from the numerical family value.
+
+The stable Detailed Design identifier must appear in:
+
+- the document H1 title;
+- document metadata near the beginning of the document;
+- the filename in filesystem-safe form;
+- dependency and traceability references where the document is cited;
+- project-management indexes or decomposition plans that enumerate Detailed Design work.
+
+Because project-controlled filenames use hyphens and reserve the period for the file-extension separator, the canonical identifier `DD-1.3` is encoded in a filename as `dd-1-3`.
+
+For example:
+
+```text
+dd-1-3-managed-project-detailed-design-v01.md
+dd-2-10-nuxt-capability-detailed-design-v01.md
+dd-3-1-app-domain-detailed-design-v01.md
+```
+
+A primary Detailed Design identifier must remain stable for the lifetime of that design responsibility. A later document version retains the same Detailed Design identifier and changes only its normal document-version suffix unless the responsibility itself is deliberately replaced or re-decomposed.
+
+Detailed Design clarifications, reconciliation notes, conformance records, and other supporting documents must not acquire fictitious primary identifiers merely to fit the numbering scheme. A normative clarification should instead identify its document type and explicitly state which Detailed Design identifiers or contracts it clarifies.
+
+### 7.7 Detailed Design Families and Self-Documenting Directories
+
+Active primary Detailed Design Specifications must be grouped into self-documenting top-level directories beneath `docs/` whose names identify both the specification level and the semantic family.
+
+The approved Version 1 family structure is:
+
+```text
+docs/detailed_design_1_application_core/
+docs/detailed_design_2_shared_capabilities/
+docs/detailed_design_3_high_coupling_domains/
+docs/detailed_design_4_policy_and_resource_domains/
+```
+
+These directory names deliberately spell out `detailed_design` instead of relying only on abbreviations such as `dd1` so that repository navigation remains understandable without prior knowledge of project shorthand.
+
+The family number is retained in the directory name so that repository order and the stable Detailed Design identifier scheme remain visibly aligned.
+
+Primary active Detailed Design Specifications should not be placed together in one undifferentiated `docs/detailed_design/` directory once the structured migration is complete. A generic container that requires readers to know the historical drafting sequence is insufficiently self-documenting for the active normative design set.
+
+Supporting clarification documents may be grouped beneath a `clarifications/` subdirectory of the Detailed Design family they principally clarify where that improves navigation. Such placement does not alter their authority or create a new specification level.
+
+Example:
+
+```text
+docs/
+├── detailed_design_1_application_core/
+│   ├── dd-1-1-application-invocation-detailed-design-v01.md
+│   ├── dd-1-2-execution-outcomes-detailed-design-v01.md
+│   ├── dd-1-3-managed-project-detailed-design-v01.md
+│   ├── dd-1-4-configuration-resolution-detailed-design-v01.md
+│   ├── dd-1-5-application-engine-detailed-design-v01.md
+│   └── clarifications/
+├── detailed_design_2_shared_capabilities/
+├── detailed_design_3_high_coupling_domains/
+└── detailed_design_4_policy_and_resource_domains/
+```
+
+The Detailed Design decomposition plan is the canonical project-management register for the assignment of individual documents to family/item identifiers. Filesystem order, alphabetical order, implementation structure, or current source topology must not be used to infer or silently renumber those identifiers.
+
+### 7.8 Detailed Design Document Identity Header
+
+A primary Detailed Design Specification must make its position in the design set immediately visible to a reader who arrives at the file directly through GitHub, search, VitePress, a copied link, or an AI retrieval system.
+
+The preferred opening form is:
+
+```markdown
+# DD-3.1 — AppManager App Domain Detailed Design
+
+> **Detailed Design ID:** DD-3.1
+>
+> **Design family:** DD-3 — High-Coupling Domains
+>
+> **Status:** Version 1 Detailed Design Specification
+```
+
+Additional authority, governing-source, related-design, or planning metadata may follow.
+
+A clarification should instead use explicit clarification metadata, for example:
+
+```markdown
+> **Document type:** Detailed Design clarification
+>
+> **Clarifies:** DD-1.3, DD-1.4, DD-1.5
+```
+
+The identity header communicates classification and navigation; it does not replace the document's substantive authority statement.
+
+### 7.9 Navigable Cross-References
+
+References to other repository documentation should use repository-relative Markdown links where practical so that the active documentation set is navigable directly on GitHub and remains usable in local Markdown renderers, VitePress, forks, and non-default branches.
+
+A bare code-formatted pathname may still be used where the literal path itself is the subject of discussion, but it should not be the default form for a dependency or governing-authority reference.
+
+Prefer:
+
+```markdown
+[DD-1.5 — Application Engine](../detailed_design_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
+```
+
+rather than:
+
+```markdown
+`docs/detailed_design/application-engine-detailed-design-v01.md`
+```
+
+Dependency and traceability tables should normally use a linked human-readable document label together with the stable document or requirement identifier.
+
+Repository-relative links are preferred over hard-coded absolute `github.com` URLs for documents in the same repository because relative links remain valid across repository forks, branches, local checkouts, and repository renames where the relative structure is preserved.
+
+Absolute URLs remain appropriate for external sources, cross-repository references, or destinations whose identity is inherently external to the AppManager repository.
+
 ---
 
 ## 8. Level 4 - Implementation Specification
@@ -522,9 +656,11 @@ Implementation Specification
 
 Not every stage is required for every requirement or decision.
 
-Traceability may be expressed through document references, requirement identifiers, ADR identifiers, component names, command identifiers, or structured cross-reference tables.
+Traceability may be expressed through document references, requirement identifiers, ADR identifiers, Detailed Design identifiers, component names, command identifiers, or structured cross-reference tables.
 
 Specifications should reference the relevant ADR where the rationale would otherwise be difficult to discover, and ADRs must identify the specifications materially affected by the decision.
+
+Cross-document traceability should use navigable repository-relative Markdown links as defined in Section 7.9 where the referenced document resides in the same repository.
 
 Traceability should be introduced where it provides engineering value and should not become bureaucratic overhead.
 
@@ -673,68 +809,63 @@ The term `layer` should be used only where a genuine layered relationship exists
 
 The `docs/` tree should reflect specification responsibility rather than historical generation order.
 
-The documentation root should contain the highest-level governing documents, the specification hierarchy, decision records, project-management records, and the archive, including:
+Directory names should make the documentation level and, where a specification level contains stable families, the family responsibility understandable without requiring knowledge of conversation history or project shorthand.
+
+The target active documentation structure is:
 
 ```text
 docs/
 ├── project-documentation-guide-v01.md
 ├── appmanager-design-specification-v01.md
-├── decisions/
 ├── design/
 ├── functional/
-├── detailed_design/
+├── detailed_design_1_application_core/
+├── detailed_design_2_shared_capabilities/
+├── detailed_design_3_high_coupling_domains/
+├── detailed_design_4_policy_and_resource_domains/
 ├── implementation/
 ├── project_management/
+│   └── decisions/
 └── archive/
-    ├── decisions/
-    ├── design/
-    ├── functional/
-    ├── detailed_design/
-    ├── implementation/
-    └── project_management/
 ```
 
-The four principal specification levels are represented by `design/`, `functional/`, `detailed_design/`, and `implementation/` together with the root Design Specification where applicable.
+The four principal specification levels remain Design, Functional, Detailed Design, and Implementation. The four `detailed_design_*` directories above are separate **families within Level 3**, not additional specification levels.
 
-The `decisions/` directory contains the Architecture Decision Record governance document, ADR template, and durable Architecture Decision Records. ADRs are governed decision-provenance records and are outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. They must not become a parallel specification system.
+The use of separate self-documenting Detailed Design family directories is deliberate. It provides visible repository-level separation among Application Core, Shared Capability, High-Coupling Domain, and Policy/Resource Domain specifications while keeping the common Detailed Design abstraction level explicit in every directory name.
 
-The `project_management/` directory contains project planning, coordination, migration planning and sequencing, migration status, rationalisation, status, handoff, release-planning, architecture investigations and reviews, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification. Where an investigation results in a significant architectural decision, the decision should additionally be recorded through the ADR process when required.
+The active normative Detailed Design set should therefore migrate away from an undifferentiated `docs/detailed_design/` directory. The migration must preserve content, stable Detailed Design identifiers, history where practical, and all active cross-references.
+
+The `project_management/` directory contains project planning, coordination, migration planning and sequencing, migration status, rationalisation, status, handoff, release-planning, architecture investigations and reviews, decision governance, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification.
+
+The `project_management/decisions/` directory contains Architecture Decision Record governance, the ADR template, and durable ADRs. ADRs remain governed decision-provenance records rather than project-management status records; their placement beneath `project_management/` reflects governance and repository organisation, not reduced architectural significance and not inclusion in the normative four-level specification hierarchy.
 
 Temporary migration states, workstream order, milestone sequencing, component-by-component conversion plans, progress, and handoff information belong in project-management documentation unless a permanent system requirement or design constraint is identified and deliberately incorporated into the appropriate normative specification.
 
-The `archive/` tree is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status. Archived decision material may preserve ADR identifiers and provenance where required by the ADR governance rules.
+The `archive/` tree, when present, is outside the active specification hierarchy. Documents beneath it are non-authoritative regardless of their previous status. Archived decision material may preserve ADR identifiers and provenance where required by the ADR governance rules.
 
-This tree is a target documentation model rather than an instruction to immediately move every existing document.
+This tree is a target documentation model rather than an instruction to move documents without reconciliation. Structural migrations must be deliberate and must update links and references atomically enough to avoid leaving the active documentation set misleading or unnavigable.
 
 Existing documentation should be rationalised incrementally to avoid information loss.
 
-Lower-level directories may be subdivided according to stable architectural or functional concerns.
+Within a Detailed Design family directory, subordinate directories should be introduced only for stable document classes that improve navigation, such as `clarifications/`. They should not recreate implementation-shaped directory trees based on services, classes, current source packages, or other topology that belongs below Detailed Design.
 
 Example:
 
 ```text
 docs/
-└── detailed_design/
-    ├── architecture/
-    │   ├── services/
-    │   ├── scanners/
-    │   ├── strategies/
-    │   ├── orchestrators/
-    │   ├── resolvers/
-    │   ├── template_engine/
-    │   └── license_engine/
-    └── commands/
-        ├── app/
-        ├── git/
-        ├── nuxt/
-        ├── docs/
-        ├── quality/
-        ├── utils/
-        ├── ai/
-        └── settings/
+├── detailed_design_1_application_core/
+│   ├── dd-1-1-application-invocation-detailed-design-v01.md
+│   ├── dd-1-2-execution-outcomes-detailed-design-v01.md
+│   ├── dd-1-3-managed-project-detailed-design-v01.md
+│   ├── dd-1-4-configuration-resolution-detailed-design-v01.md
+│   ├── dd-1-5-application-engine-detailed-design-v01.md
+│   └── clarifications/
+├── detailed_design_2_shared_capabilities/
+├── detailed_design_3_high_coupling_domains/
+└── detailed_design_4_policy_and_resource_domains/
 ```
 
-The final directory structure should evolve from the current documentation tree rather than being replaced without analysis.
+The final directory structure should evolve from the current documentation tree through focused, reviewable migrations rather than unreviewed bulk movement.
 
 ### 12.1 Repository Documentation and Collaboration Surfaces
 
@@ -776,19 +907,19 @@ These sources may provide valuable context, provenance, discussion, evidence, an
 Active ADRs reside under:
 
 ```text
-docs/decisions/
+docs/project_management/decisions/
 ```
 
 The governance document is:
 
 ```text
-docs/decisions/architecture-decision-governance-v01.md
+docs/project_management/decisions/architecture-decision-governance-v01.md
 ```
 
 New ADRs should use:
 
 ```text
-docs/decisions/adr-template.md
+docs/project_management/decisions/adr-template.md
 ```
 
 The detailed ADR rules are delegated to the governance document, but this guide establishes the following higher-order constraints:
@@ -867,6 +998,26 @@ ADR numbers must never be reused, including after rejection or supersession.
 
 The ADR identifier is the durable identity of the decision record. Renaming an accepted ADR should be avoided unless necessary to correct a misleading title.
 
+### 13.3 Detailed Design Specification Filenames
+
+Primary Detailed Design Specification filenames must begin with the filesystem-safe encoding of their stable Detailed Design identifier:
+
+```text
+dd-<family>-<item>-<descriptive-subject>-detailed-design-v<version>.md
+```
+
+Examples:
+
+```text
+dd-1-3-managed-project-detailed-design-v01.md
+dd-2-4-source-intelligence-detailed-design-v01.md
+dd-3-1-app-domain-detailed-design-v01.md
+```
+
+The filename prefix `dd-1-3` corresponds exactly to the canonical document identifier `DD-1.3` while remaining compliant with the project filename rule that uses hyphens rather than additional periods.
+
+Clarification and other supporting Detailed Design documents need not use a primary `dd-<family>-<item>` filename prefix unless they themselves have been deliberately assigned a primary Detailed Design identifier by the authoritative decomposition plan.
+
 ---
 
 ## 14. Document Versioning
@@ -890,6 +1041,8 @@ When a new document version supersedes an old one, the older version must be mad
 The project should avoid multiple apparently current specifications covering the same responsibility.
 
 ADRs use sequential decision identifiers rather than ordinary document-version succession. A materially changed accepted architectural decision must normally be represented by a new ADR that supersedes or modifies the earlier ADR instead of rewriting the historical decision to appear current.
+
+A new version of a primary Detailed Design Specification retains its stable `DD-<family>.<item>` identifier unless the design responsibility itself has been deliberately re-decomposed through the documentation-governance process.
 
 ---
 
@@ -974,6 +1127,8 @@ Likewise, the Detailed Design Specification may define a service interface, whil
 
 Architecture reviews and ADRs should follow the same principle. A review may contain detailed comparative analysis; the ADR should preserve the decision, decisive rationale, consequences, and references rather than copying the entire research report. The affected specification should contain the approved normative consequence rather than reproducing the complete ADR rationale.
 
+Where the referenced document is part of the same repository, use a repository-relative Markdown link as defined in Section 7.9 rather than duplicating content or relying on an unlinked bare filename.
+
 ---
 
 ## 17. Conflict Resolution
@@ -1031,7 +1186,7 @@ active
                retired
 ```
 
-Architecture Decision Records use their own status model under `docs/decisions/architecture-decision-governance-v01.md` because Accepted, Rejected, Deprecated, and Superseded ADRs may remain valuable as durable architectural history.
+Architecture Decision Records use their own status model under [Architecture Decision Governance](project_management/decisions/architecture-decision-governance-v01.md) because Accepted, Rejected, Deprecated, and Superseded ADRs may remain valuable as durable architectural history.
 
 Archiving may also be applied directly to non-normative historical, audit, roadmap, reconciliation, investigation, or project-management material when it is intentionally removed from the live documentation tree.
 
@@ -1085,24 +1240,31 @@ If reconciliation is complete, the superseded document may be marked retired. If
 
 ### 18.6 Archive Structure
 
-The archive should mirror the active documentation categories where practical:
+The archive should mirror active documentation responsibilities where practical without recreating ambiguity.
+
+For Detailed Design, archived documents should retain enough family information in their archive path or filename to preserve the meaning of their stable Detailed Design identifiers.
+
+An illustrative archive structure is:
 
 ```text
 docs/
 └── archive/
-    ├── decisions/
     ├── design/
     ├── functional/
-    ├── detailed_design/
+    ├── detailed_design_1_application_core/
+    ├── detailed_design_2_shared_capabilities/
+    ├── detailed_design_3_high_coupling_domains/
+    ├── detailed_design_4_policy_and_resource_domains/
     ├── implementation/
     └── project_management/
+        └── decisions/
 ```
 
 Additional archive categories may be introduced where a stable need exists, but the archive must not become an undifferentiated holding directory.
 
 Archived design material belongs under `docs/archive/design/`, archived Functional Specifications under `docs/archive/functional/`, and archived project-management artefacts under `docs/archive/project_management/`.
 
-If ADRs are archived in future, `docs/archive/decisions/` should preserve their identifiers, status, successor relationships, and traceability. Decision history must not be deleted merely because a newer decision exists.
+If ADRs are archived in future, `docs/archive/project_management/decisions/` should preserve their identifiers, status, successor relationships, and traceability. Decision history must not be deleted merely because a newer decision exists.
 
 ### 18.7 Status Notices
 
@@ -1203,6 +1365,8 @@ It should not treat a recommendation, architecture review, or draft ADR as an ac
 When modifying the root Design Specification, an AI system must apply the enduring target-system test in Section 5.6 and exclude migration journey, transitional implementation state, and reduction-to-practice detail unless the information expresses a permanent target-system architectural constraint.
 
 When modifying Detailed Design, an AI system must distinguish permanent internal design from transient migration execution. Permanent constraints required to support safe migration may be designed there, but temporary sequencing, component conversion order, progress, and transitional work arrangements must be placed at the Implementation Specification or project-management level as appropriate.
+
+An AI system modifying a primary Detailed Design Specification must preserve the stable `DD-<family>.<item>` identity, the owning Detailed Design family, and the self-documenting directory/filename conventions defined by Sections 7.6–7.9 and 13.3.
 
 ### 19.2 Source Authority
 
@@ -1362,6 +1526,8 @@ Before a normative document is considered complete, it should be checked for:
 - migration or transitional detail placed above its appropriate specification or project-management level;
 - confirmation that root Design Specification statements pass the enduring target-system test in Section 5.6;
 - confirmation that Detailed Design describes permanent technical design rather than transient migration execution;
+- for primary Detailed Design Specifications, a visible stable `DD-<family>.<item>` identity and correct family directory placement;
+- navigable repository-relative links for internal document dependencies where practical;
 - ambiguous normative language;
 - unresolved legacy references;
 - obsolete architectural terminology;
@@ -1405,7 +1571,7 @@ The second defines what AppManager is intended to be.
 
 All other project specifications should refine one of the responsibilities established by those two documents.
 
-The `docs/decisions/` stream is intentionally separate from this authoritative root set because ADRs are decision-provenance records rather than a specification level. Its governance document remains subordinate to this Project Documentation Guide.
+The `docs/project_management/decisions/` stream is intentionally outside this authoritative root set because ADRs are decision-provenance records rather than a specification level. Its governance document remains subordinate to this Project Documentation Guide.
 
 Project-management documents are intentionally maintained outside the normative specification hierarchy and therefore do not expand this authoritative root set.
 
@@ -1435,6 +1601,8 @@ The consolidation process should:
 
 Structural changes should be deliberate, incremental, and justified by improved documentation responsibility rather than cosmetic reorganisation.
 
+Detailed Design restructuring must preserve stable `DD-<family>.<item>` identity, normative content, clarification relationships, and navigable cross-references while migrating documents into the self-documenting family directories defined in Section 7.7.
+
 Moving a superseded or mixed-authority document into `docs/archive/` is an appropriate way to clean the live documentation tree without prematurely declaring its information redundant.
 
 Existing implementation choices, including language, runtime, framework, library, or process topology, are evidence and migration context rather than automatic design authority. When such a choice materially constrains future architecture, it should be evaluated deliberately under the architecture-decision governance process.
@@ -1456,29 +1624,34 @@ The AppManager documentation system is governed by the following core rules:
 9. The root Design Specification describes enduring target-system architecture and constraints, not the migration journey or reduction to practice.
 10. A root Design Specification statement must remain useful and true after the current implementation and migration to the target architecture have ceased to matter.
 11. Detailed Design describes the permanent internal technical design; transient migration execution does not become permanent design authority.
-12. Implementation Specifications own concrete reduction to practice and may record relevant current implementation state; project-management documentation owns migration sequencing, coordination, progress, and temporary states.
-13. Duplication should be replaced by cross-reference and traceability.
-14. Design intent, decision rationale, current implementation state, and migration state must be clearly distinguished.
-15. TUI, Headless, GUI, IDE, and other interaction or host-integration adapters should share the Application Invocation Contract and authoritative Application Engine rather than duplicate domain behaviour.
-16. Headless operation and the Application Invocation Contract are distinct architectural concepts.
-17. The Application Engine retains application authority when specialist execution is delegated through capabilities, subsystems, providers, or external tools.
-18. Architectural subsystems should not be forced into an artificial layer model.
-19. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
-20. ADRs are governed decision-provenance records and are not a fifth specification level.
-21. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
-22. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
-23. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
-24. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
-25. Archived documents are outside the active specification hierarchy and are non-authoritative.
-26. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
-27. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
-28. A retired document must use the `-retired` suffix immediately after its version identifier.
-29. A document must not be retired while it remains the sole source of information the project intends to preserve.
-30. Superseded canonical documents must identify their successor or replacement authority.
-31. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
-32. Active specifications should not rely upon archived or retired documents as normative authority.
-33. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, target-system permanence, and the archive/retirement lifecycle.
-34. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+12. Primary Detailed Design Specifications use stable `DD-<family>.<item>` identifiers visible in the title, metadata, filename, and cross-references.
+13. Detailed Design families are subdivisions of Level 3, not additional specification levels or authority tiers.
+14. Active primary Detailed Design Specifications are grouped in self-documenting top-level `detailed_design_<family>_<semantic_name>/` directories rather than one undifferentiated Detailed Design directory.
+15. Internal document dependencies should use repository-relative Markdown links where practical so the documentation set is directly navigable.
+16. Implementation Specifications own concrete reduction to practice and may record relevant current implementation state; project-management documentation owns migration sequencing, coordination, progress, and temporary states.
+17. Duplication should be replaced by cross-reference and traceability.
+18. Design intent, decision rationale, current implementation state, and migration state must be clearly distinguished.
+19. TUI, Headless, GUI, IDE, and other interaction or host-integration adapters should share the Application Invocation Contract and authoritative Application Engine rather than duplicate domain behaviour.
+20. Headless operation and the Application Invocation Contract are distinct architectural concepts.
+21. The Application Engine retains application authority when specialist execution is delegated through capabilities, subsystems, providers, or external tools.
+22. Architectural subsystems should not be forced into an artificial layer model.
+23. Project-management documentation is outside the normative four-level specification hierarchy and must not establish product requirements or design authority.
+24. ADRs are governed decision-provenance records and are not a fifth specification level.
+25. Active ADRs and ADR governance reside beneath `docs/project_management/decisions/`.
+26. Significant architectural decisions should use ADRs where preserving rationale has durable engineering value.
+27. Accepted ADRs must not become the sole normative source of required system behaviour or architecture; affected specifications must be updated.
+28. Significant project-wide technology and platform choices must be deliberate and must not arise solely from historical implementation, developer familiarity, or convenience.
+29. Repository-level documents and collaboration surfaces must not become alternative sources of specification or decision authority; durable approved project knowledge must be incorporated into the appropriate repository-controlled documentation.
+30. Archived documents are outside the active specification hierarchy and are non-authoritative.
+31. Archiving and retirement are distinct lifecycle operations; archiving does not imply retirement.
+32. Historical documentation must not be retired until every meaningful item the project intends to preserve has been dispositioned.
+33. A retired document must use the `-retired` suffix immediately after its version identifier.
+34. A document must not be retired while it remains the sole source of information the project intends to preserve.
+35. Superseded canonical documents must identify their successor or replacement authority.
+36. Accepted ADRs should be superseded rather than rewritten when a material architectural decision changes.
+37. Active specifications should not rely upon archived or retired documents as normative authority.
+38. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, target-system permanence, stable Detailed Design identity, navigability, and the archive/retirement lifecycle.
+39. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 
 ---
 
@@ -1505,7 +1678,10 @@ Architecture Decision Records answer a different question:
 |---|---|---|
 | Application name in prose | Exact canonical name | `AppManager` |
 | Directory | lowercase with underscores | `license_engine/` |
+| Detailed Design family directory | `detailed_design_<family>_<semantic_name>/` | `detailed_design_2_shared_capabilities/` |
 | Filename | lowercase with hyphens | `project-documentation-guide-v01.md` |
+| Detailed Design identifier | `DD-<family>.<item>` | `DD-1.3` |
+| Detailed Design filename | `dd-<family>-<item>-<subject>-detailed-design-v<version>.md` | `dd-1-3-managed-project-detailed-design-v01.md` |
 | Project-controlled identifier | lowercase, normally underscores | `active_provider` |
 | Normative document version | `v` plus two digits | `v01` |
 | Retired document | version followed by `-retired` | `document-name-v01-retired.md` |
