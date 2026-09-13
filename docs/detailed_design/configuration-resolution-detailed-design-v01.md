@@ -6,7 +6,7 @@
 >
 > **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/configuration-functional-specification-v01.md`
 >
-> **Related Detailed Design authorities:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/managed-project-detailed-design-v01.md`
+> **Related Detailed Design authorities:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/managed-project-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/application-core-bootstrap-resolution-clarification-v01.md`
 >
 > **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
 
@@ -25,6 +25,8 @@ A second governing rule is:
 A third governing rule is:
 
 > **A value becoming available does not make it effective; source applicability, candidate validity, precedence, fallback policy, sensitivity, and operation context must all be resolved under AppManager semantics.**
+
+Where managed-project identity and configuration applicability depend on one another, this design shall be read with `application-core-bootstrap-resolution-clarification-v01.md`, which defines the staged bootstrap-versus-project-aware resolution contract without changing DD-1.4 ownership of configuration semantics.
 
 ## 2. Scope
 
@@ -52,7 +54,7 @@ This design owns permanent internal contracts for:
 - refresh and invalidation boundaries;
 - configuration change visibility to subsequent operations;
 - cross-mode equivalence;
-- integration with DD-1.1 invocation, DD-1.2 outcomes, and DD-1.3 managed-project context.
+- integration with DD-1.1 invocation, DD-1.2 outcomes, DD-1.3 managed-project context, and DD-1.5 staged Application Engine coordination.
 
 This design does not own Settings-domain CRUD workflows, persistence user experiences, domain-specific configuration meaning, command semantics, managed-scope authority, provider execution semantics, secret-store technology, serialization formats, or presentation rendering.
 
@@ -83,33 +85,42 @@ The design deliberately defines semantic seams before implementation topology.
 
 ## 4. Architectural Position
 
-Configuration resolution sits between configuration sources and Application Engine/domain/capability consumers.
+Configuration Resolution participates in two semantic stages where managed-project identity and project-aware configuration depend on one another. Both stages use this same DD-1.4 resolution authority; the stages differ only in which context is available and therefore which concerns/sources are applicable.
 
 ```text
-invocation / operation
+invocation / host context
         |
         v
-managed project + managed scope
-        |
-        v
-configuration resolution context
+context-independent configuration candidates
         |
         v
 +-------------------------------------+
 | Configuration Resolution boundary   |
-|                                     |
-| source applicability                |
-| candidate acquisition               |
-| candidate validation                |
-| precedence / selection              |
-| fallback                            |
-| provenance                          |
-| sensitivity                         |
-| effective-value construction        |
+| bootstrap applicability / validation|
+| precedence / fallback / provenance  |
 +------------------+------------------+
                    |
                    v
-      effective configuration snapshot
+      bootstrap effective configuration
+                   |
+                   v
+        DD-1.3 managed-project resolution
+                   |
+                   v
+        sufficient managed-project context
+                   |
+                   v
++-------------------------------------+
+| Configuration Resolution boundary   |
+| project/scope-aware applicability   |
+| validation / precedence / fallback  |
+| provenance / effective construction |
++------------------+------------------+
+                   |
+                   v
+      operation effective snapshot
+                   |
+                   +--> DD-1.3 managed-scope resolution where scope depends on configuration
                    |
                    v
           Application Engine
@@ -117,6 +128,8 @@ configuration resolution context
                    v
       domain / capability semantics
 ```
+
+This is a semantic dependency view, not a requirement for two resolver implementations, two services, two passes for every operation, or one fixed call sequence. Operations that do not require bootstrap/project staging may resolve directly with the context they require.
 
 Configuration Resolution is a permanent responsibility boundary. It does not imply a separate process, package, executable, service, or transport.
 
@@ -243,7 +256,7 @@ A configuration source shall not:
 
 Configuration resolution occurs relative to explicit operation context rather than in a global vacuum.
 
-A resolution context shall be capable of carrying:
+A resolution context shall be capable of carrying, where available at the current stage:
 
 - invocation identity where available;
 - command/use-case identity;
@@ -258,13 +271,23 @@ A resolution context shall be capable of carrying:
 - correlation metadata;
 - policy/evaluation phase where relevant.
 
+A bootstrap resolution context intentionally lacks authoritative managed-project identity, topology and managed scope. An operation/project-aware context may carry those values once DD-1.3 has established them.
+
 ### 8.2 Context authority
 
 Resolution context is input to configuration resolution. It does not itself become configuration.
 
 A project fact, selected file, repository identity, host selection, detected framework fact, or provider property becomes a candidate only where the concern explicitly permits contextual or detected input.
 
-### 8.3 Managed Project dependency
+### 8.3 Bootstrap resolution dependency
+
+Before authoritative managed-project identity exists, only concerns and sources whose applicability and effective value do not depend on that unresolved identity, project topology or managed scope may participate. Those concerns form the bounded bootstrap subset defined by `application-core-bootstrap-resolution-clarification-v01.md`.
+
+Bootstrap resolution uses the same concern catalogue, candidate validation, precedence, fallback, sensitivity and provenance semantics as later resolution. It is not a second configuration system.
+
+Bootstrap effective configuration may contribute governed project hints or other permitted evidence to DD-1.3. It does not itself establish project identity, managed scope, targetability, mutation authority or authorization.
+
+### 8.4 Managed Project dependency
 
 Project-scoped source participation requires sufficient DD-1.3 managed-project context.
 
@@ -276,13 +299,15 @@ The configuration resolver shall not infer project association merely from:
 - adapter-provided host selection;
 - framework marker presence.
 
-Those may contribute project evidence through DD-1.3, but project association used by configuration resolution shall consume the resolved managed-project model.
+Those may contribute project evidence through DD-1.3, but project association used by project/scope-aware configuration resolution shall consume the resolved managed-project model.
 
-### 8.4 Managed scope dependency
+### 8.5 Managed scope dependency
 
-Where a configuration concern varies by root application, layer, repository, file, or another managed entity, resolution shall consume the relevant managed scope.
+Where a configuration concern genuinely requires an already-resolved managed scope to determine its applicability, DD-1.4 shall consume that scope.
 
-Configuration shall not silently broaden that scope.
+Managed scope is not, however, a universal prerequisite for all project-aware configuration. Where DD-1.3 scope or exclusion semantics themselves depend upon an operation-effective configuration value, that value may be resolved from sufficient managed-project context before final scope acceptance and then supplied to DD-1.3 as governed input.
+
+Configuration shall not silently broaden scope, and Configuration Resolution does not acquire scope authority merely because a scope decision consumes an effective value.
 
 ## 9. Candidate Model
 
@@ -375,7 +400,7 @@ Presence alone cannot move a candidate into the effective set.
 
 ### 10.3 Project-local and project-shared applicability
 
-Where historical project-local/project-shared/tool-level tiers remain valid for a concern, the project association and scope must be resolved before those candidates participate.
+Where historical project-local/project-shared/tool-level tiers remain valid for a concern, the project association and required scope context must be resolved before those candidates participate.
 
 The known precedence:
 
@@ -474,7 +499,7 @@ They remain subject to:
 - validation;
 - safety constraints;
 - managed-project applicability;
-- managed-scope constraints;
+- managed-scope constraints where the concern requires them;
 - sensitivity rules.
 
 ## 13. Resolution Policy
@@ -632,13 +657,17 @@ The consuming use case determines what optional absence means after governed res
 
 An operation that requires multiple configuration concerns should consume a coherent effective-configuration snapshot rather than repeatedly rereading raw sources throughout execution.
 
+A bootstrap effective value or bootstrap snapshot is a bounded stage result used only for concerns resolvable without managed-project context. It is not automatically the operation-facing snapshot.
+
 ### 16.2 Snapshot properties
 
-An effective-configuration snapshot should be:
+An operation-effective configuration snapshot should be:
 
 - immutable from the consuming operation's perspective;
 - associated with the invocation/use case;
-- associated with the relevant managed project and managed scope;
+- associated with the relevant managed project once project context is required;
+- associated with the relevant managed scope where that scope is already established and required by the constituent concerns;
+- capable of preceding final managed-scope acceptance where DD-1.3 scope/exclusion semantics consume configuration values that can be resolved from sufficient managed-project context;
 - composed only of governed effective values and explicit optional absences;
 - capable of exposing safe provenance;
 - stable for the phase of execution that depends on it.
@@ -1077,13 +1106,19 @@ For example, a value such as `force=true` or a target branch name cannot automat
 
 ## 32. Managed Project Integration
 
-### 32.1 DD-1.3 dependency
+DD-1.3 and DD-1.4 collaborate through the staged contract in `application-core-bootstrap-resolution-clarification-v01.md`; neither is globally upstream of the other for every stage.
 
-Configuration Resolution consumes DD-1.3 project identity, project topology, managed entities, and managed scope.
+### 32.1 Bootstrap contribution to DD-1.3
 
-It does not independently rediscover them.
+Before authoritative managed-project identity exists, DD-1.4 may supply only governed bootstrap effective configuration whose own applicability does not depend on that unresolved identity. DD-1.3 may consume those values as project-resolution evidence but retains authority over project identity and context.
 
-### 32.2 Scope-sensitive concerns
+### 32.2 Project-aware DD-1.3 dependency
+
+After sufficient Managed Project Context exists, Configuration Resolution consumes DD-1.3 project identity, project topology and managed entities to determine project-aware source applicability and effective values.
+
+It does not independently rediscover or replace those project semantics.
+
+### 32.3 Scope-sensitive concerns
 
 A concern may resolve differently for:
 
@@ -1094,11 +1129,15 @@ A concern may resolve differently for:
 - multiple repositories;
 - selected files/resources.
 
-The effective snapshot must preserve the context to which those values apply.
+Where the concern requires an already-resolved managed scope, the effective snapshot shall preserve that scope association. Where DD-1.3 scope/exclusion semantics instead require an operation-effective value that can be resolved from sufficient project context, DD-1.4 may supply that value before final scope acceptance.
 
-### 32.3 Configuration cannot expand scope
+### 32.4 Configuration cannot expand scope
 
-Even an effective value cannot authorize targets outside DD-1.3 managed scope.
+Even an effective value cannot authorize targets outside the DD-1.3 scope that is ultimately resolved and accepted for the operation. Configuration Resolution supplies governed values; DD-1.3/Application Engine retain scope and targetability authority.
+
+### 32.5 Conflict and re-resolution
+
+Project-aware configuration that materially conflicts with the project identity or bootstrap assumptions shall produce structured evidence for DD-1.5 to handle through explicit revalidation, bounded re-resolution, disambiguation or failure. DD-1.3/DD-1.4 shall not enter an uncontrolled recursive resolution loop.
 
 ## 33. Provider and Capability Integration
 
@@ -1165,7 +1204,8 @@ TUI, Headless, GUI, IDE/host-tool, CI, automation agents, and future adapters sh
 - precedence;
 - fallback;
 - sensitivity;
-- effective-value semantics.
+- effective-value semantics;
+- bootstrap-versus-project-aware staging semantics where staging is required.
 
 Interaction modes may differ only in how they acquire optional interactive candidates and render explanation/diagnostics.
 
@@ -1219,12 +1259,15 @@ Detailed Design conformance tests should be able to verify at least:
 - one-off values are not silently persisted;
 - durable changes affect future resolution;
 - immutable snapshots do not retroactively change;
+- bootstrap configuration can be resolved without unresolved project-dependent applicability;
+- project-aware sources do not participate before sufficient Managed Project Context exists;
 - managed-project and managed-scope context affect applicable values correctly;
+- operation-effective configuration may feed scope finalization without acquiring scope authority;
 - configuration cannot broaden managed scope;
 - caches do not become a new authority tier;
 - equal-authority conflicts fail or disambiguate deterministically;
 - provider defaults do not redefine AppManager defaults;
-- all interaction modes produce equivalent effective values for equivalent inputs.
+- all interaction modes produce equivalent effective values and equivalent staging decisions for equivalent inputs.
 
 ## 39. Design Invariants
 
@@ -1245,11 +1288,14 @@ The following invariants are normative for downstream design:
 13. resolution does not imply persistence;
 14. operational state and caches do not silently become configuration authority;
 15. effective snapshots are stable for the operation phase that consumes them;
-16. configuration cannot expand managed scope;
-17. the resolver does not own consuming use-case semantics;
-18. Settings persistence does not redefine precedence;
-19. provider defaults do not automatically become AppManager defaults;
-20. equivalent contexts yield materially equivalent effective resolution.
+16. bootstrap resolution is restricted to concerns and sources whose applicability does not depend on unresolved managed-project identity;
+17. project/scope-aware concerns become eligible only when their required DD-1.3 context exists;
+18. configuration cannot expand managed scope;
+19. resolving a value before scope finalization does not transfer scope authority to DD-1.4;
+20. the resolver does not own consuming use-case semantics;
+21. Settings persistence does not redefine precedence;
+22. provider defaults do not automatically become AppManager defaults;
+23. equivalent contexts yield materially equivalent effective resolution.
 
 ## 40. Traceability to Functional Requirements
 
@@ -1291,15 +1337,15 @@ DD-1.4 supplies configuration-resolution evidence projected into those models.
 
 ### 41.3 DD-1.3 Managed Project
 
-DD-1.3 owns project identity, topology, managed entities, and managed scope.
+DD-1.3 owns project identity, topology, managed entities, managed scope and targetability.
 
-DD-1.4 consumes those contracts to determine project/scope-specific source applicability and effective values.
+DD-1.4 may first provide bootstrap effective configuration as bounded project-resolution evidence, then consumes sufficient DD-1.3 context to determine project/scope-aware source applicability and effective values. The staged collaboration is governed by `application-core-bootstrap-resolution-clarification-v01.md`; neither side acquires the other's authority.
 
 ### 41.4 DD-1.5 Application Engine
 
-DD-1.5 shall define when the Application Engine requests configuration resolution, how snapshots enter use-case execution context, how policy consumes effective values, and when re-resolution is permitted.
+DD-1.5 defines when the Application Engine requests bootstrap or project/scope-aware configuration resolution, how snapshots enter use-case execution context, how managed-scope/policy decisions consume effective values, and when bounded re-resolution is permitted.
 
-The Application Engine remains authoritative over application semantics.
+The Application Engine remains authoritative over application sequencing and semantics; DD-1.4 remains authoritative over configuration resolution semantics.
 
 ### 41.5 Shared capabilities
 
@@ -1325,7 +1371,7 @@ Future runtime changes may preserve these responsibility boundaries without requ
 
 Later Detailed Designs shall preserve the following constraints:
 
-- DD-1.5 Application Engine must consume effective configuration rather than raw source values;
+- DD-1.5 Application Engine must consume effective configuration rather than raw source values and must preserve staged bootstrap/project-aware resolution where required;
 - Resource Access may read/write configuration resources but must not decide precedence;
 - Process Execution must receive already-authorized effective execution options rather than reading AppManager settings ad hoc;
 - Repository Capability may contribute repository/provider observations but not configuration authority;
@@ -1351,14 +1397,18 @@ A downstream design conforms to DD-1.4 only if all of the following are true:
 8. interactive acquisition re-enters the same resolver;
 9. sensitive values are minimized and provenance remains safe;
 10. one-off values are not silently persisted;
-11. effective snapshots are coherent and stable;
-12. changed durable configuration affects future resolution without retroactively mutating accepted snapshots;
-13. project/scope configuration consumes DD-1.3 rather than reconstructing project identity;
-14. configuration cannot expand managed scope or bypass authorization;
-15. Settings CRUD remains distinct from resolution semantics;
-16. capability providers do not redefine AppManager configuration semantics;
-17. configuration diagnostics integrate with DD-1.2;
-18. all supported interaction modes preserve equivalent semantics.
+11. bootstrap values are not mistaken for the complete operation-effective snapshot;
+12. configuration used before project resolution does not require unresolved project identity for its own applicability;
+13. project/scope-aware sources participate only after sufficient DD-1.3 context exists;
+14. effective snapshots are coherent and stable for the phase that consumes them;
+15. changed durable configuration affects future resolution without retroactively mutating accepted snapshots;
+16. project/scope configuration consumes DD-1.3 rather than reconstructing project identity;
+17. configuration cannot expand managed scope or bypass authorization;
+18. resolving configuration before final scope acceptance where required does not transfer scope authority to DD-1.4;
+19. Settings CRUD remains distinct from resolution semantics;
+20. capability providers do not redefine AppManager configuration semantics;
+21. configuration diagnostics integrate with DD-1.2;
+22. all supported interaction modes preserve equivalent semantics.
 
 ## 45. Summary
 
@@ -1368,13 +1418,13 @@ The permanent semantic flow is:
 
 ```text
 approved sources
-    -> applicable sources
+    -> applicable sources for the current resolution stage
     -> candidates + provenance
     -> validation
     -> concern-specific precedence / selection / fallback
     -> effective values
-    -> immutable operation snapshot
-    -> Application Engine / use-case semantics
+    -> bootstrap result or immutable operation snapshot as applicable
+    -> Application Engine / DD-1.3 / use-case semantics
 ```
 
 The key boundaries are:
@@ -1382,6 +1432,8 @@ The key boundaries are:
 > **source != candidate authority**
 
 > **candidate != effective value**
+
+> **bootstrap effective value != complete operation snapshot**
 
 > **effective value != application policy**
 
@@ -1391,4 +1443,4 @@ The key boundaries are:
 
 > **configuration != authorization**
 
-These distinctions allow later domain and capability designs to share deterministic configuration semantics without collapsing Settings, project discovery, provider mechanics, or application authority into one configuration service.
+These distinctions allow later domain and capability designs to share deterministic configuration semantics without collapsing Settings, project discovery, managed-scope authority, provider mechanics, or application authority into one configuration service.
