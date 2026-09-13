@@ -132,7 +132,7 @@ The meaning of an invocation shall not depend on terminal formatting, menu posit
 ### 6.3 Omitted optional information
 
 **FR-INV-009 — Optional inputs**  
-Omitted optional inputs shall be handled according to the command's Functional Specification and shared configuration/context rules. Omission shall not be silently interpreted as an unsafe or destructive choice merely because one interaction adapter historically supplied such a value.
+Omitted optional inputs shall be handled according to the command's Functional Specification and shared configuration/context rules. Omission shall not be silently interpreted as an unsafe or destructive choice merely because one interaction adapter supplied such a value.
 
 ### 6.4 Invocation context
 
@@ -383,27 +383,9 @@ This specification intentionally delegates several shared concerns to their auth
 | Shared source inspection, mutation, generation, validation and acceptance | `source-transformation-functional-specification-v01.md` |
 | Individual commands and use cases | Owning domain Functional Specification |
 
-Until those specifications are approved, the corresponding root Design requirements remain authoritative. This document must not be interpreted as filling those future specifications with unstated assumptions.
+These specifications are current authorities for their respective concerns. This document shall not be interpreted as duplicating or weakening them.
 
-## 21. Legacy Requirement Disposition
-
-The Design Reconciliation Audit identifies legacy invocation and command-infrastructure information requiring Functional preservation. This specification incorporates the functional substance as follows:
-
-| Legacy information | Functional disposition |
-|---|---|
-| Commands share coherent invocation behaviour | `FR-INV-001`, `FR-INV-017` |
-| Command discovery / registry is required conceptually | `FR-INV-003`–`FR-INV-006`; concrete registry design remains lower-level |
-| Command availability / `isEnabled` behaviour | `FR-INV-014`–`FR-INV-016` |
-| Interactive and Headless execution | `FR-INV-017`–`FR-INV-022` |
-| Presentation logic separated from command behaviour | `FR-INV-008`, `FR-INV-017`–`FR-INV-019` |
-| Structured outcomes and diagnostics | `FR-INV-033`–`FR-INV-047` |
-| Confirmation and safety mixed into legacy commands | Shared invocation semantics in Section 11; operation-specific requirements remain with owning domain specs |
-| Exact `BaseCommand`, `CommandRegistry`, bootstrap and argument-dispatch implementations | Not propagated at Functional level; Detailed Design / Implementation concern |
-| Exact terminal libraries, spinner implementations and console behaviour | Not propagated at Functional level; presentation / implementation concern |
-
-Legacy material remains evidence and provenance, not independent normative authority.
-
-## 22. Traceability
+## 21. Traceability
 
 The principal upward traceability for this specification is:
 
@@ -424,7 +406,7 @@ The principal upward traceability for this specification is:
 
 ADR-0001 selects the Version 1 implementation runtime but does not alter these technology-independent Functional requirements.
 
-## 23. Conformance Criteria
+## 22. Conformance Criteria
 
 An interaction adapter, host integration, command surface, or invocation mechanism conforms to this specification only if it preserves the shared AppManager invocation semantics defined here.
 
@@ -443,7 +425,7 @@ Conformance requires that:
 11. sensitive information is minimised in invocation-visible outputs;
 12. the implementation does not create a parallel application authority in an adapter, provider, or host integration.
 
-## 24. Downstream Specification Requirements
+## 23. Downstream Specification Requirements
 
 Detailed Design Specifications derived from this Functional Specification shall define the permanent technical realisation required to satisfy these behaviours, including where appropriate:
 
