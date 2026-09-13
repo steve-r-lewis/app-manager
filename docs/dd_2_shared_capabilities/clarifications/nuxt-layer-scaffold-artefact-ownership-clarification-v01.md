@@ -1,10 +1,14 @@
 # AppManager Nuxt Layer Scaffold Artefact Ownership Clarification
 
+> **Document type:** Detailed Design clarification
+>
+> **Clarifies:** DD-2.10, DD-2.5, DD-2.6, DD-2.9
+
 > **Status:** Version 1 Detailed Design Clarification
 >
 > **Purpose:** Resolve DD-2 reconciliation item R-03 by distinguishing Nuxt layer-creation orchestration from artefact semantic ownership, declarative rendering, and persistence authority.
 >
-> **Reconciliation source:** `docs/project_management/dd2-independent-review-reconciliation-v01.md`
+> **Reconciliation source:** [docs/project_management/dd2-independent-review-reconciliation-v01.md](../../project_management/dd2-independent-review-reconciliation-v01.md)
 
 ## 1. Governing distinction
 

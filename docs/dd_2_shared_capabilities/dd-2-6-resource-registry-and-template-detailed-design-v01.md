@@ -1,14 +1,18 @@
-# AppManager Resource Registry and Template Detailed Design
+# DD-2.6 — AppManager Resource Registry and Template Detailed Design
+
+> **Detailed Design ID:** DD-2.6
+>
+> **Design family:** DD-2 — Shared Capabilities
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for declarative resource registries, template discovery, template validation, parameter binding, deterministic rendering, provenance, compatibility and extension beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/project_management/detailed-design-decomposition-plan-v01.md`, `docs/decisions/adr-0001-primary-application-runtime.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Design authorities:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/managed-project-detailed-design-v01.md`, `docs/detailed_design/configuration-resolution-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/resource-access-detailed-design-v01.md`, `docs/detailed_design/source-intelligence-detailed-design-v01.md`, `docs/detailed_design/source-transformation-detailed-design-v01.md`
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md)
 >
-> **Primary Functional authorities:** `docs/functional/settings-functional-specification-v01.md` for declarative template-resource management, plus the App, Docs, Nuxt, AI, Settings and other domain Functional Specifications where they consume declarative resources or templates.
+> **Primary Functional authorities:** [docs/functional/settings-functional-specification-v01.md](../functional/settings-functional-specification-v01.md) for declarative template-resource management, plus the App, Docs, Nuxt, AI, Settings and other domain Functional Specifications where they consume declarative resources or templates.
 
 ---
 

@@ -4,9 +4,9 @@
 >
 > **Functional authority:** This document defines the required observable behaviour by which AppManager identifies, resolves, validates, represents, and scopes the target project it manages. It refines, but does not override, the root Design Specification.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md)
 >
-> **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
+> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ## 1. Purpose
 
@@ -396,19 +396,19 @@ When project-context or scope uncertainty could cause AppManager to act on the w
 
 ### 19.1 Application Invocation
 
-`application-invocation-functional-specification-v01.md` owns shared invocation, validation, Headless, confirmation, result, diagnostics, cancellation, and partial-success semantics.
+[application-invocation-functional-specification-v01.md](application-invocation-functional-specification-v01.md) owns shared invocation, validation, Headless, confirmation, result, diagnostics, cancellation, and partial-success semantics.
 
 This specification owns project-context and managed-scope semantics consumed by those invocations.
 
 ### 19.2 Configuration
 
-`configuration-functional-specification-v01.md` owns candidate-to-effective configuration semantics and precedence.
+[configuration-functional-specification-v01.md](configuration-functional-specification-v01.md) owns candidate-to-effective configuration semantics and precedence.
 
 Effective configuration may contribute to project-context resolution, but this document does not define general configuration precedence.
 
 ### 19.3 Source Transformation
 
-`source-transformation-functional-specification-v01.md` owns shared inspection, mutation, generation, transformation, validation, and application-acceptance behaviour.
+[source-transformation-functional-specification-v01.md](source-transformation-functional-specification-v01.md) owns shared inspection, mutation, generation, transformation, validation, and application-acceptance behaviour.
 
 This specification determines whether a source resource belongs to the relevant managed context and scope; it does not define how source mutation is performed.
 

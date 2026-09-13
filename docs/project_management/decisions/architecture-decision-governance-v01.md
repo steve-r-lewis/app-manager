@@ -152,7 +152,7 @@ The ADR should summarise the evidence necessary to understand the decision and r
 Active ADRs reside under:
 
 ```text
-docs/decisions/
+docs/project_management/decisions/
 ```
 
 ADR filenames use a stable sequential identifier and descriptive slug:
@@ -317,7 +317,7 @@ If ADRs are moved to an archive in future, the archive must preserve their ident
 
 ## 15. ADR Template
 
-New ADRs should use `docs/decisions/adr-template.md` as the starting structure unless the decision requires justified additional sections.
+New ADRs should use [ADR Template](adr-template.md) as the starting structure unless the decision requires justified additional sections.
 
 The template is procedural scaffolding only. The accepted ADR content and its specification consequences determine the value of the record.
 

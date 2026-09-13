@@ -4,9 +4,9 @@
 >
 > **Functional authority:** This document defines the required observable behaviour of AppManager invocation and shared command execution semantics. It refines, but does not override, the root Design Specification.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md)
 >
-> **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
+> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ## 1. Purpose
 
@@ -378,9 +378,9 @@ This specification intentionally delegates several shared concerns to their auth
 
 | Concern | Functional authority |
 |---|---|
-| Managed project context, project recognition, managed scope | `managed-project-functional-specification-v01.md` |
-| Effective configuration and configuration-source resolution | `configuration-functional-specification-v01.md` |
-| Shared source inspection, mutation, generation, validation and acceptance | `source-transformation-functional-specification-v01.md` |
+| Managed project context, project recognition, managed scope | [managed-project-functional-specification-v01.md](managed-project-functional-specification-v01.md) |
+| Effective configuration and configuration-source resolution | [configuration-functional-specification-v01.md](configuration-functional-specification-v01.md) |
+| Shared source inspection, mutation, generation, validation and acceptance | [source-transformation-functional-specification-v01.md](source-transformation-functional-specification-v01.md) |
 | Individual commands and use cases | Owning domain Functional Specification |
 
 These specifications are current authorities for their respective concerns. This document shall not be interpreted as duplicating or weakening them.

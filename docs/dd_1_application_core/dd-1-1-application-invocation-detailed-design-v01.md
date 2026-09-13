@@ -1,16 +1,20 @@
-# AppManager Application Invocation Detailed Design
+# DD-1.1 — AppManager Application Invocation Detailed Design
+
+> **Detailed Design ID:** DD-1.1
+>
+> **Design family:** DD-1 — Application Core
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document defines the permanent internal design by which AppManager realises the shared Application Invocation Functional Specification. It refines, but does not override, the root Design Specification or Functional Specifications.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/application-invocation-functional-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
-> **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
+> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
 >
-> **Related Functional authorities:** `docs/functional/managed-project-functional-specification-v01.md`, `docs/functional/configuration-functional-specification-v01.md`, `docs/functional/source-transformation-functional-specification-v01.md`
+> **Related Functional authorities:** [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md), [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md)
 >
-> **Related Detailed Designs:** `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/application-outcome-and-diagnostic-ownership-clarification-v01.md`
+> **Related Detailed Designs:** [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md)
 
 ## 1. Purpose
 
@@ -1103,7 +1107,7 @@ DD-1.2 is the canonical semantic owner of the shared AppManager outcome, diagnos
 
 This document owns only the invocation-facing request/event/cancellation-control boundary and the projection/delivery of the accepted DD-1.2 outcome. Any invocation-specific diagnostic code or projection field must map to DD-1.2 rather than redefine its shared meanings.
 
-The relationship is further clarified by `application-outcome-and-diagnostic-ownership-clarification-v01.md`.
+The relationship is further clarified by [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md).
 
 ### 41.2 DD-1.3 — Managed Project
 

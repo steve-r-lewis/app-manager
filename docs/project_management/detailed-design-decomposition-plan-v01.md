@@ -115,11 +115,11 @@ The first design family defines the permanent Application Engine contracts that 
 
 | ID | Canonical subject | Canonical target path | Status |
 |---|---|---|---|
-| `DD-1.1` | Application Invocation | `docs/dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md` | Complete |
-| `DD-1.2` | Execution Outcomes | `docs/dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md` | Complete |
-| `DD-1.3` | Managed Project | `docs/dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md` | Complete |
-| `DD-1.4` | Configuration Resolution | `docs/dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md` | Complete |
-| `DD-1.5` | Application Engine | `docs/dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md` | Complete |
+| `DD-1.1` | Application Invocation | [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md) | Complete |
+| `DD-1.2` | Execution Outcomes | [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md) | Complete |
+| `DD-1.3` | Managed Project | [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md) | Complete |
+| `DD-1.4` | Configuration Resolution | [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md) | Complete |
+| `DD-1.5` | Application Engine | [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md) | Complete |
 
 These documents are intentionally separated where responsibilities are independently reusable and testable, but they must remain mutually coherent.
 
@@ -129,16 +129,16 @@ The second design family defines reusable specialist capabilities behind stable 
 
 | ID | Canonical subject | Canonical target path | Status |
 |---|---|---|---|
-| `DD-2.1` | Resource Access | `docs/dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md` | Complete |
-| `DD-2.2` | Process Execution | `docs/dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md` | Complete |
-| `DD-2.3` | Repository Capability | `docs/dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md` | Complete |
-| `DD-2.4` | Source Intelligence | `docs/dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md` | Complete |
-| `DD-2.5` | Source Transformation | `docs/dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md` | Complete |
-| `DD-2.6` | Resource Registry and Template | `docs/dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md` | Complete |
-| `DD-2.7` | AI Capability | `docs/dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md` | Complete |
-| `DD-2.8` | Quality Capability | `docs/dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md` | Complete |
-| `DD-2.9` | Documentation Capability | `docs/dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md` | Complete |
-| `DD-2.10` | Nuxt Capability | `docs/dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md` | Complete |
+| `DD-2.1` | Resource Access | [DD-2.1 — Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md) | Complete |
+| `DD-2.2` | Process Execution | [DD-2.2 — Process Execution](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md) | Complete |
+| `DD-2.3` | Repository Capability | [DD-2.3 — Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) | Complete |
+| `DD-2.4` | Source Intelligence | [DD-2.4 — Source Intelligence](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md) | Complete |
+| `DD-2.5` | Source Transformation | [DD-2.5 — Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md) | Complete |
+| `DD-2.6` | Resource Registry and Template | [DD-2.6 — Resource Registry and Template](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md) | Complete |
+| `DD-2.7` | AI Capability | [DD-2.7 — AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) | Complete |
+| `DD-2.8` | Quality Capability | [DD-2.8 — Quality Capability](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md) | Complete |
+| `DD-2.9` | Documentation Capability | [DD-2.9 — Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md) | Complete |
+| `DD-2.10` | Nuxt Capability | [DD-2.10 — Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) | Complete |
 
 These names describe responsibility boundaries, not required classes, services, packages, or processes.
 
@@ -150,7 +150,7 @@ The third design family defines how approved high-coupling domain use cases coor
 
 | ID | Canonical subject | Canonical target path | Status |
 |---|---|---|---|
-| `DD-3.1` | App Domain | `docs/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md` | Complete |
+| `DD-3.1` | App Domain | [DD-3.1 — App Domain](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md) | Complete |
 | `DD-3.2` | Git Domain | `docs/dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md` | Planned — next domain design |
 | `DD-3.3` | Nuxt Domain | `docs/dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md` | Planned |
 | `DD-3.4` | Docs Domain | `docs/dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md` | Planned |

@@ -4,7 +4,7 @@
 
 This document defines the project-management authoring controls, scope boundaries, presentation structure, and drafting conventions for AppManager domain Detailed Design Specifications.
 
-It applies principally to the Version 1 domain-design families identified by `docs/project_management/detailed-design-decomposition-plan-v01.md`:
+It applies principally to the Version 1 domain-design families identified by [Detailed Design Decomposition Plan and Canonical Register](detailed-design-decomposition-plan-v01.md):
 
 - DD-3 — High-Coupling Domains;
 - DD-4 — Policy and Resource Domains.
@@ -30,14 +30,14 @@ The governing principle is:
 
 This document operates under the authority of:
 
-1. `docs/project-documentation-guide-v01.md`;
-2. `docs/appmanager-design-specification-v01.md`;
+1. [Project Documentation Guide](../project-documentation-guide-v01.md);
+2. [AppManager Design Specification](../appmanager-design-specification-v01.md);
 3. the applicable Version 1 Functional Specifications under `docs/functional/`;
 4. accepted ADRs;
-5. the normative DD-1 Application Core specifications under `docs/detailed_design/`;
-6. the normative DD-2 Shared Capability specifications under `docs/detailed_design/`;
-7. `docs/project_management/detailed-design-decomposition-plan-v01.md`;
-8. `docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md`.
+5. the normative DD-1 Application Core specifications under [docs/dd_1_application_core/](../dd_1_application_core/);
+6. the normative DD-2 Shared Capability specifications under [docs/dd_2_shared_capabilities/](../dd_2_shared_capabilities/);
+7. [Detailed Design Decomposition Plan and Canonical Register](detailed-design-decomposition-plan-v01.md);
+8. [docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md](dd2-final-horizontal-reconciliation-conformance-closeout-v01.md).
 
 Where this guide conflicts with a higher-authority normative specification, the higher-authority document governs.
 
@@ -54,10 +54,10 @@ The approved decomposition separates domain Detailed Design into two families.
 DD-3 comprises:
 
 ```text
-docs/detailed_design/app-domain-detailed-design-v01.md
-docs/detailed_design/git-domain-detailed-design-v01.md
-docs/detailed_design/nuxt-domain-detailed-design-v01.md
-docs/detailed_design/docs-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md
 ```
 
 These domains coordinate the largest number of DD-1 and DD-2 contracts and therefore act as the first domain-level validation of the established architecture.
@@ -67,10 +67,10 @@ These domains coordinate the largest number of DD-1 and DD-2 contracts and there
 DD-4 comprises:
 
 ```text
-docs/detailed_design/quality-domain-detailed-design-v01.md
-docs/detailed_design/settings-domain-detailed-design-v01.md
-docs/detailed_design/ai-domain-detailed-design-v01.md
-docs/detailed_design/utils-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md
 ```
 
 These documents remain subject to the same authoring rules defined here.

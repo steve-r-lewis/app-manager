@@ -1,10 +1,14 @@
 # AppManager Application Outcome and Diagnostic Ownership Clarification
 
+> **Document type:** Detailed Design clarification
+>
+> **Clarifies:** DD-1.1, DD-1.2
+
 > **Status:** Version 1 Detailed Design clarification
 >
-> **Clarifies:** `application-invocation-detailed-design-v01.md` and `execution-outcomes-detailed-design-v01.md`
+> **Clarifies:** [DD-1.1 — Application Invocation](../dd-1-1-application-invocation-detailed-design-v01.md) and [DD-1.2 — Execution Outcomes](../dd-1-2-execution-outcomes-detailed-design-v01.md)
 >
-> **Reconciliation source:** `docs/project_management/dd2-independent-review-reconciliation-v01.md`, R-01 and R-02
+> **Reconciliation source:** [docs/project_management/dd2-independent-review-reconciliation-v01.md](../../project_management/dd2-independent-review-reconciliation-v01.md), R-01 and R-02
 >
 > **Normative effect:** This clarification resolves ownership ambiguity between existing DD-1 contracts. It does not introduce a new outcome model or a second diagnostic taxonomy.
 
@@ -20,7 +24,7 @@ The governing rule is:
 
 ## 2. Canonical Outcome Ownership
 
-`execution-outcomes-detailed-design-v01.md` is the canonical Detailed Design owner of the shared AppManager outcome model.
+[DD-1.2 — Execution Outcomes](../dd-1-2-execution-outcomes-detailed-design-v01.md) is the canonical Detailed Design owner of the shared AppManager outcome model.
 
 Its outcome contract owns the common meanings of:
 
@@ -66,7 +70,7 @@ Invocation-specific characteristics such as whether execution was previewed or r
 
 ## 4. Canonical Diagnostic Ownership
 
-The diagnostic model and broad application taxonomy in `execution-outcomes-detailed-design-v01.md` are the canonical DD-1 diagnostic semantics.
+The diagnostic model and broad application taxonomy in [DD-1.2 — Execution Outcomes](../dd-1-2-execution-outcomes-detailed-design-v01.md) are the canonical DD-1 diagnostic semantics.
 
 The category list in DD-1.1 §21.2 shall therefore be interpreted as an invocation-relevant subset/view of the DD-1.2 taxonomy, not as a separate shared taxonomy.
 

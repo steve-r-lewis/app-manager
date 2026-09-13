@@ -1,14 +1,18 @@
-# AppManager Application Engine Detailed Design
+# DD-1.5 — AppManager Application Engine Detailed Design
+
+> **Detailed Design ID:** DD-1.5
+>
+> **Design family:** DD-1 — Application Core
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document defines the permanent internal responsibility and authority model by which AppManager dispatches and coordinates application use cases while preserving one coherent source of application semantics.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, Version 1 Functional Specifications, `docs/decisions/adr-0001-primary-application-runtime.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), Version 1 Functional Specifications, [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Designs:** `application-invocation-detailed-design-v01.md`, `execution-outcomes-detailed-design-v01.md`, `managed-project-detailed-design-v01.md`, `configuration-resolution-detailed-design-v01.md`, `application-core-bootstrap-resolution-clarification-v01.md`
+> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
 >
-> **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
+> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
 
 ## 1. Purpose
 
@@ -125,7 +129,7 @@ AppManager Execution Outcome
 interaction-specific projection
 ```
 
-Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by `application-core-bootstrap-resolution-clarification-v01.md`. The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
+Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md). The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
 
 ### 4.1 Authority direction
 
@@ -256,7 +260,7 @@ preview request != applied effects
 
 ### DD-ENG-019 — Managed-project dependency
 
-When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by `application-core-bootstrap-resolution-clarification-v01.md` may contribute before managed-project identity exists.
+When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) may contribute before managed-project identity exists.
 
 ### DD-ENG-020 — Managed-scope dependency
 

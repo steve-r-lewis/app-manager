@@ -4,11 +4,11 @@
 >
 > **Functional authority:** This document defines the required observable behaviour by which AppManager inspects existing source, derives bounded transformation intent, controls and applies source mutations, validates transformed source, and accepts or rejects transformation outcomes at the application level. It refines, but does not override, the root Design Specification.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md)
 >
-> **Related Functional authorities:** `docs/functional/application-invocation-functional-specification-v01.md`, `docs/functional/managed-project-functional-specification-v01.md`, `docs/functional/configuration-functional-specification-v01.md`
+> **Related Functional authorities:** [docs/functional/application-invocation-functional-specification-v01.md](application-invocation-functional-specification-v01.md), [docs/functional/managed-project-functional-specification-v01.md](managed-project-functional-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](configuration-functional-specification-v01.md)
 >
-> **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
+> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ## 1. Purpose
 

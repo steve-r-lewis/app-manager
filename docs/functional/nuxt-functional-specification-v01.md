@@ -4,13 +4,13 @@
 >
 > **Functional authority:** Observable application-level behaviour for Nuxt-specific project inspection, Nuxt configuration management, Nuxt-layer creation and integration, and Nuxt-specific project facts within AppManager-managed projects.
 >
-> **Governing authorities:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`
+> **Governing authorities:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md)
 >
-> **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `app-functional-specification-v01.md`, `git-functional-specification-v01.md`, `settings-functional-specification-v01.md`
+> **Related Functional Specifications:** [application-invocation-functional-specification-v01.md](application-invocation-functional-specification-v01.md), [managed-project-functional-specification-v01.md](managed-project-functional-specification-v01.md), [configuration-functional-specification-v01.md](configuration-functional-specification-v01.md), [source-transformation-functional-specification-v01.md](source-transformation-functional-specification-v01.md), [app-functional-specification-v01.md](app-functional-specification-v01.md), [git-functional-specification-v01.md](git-functional-specification-v01.md), [settings-functional-specification-v01.md](settings-functional-specification-v01.md)
 >
-> **Related Detailed Design clarification:** `docs/detailed_design/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`
+> **Related Detailed Design clarification:** [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
 >
-> **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
+> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ---
 
@@ -293,7 +293,7 @@ Nuxt-layer creation establishes a new Nuxt layer project. Version 1 assigns sing
 
 Layer-creation ownership is **orchestration ownership**. It means the `nuxt` domain owns the composed request to establish the selected Nuxt layer baseline, including which artefact classes the selected profile requires and whether the resulting layer satisfies the Nuxt-specific creation contract. It does not mean Nuxt acquires the permanent internal semantics of every artefact class participating in that scaffold.
 
-Where a scaffold artefact has an existing semantic owner, layer creation shall delegate to that owner and consume the result as subordinate evidence. Rendering and persistence likewise remain with their owning capabilities. The canonical detailed delegation model is defined by `nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`.
+Where a scaffold artefact has an existing semantic owner, layer creation shall delegate to that owner and consume the result as subordinate evidence. Rendering and persistence likewise remain with their owning capabilities. The canonical detailed delegation model is defined by [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md).
 
 ### FR-NUXT-051 — Layer creation use case
 AppManager shall provide a `nuxt` use case for creating a new Nuxt layer project.

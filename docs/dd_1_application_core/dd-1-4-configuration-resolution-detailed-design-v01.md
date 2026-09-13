@@ -1,14 +1,18 @@
-# AppManager Configuration Resolution Detailed Design
+# DD-1.4 — AppManager Configuration Resolution Detailed Design
+
+> **Detailed Design ID:** DD-1.4
+>
+> **Design family:** DD-1 — Application Core
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document defines the permanent internal design by which AppManager resolves configuration candidates into effective configuration for application operations. It refines, but does not override, the root Design Specification, Functional Specifications, or accepted ADRs.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/configuration-functional-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md)
 >
-> **Related Detailed Design authorities:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/managed-project-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/application-core-bootstrap-resolution-clarification-v01.md`
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
 >
-> **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
+> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
 
 ## 1. Purpose
 
@@ -26,7 +30,7 @@ A third governing rule is:
 
 > **A value becoming available does not make it effective; source applicability, candidate validity, precedence, fallback policy, sensitivity, and operation context must all be resolved under AppManager semantics.**
 
-Where managed-project identity and configuration applicability depend on one another, this design shall be read with `application-core-bootstrap-resolution-clarification-v01.md`, which defines the staged bootstrap-versus-project-aware resolution contract without changing DD-1.4 ownership of configuration semantics.
+Where managed-project identity and configuration applicability depend on one another, this design shall be read with [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md), which defines the staged bootstrap-versus-project-aware resolution contract without changing DD-1.4 ownership of configuration semantics.
 
 ## 2. Scope
 
@@ -281,7 +285,7 @@ A project fact, selected file, repository identity, host selection, detected fra
 
 ### 8.3 Bootstrap resolution dependency
 
-Before authoritative managed-project identity exists, only concerns and sources whose applicability and effective value do not depend on that unresolved identity, project topology or managed scope may participate. Those concerns form the bounded bootstrap subset defined by `application-core-bootstrap-resolution-clarification-v01.md`.
+Before authoritative managed-project identity exists, only concerns and sources whose applicability and effective value do not depend on that unresolved identity, project topology or managed scope may participate. Those concerns form the bounded bootstrap subset defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md).
 
 Bootstrap resolution uses the same concern catalogue, candidate validation, precedence, fallback, sensitivity and provenance semantics as later resolution. It is not a second configuration system.
 
@@ -1106,7 +1110,7 @@ For example, a value such as `force=true` or a target branch name cannot automat
 
 ## 32. Managed Project Integration
 
-DD-1.3 and DD-1.4 collaborate through the staged contract in `application-core-bootstrap-resolution-clarification-v01.md`; neither is globally upstream of the other for every stage.
+DD-1.3 and DD-1.4 collaborate through the staged contract in [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md); neither is globally upstream of the other for every stage.
 
 ### 32.1 Bootstrap contribution to DD-1.3
 
@@ -1339,7 +1343,7 @@ DD-1.4 supplies configuration-resolution evidence projected into those models.
 
 DD-1.3 owns project identity, topology, managed entities, managed scope and targetability.
 
-DD-1.4 may first provide bootstrap effective configuration as bounded project-resolution evidence, then consumes sufficient DD-1.3 context to determine project/scope-aware source applicability and effective values. The staged collaboration is governed by `application-core-bootstrap-resolution-clarification-v01.md`; neither side acquires the other's authority.
+DD-1.4 may first provide bootstrap effective configuration as bounded project-resolution evidence, then consumes sufficient DD-1.3 context to determine project/scope-aware source applicability and effective values. The staged collaboration is governed by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md); neither side acquires the other's authority.
 
 ### 41.4 DD-1.5 Application Engine
 

@@ -2,7 +2,7 @@
 
 > **Status:** Architecture Review — Revised Recommendation for Decision
 >
-> **Authority:** Non-normative project-management investigation conducted under `docs/decisions/architecture-decision-governance-v01.md`. This review provides evidence and a recommendation. It does not itself approve a technology architecture or override the AppManager Design Specification.
+> **Authority:** Non-normative project-management investigation conducted under [Architecture Decision Governance](decisions/architecture-decision-governance-v01.md). This review provides evidence and a recommendation. It does not itself approve a technology architecture or override the AppManager Design Specification.
 >
 > **Decision target:** A subsequent Architecture Decision Record should record the approved near-term development technology direction and the conditions under which the application-engine technology should be reviewed again.
 
@@ -701,10 +701,10 @@ Acceptance of such an ADR should result in only the enduring architectural conse
 
 Project sources:
 
-- `docs/project-documentation-guide-v01.md`
-- `docs/appmanager-design-specification-v01.md`
-- `docs/decisions/architecture-decision-governance-v01.md`
-- `docs/decisions/adr-template.md`
+- [Project Documentation Guide](../project-documentation-guide-v01.md)
+- [AppManager Design Specification](../appmanager-design-specification-v01.md)
+- [Architecture Decision Governance](decisions/architecture-decision-governance-v01.md)
+- [ADR Template](decisions/adr-template.md)
 
 External evidence consulted for this review:
 
