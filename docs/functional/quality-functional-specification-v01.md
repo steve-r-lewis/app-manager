@@ -11,8 +11,6 @@
 > **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `app-functional-specification-v01.md`, `git-functional-specification-v01.md`, `docs-functional-specification-v01.md`
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
->
-> **Legacy reconciliation source:** `docs/archive/design/appmanager-design-reconciliation-audit-v01.md`
 
 ## 1. Purpose
 
@@ -24,7 +22,7 @@ The governing boundary is:
 
 > **The `quality` domain owns quality intent, quality scope, quality interpretation and quality-gate outcomes. It does not own application build semantics, repository semantics, CI/CD orchestration, source transformation, or the implementation mechanics of delegated quality tools.**
 
-This specification preserves the legacy requirements to run all tests, unit tests, end-to-end tests, coverage and a test UI, and extends them consistently with the approved root Design to include linting, type checking, validation, quality gates and structured Headless outcomes.
+Version 1 supports running all tests, unit tests, end-to-end tests, coverage and a test UI, together with linting, type checking, validation, quality gates and structured Headless outcomes.
 
 ---
 
@@ -410,7 +408,7 @@ A check that cannot run because its required capability is unavailable shall be 
 Where AppManager cannot reliably determine pass or fail, the result shall be represented as indeterminate rather than successful.
 
 **FR-QUAL-100 — Diagnostics**  
-Quality outcomes shall expose diagnostically useful information while avoiding unnecessary leakage of secrets or sensitive project content.
+Quality outcomes shall expose diagnostically useful information while avoiding unnecessary leakage of protected information or sensitive project content.
 
 **FR-QUAL-101 — Provider output abstraction**  
 Callers shall not be required to parse raw stdout, stderr, prompts or provider-specific UI text to determine the AppManager quality result.
@@ -462,81 +460,47 @@ Quality checks shall not silently invoke provider autofix modes.
 **FR-QUAL-114 — Managed-scope protection**  
 A quality operation shall not execute against unmanaged external targets merely because they are reachable from the filesystem or a provider configuration.
 
-**FR-QUAL-115 — Secret protection**  
-Quality diagnostics and structured results shall avoid exposing secrets and sensitive configuration unless explicitly required and authorized by the owning use case.
+**FR-QUAL-115 — Sensitive-information protection**  
+Quality diagnostics and structured results shall avoid exposing protected configuration or sensitive project information unless explicitly required and authorized by the owning use case.
 
 **FR-QUAL-116 — Fail-safe scope ambiguity**  
 Ambiguous target or quality-gate scope shall result in disambiguation or safe failure rather than silently selecting the broadest scope.
 
 ---
 
-## 17. Legacy Reconciliation Decisions
+## 17. Traceability Summary
 
-### 17.1 Retained legacy behaviours
-
-The following reconciliation-audit requirements are retained as first-class Quality behaviours:
-
-- run all tests;
-- run unit tests;
-- run end-to-end tests;
-- run coverage;
-- run test UI.
-
-### 17.2 Later `quality.run` proposal
-
-The later technical `quality.run` proposal identified lint, test, typecheck and test-UI actions by inspecting package metadata and delegated tooling. Its user-visible intent is retained here, but package scripts, package-manager detection, `spawnChecked()`, exact commands and process APIs remain Detailed Design or Implementation concerns.
-
-### 17.3 Lint and type checking
-
-Linting and type checking are explicitly retained because the approved root Design and decomposition plan define the `quality` domain as the home for tests, coverage, linting, type checking, validation and quality gates. Their Functional identity does not depend on the specific scripts present in the current implementation.
-
-### 17.4 Quality gates
-
-Legacy command material did not fully specify a quality-gate model. The root Design and decomposition plan require one. This specification therefore defines gate semantics without inventing particular Version 1 thresholds or mandatory provider choices. Concrete gate policy may be supplied through effective configuration or later specifications.
-
-### 17.5 CI/CD
-
-Quality participates in CI/CD but does not own it. This preserves the boundary already established by the Git Functional Specification: a CI/CD workflow is cross-domain orchestration, not a reason to place build, quality, repository and deployment semantics under one domain.
-
-### 17.6 Utils validation
-
-Generic utility commands that perform narrowly scoped maintenance checks may remain in `utils` where their product identity is genuinely utility-specific. However, project-wide tests, linting, type checking, coverage and quality-gate semantics remain singularly owned by `quality` and shall not be duplicated in `utils`.
-
----
-
-## 18. Traceability Summary
-
-| Functional area | Requirements | Primary Design / legacy provenance |
+| Functional area | Requirements | Current authority |
 |---|---|---|
 | Domain boundary and authority | FR-QUAL-001–005 | Root Design §§1, 3, 6, 10; decomposition plan §5.6 |
 | Invocation | FR-QUAL-006–018 | Root Design §§4–7; FR-INV, FR-PROJ, FR-CONFIG |
-| Target and scope | FR-QUAL-019–028 | FR-PROJ; root managed-project model |
-| Tests | FR-QUAL-029–040 | Reconciliation audit §3.18 |
-| Test UI | FR-QUAL-041–045 | Reconciliation audit §3.18; legacy `quality.run` |
-| Coverage | FR-QUAL-046–053 | Reconciliation audit §3.18; decomposition plan §5.6 |
-| Linting | FR-QUAL-054–060 | Root Design quality domain; legacy `quality.run` |
-| Type checking | FR-QUAL-061–065 | Root Design quality domain; legacy `quality.run` |
-| Validation | FR-QUAL-066–070 | Root Design quality/validation responsibility |
-| Quality gates | FR-QUAL-071–080 | Root Design and decomposition plan §5.6 |
-| Composite runs | FR-QUAL-081–087 | Application Engine workflow authority |
-| CI/CD boundary | FR-QUAL-088–093 | Git Functional Specification CI/CD boundary; Root Design |
-| Results | FR-QUAL-094–103 | FR-INV; Application Engine authority |
-| Failure/concurrency | FR-QUAL-104–110 | FR-INV; managed context and delegated execution rules |
-| Safety | FR-QUAL-111–116 | Root Design safety; FR-PROJ; FR-XFORM |
+| Target and scope | FR-QUAL-019–028 | This specification §4; FR-PROJ; root managed-project model |
+| Tests | FR-QUAL-029–040 | This specification §5 |
+| Test UI | FR-QUAL-041–045 | This specification §6 |
+| Coverage | FR-QUAL-046–053 | This specification §7; decomposition plan §5.6 |
+| Linting | FR-QUAL-054–060 | This specification §8; Root Design quality domain |
+| Type checking | FR-QUAL-061–065 | This specification §9; Root Design quality domain |
+| Validation | FR-QUAL-066–070 | This specification §10; Root Design quality/validation responsibility |
+| Quality gates | FR-QUAL-071–080 | This specification §11; Root Design and decomposition plan §5.6 |
+| Composite runs | FR-QUAL-081–087 | This specification §12; Application Engine workflow authority |
+| CI/CD boundary | FR-QUAL-088–093 | This specification §13; Git Functional Specification CI/CD boundary; Root Design |
+| Results | FR-QUAL-094–103 | This specification §14; FR-INV; Application Engine authority |
+| Failure/concurrency | FR-QUAL-104–110 | This specification §15; FR-INV; managed context and delegated execution rules |
+| Safety | FR-QUAL-111–116 | This specification §16; Root Design safety; FR-PROJ; FR-XFORM |
 
 ---
 
-## 19. Downstream Specification Boundary
+## 18. Downstream Specification Boundary
 
 Detailed Design may define permanent internal contracts for quality orchestration, provider capabilities, normalized test/coverage/lint/type-check result models, gate evaluation and composite quality execution.
 
-Implementation Specifications may define concrete TypeScript modules, package scripts, Vitest or alternative test-runner commands, linter/type-check providers, process APIs, CI bindings, report parsers, timeouts, output paths and migration from current command stubs.
+Implementation Specifications may define concrete TypeScript modules, package scripts, Vitest or alternative test-runner commands, linter/type-check providers, process APIs, CI bindings, report parsers, timeouts and output paths.
 
 Neither level may redefine the Functional ownership or gate semantics established here without an approved change to the governing specification hierarchy.
 
 ---
 
-## 20. Version 1 Functional Baseline
+## 19. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `quality` domain.
 
