@@ -416,7 +416,7 @@ Where multiple layer repositories are initialised in one invocation, AppManager 
 
 ### 14.1 Purpose
 
-Remote repository deletion is an exceptional destructive capability. Legacy requirements preserve it as a candidate Version 1 Git use case, but its presence does not justify weak confirmation or guessed targets.
+Remote repository deletion is an exceptional destructive capability and, where enabled in Version 1, requires stronger safety controls than ordinary Git operations.
 
 ### FR-GIT-087 — Explicitly retained destructive capability
 If remote-repository deletion is enabled in Version 1, it shall exist only as a deliberately destructive Git-domain use case with stronger safety controls than ordinary repository operations.
@@ -516,64 +516,28 @@ Headless callers shall be able to determine per-repository outcomes of coordinat
 
 ---
 
-## 18. Legacy Reconciliation and Boundary Decisions
+## 18. Traceability Summary
 
-### 18.1 Preserved legacy behaviour
-
-This specification preserves the behavioural substance of legacy requirements for:
-
-- showing Git configuration;
-- repository initialisation;
-- commit and richer commit-management behaviour;
-- adding submodules or equivalent managed repository relationships;
-- initialising layer repositories;
-- deleting remote repositories subject to explicit safety review;
-- pushing a selected repository/remote;
-- pushing all relevant repositories;
-- synchronising one repository;
-- synchronising the managed project;
-- scoped repository synchronisation.
-
-### 18.2 Consolidated command families
-
-Legacy duplicate or overlapping command names do not establish separate functional authorities. `pushCommand`/`pushToRemote`, `syncCommand`/`syncRepo`/`syncReposAll`, and `commitCommand`/`manageCommits` are treated as historical implementation decompositions of coherent push, synchronisation, and commit use cases.
-
-### 18.3 Root/layer/all scope decision
-
-Version 1 explicitly recognises root, selected managed repository/layer, selected set, and all-managed-repositories scope where meaningful. This replaces reliance on current working directory or directory scanning as the functional definition of scope.
-
-### 18.4 Headless safety correction
-
-A legacy technical specification proposed prompting for a missing organisation during an otherwise Headless remote deletion. That behaviour is not propagated: unresolved destructive target identity in Headless mode shall fail safely under `FR-GIT-090` and `FR-GIT-113`.
-
-### 18.5 CI/CD classification
-
-Git owns repository operations used within CI/CD, not the complete CI/CD lifecycle. This preserves the domain boundary established with the `app` Functional Specification and prevents Git from becoming a general workflow catch-all.
-
----
-
-## 19. Traceability Summary
-
-| Requirement range | Functional concern | Primary upstream authority / legacy provenance |
+| Requirement range | Functional concern | Primary current authority |
 |---|---|---|
 | `FR-GIT-001`–`014` | General Git authority, topology, scope | Root Design; Managed Project; Invocation |
-| `FR-GIT-015`–`020` | Inspection/configuration | Reconciliation Audit §3.15; legacy Git specs |
-| `FR-GIT-021`–`026` | Repository initialisation | Reconciliation Audit §3.15; app creation boundary |
-| `FR-GIT-027`–`039` | Commit and optional AI assistance | Reconciliation Audit; `commitCommand`/`manageCommits` legacy material |
-| `FR-GIT-040`–`049` | Root/selected repository push | Reconciliation Audit; legacy push specifications |
-| `FR-GIT-050`–`058` | All-managed-repositories push | Legacy `pushAll`; managed-project topology |
-| `FR-GIT-059`–`073` | Scoped synchronisation | Reconciliation Audit; scoped-sync legacy proposals/specifications |
-| `FR-GIT-074`–`081` | Managed repository relationships | Legacy submodule requirements; Managed Project |
-| `FR-GIT-082`–`086` | Layer repository initialisation | Legacy `initLayers`; Nuxt boundary |
-| `FR-GIT-087`–`095` | Remote deletion | Legacy deletion requirement; Invocation safety |
-| `FR-GIT-096`–`100` | CI/CD and automation boundary | Root Design; App Functional Specification |
-| `FR-GIT-101`–`114` | Safety, partial success, modes | Invocation; Managed Project; Configuration |
+| `FR-GIT-015`–`020` | Inspection/configuration | Repository Capability; Managed Project |
+| `FR-GIT-021`–`026` | Repository initialisation | Repository Capability; App creation boundary |
+| `FR-GIT-027`–`039` | Commit and optional AI assistance | Repository Capability; AI capability boundary; Invocation |
+| `FR-GIT-040`–`049` | Root/selected repository push | Repository Capability; Managed Project |
+| `FR-GIT-050`–`058` | All-managed-repositories push | Managed Project topology; Repository Capability |
+| `FR-GIT-059`–`073` | Scoped synchronisation | Managed Project; Repository Capability |
+| `FR-GIT-074`–`081` | Managed repository relationships | Managed Project; Repository Capability |
+| `FR-GIT-082`–`086` | Layer repository initialisation | Nuxt boundary; Repository Capability |
+| `FR-GIT-087`–`095` | Remote deletion | Invocation safety; Repository Capability/provider boundary |
+| `FR-GIT-096`–`100` | CI/CD and automation boundary | Root Design; App Functional Specification; Quality boundary |
+| `FR-GIT-101`–`114` | Safety, partial success, modes | Invocation; Managed Project; Configuration; Repository Capability |
 
 Detailed Design shall extend traceability downward to permanent repository contracts and provider boundaries without changing these functional ownership decisions.
 
 ---
 
-## 20. Conformance Summary
+## 19. Conformance Summary
 
 A Version 1 implementation conforms to this Functional Specification only if it:
 
@@ -596,7 +560,7 @@ A Version 1 implementation conforms to this Functional Specification only if it:
 
 ---
 
-## 21. Version 1 Functional Baseline
+## 20. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `git` domain.
 

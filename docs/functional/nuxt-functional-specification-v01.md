@@ -82,7 +82,7 @@ The managed root application and each managed Nuxt layer are distinct project re
 
 ### 4.3 Layer creation versus layer integration
 
-Version 1 distinguishes two operations that legacy material partially conflated:
+Version 1 distinguishes two separate operations:
 
 1. **layer creation** — establish a valid Nuxt layer project;
 2. **layer integration** — make an eligible layer participate in a managed root application's Nuxt topology.
@@ -456,8 +456,8 @@ The Nuxt domain may expose Nuxt-specific project facts that a documentation use 
 ### FR-NUXT-098 — Documentation intent belongs to docs
 When the primary user intent is to generate, extract, or update documentation for a layer or Nuxt project, functional ownership belongs to the `docs` domain rather than `nuxt`.
 
-### FR-NUXT-099 — No duplicate extract-docs authority
-A legacy `nuxt.extractDocs` command shall not be propagated as a second independent documentation implementation if the same product intent is owned by `docs`.
+### FR-NUXT-099 — Single documentation authority
+Nuxt shall not establish a second independent documentation implementation for product intent already owned by the `docs` domain.
 
 ---
 
@@ -469,8 +469,8 @@ The Nuxt domain shall not define an independent general clean/install/reset envi
 ### FR-NUXT-101 — Nuxt-specific environment facts allowed
 Nuxt may expose Nuxt-specific generated-state facts when required by another approved Nuxt use case, but removal/reinstallation lifecycle intent remains owned by `app` unless a genuinely Nuxt-specific operation is separately specified.
 
-### FR-NUXT-102 — Legacy manageEnv disposition
-Legacy `nuxt.manageEnv` behaviour concerning cache cleanup, dependency reinstall, reset, and equivalent application environment actions shall be treated as provenance for the `app` lifecycle requirements rather than as a separate Version 1 Nuxt functional authority.
+### FR-NUXT-102 — Application lifecycle ownership
+Cache cleanup, dependency reinstall, reset, and equivalent general application-environment actions are owned by the `app` lifecycle rather than by an independent Nuxt lifecycle authority.
 
 ---
 
@@ -515,77 +515,18 @@ Headless callers shall be able to determine created/modified targets, integratio
 
 ---
 
-## 20. Legacy Reconciliation and Boundary Decisions
+## 20. Traceability Summary
 
-### 20.1 Preserved legacy Nuxt behaviour
-
-This specification preserves the behavioural substance of legacy requirements for:
-
-- managing `nuxt.config`;
-- listing supported Nuxt configuration entries;
-- adding supported configuration;
-- removing supported configuration;
-- creating Nuxt layers;
-- producing standalone layer projects where retained by the later technical specifications;
-- optional local/remote repository coordination for new layers;
-- exposing Nuxt-specific project and layer facts.
-
-### 20.2 Layer creation ownership resolved
-
-The earlier decomposition plan left layer creation ownership open between `app` and `nuxt`. PR #41 resolved that ambiguity: root-application creation belongs to `app`; Nuxt-layer creation/provisioning belongs to `nuxt`. This specification makes that decision normative at the Nuxt Functional level.
-
-### 20.3 Creation and integration separated
-
-Legacy technical material combined standalone layer creation, Git repository setup, remote creation, and later host integration into one evolving command concept. Version 1 separates the functional intents:
-
-- create the layer;
-- optionally coordinate Git setup;
-- integrate the layer into a selected root application as a separate explicit Nuxt relationship operation.
-
-This prevents repository side effects from being mistaken for Nuxt integration and allows a valid standalone layer to exist independently.
-
-### 20.4 `nuxt.manageEnv` reclassified
-
-Legacy `nuxt.manageEnv` cleanup/reinstall/reset behaviour is not retained as an independent Nuxt Functional authority. The current `app` Functional Specification already owns clean, reset/empty, initialise, and reinitialise semantics. Shared lower-level mechanics may still exist, but functional ownership remains `app`.
-
-### 20.5 `nuxt.extractDocs` reclassified
-
-Legacy `nuxt.extractDocs` is not retained as a second documentation authority. Nuxt may expose facts needed by documentation, but documentation generation/extraction belongs to the `docs` domain.
-
-### 20.6 Generic `nuxt.addFile` not propagated
-
-The later technical proposal for a generic `nuxt.addFile` command, including examples such as provider configuration files, is not promoted into Nuxt Functional authority. A file-generation use case must be classified by its actual product intent. Nuxt owns only defined Nuxt-specific artefacts/configuration; generic or provider-specific project files require a clearer domain/resource owner.
-
-### 20.7 Implementation details intentionally demoted
-
-The following legacy details remain below Functional level:
-
-- exact template function names;
-- exact generated filenames where not part of observable product identity;
-- package-manager detection rules;
-- concrete GitHub-service methods;
-- exact Git commit text;
-- parser/AST/strategy classes;
-- direct source paths;
-- directory heuristics;
-- test fixture IDs;
-- process spawning APIs;
-- concrete remote-provider API calls.
-
----
-
-## 21. Traceability Summary
-
-| Requirement range | Functional concern | Primary upstream authority / legacy provenance |
+| Requirement range | Functional concern | Primary current authority |
 |---|---|---|
 | `FR-NUXT-001`–`012` | General Nuxt authority and boundaries | Root Design; Invocation; Managed Project |
-| `FR-NUXT-013`–`020` | Nuxt facts and inspection | Root Design; Managed Project |
-| `FR-NUXT-021`–`033` | Nuxt configuration inspection/listing | Reconciliation Audit; decomposition plan |
-| `FR-NUXT-034`–`050` | Add/remove Nuxt configuration | Reconciliation Audit; Source Transformation |
-| `FR-NUXT-051`–`070` | Nuxt layer creation | App boundary decision; legacy createLayer technical specs |
-| `FR-NUXT-071`–`088` | Layer integration/detachment | Root Design layer model; legacy createLayer evolution; Git boundary |
+| `FR-NUXT-013`–`020` | Nuxt facts and inspection | Root Design; Managed Project; Source Intelligence boundary |
+| `FR-NUXT-021`–`033` | Nuxt configuration inspection/listing | Source Intelligence; Source Transformation; Managed Project |
+| `FR-NUXT-034`–`050` | Add/remove Nuxt configuration | Source Transformation; Managed Project |
+| `FR-NUXT-051`–`070` | Nuxt layer creation | App boundary; Resource Registry and Template; Git boundary |
+| `FR-NUXT-071`–`088` | Layer integration/detachment | Root Design layer model; Source Transformation; Git boundary |
 | `FR-NUXT-089`–`092` | Layer lifecycle facts | Managed Project; Nuxt layer model |
-| `FR-NUXT-093`–`102` | Generic file/docs/environment reclassification | Legacy `addFile`, `extractDocs`, `manageEnv`; current domain ownership |
+| `FR-NUXT-093`–`102` | File/docs/environment ownership boundaries | Docs, App, Resource Registry and Template boundaries |
 | `FR-NUXT-103`–`109` | Safety/transformation | Source Transformation; Managed Project |
 | `FR-NUXT-110`–`113` | Interaction modes | Application Invocation |
 
@@ -593,7 +534,7 @@ Detailed Design shall extend traceability downward to permanent Nuxt configurati
 
 ---
 
-## 22. Conformance Summary
+## 21. Conformance Summary
 
 A Version 1 implementation conforms to this Functional Specification only if it:
 
@@ -607,8 +548,8 @@ A Version 1 implementation conforms to this Functional Specification only if it:
 8. keeps Git repository setup and relationships under `git` authority even when coordinated by layer creation;
 9. distinguishes Nuxt layer integration from Git repository linking;
 10. reports partial creation/integration truthfully when composed steps diverge;
-11. does not duplicate `app` clean/reset/reinitialise behaviour under `nuxt.manageEnv`;
-12. does not duplicate documentation-generation authority under `nuxt.extractDocs`;
+11. does not duplicate `app` clean/reset/reinitialise behaviour under `nuxt`;
+12. does not duplicate documentation-generation authority under `nuxt`;
 13. does not treat generic arbitrary file creation as inherently Nuxt-specific;
 14. fails safely on ambiguous or unsupported Nuxt source structures;
 15. preserves unrelated source during controlled Nuxt configuration changes;
@@ -617,7 +558,7 @@ A Version 1 implementation conforms to this Functional Specification only if it:
 
 ---
 
-## 23. Version 1 Functional Baseline
+## 22. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `nuxt` domain.
 
