@@ -51,18 +51,19 @@ A design that is technically separable but requires repeated prose negotiation t
 
 ### R-01 — Shared outcome contract
 
-**External finding:** Application Invocation and Execution Outcomes appear to define overlapping invocation/final outcome envelopes with non-identical field families.
+**External finding:** Application Invocation and Execution Outcomes appeared to define overlapping invocation/final outcome envelopes with non-identical field families.
 
 **Classification:** confirmed semantic-ownership ambiguity.
 
-**Decision:** DD-1.2 Execution Outcomes is the single canonical semantic owner of the shared AppManager outcome model. DD-1.1 Application Invocation owns caller-facing invocation mechanics and the projection/delivery of the accepted DD-1.2 outcome; it does not own a second semantic result envelope.
+**Decision:** DD-1.2 Execution Outcomes is the single canonical semantic owner of the shared AppManager outcome model. DD-1.1 Application Invocation owns caller-facing invocation mechanics and projection/delivery of the accepted DD-1.2 outcome; it does not own a second semantic result envelope.
 
 **Resolution evidence:**
 
 - PR #87 added `application-outcome-and-diagnostic-ownership-clarification-v01.md`;
-- the propagation correction updates DD-1.1 to an explicit **Invocation Outcome Projection Contract**;
-- the propagation correction updates DD-1.2 to identify its outcome contract as the canonical shared semantic model;
-- the dependency direction is now explicit:
+- PR #88 propagated the correction into DD-1.1 and DD-1.2;
+- DD-1.1 now defines an **Invocation Outcome Projection Contract** rather than a competing final semantic envelope;
+- DD-1.2 now explicitly owns the canonical outcome field-family model;
+- final horizontal verification after PR #88 found no remaining material DD-2 capability conflict with this ownership direction.
 
 ```text
 capability/provider evidence
@@ -72,11 +73,11 @@ capability/provider evidence
         -> caller
 ```
 
-**Current status:** **resolved subject to merge and final horizontal verification**.
+**Current status:** **resolved**.
 
 ### R-02 — Diagnostic taxonomy
 
-**External finding:** DD-1.1 and DD-1.2 use divergent shared diagnostic categories, while multiple DD-2 capabilities also enumerate local diagnostic/failure categories.
+**External finding:** DD-1.1 and DD-1.2 used divergent shared diagnostic categories, while multiple DD-2 capabilities also enumerate local diagnostic/failure categories.
 
 **Classification:** confirmed semantic-ownership ambiguity between DD-1.1 and DD-1.2; DD-2 local failure vocabularies are not independently defective where they are explicitly technical/capability evidence.
 
@@ -87,21 +88,58 @@ capability/provider evidence
 - capability/provider failure classes remain technical evidence until mapped into application-facing DD-1.2 diagnostics;
 - domain/capability refinements shall not describe themselves as alternative shared taxonomies.
 
-**DD-2 horizontal verification:** the live DD-2 family already contains the required dependency direction in material locations rather than claiming independent final diagnostic authority. Examples include Process Execution returning technical evidence compatible with DD-1.2, Source Intelligence explicitly calling its results capability evidence compatible with DD-1.2, AI explicitly classifying provider failure category as capability evidence, Quality preserving mixed evidence for DD-1.2/Application Engine interpretation, Documentation normalizing provider failure as capability evidence, and Nuxt feeding capability evidence to final DD-1.2 interpretation. Repository and Registry/Templates likewise contain explicit DD-1.2 outcome-integration relationships.
+**Resolution evidence:**
 
-The propagation change therefore centralizes the taxonomy in DD-1.2 rather than performing low-value repetitive edits across every capability document. Future capability wording that introduces a local failure vocabulary is governed by the canonical mapping rule in DD-1.2.
+- PR #87 established the canonical ownership rule;
+- PR #88 propagated it into DD-1.1 and DD-1.2;
+- the DD-2 family was horizontally rechecked after merge and material capability documents already describe local provider/failure vocabularies as capability evidence and/or feed them into DD-1.2/Application Engine interpretation;
+- no broad repetitive DD-2 rewrite was required because the canonical mapping rule now exists once in DD-1.2.
 
-**Current status:** **resolved subject to merge and final horizontal verification**.
+**Current status:** **resolved**.
 
 ### R-03 — Nuxt scaffold licence and README ownership
 
-**External finding:** Nuxt layer creation includes licence and README/introduction artefacts while Registry/Templates and Documentation boundaries describe separate ownership constraints.
+**External finding:** Nuxt layer creation includes licence and README/introduction artefacts while Registry/Templates, Documentation and Settings/application boundaries retain separate ownership constraints.
 
-**Required decision:** distinguish **use-case orchestration ownership** from **artefact semantic/content ownership** and **persistence authority**.
+**Classification:** clarification required rather than removal of those artefact classes from the Nuxt layer profile.
 
-The reconciliation shall not assume that including an artefact in a Nuxt layer profile transfers licence/documentation semantics to Nuxt Capability.
+**Decision:** distinguish five separate ownership dimensions:
 
-**Current status:** open; next material reconciliation item after R-01/R-02 propagation.
+1. Nuxt layer-creation **orchestration/profile ownership**;
+2. artefact **semantic/content ownership**;
+3. declarative resource/template **resolution/rendering ownership**;
+4. project-resource **persistence/mutation ownership**;
+5. final Nuxt layer-creation **application acceptance**.
+
+The intended dependency direction is:
+
+```text
+Nuxt layer-creation use case / selected profile
+        |
+        +--> Nuxt-owned semantics where genuinely Nuxt-specific
+        +--> Documentation Capability where documentation semantics are required
+        +--> Settings/application licence semantics where licence management is required
+        +--> DD-2.6 Registry/Templates for declarative resource resolution/rendering
+        +--> DD-2.1 Resource Access for authorized new-resource creation
+        +--> DD-2.5 Source Transformation for authorized existing-resource modification
+        |
+        v
+Nuxt-specific scaffold validation
+        |
+        v
+Application Engine / Nuxt-use-case acceptance
+```
+
+**Normative clarification:** `docs/detailed_design/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md` records this ownership model.
+
+The clarification establishes in particular that:
+
+- a README/introduction requirement may contribute to Nuxt profile completeness without creating a second Nuxt documentation subsystem;
+- deterministic declarative README rendering may be supplied by DD-2.6, while documentation-specific modeling/generation remains DD-2.9-owned;
+- licence material may be required by a Nuxt profile without transferring Settings/application licence-management semantics or DD-2.6 licence-resource semantics to Nuxt;
+- content production never creates persistence authority; new resources remain DD-2.1 effects and existing-resource modification remains DD-2.5 where applicable.
+
+**Current status:** **clarified subject to merge and propagation into the primary Nuxt Functional/DD-2.10 specifications**.
 
 ### R-04 — Bootstrap configuration / managed-project sequence
 
@@ -225,7 +263,19 @@ The R-01/R-02 propagation is the first deliberate application of the three-layer
 
 This is the preferred pattern for later boilerplate consolidation.
 
-### 4.5 Target outcome
+### 4.5 R-03 modularity example
+
+R-03 applies the same rule across composed artefacts:
+
+- Documentation Capability retains documentation semantics rather than having those semantics copied into Nuxt;
+- Settings/application licence contracts and DD-2.6 retain licence semantics rather than having licence management copied into Nuxt;
+- DD-2.6 retains declarative resource/template rendering semantics;
+- DD-2.1/DD-2.5 retain persistence/mutation mechanics;
+- DD-2.10 should retain only the Nuxt-specific profile/orchestration delta and concise bindings to those owners.
+
+This separates reasons to change: documentation changes do not require redesigning Nuxt semantics, licence-resource policy changes do not require changing the Nuxt provider contract, and filesystem/transformation mechanics remain independently replaceable.
+
+### 4.6 Target outcome
 
 The target is a corpus in which:
 
@@ -282,6 +332,6 @@ Current project-management gate state:
 
 > **DD-2 RECONCILIATION ACTIVE — DD-3 PAUSED**
 
-R-01 and R-02 are now in **resolved subject to merge/final-verification** state. R-03 through R-08 remain the active reconciliation sequence.
+R-01 and R-02 are resolved. R-03 is clarified subject to merge and primary-specification propagation. R-04 through R-08 remain active.
 
 The gate may return to PASS only when all material R-01 through R-08 findings are classified, confirmed defects/clarifications are resolved, and the final cross-document audit explicitly records the resulting state.
