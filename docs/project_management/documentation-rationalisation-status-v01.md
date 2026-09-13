@@ -1,441 +1,199 @@
 # AppManager Documentation Rationalisation Status
 
-> **Status:** Active
+> **Status:** Active project-management status record
 >
-> This document records the current project-management state of the AppManager documentation rationalisation work. It is not a specification authority and must not redefine the Project Documentation Guide, Design Specification, Functional Specifications, Detailed Design Specifications, or Implementation Specifications.
+> **Normative effect:** None. This document records repository/documentation state and must not redefine the Project Documentation Guide, Design Specification, Functional Specifications, Detailed Design Specifications or Implementation Specifications.
+>
+> **Current baseline for this revision:** `master` at `497400e816e2a0990554b2bcf1e90b333c21ddc9`, the merge commit for PR #97.
+
+---
 
 ## 1. Purpose
 
-This document provides a durable repository-based handoff point for ongoing documentation rationalisation work.
+This document provides a durable repository-based status point for AppManager documentation rationalisation and specification development.
 
-It exists to reduce dependence on individual AI or human conversation history by recording:
+It exists to reduce dependence on conversation history by recording:
 
-- the current authoritative documentation structure;
-- completed rationalisation work;
-- archived source material;
-- active migration and reconciliation work;
-- open documentation changes and Pull Requests;
-- unresolved defects and decisions;
-- the recommended next sequence of work.
+- the current documentation authority hierarchy;
+- material rationalisation milestones already completed;
+- the current Detailed Design phase and reconciliation state;
+- historical source-material disposition;
+- current continuation rules.
 
-This document belongs to the project-management documentation category because it records planning, coordination, migration status, rationalisation progress, handoff context, and the sequencing of work. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy and must not establish product requirements or design authority.
+This is a project-management document. It does not participate in the normative specification hierarchy.
 
 ---
 
-## 2. Governing Documentation
+## 2. Current Documentation Authority
 
-The current documentation authority hierarchy is:
+The active authority hierarchy is:
 
 ```text
-project-documentation-guide-v01.md
-          |
-          v
-appmanager-design-specification-v01.md
-          |
-          v
-Functional Specifications
-          |
-          v
-Detailed Design Specifications
-          |
-          v
-Implementation Specifications
+Project Documentation Guide
+        -> Design Specification
+        -> Functional Specifications
+        -> Detailed Design Specifications
+        -> Implementation Specifications
 ```
 
-The governing documents are:
+Primary governing documents include:
 
-- `docs/project-documentation-guide-v01.md`
-  - highest documentation authority within `docs/`;
-  - governs naming, specification levels, traceability, lifecycle, archiving, retirement, and AI-assisted documentation practices.
+- `docs/project-documentation-guide-v01.md`;
+- `docs/appmanager-design-specification-v01.md`;
+- the active Functional Specifications beneath `docs/functional/`;
+- the active Detailed Design Specifications beneath `docs/detailed_design/`.
 
-- `docs/appmanager-design-specification-v01.md`
-  - current canonical Design Specification;
-  - defines the intended AppManager system beneath the Project Documentation Guide.
-
-Lower-level documents must refine these authorities without silently redefining them.
-
-Project-management documents may report progress against this hierarchy, but they do not participate in it as normative specification authorities.
+Project-management records may describe progress and verification state but are not design authority.
 
 ---
 
-## 3. Canonical Naming Rules
+## 3. Historical Rationalisation Context
 
-The canonical application name is:
+The documentation programme began by reconciling older design/specification material into the current four-level hierarchy.
 
-```text
-AppManager
-```
+Historical milestones include:
 
-Project-controlled naming currently follows these rules:
+- establishment of `docs/project-documentation-guide-v01.md`;
+- establishment of `docs/appmanager-design-specification-v01.md` as the canonical root Design Specification;
+- replacement of the former five-layer architectural description with explicit subsystem/capability responsibilities;
+- migration of functional requirements into dedicated Functional Specifications;
+- decomposition of Detailed Design into Application Core and Shared Capability workstreams;
+- adoption of the AI branch/PR workflow that prohibits direct AI edits to `master`.
 
-- directories use lowercase letters, numbers, and underscores;
-- filenames use lowercase letters, numbers, and hyphens;
-- project-controlled identifiers normally use lowercase underscore-delimited names unless an external format imposes another convention;
-- retired documentation uses `-retired` immediately after the version identifier.
+Earlier project-management versions referred to legacy material under `docs/archive/`. That tree has since been removed from the live repository after its required information was reconciled or otherwise dispositioned. It is therefore historical provenance, not current required reading and not a valid live path.
 
-Examples:
-
-```text
-license_engine/
-project-documentation-guide-v01.md
-document-name-v01-retired.md
-```
+Historical references to early Pull Requests or migration branches are retained only where they explain provenance; they shall not be interpreted as open work unless explicitly marked current.
 
 ---
 
-## 4. Documentation Specification Levels
+## 4. Current Detailed Design State
 
-The approved four-level specification hierarchy is:
+### 4.1 DD-1 Application Core
 
-1. Design Specification — what system is being built and what architectural intent governs it.
-2. Functional Specification — what AppManager must do.
-3. Detailed Design Specification — how approved functionality should work internally.
-4. Implementation Specification — how the approved design is currently realised in the repository.
+DD-1 Application Core is complete and has passed its conformance audit/correction cycle.
 
-Information should be stored at the highest appropriate level of abstraction and should not be duplicated across levels except where limited context or traceability requires it.
+The Application Core Detailed Designs establish the shared contracts for:
 
-Project-management records are maintained separately from these four specification levels.
+- Application Invocation;
+- Execution Outcomes;
+- Managed Project;
+- Configuration Resolution;
+- Application Engine.
 
----
+The bootstrap configuration / managed-project sequencing clarification is also complete and propagated.
 
-## 5. Completed Rationalisation Work
+### 4.2 DD-2 Shared Capabilities
 
-### 5.1 Project Documentation Guide
+DD-2.1 through DD-2.10 are complete:
 
-Created:
+- DD-2.1 Resource Access;
+- DD-2.2 Process Execution;
+- DD-2.3 Repository Capability;
+- DD-2.4 Source Intelligence;
+- DD-2.5 Source Transformation;
+- DD-2.6 Resource Registry and Template;
+- DD-2.7 AI Capability;
+- DD-2.8 Quality Capability;
+- DD-2.9 Documentation Capability;
+- DD-2.10 Nuxt Capability.
 
-```text
-docs/project-documentation-guide-v01.md
-```
-
-The guide now governs:
-
-- documentation authority;
-- canonical AppManager naming;
-- directory, filename, and identifier conventions;
-- the four-level specification hierarchy;
-- bidirectional traceability;
-- interaction-mode terminology;
-- architectural terminology;
-- document structure, naming, and versioning;
-- conflict resolution;
-- archive and retirement policy;
-- AI-assisted documentation and development;
-- design versus implementation separation;
-- documentation quality criteria.
-
-The guide was later extended to distinguish Active, Archived, and Retired documentation states and to define a formal retirement procedure.
-
-The guide also now defines the normative AI GitHub branch and Pull Request workflow following the merge of Pull Request #6.
-
-### 5.2 Root Design Specification
-
-Created:
-
-```text
-docs/appmanager-design-specification-v01.md
-```
-
-This document supersedes the previous system-level design overview as the current canonical Design Specification.
-
-It establishes the current system-level design across fifteen principal sections covering purpose, scope, system vision, terminology, interaction modes, command model, architecture, code intelligence, configuration, managed projects, functional domains, workflows, invariants, extensibility, hierarchy, traceability, and glossary material.
-
-### 5.3 Architecture Terminology Rationalisation
-
-The previous `five-layer architecture` description has been retired as a complete architectural model.
-
-The responsibilities previously associated with services, scanners, strategies, templates, and orchestrators remain useful, but they are now treated as architectural subsystems, component families, processing stages, domain engines, or related architectural concerns rather than as five equivalent layers.
-
-### 5.4 Reconciliation Audit
-
-Created:
-
-```text
-docs/archive/design/appmanager-design-reconciliation-audit-v01.md
-```
-
-The audit reconciles meaningful information from three major legacy sources and classifies content as appropriate for:
-
-- Design;
-- Functional Specification;
-- Detailed Design Specification;
-- Implementation Specification;
-- proposal status;
-- deliberate obsolescence.
-
-The audit is a disposition record and does not itself complete migration where information still needs to be materialised in the target specification level.
+A vertical conformance audit was followed by an independent horizontal reconciliation because cross-document ownership and dependency questions remained.
 
 ---
 
-## 6. Archived Documentation
+## 5. DD-2 Independent Review Reconciliation
 
-The following legacy design documents have been moved out of the active documentation tree and placed beneath:
+The durable reconciliation control record is:
 
-```text
-docs/archive/design/
-```
+`docs/project_management/dd2-independent-review-reconciliation-v01.md`
 
-Archived source documents include:
+The reconciliation findings are:
 
-```text
-app-manager-design-specification-overview-v01.md
-20260822-1843-app-manager-comprehensive-specification-v02.md
-20260822-2051-implementation-roadmap-v01.md
-```
-
-Their current archive state has the following meaning:
-
-- they are no longer authoritative;
-- they remain available for reconciliation, provenance, and historical reference;
-- archiving does not automatically mean retirement;
-- a document must not receive the `-retired` suffix until all information intended for preservation has actually been transferred, explicitly retained elsewhere, or deliberately classified obsolete.
-
-The former design overview should be understood as the superseded canonical Design Specification rather than merely as an incidental legacy document.
+- **R-01 Shared outcome contract — resolved.** DD-1.2 owns the canonical AppManager outcome model; DD-1.1 owns invocation projection/delivery.
+- **R-02 Diagnostic taxonomy — resolved.** DD-1.2 owns the shared application diagnostic taxonomy; capability vocabularies remain specialist evidence until mapped.
+- **R-03 Nuxt scaffold licence/README ownership — resolved.** Nuxt orchestration/profile ownership is separated from artefact semantics, template rendering and persistence/mutation ownership.
+- **R-04 Bootstrap configuration / managed-project sequence — resolved.** The staged bootstrap/project-aware configuration dependency is explicit across DD-1.3, DD-1.4 and DD-1.5.
+- **R-05 Structural fact model — resolved, not sustained.** Source Intelligence, Nuxt and Documentation fact models are semantically distinct projections/compositions; no generic `StructuralFact` framework is justified.
+- **R-06 Repository / Source Intelligence relationship — resolved.** They are sibling capabilities with distinct semantic ownership and no mandatory direct dependency.
+- **R-07 App / Settings environment-file ownership — resolved.** App owns application-initialisation intent and acceptance; Settings owns persisted environment-definition CRUD semantics. The normative seam is recorded in `docs/functional/app-settings-environment-definition-ownership-clarification-v01.md`.
+- **R-08 stale references/project-management records — addressed by the current cleanup.** Alleged stale future/forthcoming references in the cited live normative DD material were not sustained; stale project-management state and removed-archive references were confirmed and corrected.
 
 ---
 
-## 7. Reconciliation Status by Legacy Source
+## 6. Archive and Legacy Material State
 
-### 7.1 Previous Design Specification Overview
+The live repository no longer contains `docs/archive/`.
 
-System-level intent has been transferred into the current root Design Specification.
+Consequences:
 
-The reconciliation audit has classified remaining lower-level material for Functional, Detailed Design, or Implementation treatment.
+- no active workflow shall require reading a file beneath `docs/archive/`;
+- project-management records shall not describe archive files as currently available sources;
+- historical archive paths may be mentioned only when clearly identified as historical provenance;
+- active architecture and requirements must be derivable from the live normative documentation tree.
 
-Retirement should occur only when all information intended for preservation has reached its appropriate destination or has otherwise been explicitly dispositioned under the Project Documentation Guide.
-
-### 7.2 Comprehensive Specification
-
-This document contains substantial Functional, Detailed Design, Implementation, and proposal material.
-
-It is archived but should not yet be considered fully retired.
-
-Important material still to be materialised includes command behaviour, service contracts, scanner and strategy design, configuration behaviour, Git behaviour, template behaviour, AI behaviour, and implementation observations.
-
-### 7.3 Implementation Roadmap
-
-This document contains implementation-planning information, Detailed Design material, migration requirements, configuration and repository-registry work, implementation status, and proposals.
-
-It is archived but should not yet be considered fully retired.
+The dedicated archive-absence audit/remediation records remain historical evidence that this independence requirement was checked. Their references to `docs/archive/` describe the audit condition and are not live-path instructions.
 
 ---
 
-## 8. Functional Specification Migration Backlog
+## 7. Known Historical Defects and Closed Items
 
-The reconciliation audit identifies the following principal Functional Specification areas that still require consolidation or creation:
+Earlier versions of this status record listed an unintended control character in the root Design Specification as an open defect. That item has already been corrected and is no longer current work.
 
-1. interaction and command execution;
-2. App domain;
-3. Git domain;
-4. Nuxt domain;
-5. Docs domain;
-6. Quality domain;
-7. Utils domain;
-8. AI domain;
-9. Settings domain;
-10. configuration resolution and persistence;
-11. managed project and repository behaviour;
-12. source inspection, documentation, and transformation behaviour;
-13. templates and artifact generation;
-14. licensing behaviour.
+Likewise, early references to PR #7, the branch `ai/documentation-rationalisation-status`, and the initial Functional/Detailed Design migration backlog describe completed historical work and are no longer continuation instructions.
 
-Existing command specifications should be mined, reconciled, and consolidated rather than rewritten from memory.
+Potential implementation-level observations that remain relevant should be handled through the applicable Implementation Specification or a fresh verified implementation audit, not carried forward automatically from historical rationalisation notes.
 
 ---
 
-## 9. Detailed Design Migration Backlog
+## 8. Current Gate
 
-The principal Detailed Design areas still requiring rationalisation include:
+DD-3 remains paused until the final DD-2 horizontal reconciliation/conformance closeout is recorded after the R-08 cleanup is merged.
 
-- command infrastructure and registry;
-- command contracts and metadata;
-- interaction adapters;
-- configuration and settings resolution;
-- configuration schemas and precedence;
-- Git services;
-- AI and LLM services and registries;
-- file and JSONC services;
-- process execution;
-- logging;
-- code coordination;
-- scanner architecture and token models;
-- TypeScript, CSS, HTML, and JSON scanners;
-- strategy interfaces and discovery;
-- language-specific strategies;
-- safe multi-injection behaviour;
-- Vue orchestration;
-- template engine and template catalogue;
-- License Engine;
-- repository registry;
-- AI registry;
-- `app_manager/` directory design;
-- generated state and logs;
-- command-level Detailed Design Specifications.
+R-08 itself does not introduce new architecture. It restores accuracy to the project-management records so that the final gate decision can be made from live repository state.
 
 ---
 
-## 10. Implementation Migration Backlog
+## 9. New-Session Continuation Procedure
 
-Implementation-level documentation still needs to record or rationalise:
-
-- exact source paths;
-- application entry points;
-- command registration and bootstrap;
-- implemented commands and stubs;
-- currently unwired components;
-- concrete signatures;
-- package-manager implementation;
-- Git implementation;
-- AI implementation;
-- template TODOs;
-- hard-coded author metadata;
-- hard-coded repository organisation or environment assumptions;
-- repository-registry wiring gaps;
-- error typing and swallowed errors;
-- duplicated process execution logic;
-- current Vue implementation location;
-- current scanner and strategy usage;
-- path migrations;
-- `.gitignore` migrations;
-- test-report paths;
-- settings and configuration paths;
-- source/documentation discrepancies.
-
----
-
-## 11. Proposal Register
-
-The following items remain proposals unless and until approved by the appropriate authoritative specification:
-
-- GUI interaction mode as a first-class implementation target;
-- additional scoped repository synchronisation behaviour;
-- repository synchronisation flags;
-- command auto-discovery;
-- dependency injection;
-- editor configuration generation;
-- standalone layer generation;
-- deployment templates;
-- relocation of Vue strategy/orchestration components;
-- JSX and TSX support;
-- JSX scanner and TSX strategy;
-- React orchestration.
-
-Proposal status must not be silently converted into approved requirement status by implementation work or AI-generated documentation.
-
----
-
-## 12. Known Documentation Defects
-
-### 12.1 Root Design Specification Control Character
-
-The file:
-
-```text
-docs/appmanager-design-specification-v01.md
-```
-
-contains an unintended vertical-tab/control character in Appendix 15.2 before one diagram line.
-
-This should be corrected through the normal branch and Pull Request workflow before `v01` is considered editorially complete.
-
-### 12.2 Historical Naming Inconsistencies
-
-Some existing directories and documents still use naming forms that do not conform to the current Project Documentation Guide.
-
-These should be migrated deliberately rather than silently renamed, because path changes may affect references and traceability.
-
-One known example is the existing `template-engine` directory, which conflicts with the directory convention that would require `template_engine`.
-
----
-
-## 13. AI GitHub Workflow Status
-
-The normative AI GitHub branch and Pull Request workflow is now included in:
-
-```text
-docs/project-documentation-guide-v01.md
-```
-
-The workflow requires AI systems to:
-
-- avoid direct commits to `master` or another integration branch;
-- create a dedicated session or task branch;
-- use `ai/<purpose>` as the default AI branch naming form;
-- make related changes on that branch;
-- create a Pull Request targeting the appropriate integration branch;
-- describe the purpose, affected areas, consequences, and validation performed;
-- leave merging to the user or an explicitly approved review/automation process;
-- avoid unrelated formatting churn, force-pushes, shared-history rewrites, and direct protected-branch edits unless explicitly authorised.
-
-The policy became authoritative when Pull Request #6 was merged into `master`.
-
----
-
-## 14. Current Change for This Status Document
-
-This status document is being introduced and refined on the task branch:
-
-```text
-ai/documentation-rationalisation-status
-```
-
-The intended merge target is:
-
-```text
-master
-```
-
-Pull Request #7 carries the change and must be reviewed and merged by the user or another explicitly approved process.
-
-As part of that Pull Request, this status document is located under `docs/project_management/` and the Project Documentation Guide is being updated to define project-management documentation as separate from the four-level normative specification hierarchy.
-
----
-
-## 15. Recommended Next Sequence
-
-The recommended continuation sequence is:
-
-1. review and merge or revise Pull Request #7 introducing the project-management category and this rationalisation status document;
-2. correct the control character in `docs/appmanager-design-specification-v01.md` through a dedicated branch and Pull Request;
-3. inventory and rationalise existing Functional Specifications, beginning with the existing command-domain documents;
-4. transfer Functional material from archived sources and the reconciliation audit into authoritative Functional Specifications;
-5. perform a second zero-information-loss reconciliation check for Functional material;
-6. rationalise Detailed Design documentation by subsystem and command responsibility;
-7. create or consolidate the root Implementation Specification and implementation-level supporting documents;
-8. transfer remaining implementation observations from archived sources;
-9. extract unresolved proposals into explicit proposal records where useful;
-10. perform a final cross-level traceability review;
-11. mark archived documents `-retired` only when their retirement criteria have actually been satisfied.
-
----
-
-## 16. New-Session Continuation Procedure
-
-A new AI or human-assisted working session should begin by reading, in order:
+A new session working on the current DD programme should begin by reading, in order:
 
 ```text
 docs/project-documentation-guide-v01.md
 docs/appmanager-design-specification-v01.md
-docs/archive/design/appmanager-design-reconciliation-audit-v01.md
-docs/project_management/documentation-rationalisation-status-v01.md
+docs/project_management/detailed-design-decomposition-plan-v01.md
+docs/project_management/dd2-independent-review-reconciliation-v01.md
+docs/project_management/dd2-reconciliation-handover-v01.md
 ```
 
-The session should then inspect any open Pull Requests relevant to the requested work before making repository changes.
+Then verify the current `master` head and relevant Pull Request state before making changes.
 
-The repository documentation should be treated as the durable source of project continuity. Conversation history may provide useful context, but it must not silently override the current authoritative documentation or verified repository state.
+Do not rely on historical branch/PR assumptions, removed archive paths, or implementation behaviour where current normative specifications exist.
 
 ---
 
-## 17. Status Maintenance
+## 10. Repository Workflow
 
-This document should be updated when a material change occurs in the documentation rationalisation state, including when:
+AI-assisted repository changes shall follow the Project Documentation Guide:
 
-- an authoritative document is added or superseded;
-- an archived document becomes retired;
-- a major migration backlog area is completed;
-- a proposal is approved, rejected, or moved into another specification level;
-- a known documentation defect is resolved;
-- a significant documentation rationalisation Pull Request is opened or merged;
-- the recommended next sequence materially changes.
+1. verify current repository state;
+2. create a dedicated `ai/...` task/session branch from the verified integration baseline;
+3. make only the focused changes required by the task;
+4. validate the branch diff against the verified base;
+5. open a focused Pull Request to `master` or the documented integration branch;
+6. leave merge authority to the user or an explicitly authorised process.
 
-Routine wording changes and individual low-level edits do not require an update unless they affect project continuation or migration status.
+Direct AI edits to `master` are prohibited.
+
+---
+
+## 11. Status Maintenance
+
+Update this record only when a material documentation-programme state changes, including:
+
+- completion or reopening of a specification phase;
+- a material reconciliation or conformance decision;
+- a change to the active authority/read-order model;
+- retirement/removal of a documentation source on which continuation instructions previously depended;
+- a significant change to the current gate or next phase.
+
+Routine wording edits do not require a status update.
