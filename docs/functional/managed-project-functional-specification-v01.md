@@ -402,13 +402,13 @@ This specification owns project-context and managed-scope semantics consumed by 
 
 ### 19.2 Configuration
 
-The future `configuration-functional-specification-v01.md` owns candidate-to-effective configuration semantics and precedence.
+`configuration-functional-specification-v01.md` owns candidate-to-effective configuration semantics and precedence.
 
 Effective configuration may contribute to project-context resolution, but this document does not define general configuration precedence.
 
 ### 19.3 Source Transformation
 
-The future `source-transformation-functional-specification-v01.md` owns shared inspection, mutation, generation, transformation, validation, and application-acceptance behaviour.
+`source-transformation-functional-specification-v01.md` owns shared inspection, mutation, generation, transformation, validation, and application-acceptance behaviour.
 
 This specification determines whether a source resource belongs to the relevant managed context and scope; it does not define how source mutation is performed.
 
@@ -418,37 +418,7 @@ Domain Functional Specifications shall define domain-specific target choices and
 
 A domain specification may further constrain scope for one command but shall not weaken the cross-cutting rule that discovery does not grant mutation authority.
 
-## 20. Legacy Reconciliation
-
-The legacy documentation contains useful but mixed-abstraction material around resolvers, target selection, settings, repositories, layers, and filesystem context.
-
-The following functional substance is retained here:
-
-- incomplete or ambiguous target information must be resolved through explicit application policy;
-- explicit input, environment/context, detected project state, configuration, and interaction may act as candidate information sources;
-- resolution must be deterministic for Headless and automation use;
-- unresolved ambiguity must fail clearly rather than block or guess;
-- interactive completion is a source of candidate information, not an alternative application model;
-- target selection and operation execution are separate concerns;
-- repository or layer selection is resolution of an AppManager target, not authority to mutate it;
-- cancellation or inability to resolve a target is not a valid target value;
-- resolution policy must not be duplicated independently across commands.
-
-The following legacy material is deliberately not propagated as Functional authority:
-
-- resolver class hierarchies;
-- exact TypeScript APIs;
-- concrete `Resolution<T>` shapes;
-- specific error classes;
-- exact precedence chains belonging to configuration resolution;
-- exact directory traversal algorithms;
-- specific resolver filenames or source locations;
-- concrete Git/Nuxt detection implementations;
-- persistence mechanisms and caches.
-
-Those belong to Detailed Design or Implementation Specifications where still relevant.
-
-## 21. Traceability
+## 20. Traceability
 
 | Functional requirement range | Root Design authority | Notes |
 |---|---|---|
@@ -466,9 +436,7 @@ Those belong to Detailed Design or Implementation Specifications where still rel
 | `FR-PROJ-056`–`058` | Sections 4, 9.6, 12 | Interaction-mode equivalence and Headless behaviour |
 | `FR-PROJ-059`–`061` | Sections 9.7–9.9, 11, 12 | Safety before consequential effects |
 
-Legacy provenance is principally reconciled from `docs/archive/design/appmanager-design-reconciliation-audit-v01.md` and the historical resolver specification under `docs/archive/specification/architecture/resolvers/`.
-
-## 22. Conformance
+## 21. Conformance
 
 A Version 1 implementation conforms to this Functional Specification only if project-dependent operations:
 
