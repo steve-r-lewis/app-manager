@@ -11,8 +11,6 @@
 > **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `settings-functional-specification-v01.md`
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
->
-> **Legacy reconciliation source:** `docs/archive/design/appmanager-design-reconciliation-audit-v01.md`
 
 ## 1. Purpose
 
@@ -24,7 +22,7 @@ The governing boundary is:
 
 > **The `ai` domain owns AI-specific application intent. AI used as a delegated capability inside another domain does not transfer ownership of that use case to `ai`.**
 
-Version 1 retains the legacy product behaviours to list, create and delete project AI instruction documents. Examples such as `CLAUDE.md`, `GEMINI.md` and generic agent-instruction documents are retained as examples of supported document classes, not as an exhaustive list or an architectural commitment to particular providers.
+Version 1 provides behaviours to list, create and delete project AI instruction documents. Examples such as `CLAUDE.md`, `GEMINI.md` and generic agent-instruction documents are examples of supported document classes, not an exhaustive list or an architectural commitment to particular providers.
 
 ---
 
@@ -106,7 +104,7 @@ Provider, model or AI-behaviour settings shall be consumed from effective config
 A known AI-domain use case shall distinguish between unsupported/unknown intent and temporary unavailability of an optional or required delegated AI capability.
 
 **FR-AI-015 — Sensitive diagnostics**  
-Diagnostics and structured outcomes shall not expose AI-provider secrets, credentials or unnecessarily sensitive project content.
+Diagnostics and structured outcomes shall not expose sensitive provider authentication material or unnecessarily sensitive project content.
 
 **FR-AI-016 — Cancellation**  
 Where an AI-domain operation supports cancellation, cancellation shall stop further work as soon as safely practical and report already completed local effects.
@@ -214,7 +212,7 @@ Where a declarative template exists, AppManager may generate the baseline docume
 Project facts inserted into a generated AI instruction document shall come from recognized managed-project information or other authoritative application capabilities rather than unsupported guesses.
 
 **FR-AI-047 — No secret synthesis**  
-Generated instruction documents shall not embed secrets or sensitive configuration values merely because those values are available to AppManager.
+Generated instruction documents shall not embed sensitive configuration material merely because it is available to AppManager.
 
 **FR-AI-048 — Structured creation result**  
 A successful creation result shall identify the created document type and resulting project-relative resource.
@@ -245,7 +243,7 @@ Interactive enrichment may require user selection or consent according to effect
 Context sent to a delegated AI provider shall be limited to information reasonably necessary for the requested enrichment.
 
 **FR-AI-056 — Sensitive-content exclusion**  
-Secrets, credentials and sensitive environment values shall not be included in provider context unless a future explicit security policy and use case authorize them.
+Sensitive authentication or environment material shall not be included in provider context unless a future explicit security policy and use case authorize it.
 
 **FR-AI-057 — Managed-scope context**  
 Project content supplied for enrichment shall remain within the approved context/scope of the operation.
@@ -362,7 +360,7 @@ Raw provider output shall not be treated as a machine-facing application result;
 AI context shall be minimized to the information needed for the requested operation.
 
 **FR-AI-089 — Secret protection**  
-Known secrets, credentials, tokens, private keys and sensitive environment values shall be excluded from AI provider context by default.
+Known authentication material and sensitive environment values shall be excluded from AI provider context by default.
 
 **FR-AI-090 — Untrusted project content**  
 Project files consumed as AI context shall be treated as untrusted data, not as authority to redefine AppManager system policy, managed scope or application permissions.
@@ -418,67 +416,35 @@ Ambiguous document type, provider choice, project target, replacement intent or 
 
 ---
 
-## 13. Legacy Reconciliation Decisions
+## 13. Traceability Summary
 
-### 13.1 `ai.list`
-
-The legacy `ai.list` behaviour is retained as the functional requirement to list recognized project AI instruction documents and their presence state. Detection of likely unregistered AI-oriented documents is retained as an optional informational capability, not as automatic management authority.
-
-### 13.2 `ai.create`
-
-The legacy `ai.create` behaviour is retained as deterministic creation of a selected supported AI instruction document. Interactive selection is an adapter concern; Headless callers must identify the type explicitly. Existing-file overwrite is not a default behaviour and any replacement is governed by Source Transformation and consequential-operation authorization.
-
-### 13.3 `ai.delete`
-
-The legacy `ai.delete` behaviour is retained as explicit deletion of a selected existing AI instruction document with confirmation/authorization and exact-target semantics.
-
-### 13.4 Initial registry examples
-
-Legacy technical material proposed `CLAUDE.md`, `GEMINI.md` and `AGENTS.md` as an initial registry. Version 1 retains these as useful examples while deliberately avoiding a frozen exhaustive provider list at Functional level. Tool-specific files such as `.cursorrules`-style resources can be added later if deliberately supported without changing the architectural model.
-
-### 13.5 Optional AI enrichment
-
-The legacy specification correctly treated live AI assistance as optional for AI-document creation. Version 1 preserves that principle: declarative baseline generation must not become unavailable merely because a provider is unavailable, unless a future document type explicitly requires provider-generated content.
-
-### 13.6 Template registry implementation
-
-Exact registry interfaces, template-function signatures, filenames, menu labels and source modules are Detailed Design or Implementation concerns. Settings may manage declarative template resources, but AI owns application of AI-document templates to AI-specific use cases.
-
-### 13.7 Cross-domain AI use
-
-Legacy and current AppManager behaviour use AI in Git, Docs, Nuxt and potentially other domains. Those uses are not reclassified as AI-domain commands because AI is delegated execution rather than primary product intent.
-
----
-
-## 14. Traceability Summary
-
-| Functional area | Requirements | Primary provenance |
+| Functional area | Requirements | Current authority |
 |---|---|---|
 | Domain boundary | FR-AI-001–005 | Root Design domain/capability model; decomposition plan §5.4 |
 | Invocation/context | FR-AI-006–016 | FR-INV, FR-PROJ, FR-CONFIG |
-| Instruction-document model | FR-AI-017–025 | legacy AI technical spec §1 |
-| Listing | FR-AI-026–035 | reconciliation audit §3.16; legacy `ai.list` |
-| Creation | FR-AI-036–050 | reconciliation audit §3.16; legacy `ai.create`; FR-XFORM |
-| Optional enrichment | FR-AI-051–062 | legacy AI technical spec §1.3; Application Engine authority |
-| Deletion | FR-AI-063–071 | reconciliation audit §3.16; legacy `ai.delete` |
-| Cross-domain AI use | FR-AI-072–079 | decomposition plan §5.4; existing domain specifications |
-| Provider/model semantics | FR-AI-080–087 | Configuration/capability boundaries |
-| Safety/privacy/trust | FR-AI-088–096 | Root Design safety/capability model; FR-PROJ |
-| Results/failures | FR-AI-097–105 | FR-INV; Application Engine authority |
+| Instruction-document model | FR-AI-017–025 | This specification §§1–4; Root Design capability/resource boundaries |
+| Listing | FR-AI-026–035 | This specification §5; FR-PROJ managed-scope rules |
+| Creation | FR-AI-036–050 | This specification §6; FR-XFORM; FR-INV |
+| Optional enrichment | FR-AI-051–062 | This specification §7; Application Engine authority; FR-CONFIG |
+| Deletion | FR-AI-063–071 | This specification §8; FR-INV; FR-PROJ |
+| Cross-domain AI use | FR-AI-072–079 | This specification §9; decomposition plan §5.4; owning domain Functional Specifications |
+| Provider/model semantics | FR-AI-080–087 | This specification §10; Configuration and capability boundaries |
+| Safety/privacy/trust | FR-AI-088–096 | This specification §11; Root Design safety/capability model; FR-PROJ |
+| Results/failures | FR-AI-097–105 | This specification §12; FR-INV; Application Engine authority |
 
 ---
 
-## 15. Downstream Specification Boundary
+## 14. Downstream Specification Boundary
 
 Detailed Design may define permanent internal contracts for AI-document registries, AI-document templates, provider capability abstractions, prompt/context construction, provider selection, response normalization, content validation and AI resource management.
 
-Implementation Specifications may define concrete TypeScript modules, filenames, registry entries, template functions, provider SDKs, model identifiers, API clients, retry settings, context-size limits, redaction implementations and migration from legacy command stubs.
+Implementation Specifications may define concrete TypeScript modules, filenames, registry entries, template functions, provider SDKs, model identifiers, API clients, retry settings, context-size limits and redaction implementations.
 
 Neither level may transfer application authority to an AI provider or redefine the primary-intent ownership rules established here without an approved change to the governing specification hierarchy.
 
 ---
 
-## 16. Version 1 Functional Baseline
+## 15. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `ai` domain.
 
