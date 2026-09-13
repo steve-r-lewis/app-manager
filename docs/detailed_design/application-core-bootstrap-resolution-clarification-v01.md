@@ -6,7 +6,9 @@
 >
 > **Corrective source:** `docs/project_management/application-core-detailed-design-conformance-audit-v01.md`, finding MC-001
 >
-> **Normative purpose:** This document closes the cross-contract sequencing ambiguity identified by MC-001. It refines the interaction between DD-1.3 and DD-1.4 without changing their responsibility ownership, and is to be read as part of the Version 1 DD-1 Application Core baseline until the clarification is folded into a later consolidated revision of those specifications.
+> **Normative purpose:** This document closes the cross-contract sequencing ambiguity identified by MC-001. It refines the interaction between DD-1.3 and DD-1.4 without changing their responsibility ownership, and is to be read as part of the Version 1 DD-1 Application Core baseline. Where older generic sequencing prose in DD-1.3, DD-1.4 or DD-1.5 can be read as requiring an incompatible order, this staged dependency contract governs until that prose is consolidated.
+>
+> **Propagation status:** The staged dependency order is now propagated into DD-1.5 Application Engine. DD-1.3 and DD-1.4 remain semantically governed by this clarification and require explicit backlink/consolidation in a later documentation pass; their existing ownership contracts remain valid.
 
 ## 1. Purpose
 
@@ -21,6 +23,10 @@ The governing rule is:
 A second rule follows:
 
 > **Bootstrap configuration may contribute project-resolution evidence, but it does not pre-authorize the project, managed scope, targetability, or consequential effects that are subsequently resolved.**
+
+A third rule makes the scope/configuration ordering explicit:
+
+> **Managed scope is finalized only after the operation-effective configuration required by that scope decision is available. Scope therefore does not precede project/scope-aware configuration as a universal prerequisite.**
 
 ## 2. Canonical Resolution Sequence
 
@@ -52,6 +58,8 @@ managed scope / policy / use-case execution
 ```
 
 This is a semantic dependency order. It does not mandate one implementation pipeline, class graph, process topology, number of resolver instances, or number of physical resolution passes.
+
+Where a use case does not require project-aware configuration, irrelevant stages may be omitted. Where a scope decision itself controls which configuration concern applies, the Engine may stage resolution and scope refinement explicitly, but shall not create an unrestricted recursive project/configuration/scope loop.
 
 ## 3. Bootstrap Configuration
 
@@ -105,6 +113,8 @@ Once sufficient managed-project context exists, DD-1.3 may consume later project
 
 If project-aware configuration materially conflicts with the resolved project identity, topology, or target assumptions, the conflict shall be surfaced through DD-1.2 diagnostics and returned to the Application Engine for explicit policy/acceptance handling.
 
+Managed-scope resolution may consume operation-effective configuration where scope or exclusion semantics depend upon it. DD-1.3 therefore owns the scope decision, while DD-1.4 owns how the configuration values feeding that decision became effective.
+
 ## 5. Configuration Resolution Integration
 
 DD-1.4 shall distinguish at least two semantic resolution stages when managed-project context is required:
@@ -116,6 +126,8 @@ The normal operation-facing Effective Configuration Snapshot is produced only af
 
 A bootstrap snapshot or bootstrap effective value is therefore not automatically the complete operation configuration snapshot.
 
+DD-1.4 remains the sole owner of candidate applicability, validation, precedence, fallback, provenance and effective-value semantics in both stages. Staging changes when enough context exists to resolve a concern; it does not create a second configuration-resolution authority.
+
 ## 6. Application Engine Coordination
 
 DD-1.5 owns coordination of the staged sequence where required by a use case.
@@ -126,8 +138,11 @@ The Engine shall ensure that:
 - configuration resolution is not asked to infer project identity independently;
 - bootstrap values are preserved with provenance;
 - project/scope-aware values are resolved against the authoritative DD-1.3 context;
-- material changes between bootstrap assumptions and later resolved context trigger appropriate validation, policy, safety, and authorization re-evaluation;
+- the operation-effective snapshot required by scope or policy decisions is available before those decisions are finalized;
+- material changes between bootstrap assumptions and later resolved context trigger appropriate validation, policy, safety, scope and authorization re-evaluation;
 - no consequential execution begins while a material bootstrap/project-resolution conflict remains unresolved.
+
+The DD-1.5 orchestration lifecycle shall therefore be interpreted as a dependency lifecycle, not as a fixed one-pass sequence in which managed scope must always precede effective configuration.
 
 ## 7. Re-resolution and Stability
 
@@ -163,6 +178,7 @@ The shared diagnostic model should be capable of distinguishing at least:
 - project identity unresolved;
 - project-dependent configuration attempted before sufficient context;
 - project-aware configuration conflicting with resolved context;
+- scope-dependent configuration unresolved before scope finalization;
 - re-resolution required;
 - unsafe or unsupported resolution cycle.
 
@@ -185,16 +201,19 @@ Project-, topology-, entity-, repository-, layer-, resource-, or scope-dependent
 Bootstrap effective configuration may contribute project-resolution evidence but shall not independently establish project identity, scope, targetability, mutation authority, or authorization.
 
 **DD-CORE-BOOT-005 — Operation snapshot follows required context**  
-An operation-facing effective-configuration snapshot shall not be accepted until the managed-project and managed-scope context required by its constituent concerns is available.
+An operation-facing effective-configuration snapshot shall not be accepted until the managed-project context required by its constituent concerns is available. Managed scope may then consume that snapshot where scope/exclusion semantics depend upon configuration.
 
 **DD-CORE-BOOT-006 — Material change requires re-evaluation**  
 Where later resolution materially changes assumptions used for project, scope, safety, authorization, provider selection, or effects, dependent decisions shall be re-evaluated before consequential execution.
 
 **DD-CORE-BOOT-007 — No uncontrolled recursive resolution**  
-Managed-project and configuration resolution shall not recurse indefinitely; material conflicts shall reach an explicit Engine-governed resolution, disambiguation, or failure state.
+Managed-project, configuration and managed-scope resolution shall not recurse indefinitely; material conflicts shall reach an explicit Engine-governed resolution, disambiguation, or failure state.
 
 **DD-CORE-BOOT-008 — Cross-mode equivalence**  
 Interactive and Headless modes shall use the same staged applicability and resolution semantics; interaction changes candidate acquisition only.
+
+**DD-CORE-BOOT-009 — Scope does not universally precede configuration**  
+Where managed-scope semantics depend upon project/scope-aware effective configuration, the required operation-effective values shall be resolved before final scope acceptance. This does not transfer scope authority from DD-1.3 to DD-1.4.
 
 ## 11. Effect on DD-1 Baseline
 
@@ -204,6 +223,8 @@ It does not alter the ownership established by DD-1.3, DD-1.4, or DD-1.5.
 
 It makes their dependency ordering explicit:
 
-> **context-independent/bootstrap configuration -> managed-project resolution -> project/scope-dependent configuration -> operation snapshot**
+> **context-independent/bootstrap configuration -> managed-project resolution -> project/scope-dependent configuration -> operation snapshot -> managed-scope/policy/use-case execution**
 
-With these rules in force, MC-001 from the Application Core Detailed Design Conformance Audit is closed and the DD-1 Application Core is suitable to serve as the governing contract baseline for DD-2 Shared Capability Detailed Design.
+DD-1.5 now carries this staged lifecycle directly. DD-1.3 and DD-1.4 remain governed by this clarification until their related-design/backlink and local wording consolidation is performed.
+
+With these rules in force, MC-001 from the Application Core Detailed Design Conformance Audit remains closed and the DD-1 Application Core is suitable to serve as the governing contract baseline for DD-2 Shared Capability Detailed Design.
