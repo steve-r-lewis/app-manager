@@ -466,7 +466,7 @@ Those belong to Detailed Design or Implementation Specifications where still rel
 | `FR-PROJ-056`–`058` | Sections 4, 9.6, 12 | Interaction-mode equivalence and Headless behaviour |
 | `FR-PROJ-059`–`061` | Sections 9.7–9.9, 11, 12 | Safety before consequential effects |
 
-Legacy provenance is principally reconciled from `docs/design/appmanager-design-reconciliation-audit-v01.md` and the historical resolver specification under `docs/specification/architecture/resolvers/`.
+Legacy provenance is principally reconciled from `docs/archive/design/appmanager-design-reconciliation-audit-v01.md` and the historical resolver specification under `docs/archive/specification/architecture/resolvers/`.
 
 ## 22. Conformance
 

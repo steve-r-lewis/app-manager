@@ -501,7 +501,7 @@ This specification primarily refines the following root Design Specification are
 - Section 12 — recognition-versus-action, bounded delegation, non-destructive operation, AI non-authority, and authoritative-versus-derived information;
 - Section 14 — Functional Specification responsibility and downward traceability.
 
-This specification also reconciles the source-inspection and transformation Functional material identified in `docs/design/appmanager-design-reconciliation-audit-v01.md` and retains useful behavioural principles from the historical scanner and strategy documentation without treating those legacy files as current architectural authority.
+This specification also reconciles the source-inspection and transformation Functional material identified in `docs/archive/design/appmanager-design-reconciliation-audit-v01.md` and retains useful behavioural principles from the historical scanner and strategy documentation without treating those legacy files as current architectural authority.
 
 ADR-0001 selects the Version 1 primary implementation technology but does not alter these technology-independent Functional requirements.
 

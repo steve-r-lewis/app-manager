@@ -12,7 +12,7 @@
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
 >
-> **Legacy reconciliation source:** `docs/design/appmanager-design-reconciliation-audit-v01.md`
+> **Legacy reconciliation source:** `docs/archive/design/appmanager-design-reconciliation-audit-v01.md`
 
 ## 1. Purpose
 
