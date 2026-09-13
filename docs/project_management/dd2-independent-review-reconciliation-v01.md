@@ -180,9 +180,58 @@ No new subsystem or implementation topology was introduced. The correction makes
 
 **External finding:** Source Intelligence, Documentation Capability and Nuxt Capability describe similar structural/domain fact records independently.
 
-**Required decision:** establish whether downstream models are true specialisations/compositions of Source Intelligence facts or intentionally distinct semantic records. If shared semantics exist, define the common base contract once and preserve domain-specific extensions explicitly.
+**Classification:** **not sustained as duplicate semantic ownership; clarification not required for correctness.**
 
-**Current status:** open; next reconciliation item.
+**Horizontal comparison:**
+
+| Model | Semantic subject | Producer authority | Evidence / interpretation class | Provenance / lifecycle | Primary consumers | Relationship to the other models |
+| --- | --- | --- | --- | --- | --- | --- |
+| DD-2.4 Source Intelligence structural facts | observed structure of a bounded source snapshot: source kind/language, regions, declarations, metadata/header structure, documentation presence and configuration structure | Source Intelligence | read-only source observation/evidence; never application intent, targetability, mutation authority or domain acceptance | explicitly snapshot-bound; source revision/digest/version evidence and provider provenance are part of the contract | Source Transformation, Documentation, Nuxt, Quality and other source-aware consumers | canonical AppManager-oriented source-structure evidence; downstream capabilities consume or interpret these facts rather than recreate provider-native parser models |
+| DD-2.9 Documentation facts/model | information selected for documentation, including source facts, Nuxt/domain facts, test facts, existing authored documentation, generated summaries/prose and documentation-specific subjects/values | Documentation Capability for documentation-model composition only; semantic authority remains with each input owner | documentation-oriented projection/composition and rendered-information model; explicitly distinguishes authoritative facts from generated prose and contextual evidence | retains input provenance, confidence/support, target association and revision/snapshot evidence where material; aggregation must preserve provenance and omission/partial evidence | Docs-domain and other approved documentation workflows/renderers | consumes Source Intelligence facts and Nuxt/domain-authoritative facts; does not redefine either source structure or Nuxt semantics |
+| DD-2.10 Nuxt facts / configuration semantic representation | Nuxt-specific identity, layer/root relationships, Nuxt composition, configuration meaning, manageability and Nuxt-specific validity | Nuxt Capability | domain interpretation derived from bounded Managed Project, Source Intelligence, Resource Access and provider evidence; still evidence until owning use-case acceptance | retains source/revision provenance and observed-vs-inferred/generated distinction where material; lifecycle follows the contributing project/configuration state rather than a generic source-fact lifecycle | Nuxt use cases, Documentation and other approved Nuxt-aware consumers | consumes source-structural evidence where useful and enriches/interprets it into Nuxt semantics; it is not a subtype of the generic source structural-fact record |
+
+**Decision:** the records are deliberately **similarly shaped but semantically distinct**, with two explicit composition/projection seams:
+
+```text
+bounded source snapshot
+        -> DD-2.4 Source Intelligence structural facts
+        -> DD-2.10 Nuxt interpretation where Nuxt meaning is required
+        -> owning use-case interpretation / acceptance
+```
+
+and:
+
+```text
+DD-2.4 source facts -----+
+DD-2.10 Nuxt facts ------+--> DD-2.9 documentation input/model composition
+other authoritative facts+        |
+existing authored docs --+        v
+AI/generated prose -------+   proposed documentation
+```
+
+The field-shape overlap (`kind`, identity/subject, provenance, confidence/support, revision/snapshot evidence, diagnostics) reflects recurring evidence metadata, not one shared semantic payload. Their meanings are contextual and not sufficiently identical to justify a new universal `StructuralFact` base contract, inheritance hierarchy or cross-capability framework.
+
+**Evidence:**
+
+- `source-intelligence-detailed-design-v01.md` §10 defines structural facts specifically as AppManager-oriented **observations derived from source**, keeps provider-native AST/CST/compiler/scanner objects below DD-2.4, and binds facts to source revision evidence;
+- `documentation-capability-detailed-design-v01.md` §§5–9 explicitly permits a normalized Source Intelligence fact set and a Nuxt/domain-authoritative fact set as separate inputs, requires their provenance to remain distinguishable, and states that source-derived documentation consumes DD-2.4 rather than recreating parsing/recognition while Nuxt facts remain Nuxt-owned;
+- `nuxt-capability-detailed-design-v01.md` §§6–8 states that Nuxt recognition consumes Managed Project, Source Intelligence and Resource Access evidence and then exposes Nuxt-specific identity/configuration/composition meaning, including manageability and equivalent/conflicting-entry semantics not owned by Source Intelligence;
+- `source-transformation-functional-specification-v01.md` `FR-XFORM-006` requires AppManager-oriented source structural facts, while `nuxt-functional-specification-v01.md` `FR-NUXT-013`–`031` separately requires Nuxt-specific facts and semantic configuration views;
+- `docs-functional-specification-v01.md` `FR-DOCS-043`, `FR-DOCS-055` and `FR-DOCS-058` distinguish source structural facts from Nuxt-owned layer/integration facts and permit Docs to consume both without acquiring their semantic authority.
+
+**Modularity/coupling assessment:**
+
+- **single owner:** satisfied — source structure is DD-2.4-owned, documentation composition is DD-2.9-owned, Nuxt semantics are DD-2.10-owned;
+- **explicit consumer:** satisfied — DD-2.9 explicitly consumes DD-2.4 and DD-2.10 facts; DD-2.10 explicitly consumes DD-2.4 evidence;
+- **authority boundary:** satisfied — all three retain evidence-versus-application-acceptance separation and none gains mutation authority merely by recognizing facts;
+- **interface visibility:** sufficient — each model identifies its subject, provenance/evidence expectations and downstream relationship without requiring a concrete TypeScript topology;
+- **replaceability:** preserved — parser/provider objects remain below DD-2.4, Nuxt-provider objects remain below DD-2.10, and documentation renderers remain below DD-2.9;
+- **coupling:** no unsafe shared internal-model coupling was found; introducing a common base contract would add coupling without resolving a demonstrated semantic contradiction;
+- **cycle safety:** dependency direction is acyclic for this concern: Source Intelligence may feed Nuxt and Documentation; Nuxt may feed Documentation; Documentation does not become a prerequisite for Source Intelligence or Nuxt recognition.
+
+**Normative-change decision:** no normative edit is justified. The live Detailed Designs already state the ownership and consumption relationships needed to disambiguate the models. Creating a generic structural-fact framework would be speculative architecture driven by naming/shape similarity rather than shared semantics.
+
+**Current status:** **resolved — not sustained**.
 
 ### R-06 — Repository / Source Intelligence relationship
 
@@ -339,39 +388,19 @@ Each challenged Detailed Design and every future DD-3 document shall be checked 
 4. **Interface visibility:** Can an implementer identify inputs, outputs, states, failure evidence and dependency direction without inferring them from prose scattered across documents?
 5. **Replaceability:** Can the provider/implementation be replaced without changing caller semantics?
 6. **Cohesion:** Are responsibilities grouped by one durable reason to change rather than historical/service naming?
-7. **Coupling:** Does one capability need knowledge of another capability's internal provider/model, or only its AppManager-oriented contract?
-8. **Cycle safety:** Are mutual dependencies staged or mediated explicitly rather than left circular?
-9. **Mutation control:** Is consequential mutation centralized behind an explicit authorised boundary?
-10. **Outcome control:** Does technical completion remain subordinate to owning-use-case interpretation?
+7. **Coupling:** Does one capability need knowledge of another capability's provider-native/internal model, or only its AppManager-oriented contract?
+8. **Dependency-cycle safety:** Do cross-capability relationships form a coherent directed dependency rather than recursive authority?
+9. **Mutation control:** Does recognition, generation, planning or provider execution remain distinct from authorization to mutate?
+10. **Outcome control:** Does application-level acceptance remain outside specialist provider completion?
 
-A PASS should require these properties to be apparent from the design, not merely reconstructable by a reviewer already familiar with the architecture.
-
----
-
-## 6. Process Changes Adopted for Reconciliation
-
-Before DD-3 resumes:
-
-- perform horizontal cross-document comparison in addition to vertical authority-chain conformance;
-- verify all external-review findings against current live documents before editing normative specifications;
-- use focused corrective PRs for confirmed normative defects;
-- keep the reconciliation record separate from normative design authority;
-- add a dependency-cycle check;
-- add a single-semantic-owner check;
-- add an ADR-trigger check;
-- add a related-document/backlink check when one normative document corrects/refines another;
-- include boilerplate/duplication review as a maintainability check, not merely editorial polish.
+These checks are architectural, not implementation-topology mandates. A document may satisfy them with stable semantic contracts without defining one class/interface per responsibility.
 
 ---
 
-## 7. Current Gate State
+## 6. Gate
 
-The merged PR #85 audit remains historical evidence of the initial review, but its clean PASS is **not currently sufficient evidence to begin DD-3**.
-
-Current project-management gate state:
+The reconciliation gate remains:
 
 > **DD-2 RECONCILIATION ACTIVE — DD-3 PAUSED**
 
-R-01 through R-04 are resolved. R-05 through R-08 remain active. R-05 is the next reconciliation item.
-
-The gate may return to PASS only when all material R-01 through R-08 findings are classified, confirmed defects/clarifications are resolved, and the final cross-document audit explicitly records the resulting state.
+R-01 through R-05 are resolved. R-06 through R-08 remain open or partially open. DD-3 shall not resume until the remaining material findings are classified/resolved and the final horizontal reconciliation audit records the resulting state.
