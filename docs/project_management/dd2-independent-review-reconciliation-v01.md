@@ -2,7 +2,9 @@
 
 > **Status:** Active project-management reconciliation record
 >
-> **Baseline:** `master` at `32549f694839af0c55f900707607763beb7e1df5`, the merge commit for PR #85
+> **Initial reconciliation baseline:** `master` at `32549f694839af0c55f900707607763beb7e1df5`, the merge commit for PR #85
+>
+> **Control record established:** PR #86, merge commit `e0f78771ef4c6efb80c5c76967c89b8b5b5181c3`
 >
 > **Normative effect:** None. This record suspends reliance on the earlier project-management PASS while independent review findings are checked against the live normative documents. Normative Design, Functional and Detailed Design authority remains in their owning documents.
 
@@ -51,21 +53,45 @@ A design that is technically separable but requires repeated prose negotiation t
 
 **External finding:** Application Invocation and Execution Outcomes appear to define overlapping invocation/final outcome envelopes with non-identical field families.
 
-**Required decision:** establish one canonical semantic owner and define any invocation-facing representation explicitly as a projection/envelope of that canonical model rather than a second independently evolving outcome contract.
+**Classification:** confirmed semantic-ownership ambiguity.
 
-**Presumptive owner:** DD-1.2 Execution Outcomes for shared application outcome semantics; DD-1.1 Invocation for transport-facing delivery/projection only.
+**Decision:** DD-1.2 Execution Outcomes is the single canonical semantic owner of the shared AppManager outcome model. DD-1.1 Application Invocation owns caller-facing invocation mechanics and the projection/delivery of the accepted DD-1.2 outcome; it does not own a second semantic result envelope.
+
+**Resolution evidence:**
+
+- PR #87 added `application-outcome-and-diagnostic-ownership-clarification-v01.md`;
+- the propagation correction updates DD-1.1 to an explicit **Invocation Outcome Projection Contract**;
+- the propagation correction updates DD-1.2 to identify its outcome contract as the canonical shared semantic model;
+- the dependency direction is now explicit:
+
+```text
+capability/provider evidence
+        -> owning-use-case interpretation
+        -> canonical DD-1.2 AppManager outcome
+        -> DD-1.1 invocation projection/delivery
+        -> caller
+```
+
+**Current status:** **resolved subject to merge and final horizontal verification**.
 
 ### R-02 — Diagnostic taxonomy
 
 **External finding:** DD-1.1 and DD-1.2 use divergent shared diagnostic categories, while multiple DD-2 capabilities also enumerate local diagnostic/failure categories.
 
-**Required decision:** distinguish:
+**Classification:** confirmed semantic-ownership ambiguity between DD-1.1 and DD-1.2; DD-2 local failure vocabularies are not independently defective where they are explicitly technical/capability evidence.
 
-- canonical cross-application diagnostic categories;
-- capability-specific technical failure categories/evidence;
-- domain-specific semantic findings.
+**Decision:**
 
-Capability vocabularies may specialise the canonical model, but shall not become competing application taxonomies.
+- DD-1.2 owns the canonical broad cross-application diagnostic taxonomy;
+- DD-1.1 projects canonical diagnostics and may add narrower invocation codes/subcategories only by mapping them to DD-1.2;
+- capability/provider failure classes remain technical evidence until mapped into application-facing DD-1.2 diagnostics;
+- domain/capability refinements shall not describe themselves as alternative shared taxonomies.
+
+**DD-2 horizontal verification:** the live DD-2 family already contains the required dependency direction in material locations rather than claiming independent final diagnostic authority. Examples include Process Execution returning technical evidence compatible with DD-1.2, Source Intelligence explicitly calling its results capability evidence compatible with DD-1.2, AI explicitly classifying provider failure category as capability evidence, Quality preserving mixed evidence for DD-1.2/Application Engine interpretation, Documentation normalizing provider failure as capability evidence, and Nuxt feeding capability evidence to final DD-1.2 interpretation. Repository and Registry/Templates likewise contain explicit DD-1.2 outcome-integration relationships.
+
+The propagation change therefore centralizes the taxonomy in DD-1.2 rather than performing low-value repetitive edits across every capability document. Future capability wording that introduces a local failure vocabulary is governed by the canonical mapping rule in DD-1.2.
+
+**Current status:** **resolved subject to merge and final horizontal verification**.
 
 ### R-03 — Nuxt scaffold licence and README ownership
 
@@ -75,11 +101,15 @@ Capability vocabularies may specialise the canonical model, but shall not become
 
 The reconciliation shall not assume that including an artefact in a Nuxt layer profile transfers licence/documentation semantics to Nuxt Capability.
 
+**Current status:** open; next material reconciliation item after R-01/R-02 propagation.
+
 ### R-04 — Bootstrap configuration / managed-project sequence
 
 **External finding:** the dedicated bootstrap clarification is not fully propagated into the documents and diagrams whose sequencing it refines.
 
 **Required decision:** make the clarification discoverable from all affected Detailed Designs and ensure diagrams/lifecycle prose agree with the staged semantic sequence.
+
+**Current status:** open.
 
 ### R-05 — Structural fact model
 
@@ -87,23 +117,36 @@ The reconciliation shall not assume that including an artefact in a Nuxt layer p
 
 **Required decision:** establish whether downstream models are true specialisations/compositions of Source Intelligence facts or intentionally distinct semantic records. If shared semantics exist, define the common base contract once and preserve domain-specific extensions explicitly.
 
+**Current status:** open.
+
 ### R-06 — Repository / Source Intelligence relationship
 
 **External finding:** Repository Capability states constraints on Source Intelligence without reciprocal acknowledgement.
 
 **Required decision:** ensure dependency direction is explicit and one-sided assertions cannot silently become undocumented obligations.
 
+**Current status:** open.
+
 ### R-07 — App / Settings environment-file ownership
 
-**External finding:** reported overlap between `FR-APP-016`–`018` and `FR-SET-058`–`061` for creation of local environment configuration from an example resource.
+**External finding:** overlap between `FR-APP-016`–`018` and `FR-SET-058`–`061` for creation of local environment configuration from an example resource.
 
-**Status:** must be verified directly before classification.
+**Classification:** clarification required rather than proven duplicate use-case ownership.
+
+**Current evidence:** App owns the higher-level existing-application initialisation intent; Settings owns persisted environment-definition CRUD. The missing contract is the delegation seam by which App initialisation requests the Settings-owned environment operation rather than implementing an independent environment-definition authority.
+
+**Current status:** open pending normative clarification.
 
 ### R-08 — stale forward references and project-management records
 
 **External findings:** possible stale "future/forthcoming" references plus known project-management references to removed archive material and previously fixed defects.
 
-**Required decision:** verify individually and correct active project-management guidance so a new session can operate solely from the live tree.
+**Classification:** mixed.
+
+- the reported stale future/forthcoming references in the cited Managed Project/Configuration sections were not sustained against the current live text;
+- stale project-management references to removed `docs/archive/` material and already-fixed defects are confirmed and require cleanup.
+
+**Current status:** partially classified; project-management cleanup remains open.
 
 ---
 
@@ -171,7 +214,18 @@ Do **not** remove local statements where they prevent a plausible authority leak
 
 These should become concise binding statements plus the local delta, not disappear behind links alone.
 
-### 4.4 Target outcome
+### 4.4 First applied example — R-01/R-02
+
+The R-01/R-02 propagation is the first deliberate application of the three-layer rule:
+
+- DD-1.2 retains the canonical detailed outcome, diagnostic, effect and cancellation semantics;
+- DD-1.1 retains concise local binding statements and only the invocation-specific request/control/projection delta;
+- repeated DD-1.1 outcome tables, diagnostic taxonomy and generic partial/effect explanations are replaced by canonical-reference plus projection obligations;
+- DD-2 capability failure vocabularies remain local evidence because they describe specialist execution facts rather than competing application semantics.
+
+This is the preferred pattern for later boilerplate consolidation.
+
+### 4.5 Target outcome
 
 The target is a corpus in which:
 
@@ -227,5 +281,7 @@ The merged PR #85 audit remains historical evidence of the initial review, but i
 Current project-management gate state:
 
 > **DD-2 RECONCILIATION ACTIVE — DD-3 PAUSED**
+
+R-01 and R-02 are now in **resolved subject to merge/final-verification** state. R-03 through R-08 remain the active reconciliation sequence.
 
 The gate may return to PASS only when all material R-01 through R-08 findings are classified, confirmed defects/clarifications are resolved, and the final cross-document audit explicitly records the resulting state.
