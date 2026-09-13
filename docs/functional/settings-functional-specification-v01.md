@@ -11,8 +11,6 @@
 > **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
->
-> **Legacy reconciliation source:** `docs/archive/design/appmanager-design-reconciliation-audit-v01.md`
 
 ## 1. Purpose
 
@@ -24,7 +22,7 @@ The governing boundary is:
 
 > **Settings owns explicit settings and metadata management. Configuration owns how candidate values from configuration sources become effective application configuration. Editing a value does not give Settings authority to redefine configuration precedence, applicability, validation, provenance, or runtime interpretation.**
 
-This distinction is essential because legacy material used similar names for two materially different concerns: AppManager's own preferences and identity settings, and metadata stored in a managed target project. Version 1 preserves both categories while requiring their scope and meaning to remain explicit.
+AppManager's own preferences and identity settings are materially distinct from metadata stored in a managed target project. Version 1 supports both categories while requiring their scope and meaning to remain explicit.
 
 ---
 
@@ -132,7 +130,7 @@ Successful persistence by a delegated mechanism shall not by itself establish su
 
 ## 4. Settings Scope and Identity
 
-Legacy specifications expose a naming collision between AppManager operator/commit identity and managed-project author metadata. Version 1 resolves this functionally rather than by prescribing UI labels or storage paths.
+AppManager operator/commit identity and managed-project author metadata are separate semantic scopes. Version 1 preserves that distinction without prescribing UI labels or storage paths.
 
 **FR-SET-022 — Scope identity**  
 Every setting shall have an unambiguous semantic scope such as AppManager/user setting, managed-project setting, managed-project metadata or managed resource.
@@ -325,8 +323,8 @@ AppManager shall avoid creating a materially duplicate contributor entry without
 **FR-SET-078 — Preserve contributors**  
 Adding one contributor shall preserve existing unrelated contributor entries.
 
-**FR-SET-079 — Utils reconciliation**  
-Legacy `utils.addContributor` behaviour shall not create a second functional authority. A Utils surface may delegate to the Settings-owned contributor use case for compatibility or convenience.
+**FR-SET-079 — Utils delegation boundary**  
+A Utils surface for contributor addition shall not create a second functional authority and may delegate to the Settings-owned contributor use case for compatibility or convenience.
 
 **FR-SET-080 — Contributor removal**  
 If contributor removal is exposed in Version 1, it shall identify the contributor unambiguously and remove only the selected entry.
@@ -394,7 +392,7 @@ Deleting a template shall identify the exact template and template class and sha
 Managing a template resource in Settings shall not transfer execution/application semantics from the domain that owns use of that template. For example, AI-document generation remains AI-owned when AI-document management is the primary intent.
 
 **FR-SET-099 — Generic custom templates**  
-Version 1 does not require a fourth arbitrary generic template registry merely because legacy technical material proposed aggregate management. Such a registry requires a deliberate future product decision.
+Version 1 does not require a fourth arbitrary generic template registry merely because aggregate management is available. Such a registry requires a deliberate future product decision.
 
 **FR-SET-100 — Template safety**  
 A template resource shall not be permitted to expand mutation authority beyond the scope of the use case that later applies it.
@@ -457,68 +455,36 @@ Ambiguous target scope, metadata identity, environment source, licence target or
 
 ---
 
-## 14. Legacy Reconciliation Decisions
+## 14. Traceability Summary
 
-### 14.1 AppManager settings versus project metadata
-
-Legacy `app-config` material and later Settings material use overlapping labels such as author name and email. Version 1 retains the distinction: AppManager/operator settings and managed-project publication metadata are separate semantic scopes. UI wording is a presentation concern, but every adapter must preserve that distinction.
-
-### 14.2 Storage schemas and resolvers
-
-The reconciliation audit explicitly places storage schemas, precedence and resolver behaviour below the Functional level. This specification therefore defines supported values and operations but does not prescribe direct `package.json` mutation, JSONC services, env-file service placement, registry implementations or exact settings file schemas.
-
-### 14.3 Contributors
-
-Legacy `utils.addContributor` is reconciled into Settings ownership because contributor metadata is explicitly part of the approved Settings domain scope. Utils may retain a compatibility/convenience surface only by delegating to the singular Settings-owned behaviour.
-
-### 14.4 Environment files
-
-Legacy technical material proposed direct `.env` management and a specific parser/service. Version 1 retains environment-definition CRUD and secret-redaction intent while leaving exact filenames, parser placement and structured-text implementation to Detailed Design/Implementation.
-
-### 14.5 Licences
-
-Legacy material proposed curated and external licence catalogues, licence-file generation and synchronization with project metadata. Version 1 retains licence resource management and coherence requirements without making a particular provider, OSI catalogue, cache chain, registry or exact fallback string part of the Functional contract.
-
-### 14.6 Templates
-
-Legacy material proposed an aggregate view over licence, deployment/CI and AI-document registries. Version 1 retains aggregate declarative resource visibility and class-specific management, but does not preserve the obsolete assumption that `nuxt.addFile` should own generic deployment/provider files. Domain-specific application of a template remains with its proper owning use case.
-
-### 14.7 Automatic versioning
-
-Manual application-version management remains Settings-owned. Automatic version derivation remains a separate use-case concern and must not be duplicated merely because both behaviours ultimately affect declared version metadata.
-
----
-
-## 15. Traceability Summary
-
-| Functional area | Requirements | Primary provenance |
+| Functional area | Requirements | Current authority |
 |---|---|---|
 | Domain boundary | FR-SET-001–005 | Root Design; decomposition plan §5.8 |
 | Common Settings behaviour | FR-SET-006–021 | FR-INV, FR-PROJ, FR-CONFIG, FR-XFORM |
-| Scope and identity | FR-SET-022–030 | legacy `app-config` / Settings collision; Configuration boundary |
-| Author metadata | FR-SET-031–037 | reconciliation audit §3.20 |
-| Funding/bugs/repository metadata | FR-SET-038–044 | reconciliation audit §3.20 |
-| Application metadata | FR-SET-045–057 | reconciliation audit §3.20 |
-| Environment definitions | FR-SET-058–071 | reconciliation audit §3.20; legacy Settings technical spec |
-| Contributors | FR-SET-072–080 | reconciliation audit §§3.19–3.20 |
-| Licences | FR-SET-081–090 | reconciliation audit §3.20; legacy Settings technical spec |
-| Templates | FR-SET-091–100 | reconciliation audit §3.20; declarative extension boundary |
-| Cross-domain coordination | FR-SET-101–107 | Root Design domain/capability authority |
-| Results and safety | FR-SET-108–116 | FR-INV, FR-PROJ, FR-XFORM |
+| Scope and identity | FR-SET-022–030 | This specification §4; Configuration boundary |
+| Author metadata | FR-SET-031–037 | This specification §5 |
+| Funding/bugs/repository metadata | FR-SET-038–044 | This specification §6; Git ownership boundary |
+| Application metadata | FR-SET-045–057 | This specification §7 |
+| Environment definitions | FR-SET-058–071 | This specification §8; Configuration boundary |
+| Contributors | FR-SET-072–080 | This specification §9; Utils delegation boundary |
+| Licences | FR-SET-081–090 | This specification §10 |
+| Templates | FR-SET-091–100 | This specification §11; declarative extension boundary |
+| Cross-domain coordination | FR-SET-101–107 | This specification §12; Root Design domain/capability authority |
+| Results and safety | FR-SET-108–116 | This specification §13; FR-INV, FR-PROJ, FR-XFORM |
 
 ---
 
-## 16. Downstream Specification Boundary
+## 15. Downstream Specification Boundary
 
 Detailed Design may define permanent contracts for settings models, metadata adapters, environment-definition parsing, licence catalogues/providers, declarative template registries, resource managers and coordination interfaces.
 
-Implementation Specifications may define concrete TypeScript modules, `settings.json`, `package.json` mappings, `.env` handling, parser/service placement, exact validation libraries, licence provider APIs, cache behaviour, registry structures, command identifiers, menu labels and migration from legacy command surfaces.
+Implementation Specifications may define concrete TypeScript modules, `settings.json`, `package.json` mappings, `.env` handling, parser/service placement, exact validation libraries, licence provider APIs, cache behaviour, registry structures, command identifiers and menu labels.
 
 Neither level may redefine configuration precedence, domain authority or the functional ownership established here without an approved change to the governing specification hierarchy.
 
 ---
 
-## 17. Version 1 Functional Baseline
+## 16. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `settings` domain.
 
