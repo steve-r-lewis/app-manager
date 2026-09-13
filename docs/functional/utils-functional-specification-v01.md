@@ -11,8 +11,6 @@
 > **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `docs-functional-specification-v01.md`, `settings-functional-specification-v01.md`, `git-functional-specification-v01.md`, `ai-functional-specification-v01.md`
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
->
-> **Legacy reconciliation sources:** `docs/archive/design/appmanager-design-reconciliation-audit-v01.md`, `docs/archive/specification/commands/spec-utils-domain-commands-v02.md`
 
 ## 1. Purpose
 
@@ -20,13 +18,13 @@ This specification defines the observable Version 1 behaviour of the AppManager 
 
 `utils` is deliberately the final domain specification because it is the domain most vulnerable to becoming a catch-all. A behaviour belongs here only when it is a coherent AppManager product operation and no more specific functional domain has primary ownership.
 
-Following reconciliation with the already-approved domain specifications, Version 1 Utils owns three principal behavioural families:
+Version 1 Utils owns three principal behavioural families:
 
 - project source-header inspection, validation and bounded repair;
 - automatic source-file version maintenance where version metadata is governed by the AppManager source-header convention;
 - cleanup of recognized temporary/test/log artefacts that do not belong to the broader application clean/reset lifecycle.
 
-Legacy automatic documentation is now owned by `docs`. Legacy contributor metadata management is now owned by `settings`. Those behaviours shall not be reintroduced as independent Utils authorities.
+Automatic documentation is owned by `docs`. Contributor metadata management is owned by `settings`. Those behaviours shall not be introduced as independent Utils authorities.
 
 The governing rule is:
 
@@ -40,7 +38,7 @@ The governing rule is:
 A Utils use case shall have a defined maintenance intent that is not more appropriately owned by another approved functional domain.
 
 **FR-UTIL-002 — No catch-all authority**  
-The existence of a legacy `utils` command name shall not by itself establish Version 1 Utils ownership.
+The existence of a `utils` command name shall not by itself establish Version 1 Utils ownership.
 
 **FR-UTIL-003 — Documentation ownership**  
 Automatic documentation generation is owned by the Docs Functional Specification. Utils shall not define a competing automatic-documentation semantic path.
@@ -107,13 +105,13 @@ Cancellation shall stop future effects as soon as safely practical while preserv
 Utils shall not imply rollback of completed file changes unless rollback is actually guaranteed.
 
 **FR-UTIL-023 — Sensitive diagnostics**  
-Diagnostics and AI context shall avoid unnecessary disclosure of secrets or sensitive project content.
+Diagnostics and AI context shall avoid unnecessary disclosure of protected or sensitive project content.
 
 ---
 
 ## 4. Source-Header Convention
 
-Version 1 retains the legacy AppManager project source-header convention as a supported maintenance concern. The convention may include semantic fields such as project identity, file identity, author attribution, version metadata and revision-history information. Exact comment syntax and parser mechanics belong below the Functional level unless intentionally exposed as a stable contract.
+Version 1 supports the AppManager project source-header convention as a maintenance concern. The convention may include semantic fields such as project identity, file identity, author attribution, version metadata and revision-history information. Exact comment syntax and parser mechanics belong below the Functional level unless intentionally exposed as a stable contract.
 
 **FR-UTIL-024 — Header recognition**  
 Utils shall be able to determine whether a supported source file contains a recognized AppManager source-header representation.
@@ -143,7 +141,7 @@ Repair shall preserve valid existing revision-history information except for the
 
 ## 5. Check and Validate Headers
 
-Legacy material names both checking and validation. Version 1 treats these as a coherent read-only validation capability with selectable depth rather than inventing duplicate authorities solely from historical command naming.
+Header checking and validation form a coherent read-only validation capability with selectable depth rather than separate authorities derived from command naming.
 
 **FR-UTIL-032 — Header check use case**  
 Utils shall provide a non-mutating use case that checks supported managed source files for recognized header presence and validity.
@@ -176,7 +174,7 @@ Where author consistency is part of the configured convention, validation may co
 Where revision history is authoritative for the source-file version convention, validation shall identify disagreement between declared top-level version and the applicable revision-history version.
 
 **FR-UTIL-042 — Package metadata validation boundary**  
-Legacy package-name checks may be included only where they are part of the retained project-maintenance validation use case; they shall not give Utils general ownership over application metadata, package management or Nuxt semantics.
+Package-name checks may be included only where they are part of the project-maintenance validation use case; they shall not give Utils general ownership over application metadata, package management or Nuxt semantics.
 
 **FR-UTIL-043 — Package-name diagnostic**  
 Where a supported package metadata naming convention can be deterministically derived from managed project facts, Utils may report a mismatch as a validation finding.
@@ -234,7 +232,7 @@ AppManager shall avoid silently applying a repair plan to materially changed sou
 
 ## 7. Package Metadata Repair within Header Validation
 
-Legacy `validateHeaders` combined header validation with package-name repair. This specification retains that behavior narrowly, without converting Utils into the owner of project metadata generally.
+Header validation may include package-name repair narrowly, without converting Utils into the owner of project metadata generally.
 
 **FR-UTIL-059 — Explicit package repair**  
 Package metadata shall not be changed by a validate-only invocation. A detected naming mismatch requires explicit repair intent or authorization.
@@ -255,7 +253,7 @@ AI unavailability shall not prevent deterministic/manual repair where those path
 Headless operation shall not rely on AI to resolve ambiguous package identity unless explicit policy permits the proposed value to be validated and accepted deterministically.
 
 **FR-UTIL-065 — Settings boundary**  
-General package/application metadata CRUD remains Settings-owned; this narrow repair path exists only as part of the retained validation/maintenance use case.
+General package/application metadata CRUD remains Settings-owned; this narrow repair path exists only as part of the validation/maintenance use case.
 
 ---
 
@@ -273,7 +271,7 @@ Source-file auto-versioning shall remain distinct from Settings-owned manual app
 Auto-versioning shall operate on an explicitly established set of changed eligible managed source files rather than indiscriminately versioning every discovered source file.
 
 **FR-UTIL-069 — Git facts without Git ownership transfer**  
-Utils may consume Git-provided change/diff facts to establish source-file changes. Repository semantics remain Git-owned.
+Utils may consume Git-provided change/diff/identity facts to establish source-file changes. Repository semantics remain Git-owned.
 
 **FR-UTIL-070 — Eligible header requirement**  
 A file without the recognized version metadata required by the source-file version convention shall not be silently converted into a versioned file by auto-versioning.
@@ -291,7 +289,7 @@ AI may assist in classifying a source-file change as Major, Minor or Patch and m
 An AI increment recommendation shall be treated as a proposal and shall remain subject to AppManager validation and policy.
 
 **FR-UTIL-075 — AI fallback**  
-Where Version 1 auto-versioning is invoked without usable AI classification, the operation may use the retained safe Patch fallback if effective policy does not require a different explicit decision.
+Where Version 1 auto-versioning is invoked without usable AI classification, the operation may use the safe Patch fallback if effective policy does not require a different explicit decision.
 
 **FR-UTIL-076 — Invalid current version**  
 Malformed or unsupported current version metadata shall be reported and the affected file shall not be blindly incremented.
@@ -361,10 +359,10 @@ Detailed Design may make cleanup locations/patterns configurable, but effective 
 ## 10. Cross-Domain Coordination
 
 **FR-UTIL-095 — Docs delegation**  
-A legacy or convenience `utils.autoDoc` surface, if retained for compatibility, shall invoke Docs-owned automatic documentation semantics rather than maintain a second implementation authority.
+A compatibility or convenience `utils.autoDoc` surface, if retained, shall invoke Docs-owned automatic documentation semantics rather than maintain a second implementation authority.
 
 **FR-UTIL-096 — Settings delegation**  
-A legacy or convenience `utils.addContributor` surface, if retained, shall invoke Settings-owned contributor metadata semantics.
+A compatibility or convenience `utils.addContributor` surface, if retained, shall invoke Settings-owned contributor metadata semantics.
 
 **FR-UTIL-097 — Git facts**  
 Utils may consume Git status/diff/identity facts where required by an approved utility use case, but shall not perform repository synchronization, commit, push or remote-management semantics as a side effect.
@@ -403,73 +401,39 @@ Headless callers shall be able to determine operation status and affected target
 **FR-UTIL-107 — No hidden scope expansion**  
 A utility operation shall not expand from a selected file/component to the complete project merely because additional defects or artefacts are discovered elsewhere.
 
-**FR-UTIL-108 — Safety over legacy convenience**  
-Where legacy behaviour conflicts with managed-scope, deterministic Headless or source-transformation safety rules, the shared Version 1 safety contract shall prevail.
+**FR-UTIL-108 — Safety over compatibility convenience**  
+Where compatibility behaviour conflicts with managed-scope, deterministic Headless or source-transformation safety rules, the shared Version 1 safety contract shall prevail.
 
 ---
 
-## 12. Legacy Reconciliation Decisions
+## 12. Traceability Summary
 
-### 12.1 `utils.autoDoc`
-
-The legacy Utils technical specification contains substantial automatic-JSDoc generation detail. That user intent is preserved, but its singular Version 1 owner is Docs because automatic documentation is documentation intent. The Docs Functional Specification governs it. Exact source-inspection and injection mechanisms remain Detailed Design/Implementation concerns.
-
-### 12.2 `utils.addContributor`
-
-Contributor metadata management is now singularly Settings-owned. The legacy behavior—name/email/URL management, duplicate protection and project metadata update—remains preserved through Settings rather than duplicated here.
-
-### 12.3 Header check, validation and repair
-
-The reconciliation audit separately lists check headers, repair headers and validate headers. Later technical material concentrated the behavior in `utils.validateHeaders` with optional fixes. Version 1 preserves all three intents as a coherent capability family: non-mutating check/validation and explicitly authorized bounded repair. Historical command naming does not require three independent implementations.
-
-### 12.4 Package-name validation
-
-Legacy header validation also checked package naming against project structure and allowed automatic, manual or AI-assisted correction. That behavior is retained narrowly as part of the maintenance validation use case. It does not grant Utils general Settings or package-management authority.
-
-### 12.5 `utils.autoVersion`
-
-Legacy auto-versioning uses changed source files, source-header `@version` metadata, source diffs, semantic increment classification and revision history. Those observable semantics are retained. Exact Git API calls, parser/strategy methods, prompt formats and string replacement algorithms are lower-level.
-
-The retained Patch fallback is a legacy behavioral choice for unavailable/malformed AI classification, not a general rule that all unknown version changes are Patch. Detailed Design shall ensure its use is bounded to this specific auto-version workflow and compatible with effective policy.
-
-### 12.6 `utils.cleanLogs`
-
-Legacy cleanup targets AppManager test/log and fixture artefacts matching a recognized mock/test pattern. Version 1 preserves the narrow cleanup intent while deliberately avoiding normative hard-coded directory strings at Functional level. Exact directories and filesystem services belong below this specification, subject to managed-scope and deletion safety.
-
-### 12.7 Code-intelligence architecture
-
-Legacy material describes `codeService`, scanners, strategies, `TypescriptStrategy.parseMetadata()`, `injectFunctionDoc()`, field-level patching and service additions such as per-file Git diff retrieval. These remain valuable Detailed Design/Implementation evidence but do not become Functional architecture layers. The observable requirements are recognition, bounded transformation, validation and application-level acceptance.
-
----
-
-## 13. Traceability Summary
-
-| Functional area | Requirements | Primary provenance |
+| Functional area | Requirements | Current authority |
 |---|---|---|
 | Domain boundary | FR-UTIL-001–009 | Root Design; decomposition plan §5.7 |
-| Common behavior | FR-UTIL-010–023 | FR-INV, FR-PROJ, FR-XFORM |
-| Header convention | FR-UTIL-024–031 | reconciliation audit §3.19; legacy Utils spec |
-| Header check/validation | FR-UTIL-032–044 | reconciliation audit §3.19; `utils.validateHeaders` |
-| Header repair | FR-UTIL-045–058 | reconciliation audit §3.19; legacy field-level repair decision |
-| Package repair | FR-UTIL-059–065 | legacy `utils.validateHeaders` |
-| Source-file auto-version | FR-UTIL-066–081 | legacy `utils.autoVersion` |
-| Temporary/test/log cleanup | FR-UTIL-082–094 | legacy `utils.cleanLogs` |
-| Cross-domain coordination | FR-UTIL-095–100 | Docs, Settings, Git, AI, Quality boundaries |
-| Results and safety | FR-UTIL-101–108 | FR-INV, FR-PROJ, FR-XFORM |
+| Common behavior | FR-UTIL-010–023 | This specification §3; FR-INV, FR-PROJ, FR-XFORM |
+| Header convention | FR-UTIL-024–031 | This specification §4 |
+| Header check/validation | FR-UTIL-032–044 | This specification §5 |
+| Header repair | FR-UTIL-045–058 | This specification §6; FR-XFORM |
+| Package repair | FR-UTIL-059–065 | This specification §7; Settings ownership boundary |
+| Source-file auto-version | FR-UTIL-066–081 | This specification §8; Git facts boundary; AI non-authority |
+| Temporary/test/log cleanup | FR-UTIL-082–094 | This specification §9; Managed Project scope |
+| Cross-domain coordination | FR-UTIL-095–100 | This specification §10; Docs, Settings, Git, AI, Quality boundaries |
+| Results and safety | FR-UTIL-101–108 | This specification §11; FR-INV, FR-PROJ, FR-XFORM |
 
 ---
 
-## 14. Downstream Specification Boundary
+## 13. Downstream Specification Boundary
 
 Detailed Design may define permanent contracts for source-header models, validation rules, code-intelligence interfaces, change classification, revision-history representation, cleanup policy, source scanners and transformation strategies.
 
-Implementation Specifications may define concrete TypeScript modules, exact supported extensions, excluded directories, header comment syntax, path derivation, Git diff calls, AI prompt/response schemas, version increment functions, cleanup directory names, filesystem APIs, compatibility command aliases and migration from legacy Utils surfaces.
+Implementation Specifications may define concrete TypeScript modules, exact supported extensions, excluded directories, header comment syntax, path derivation, Git diff calls, AI prompt/response schemas, version increment functions, cleanup directory names, filesystem APIs and compatibility command aliases.
 
 Neither level may restore automatic documentation or contributor metadata as independent Utils authorities, nor turn Utils into a generic fallback domain, without an approved change to the governing Functional/Design specifications.
 
 ---
 
-## 15. Version 1 Functional Baseline
+## 14. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `utils` domain and completes the planned set of eight domain Functional Specifications.
 
