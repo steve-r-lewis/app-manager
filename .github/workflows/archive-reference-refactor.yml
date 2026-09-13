@@ -1,0 +1,69 @@
+name: Repair legacy documentation references
+
+on:
+  push:
+    branches:
+      - ai/archive-legacy-documentation-references
+
+permissions:
+  contents: write
+
+jobs:
+  repair-references:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: ai/archive-legacy-documentation-references
+          fetch-depth: 0
+
+      - name: Update live references to archived documentation
+        shell: python
+        run: |
+          from pathlib import Path
+
+          replacements = {
+              "docs/design/": "docs/archive/design/",
+              "docs/specification/": "docs/archive/specification/",
+          }
+
+          changed = []
+          for path in Path(".").rglob("*"):
+              if not path.is_file():
+                  continue
+              rel = path.as_posix()
+              if rel.startswith("docs/archive/"):
+                  continue
+              if rel.startswith(".git/"):
+                  continue
+              if rel == ".github/workflows/archive-reference-refactor.yml":
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              updated = text
+              for old, new in replacements.items():
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  path.write_text(updated, encoding="utf-8")
+                  changed.append(rel)
+
+          print(f"Updated {len(changed)} files")
+          for rel in changed:
+              print(rel)
+
+      - name: Remove temporary workflow and commit repairs
+        shell: bash
+        run: |
+          rm .github/workflows/archive-reference-refactor.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No reference changes found"
+            exit 0
+          fi
+          git commit -m "docs: repair archived documentation references"
+          git push origin HEAD:ai/archive-legacy-documentation-references
