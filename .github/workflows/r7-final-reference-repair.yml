@@ -1,0 +1,52 @@
+name: R7 Final Reference Repair
+
+on:
+  push:
+    branches:
+      - ai/r7-reference-reconciliation
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ai/r7-reference-reconciliation
+      - name: Repair active DD family examples
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          p = Path('docs/project_management/domain-detailed-design-authoring-guide-v01.md')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('''docs/detailed_design/app-domain-detailed-design-v01.md
+docs/detailed_design/git-domain-detailed-design-v01.md
+docs/detailed_design/nuxt-domain-detailed-design-v01.md
+docs/detailed_design/docs-domain-detailed-design-v01.md''', '''docs/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md''')
+          s = s.replace('''docs/detailed_design/quality-domain-detailed-design-v01.md
+docs/detailed_design/settings-domain-detailed-design-v01.md
+docs/detailed_design/ai-domain-detailed-design-v01.md
+docs/detailed_design/utils-domain-detailed-design-v01.md''', '''docs/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md''')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit repair
+        shell: bash
+        run: |
+          if git diff --quiet -- docs/project_management/domain-detailed-design-authoring-guide-v01.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/project_management/domain-detailed-design-authoring-guide-v01.md
+          git commit -m "docs: repair active domain design paths"
+          git push origin HEAD:ai/r7-reference-reconciliation
