@@ -313,6 +313,8 @@ R-04 preserves separate reasons to change while removing a false ordering depend
 
 This is deliberately not solved by merging Managed Project and Configuration Resolution into one subsystem. The correction makes their interface explicit while keeping both replaceable behind their AppManager-oriented contracts.
 
+The R-04 closeout also applies the boilerplate rule directly: the full cycle-breaking semantics remain in the existing bootstrap clarification, while DD-1.3 receives only the binding and Managed-Project-specific delta. No second DD-1.4 addendum was created merely to duplicate the same contract.
+
 ### 4.7 Target outcome
 
 The target is a corpus in which:

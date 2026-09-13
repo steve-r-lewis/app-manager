@@ -30,6 +30,8 @@ A second governing rule is:
 
 This Detailed Design therefore separates project evidence acquisition, candidate resolution, project-context construction, operation-specific scope resolution, targetability evaluation, and final application authority.
 
+Where project resolution consumes configuration, the staged dependency rules in `application-core-bootstrap-resolution-clarification-v01.md` apply: pre-project configuration evidence is limited to bootstrap-effective configuration whose applicability does not depend on the unresolved project, while project/scope-dependent configuration is resolved only after sufficient managed-project context exists.
+
 ## 2. Scope
 
 This design owns permanent internal contracts for:
@@ -604,6 +606,8 @@ The request must be resolved against:
 - domain policy;
 - safety policy;
 - ownership/targetability rules.
+
+Where scope depends on project/scope-aware configuration, DD-1.4 resolves that configuration after sufficient Managed Project Context exists and before the affected Managed Scope decision is finalized. This staged use of effective configuration does not transfer scope authority to Configuration Resolution.
 
 **DD-PROJ-015 — Scope requires application resolution**  
 A caller-supplied scope selector shall not directly become the final target set without validation and policy evaluation.
