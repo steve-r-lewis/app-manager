@@ -6,7 +6,9 @@
 >
 > **Governing authorities:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`
 >
-> **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `app-functional-specification-v01.md`, `git-functional-specification-v01.md`
+> **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `app-functional-specification-v01.md`, `git-functional-specification-v01.md`, `settings-functional-specification-v01.md`
+>
+> **Related Detailed Design clarification:** `docs/detailed_design/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
 
@@ -104,7 +106,8 @@ The following remain authoritative in their respective specifications:
 - candidate and effective configuration: `FR-CONFIG-*`;
 - source inspection, bounded transformation, validation, and application acceptance: `FR-XFORM-*`;
 - root-application lifecycle: `FR-APP-*`;
-- repository semantics and repository relationships: `FR-GIT-*`.
+- repository semantics and repository relationships: `FR-GIT-*`;
+- user-facing application metadata, licence-selection/management intent, and environment-definition CRUD: `FR-SET-*`.
 
 ---
 
@@ -288,6 +291,10 @@ The result shall identify the target entry and whether it was removed, already a
 
 Nuxt-layer creation establishes a new Nuxt layer project. Version 1 assigns singular functional ownership of this use case to the `nuxt` domain.
 
+Layer-creation ownership is **orchestration ownership**. It means the `nuxt` domain owns the composed request to establish the selected Nuxt layer baseline, including which artefact classes the selected profile requires and whether the resulting layer satisfies the Nuxt-specific creation contract. It does not mean Nuxt acquires the permanent internal semantics of every artefact class participating in that scaffold.
+
+Where a scaffold artefact has an existing semantic owner, layer creation shall delegate to that owner and consume the result as subordinate evidence. Rendering and persistence likewise remain with their owning capabilities. The canonical detailed delegation model is defined by `nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`.
+
 ### FR-NUXT-051 — Layer creation use case
 AppManager shall provide a `nuxt` use case for creating a new Nuxt layer project.
 
@@ -310,25 +317,25 @@ Version 1 layer creation shall support creating a layer as a standalone project 
 Where more than one layer profile is supported, the selected profile shall represent a documented functional capability set rather than an arbitrary hidden template variant.
 
 ### FR-NUXT-058 — Generated artefact classes
-Layer creation may generate applicable artefact classes including package metadata, Nuxt configuration, TypeScript configuration, ignore rules, environment/example configuration, README/introduction material, licence material, and test configuration according to the selected profile.
+Layer creation may require applicable artefact classes including package metadata, Nuxt configuration, TypeScript configuration, ignore rules, environment/example configuration, README/introduction material, licence material, and test configuration according to the selected profile. Inclusion in the profile establishes Nuxt-layer baseline/orchestration intent only; it does not transfer the artefact class's independent semantic authority to the `nuxt` domain where another domain or shared capability owns that semantic contract.
 
 ### FR-NUXT-059 — Exact file set below Functional level
-This specification shall not mandate exact template filenames, template functions, or source text for the generated artefacts.
+This specification shall not mandate exact template filenames, template functions, source text, or concrete rendering/persistence mechanisms for the generated artefacts. Detailed Design shall preserve semantic ownership boundaries while coordinating the required scaffold.
 
 ### FR-NUXT-060 — Effective configuration during creation
-Author identity, licence choice, repository defaults, naming policy, visibility defaults, or similar configurable inputs shall use explicit invocation values or effective configuration according to `FR-CONFIG-*`.
+Author identity, licence choice, repository defaults, naming policy, visibility defaults, or similar configurable inputs shall use explicit invocation values or effective configuration according to `FR-CONFIG-*`. Where a value participates in a separately owned semantic contract, layer creation shall consume that contract rather than establish a competing Nuxt-specific source of truth.
 
 ### FR-NUXT-061 — No fabricated secrets
 Layer creation shall not fabricate secret values to make generated environment material appear complete.
 
 ### FR-NUXT-062 — Optional AI enrichment
-AI may assist generation of descriptive or documentation content where available, but layer creation shall not require AI in order to produce a valid supported layer baseline.
+AI may assist generation of descriptive or documentation content where available, but layer creation shall not require AI in order to produce a valid supported layer baseline. Documentation-specific modeling/generation semantics remain owned by the documentation boundary even when the resulting documentation artefact is required by the Nuxt layer profile.
 
 ### FR-NUXT-063 — AI output non-authoritative
 AI-generated layer content shall remain subject to the same generation, validation, and application-acceptance rules as non-AI content.
 
 ### FR-NUXT-064 — Generation versus mutation
-Creation of new layer artefacts shall follow generation semantics. Encountering existing artefacts requiring modification or replacement shall invoke applicable source-transformation and safety semantics.
+Creation of new layer artefacts shall follow generation semantics. Encountering existing artefacts requiring modification or replacement shall invoke applicable source-transformation and safety semantics. The Nuxt use case authorizes the composed layer-creation intent; lower-level resource creation or source modification remains governed by the owning persistence/mutation boundary.
 
 ### FR-NUXT-065 — Local repository optional coordination
 Layer creation may coordinate initialisation of a local repository through the `git` domain when requested or required by the selected layer profile.
@@ -346,7 +353,7 @@ If the Nuxt layer scaffold succeeds but an optional Git or remote follow-on step
 Unless lower-level specifications deliberately provide transactional creation, AppManager shall not imply that layer scaffolding and all optional external follow-on actions are universally atomic.
 
 ### FR-NUXT-070 — Creation result
-A successful or partial layer-creation result shall identify the created layer, selected profile or material creation choices, completed follow-on actions, and remaining recommended actions.
+A successful or partial layer-creation result shall identify the created layer, selected profile or material creation choices, completed follow-on actions, and remaining recommended actions. Subordinate artefact-generation, documentation, licence/resource, persistence, transformation, Git, AI, or quality evidence shall remain distinguishable where relevant to explaining the final layer-creation outcome.
 
 ---
 
@@ -454,10 +461,10 @@ Template/resource generation used by a Nuxt-specific use case does not create a 
 The Nuxt domain may expose Nuxt-specific project facts that a documentation use case consumes.
 
 ### FR-NUXT-098 — Documentation intent belongs to docs
-When the primary user intent is to generate, extract, or update documentation for a layer or Nuxt project, functional ownership belongs to the `docs` domain rather than `nuxt`.
+When the primary user intent is to generate, extract, or update documentation for a layer or Nuxt project, functional ownership belongs to the `docs` domain rather than `nuxt`. A documentation artefact required as one subordinate part of a Nuxt layer-creation profile remains Nuxt-orchestrated for profile completeness, but any documentation-specific modeling/generation semantics it requires remain delegated to the documentation boundary.
 
 ### FR-NUXT-099 — Single documentation authority
-Nuxt shall not establish a second independent documentation implementation for product intent already owned by the `docs` domain.
+Nuxt shall not establish a second independent documentation implementation for product intent already owned by the `docs` domain or for documentation-specific semantics merely because documentation participates in a Nuxt scaffold.
 
 ---
 
@@ -523,14 +530,14 @@ Headless callers shall be able to determine created/modified targets, integratio
 | `FR-NUXT-013`–`020` | Nuxt facts and inspection | Root Design; Managed Project; Source Intelligence boundary |
 | `FR-NUXT-021`–`033` | Nuxt configuration inspection/listing | Source Intelligence; Source Transformation; Managed Project |
 | `FR-NUXT-034`–`050` | Add/remove Nuxt configuration | Source Transformation; Managed Project |
-| `FR-NUXT-051`–`070` | Nuxt layer creation | App boundary; Resource Registry and Template; Git boundary |
+| `FR-NUXT-051`–`070` | Nuxt layer creation and scaffold orchestration | App boundary; Settings boundary; Resource Registry and Template; Documentation; Resource Access; Source Transformation; Git boundary |
 | `FR-NUXT-071`–`088` | Layer integration/detachment | Root Design layer model; Source Transformation; Git boundary |
 | `FR-NUXT-089`–`092` | Layer lifecycle facts | Managed Project; Nuxt layer model |
-| `FR-NUXT-093`–`102` | File/docs/environment ownership boundaries | Docs, App, Resource Registry and Template boundaries |
+| `FR-NUXT-093`–`102` | File/docs/environment ownership boundaries | Docs, Settings, App, Resource Registry and Template boundaries |
 | `FR-NUXT-103`–`109` | Safety/transformation | Source Transformation; Managed Project |
 | `FR-NUXT-110`–`113` | Interaction modes | Application Invocation |
 
-Detailed Design shall extend traceability downward to permanent Nuxt configuration representations, layer models, transformation contracts, generator boundaries, and provider interfaces without changing these functional ownership decisions.
+Detailed Design shall extend traceability downward to permanent Nuxt configuration representations, layer models, transformation contracts, generator boundaries, artefact-semantic delegation seams, and provider interfaces without changing these functional ownership decisions.
 
 ---
 
@@ -543,7 +550,7 @@ A Version 1 implementation conforms to this Functional Specification only if it:
 3. exposes supported Nuxt project facts without granting mutation authority through discovery;
 4. supports semantic inspection/listing of supported Nuxt configuration;
 5. supports bounded addition and removal of supported Nuxt configuration subject to `FR-XFORM-*`;
-6. creates valid supported Nuxt layer projects under singular `nuxt` ownership;
+6. creates valid supported Nuxt layer projects under singular `nuxt` orchestration ownership without treating that ownership as semantic ownership of every scaffold artefact class;
 7. supports standalone layer creation independently of immediate host integration;
 8. keeps Git repository setup and relationships under `git` authority even when coordinated by layer creation;
 9. distinguishes Nuxt layer integration from Git repository linking;
@@ -551,10 +558,11 @@ A Version 1 implementation conforms to this Functional Specification only if it:
 11. does not duplicate `app` clean/reset/reinitialise behaviour under `nuxt`;
 12. does not duplicate documentation-generation authority under `nuxt`;
 13. does not treat generic arbitrary file creation as inherently Nuxt-specific;
-14. fails safely on ambiguous or unsupported Nuxt source structures;
-15. preserves unrelated source during controlled Nuxt configuration changes;
-16. provides deterministic Headless behaviour and machine-consumable outcomes; and
-17. preserves Application Engine authority over Nuxt scope, policy, safety, and final application-level acceptance.
+14. delegates cross-owned scaffold artefact semantics, rendering, persistence, and mutation through their owning contracts while retaining Nuxt profile/baseline acceptance;
+15. fails safely on ambiguous or unsupported Nuxt source structures;
+16. preserves unrelated source during controlled Nuxt configuration changes;
+17. provides deterministic Headless behaviour and machine-consumable outcomes; and
+18. preserves Application Engine authority over Nuxt scope, policy, safety, and final application-level acceptance.
 
 ---
 
