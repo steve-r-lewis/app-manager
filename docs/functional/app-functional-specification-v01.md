@@ -36,7 +36,7 @@ This specification owns functional behaviour for:
 
 - identifying and exposing supported root-application lifecycle operations;
 - initialising an existing managed application environment;
-- executing retained post-installation lifecycle behaviour;
+- executing project-declared post-installation lifecycle behaviour;
 - starting local development execution;
 - building the managed root application;
 - previewing a built application;
@@ -44,7 +44,7 @@ This specification owns functional behaviour for:
 - resetting regenerable installation/build state;
 - reinitialising an application through a defined lifecycle composition;
 - creating a new AppManager-oriented root application;
-- creation profiles or choices such as minimal, complete, or custom where retained;
+- creation profiles or choices such as minimal, complete, or custom where supported;
 - optional follow-on actions that are part of root-application creation;
 - executing a selected package-defined project script as a bounded application use case;
 - lifecycle operation availability, preconditions, domain-specific outcomes, and domain-specific safety semantics;
@@ -102,7 +102,7 @@ Delegation does not transfer ownership of the application lifecycle use case.
 
 ### 4.3 Relationship to Nuxt-layer creation
 
-Version 1 resolves the legacy ownership ambiguity as follows:
+Version 1 assigns Nuxt-layer creation singularly to the `nuxt` domain:
 
 > **Creation or provisioning of a Nuxt layer is owned by the `nuxt` domain because the identity and validity of that use case are intrinsically Nuxt-specific.**
 
@@ -248,7 +248,7 @@ Repeated initialisation shall avoid unnecessary destructive replacement of alrea
 
 ### FR-APP-025 — Post-installation use case
 
-AppManager shall support retained project post-installation behaviour as an `app` lifecycle use case when the managed root application declares an applicable post-installation lifecycle action.
+AppManager shall support project post-installation behaviour as an `app` lifecycle use case when the managed root application declares an applicable post-installation lifecycle action.
 
 ### FR-APP-026 — Declaration-aware availability
 
@@ -482,9 +482,9 @@ Root-application creation shall generate the project artefact classes required b
 
 The exact filenames, template functions, and file contents belong below the Functional level.
 
-### FR-APP-072 — Version 1 generated artefact catalogue continuity
+### FR-APP-072 — Version 1 generated artefact catalogue
 
-The root-application creation design shall preserve the legacy requirement that AppManager is capable, where applicable to the selected profile, of generating project artefact classes including:
+AppManager shall be capable, where applicable to the selected profile, of generating project artefact classes including:
 
 - package metadata;
 - Nuxt configuration;
@@ -582,7 +582,7 @@ A managed application's package metadata may expose project-defined scripts beyo
 
 ### FR-APP-091 — Declared-script execution use case
 
-AppManager shall support execution of a selected script declared by the managed root application's recognised package metadata where retained by the project profile.
+AppManager shall support execution of a selected script declared by the managed root application's recognised package metadata where supported by the project profile.
 
 ### FR-APP-092 — Script discovery
 
@@ -726,145 +726,30 @@ Generic lifecycle execution, cleaning, reset, or project-package-script executio
 
 ---
 
-## 20. Legacy Requirement Disposition
+## 20. Traceability
 
-This section preserves and resolves legacy behavioural information without elevating implementation-specific material into Functional authority.
-
-### 20.1 Legacy app command inventory
-
-The Design Reconciliation Audit identified the following app behaviours for migration to Functional authority:
-
-| Legacy behaviour | Version 1 disposition |
-|---|---|
-| initialise environment | retained as `FR-APP-013` onward |
-| post-installation operation | retained as `FR-APP-025` onward |
-| build | retained as `FR-APP-034` onward |
-| preview | retained as `FR-APP-039` onward |
-| local development execution | retained as `FR-APP-029` onward |
-| clean generated caches/state | retained as `FR-APP-043` onward |
-| empty/reset generated installation/build state | retained as `FR-APP-050` onward |
-| reinitialise by composing reset/install/build | retained as `FR-APP-059` onward |
-| create a new application | retained as `FR-APP-066` onward |
-| minimal/complete/custom creation choices | retained conditionally as creation profiles, `FR-APP-073` through `FR-APP-076` |
-| create/provision a Nuxt layer | preserved but assigned singular ownership to the `nuxt` domain; not duplicated here |
-| execute a selected project package script | retained as bounded declared-script execution, `FR-APP-091` onward |
-
-### 20.2 Existing-checkout provisioning versus new-project scaffolding
-
-Legacy specifications used `setup` terminology for two materially different intents:
-
-1. provision an already-existing checkout;
-2. scaffold a brand-new root project.
-
-Version 1 preserves both behaviours but separates their semantics:
-
-- existing checkout preparation -> **Initialise existing application environment**;
-- new root project -> **Create new root application**.
-
-Canonical command names are not fixed by this Functional Specification; lower-level specifications may map these use cases to stable command identifiers.
-
-### 20.3 Legacy initialisation details
-
-Legacy material proposed initialisation steps including:
-
-- dependency installation;
-- copying an existing `.env.example` to `.env` when appropriate;
-- synchronising existing layer/submodule relationships;
-- generating recommended editor configuration such as VS Code settings.
-
-Disposition:
-
-- dependency readiness is retained functionally;
-- environment-example copying is retained with preservation and secret-safety constraints;
-- repository-relationship readiness is retained only through delegated `git` semantics;
-- editor-specific files are not universal Functional requirements. They may be generated by an approved project profile, host integration, template/resource capability, or explicit invocation without making a particular editor a prerequisite for AppManager initialisation.
-
-### 20.4 Legacy lifecycle action implementation details
-
-Legacy specifications named concrete resources such as `.nuxt`, `.output`, `.cache`, `node_modules`, `dist`, and package-manager lockfiles and specified exact `pnpm`, `yarn`, `npm`, or `bun` command behaviour.
-
-Disposition:
-
-- the behavioural distinction between Clean and stronger Reset/Empty is retained;
-- cache/build state, installed dependency state, and lock state remain distinct functional effect classes;
-- exact path lists, lockfile inventories, package-manager detection order, process APIs, and command arguments move to Detailed Design or Implementation Specifications;
-- removal of lock state must be an explicit policy rather than an accidental consequence.
-
-### 20.5 Legacy root scaffold details
-
-Legacy material proposed generation of root project artefacts including package metadata, Nuxt configuration, TypeScript configuration, ignore rules, workspace configuration, environment/example configuration, licence content, README content, editor/configuration support files, and a future layers location.
-
-Disposition:
-
-- the durable artefact capability classes are retained in `FR-APP-071` and `FR-APP-072`;
-- exact templates, file names, and source functions belong below Functional level;
-- creation of an empty `.gitmodules`-style relationship artefact is not required when no repository relationship exists;
-- preparation of a future layers container does not constitute layer creation;
-- Nuxt-layer creation remains `nuxt` ownership.
-
-### 20.6 Legacy Git coupling
-
-Legacy app scaffolding proposed optional local Git initialisation and initial commit behaviour.
-
-Disposition:
-
-- optional repository initialisation may remain part of the root-creation workflow;
-- Git semantics themselves belong to `git`;
-- remote repository creation is not implied by root application creation and requires explicit Git-domain or provider behaviour if later approved.
-
-### 20.7 Legacy generic script runner
-
-The existing/legacy `app.run` behaviour included discovery and execution of package-defined scripts as a fallback beyond named lifecycle presets.
-
-Disposition:
-
-- retained as `FR-APP-091` through `FR-APP-098`;
-- constrained to recognised project-declared scripts;
-- arbitrary shell-command execution is not introduced as equivalent AppManager application behaviour.
-
-### 20.8 Implementation-specific material not propagated
-
-The following legacy details are deliberately not normative here:
-
-- `runApp.ts`, `setupApp.ts`, `manageEnv.ts`, or any other concrete source file;
-- `processService.spawn`, `execSync`, or equivalent APIs;
-- `fileService.deleteDir`, recursive file APIs, or helper placement;
-- exact package-manager detection priority;
-- exact lifecycle command strings;
-- exact template function names;
-- exact Git service method names;
-- exact prompt wording;
-- test scenario identifiers tied to a specific implementation;
-- internal command composition through particular modules or service imports.
-
-These remain evidence for downstream Detailed Design and Implementation work.
-
----
-
-## 21. Traceability
-
-| Functional requirement range | Root Design authority | Cross-cutting authority / legacy provenance |
+| Functional requirement range | Root Design authority | Current cross-cutting authority |
 |---|---|---|
 | `FR-APP-001`–`FR-APP-012` | Sections 1, 2, 5, 6, 10.1, 12 | `FR-INV-*`, `FR-PROJ-*`, `FR-CONFIG-*`; decomposition plan §5.1 |
-| `FR-APP-013`–`FR-APP-024` | Sections 2, 5, 8, 9, 10.1, 12 | reconciliation audit §3.13; legacy checkout-provisioning behaviour |
-| `FR-APP-025`–`FR-APP-028` | Sections 5, 10.1, 12.9 | reconciliation audit §3.13; legacy post-install behaviour |
-| `FR-APP-029`–`FR-APP-033` | Sections 4, 5, 10.1, 12.9 | `FR-INV-*`; reconciliation audit §3.13 |
-| `FR-APP-034`–`FR-APP-038` | Sections 5, 10.1, 12 | reconciliation audit §3.13 |
-| `FR-APP-039`–`FR-APP-042` | Sections 4, 5, 10.1, 12 | reconciliation audit §3.13 |
-| `FR-APP-043`–`FR-APP-049` | Sections 5, 9, 10.1, 12 | `FR-PROJ-*`; reconciliation audit §3.13 |
-| `FR-APP-050`–`FR-APP-058` | Sections 5, 9, 10.1, 12 | `FR-INV-*`, `FR-PROJ-*`; reconciliation audit §3.13 |
-| `FR-APP-059`–`FR-APP-065` | Sections 5, 6, 10.1, 12 | reconciliation audit §3.13; legacy lifecycle composition |
-| `FR-APP-066`–`FR-APP-090` | Sections 1, 2, 6.7, 8, 9, 10.1, 12.5 | `FR-CONFIG-*`, `FR-XFORM-*`; reconciliation audit §§3.9, 3.13 |
-| `FR-APP-091`–`FR-APP-098` | Sections 5, 10.1, 12.9 | reconciliation audit §§3.3, 4.4; decomposition plan §8 |
-| `FR-APP-099`–`FR-APP-104` | Sections 2.3, 9, 12 | `FR-PROJ-*`, `FR-XFORM-*` |
-| `FR-APP-105`–`FR-APP-109` | Section 4 | `FR-INV-*` |
-| `FR-APP-110`–`FR-APP-115` | Sections 5, 11, 12 | `FR-INV-*`; legacy chain-failure behaviour |
+| `FR-APP-013`–`FR-APP-024` | Sections 2, 5, 8, 9, 10.1, 12 | This specification §6; `FR-INV-*`, `FR-PROJ-*`, `FR-CONFIG-*` |
+| `FR-APP-025`–`FR-APP-028` | Sections 5, 10.1, 12.9 | This specification §7; Process Execution boundary |
+| `FR-APP-029`–`FR-APP-033` | Sections 4, 5, 10.1, 12.9 | This specification §8; `FR-INV-*` |
+| `FR-APP-034`–`FR-APP-038` | Sections 5, 10.1, 12 | This specification §9; `FR-XFORM-*` |
+| `FR-APP-039`–`FR-APP-042` | Sections 4, 5, 10.1, 12 | This specification §10; `FR-INV-*` |
+| `FR-APP-043`–`FR-APP-049` | Sections 5, 9, 10.1, 12 | This specification §11; `FR-PROJ-*` |
+| `FR-APP-050`–`FR-APP-058` | Sections 5, 9, 10.1, 12 | This specification §12; `FR-INV-*`, `FR-PROJ-*` |
+| `FR-APP-059`–`FR-APP-065` | Sections 5, 6, 10.1, 12 | This specification §13; Application Engine workflow authority |
+| `FR-APP-066`–`FR-APP-090` | Sections 1, 2, 6.7, 8, 9, 10.1, 12.5 | This specification §14; `FR-CONFIG-*`, `FR-XFORM-*`, Git/Nuxt ownership boundaries |
+| `FR-APP-091`–`FR-APP-098` | Sections 5, 10.1, 12.9 | This specification §15; Process Execution boundary |
+| `FR-APP-099`–`FR-APP-104` | Sections 2.3, 9, 12 | This specification §16; `FR-PROJ-*`, `FR-XFORM-*` |
+| `FR-APP-105`–`FR-APP-109` | Section 4 | This specification §17; `FR-INV-*` |
+| `FR-APP-110`–`FR-APP-115` | Sections 5, 11, 12 | This specification §18; `FR-INV-*`; Application Engine workflow authority |
 
 ADR-0001 selects Node.js/TypeScript for Version 1 implementation but does not materially alter the technology-independent Functional requirements in this document.
 
 ---
 
-## 22. Conformance Criteria
+## 21. Conformance Criteria
 
 An implementation conforms to this Functional Specification only if it satisfies all applicable requirements and, at minimum, demonstrates that:
 
@@ -891,7 +776,7 @@ An implementation conforms to this Functional Specification only if it satisfies
 
 ---
 
-## 23. Downstream Detailed Design Requirements
+## 22. Downstream Detailed Design Requirements
 
 Detailed Design Specifications derived from this Functional Specification may define, among other matters:
 
@@ -919,7 +804,7 @@ Detailed Design shall preserve the authority boundaries in this document rather 
 
 ---
 
-## 24. Downstream Implementation Specification Requirements
+## 23. Downstream Implementation Specification Requirements
 
 Implementation Specifications may map the approved Detailed Design to concrete Version 1 technology, including:
 
@@ -935,7 +820,6 @@ Implementation Specifications may map the approved Detailed Design to concrete V
 - Git libraries and APIs;
 - current source wiring;
 - tests and fixtures;
-- logging and diagnostics implementations;
-- migration from existing `app.run`, `app.setup`, or related source behaviour.
+- logging and diagnostics implementations.
 
 Those implementation choices shall satisfy this Functional Specification rather than redefining it.
