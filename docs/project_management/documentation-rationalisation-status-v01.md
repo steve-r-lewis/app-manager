@@ -38,10 +38,10 @@ Project Documentation Guide
 
 Primary governing documents include:
 
-- `docs/project-documentation-guide-v01.md`;
-- `docs/appmanager-design-specification-v01.md`;
+- [Project Documentation Guide](../project-documentation-guide-v01.md);
+- [AppManager Design Specification](../appmanager-design-specification-v01.md);
 - the active Functional Specifications beneath `docs/functional/`;
-- the active Detailed Design Specifications beneath `docs/detailed_design/`.
+- the active Detailed Design Specifications beneath `docs/dd_1_application_core/`, `docs/dd_2_shared_capabilities/`, `docs/dd_3_high_coupling_domains/`, and `docs/dd_4_policy_and_resource_domains/`.
 
 Project-management records may describe progress and verification state but are not design authority.
 
@@ -53,8 +53,8 @@ The documentation programme began by reconciling older design/specification mate
 
 Historical milestones include:
 
-- establishment of `docs/project-documentation-guide-v01.md`;
-- establishment of `docs/appmanager-design-specification-v01.md` as the canonical root Design Specification;
+- establishment of [Project Documentation Guide](../project-documentation-guide-v01.md);
+- establishment of [AppManager Design Specification](../appmanager-design-specification-v01.md) as the canonical root Design Specification;
 - replacement of the former five-layer architectural description with explicit subsystem/capability responsibilities;
 - migration of functional requirements into dedicated Functional Specifications;
 - decomposition of Detailed Design into Application Core and Shared Capability workstreams;
@@ -105,7 +105,7 @@ A vertical conformance audit was followed by an independent horizontal reconcili
 
 The durable reconciliation control record is:
 
-`docs/project_management/dd2-independent-review-reconciliation-v01.md`
+[docs/project_management/dd2-independent-review-reconciliation-v01.md](dd2-independent-review-reconciliation-v01.md)
 
 The reconciliation findings are:
 
@@ -115,7 +115,7 @@ The reconciliation findings are:
 - **R-04 Bootstrap configuration / managed-project sequence — resolved.** The staged bootstrap/project-aware configuration dependency is explicit across DD-1.3, DD-1.4 and DD-1.5.
 - **R-05 Structural fact model — resolved, not sustained.** Source Intelligence, Nuxt and Documentation fact models are semantically distinct projections/compositions; no generic `StructuralFact` framework is justified.
 - **R-06 Repository / Source Intelligence relationship — resolved.** They are sibling capabilities with distinct semantic ownership and no mandatory direct dependency.
-- **R-07 App / Settings environment-file ownership — resolved.** App owns application-initialisation intent and acceptance; Settings owns persisted environment-definition CRUD semantics. The normative seam is recorded in `docs/functional/app-settings-environment-definition-ownership-clarification-v01.md`.
+- **R-07 App / Settings environment-file ownership — resolved.** App owns application-initialisation intent and acceptance; Settings owns persisted environment-definition CRUD semantics. The normative seam is recorded in [docs/functional/app-settings-environment-definition-ownership-clarification-v01.md](../functional/app-settings-environment-definition-ownership-clarification-v01.md).
 - **R-08 stale references/project-management records — addressed by the current cleanup.** Alleged stale future/forthcoming references in the cited live normative DD material were not sustained; stale project-management state and removed-archive references were confirmed and corrected.
 
 ---

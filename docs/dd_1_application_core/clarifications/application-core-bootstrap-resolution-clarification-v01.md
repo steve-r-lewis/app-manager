@@ -1,10 +1,14 @@
 # AppManager Application Core Bootstrap Resolution Clarification
 
+> **Document type:** Detailed Design clarification
+>
+> **Clarifies:** DD-1.3, DD-1.4, DD-1.5
+
 > **Status:** Version 1 Detailed Design corrective clarification
 >
-> **Applies to:** `managed-project-detailed-design-v01.md`, `configuration-resolution-detailed-design-v01.md`, and `application-engine-detailed-design-v01.md`
+> **Applies to:** [DD-1.3 — Managed Project](../dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd-1-4-configuration-resolution-detailed-design-v01.md), and [DD-1.5 — Application Engine](../dd-1-5-application-engine-detailed-design-v01.md)
 >
-> **Corrective source:** `docs/project_management/application-core-detailed-design-conformance-audit-v01.md`, finding MC-001
+> **Corrective source:** [docs/project_management/application-core-detailed-design-conformance-audit-v01.md](../../project_management/application-core-detailed-design-conformance-audit-v01.md), finding MC-001
 >
 > **Normative purpose:** This document closes the cross-contract sequencing ambiguity identified by MC-001. It refines the interaction between DD-1.3 and DD-1.4 without changing their responsibility ownership, and is to be read as part of the Version 1 DD-1 Application Core baseline. Where older generic sequencing prose in DD-1.3, DD-1.4 or DD-1.5 can be read as requiring an incompatible order, this staged dependency contract governs.
 >

@@ -1,12 +1,16 @@
-# AppManager App Domain Detailed Design
+# DD-3.1 — AppManager App Domain Detailed Design
+
+> **Detailed Design ID:** DD-3.1
+>
+> **Design family:** DD-3 — High-Coupling Domains
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document defines the permanent domain-specific orchestration, policy, state, decision and result contracts by which AppManager realises root-application lifecycle and root-application creation use cases through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/app-functional-specification-v01.md`, `docs/functional/app-settings-environment-definition-ownership-clarification-v01.md`, accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md), [docs/functional/app-settings-environment-definition-ownership-clarification-v01.md](../functional/app-settings-environment-definition-ownership-clarification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
-> **Authoring controls:** `docs/project_management/detailed-design-decomposition-plan-v01.md`, `docs/project_management/domain-detailed-design-authoring-guide-v01.md`, `docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md`
+> **Authoring controls:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [docs/project_management/domain-detailed-design-authoring-guide-v01.md](../project_management/domain-detailed-design-authoring-guide-v01.md), [docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md](../project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md)
 
 ---
 
@@ -77,7 +81,7 @@ This design does not own or redefine:
 
 ### 3.1 Functional ownership
 
-The App domain owns `FR-APP-001` through `FR-APP-115` from `docs/functional/app-functional-specification-v01.md`.
+The App domain owns `FR-APP-001` through `FR-APP-115` from [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md).
 
 The principal requirement groups are:
 
@@ -104,12 +108,12 @@ The principal requirement groups are:
 
 This design consumes, but does not redefine:
 
-- `application-invocation-detailed-design-v01.md`;
-- `execution-outcomes-detailed-design-v01.md`;
-- `managed-project-detailed-design-v01.md`;
-- `configuration-resolution-detailed-design-v01.md`;
-- `application-core-bootstrap-resolution-clarification-v01.md`;
-- `application-engine-detailed-design-v01.md`.
+- [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md);
+- [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md);
+- [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md);
+- [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md);
+- [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md);
+- [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md).
 
 ### 3.3 Shared capability authorities
 

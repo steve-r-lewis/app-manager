@@ -1,10 +1,14 @@
 # AppManager Repository / Source Intelligence Relationship Clarification
 
+> **Document type:** Detailed Design clarification
+>
+> **Clarifies:** DD-2.3, DD-2.4
+
 > **Status:** Version 1 Detailed Design clarification
 >
 > **Purpose:** Clarify the permanent relationship between DD-2.3 Repository Capability and DD-2.4 Source Intelligence without creating a new subsystem, shared provider model or authority transfer.
 >
-> **Normative scope:** This document refines the relationship between `repository-capability-detailed-design-v01.md` and `source-intelligence-detailed-design-v01.md`. It does not replace either capability's owning contracts or the DD-1 Application Core authorities.
+> **Normative scope:** This document refines the relationship between [DD-2.3 — Repository Capability](../dd-2-3-repository-capability-detailed-design-v01.md) and [DD-2.4 — Source Intelligence](../dd-2-4-source-intelligence-detailed-design-v01.md). It does not replace either capability's owning contracts or the DD-1 Application Core authorities.
 
 ---
 

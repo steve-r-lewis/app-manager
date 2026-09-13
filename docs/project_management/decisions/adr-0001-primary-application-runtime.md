@@ -2,7 +2,7 @@
 
 > **Status:** Accepted
 > **Date:** 2026-09-12
-> **Related specifications:** `docs/appmanager-design-specification-v01.md`; future AppManager Functional, Detailed Design, and Implementation Specifications affected by runtime or ecosystem-capability implementation
+> **Related specifications:** [AppManager Design Specification](../../appmanager-design-specification-v01.md); future AppManager Functional, Detailed Design, and Implementation Specifications affected by runtime or ecosystem-capability implementation
 > **Supersedes:** None
 > **Superseded by:** None
 
@@ -57,7 +57,7 @@ Use Kotlin/JVM for the authoritative Application Engine and retain Node.js/TypeS
 
 This remains architecturally credible and may become advantageous in a future major version. For Version 1, however, it introduces a second implementation ecosystem and makes the internal capability contract a cross-runtime boundary before real AppManager workflows have sufficiently validated its required granularity and semantics.
 
-The detailed comparative analysis is retained in `docs/project_management/technology-architecture-review-v01.md`.
+The detailed comparative analysis is retained in [docs/project_management/technology-architecture-review-v01.md](../technology-architecture-review-v01.md).
 
 ## Decision
 
@@ -127,7 +127,7 @@ Detailed Design and Implementation work must:
 
 ## Specification Impact
 
-The principal high-level architectural consequences are already represented in `docs/appmanager-design-specification-v01.md`, which deliberately defines the Application Engine, Application Invocation Contract, capability boundaries, provider delegation, and topology independence without making Node.js/TypeScript itself an enduring conceptual requirement of AppManager.
+The principal high-level architectural consequences are already represented in [AppManager Design Specification](../../appmanager-design-specification-v01.md), which deliberately defines the Application Engine, Application Invocation Contract, capability boundaries, provider delegation, and topology independence without making Node.js/TypeScript itself an enduring conceptual requirement of AppManager.
 
 This ADR provides the decision provenance for using Node.js/TypeScript when the Version 1 architecture is reduced to concrete technical design and implementation.
 
@@ -141,7 +141,7 @@ This ADR does not mandate a Node.js/TypeScript ecosystem capability provider as 
 
 ## References
 
-- `docs/project_management/technology-architecture-review-v01.md` — comparative architecture review and revised recommendation.
-- `docs/appmanager-design-specification-v01.md` — authoritative Version 1 root Design Specification.
-- `docs/project-documentation-guide-v01.md` — documentation hierarchy and decision-governance authority.
-- `docs/decisions/architecture-decision-governance-v01.md` — ADR lifecycle and technology-selection governance.
+- [docs/project_management/technology-architecture-review-v01.md](../technology-architecture-review-v01.md) — comparative architecture review and revised recommendation.
+- [AppManager Design Specification](../../appmanager-design-specification-v01.md) — authoritative Version 1 root Design Specification.
+- [Project Documentation Guide](../../project-documentation-guide-v01.md) — documentation hierarchy and decision-governance authority.
+- [Architecture Decision Governance](architecture-decision-governance-v01.md) — ADR lifecycle and technology-selection governance.

@@ -1,14 +1,18 @@
-# AppManager Managed Project Detailed Design
+# DD-1.3 — AppManager Managed Project Detailed Design
+
+> **Detailed Design ID:** DD-1.3
+>
+> **Design family:** DD-1 — Application Core
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document defines the permanent internal design by which AppManager identifies, resolves, validates, represents, and scopes the project being managed. It refines, but does not override, the root Design Specification or Functional Specifications.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/managed-project-functional-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md)
 >
-> **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
+> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
 >
-> **Related Detailed Designs:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/configuration-resolution-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/application-core-bootstrap-resolution-clarification-v01.md`
+> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
 
 ## 1. Purpose
 
@@ -30,7 +34,7 @@ A second governing rule is:
 
 This Detailed Design therefore separates project evidence acquisition, candidate resolution, project-context construction, operation-specific scope resolution, targetability evaluation, and final application authority.
 
-Where project resolution consumes configuration, the staged dependency rules in `application-core-bootstrap-resolution-clarification-v01.md` apply: pre-project configuration evidence is limited to bootstrap-effective configuration whose applicability does not depend on the unresolved project, while project/scope-dependent configuration is resolved only after sufficient managed-project context exists.
+Where project resolution consumes configuration, the staged dependency rules in [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) apply: pre-project configuration evidence is limited to bootstrap-effective configuration whose applicability does not depend on the unresolved project, while project/scope-dependent configuration is resolved only after sufficient managed-project context exists.
 
 ## 2. Scope
 
@@ -90,7 +94,7 @@ The design defines enduring responsibility and contract boundaries, not one impl
 
 ## 4. Architectural Position
 
-Managed Project sits between invocation intent and domain/capability execution. Where configuration contributes to project resolution, the staged collaboration defined by `application-core-bootstrap-resolution-clarification-v01.md` applies.
+Managed Project sits between invocation intent and domain/capability execution. Where configuration contributes to project resolution, the staged collaboration defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) applies.
 
 ```text
 caller / host / automation
@@ -216,7 +220,7 @@ Project resolution may consume bounded evidence from:
 - project-associated resource recognition;
 - previously resolved context evidence that is still valid.
 
-Before managed-project identity exists, configuration evidence in this list means only the bootstrap subset defined by `application-core-bootstrap-resolution-clarification-v01.md`: concerns and sources whose applicability and effective value do not depend on the unresolved managed project, topology or managed scope. Later project/scope-aware configuration may refine downstream scope, policy or interpretation only after sufficient Managed Project Context exists.
+Before managed-project identity exists, configuration evidence in this list means only the bootstrap subset defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md): concerns and sources whose applicability and effective value do not depend on the unresolved managed project, topology or managed scope. Later project/scope-aware configuration may refine downstream scope, policy or interpretation only after sufficient Managed Project Context exists.
 
 ### 7.2 Evidence is factual, not authoritative
 
@@ -896,7 +900,7 @@ Internal resolution may require paths and identifiers, but caller-visible projec
 
 ## 29. Relationship to Configuration Resolution
 
-DD-1.3 and DD-1.4 collaborate through the staged dependency contract defined normatively by `application-core-bootstrap-resolution-clarification-v01.md`.
+DD-1.3 and DD-1.4 collaborate through the staged dependency contract defined normatively by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md).
 
 Before authoritative managed-project identity exists, Managed Project may consume only bootstrap effective configuration whose applicability and effective value are independently resolvable without that identity. After sufficient Managed Project Context exists, DD-1.4 may resolve project-, topology-, entity-, repository-, layer-, resource- or scope-dependent concerns. The resulting operation-effective configuration may then contribute to managed-scope, exclusion, targetability and policy decisions where their owning semantics permit it.
 

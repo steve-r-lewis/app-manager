@@ -2,7 +2,7 @@
 
 > **Status:** Version 1 Functional Specification clarification
 >
-> **Clarifies:** `app-functional-specification-v01.md` `FR-APP-013`–`FR-APP-018` and `settings-functional-specification-v01.md` `FR-SET-058`–`FR-SET-071`
+> **Clarifies:** [app-functional-specification-v01.md](app-functional-specification-v01.md) `FR-APP-013`–`FR-APP-018` and [settings-functional-specification-v01.md](settings-functional-specification-v01.md) `FR-SET-058`–`FR-SET-071`
 >
 > **Normative role:** This document clarifies the cross-domain ownership and delegation seam for persisted managed-project environment definitions. It does not create a third environment-management domain, redefine Configuration authority, or prescribe implementation topology.
 

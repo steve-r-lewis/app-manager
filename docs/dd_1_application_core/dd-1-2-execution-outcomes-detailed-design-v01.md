@@ -1,16 +1,20 @@
-# AppManager Execution Outcomes and Diagnostics Detailed Design
+# DD-1.2 — AppManager Execution Outcomes and Diagnostics Detailed Design
+
+> **Detailed Design ID:** DD-1.2
+>
+> **Design family:** DD-1 — Application Core
 
 > **Status:** Version 1 Detailed Design Specification
 >
 > **Detailed Design authority:** This document is the single canonical Detailed Design authority for shared AppManager execution outcomes, diagnostics, warnings, progress, cancellation, partial completion, consequential-effect reporting, provider-result normalization, and the shared semantic rules governing their composition. It refines, but does not override, the root Design Specification or Functional Specifications.
 >
-> **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/application-invocation-functional-specification-v01.md`
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
-> **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
+> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
 >
-> **Preceding Detailed Design:** `docs/detailed_design/application-invocation-detailed-design-v01.md`
+> **Preceding Detailed Design:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md)
 >
-> **Related clarification:** `docs/detailed_design/application-outcome-and-diagnostic-ownership-clarification-v01.md`
+> **Related clarification:** [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md)
 >
 > **Related Functional authorities:** all domain Functional Specifications where command-specific success, failure, partial completion, diagnostics, progress, cancellation, preview, safety, or effect-reporting semantics are defined.
 
@@ -818,7 +822,7 @@ DD-1.1/adapters shall not:
 - expose secrets from bounded provider evidence;
 - create adapter-specific final status semantics.
 
-The mapping/projection relationship is further defined by `application-outcome-and-diagnostic-ownership-clarification-v01.md`.
+The mapping/projection relationship is further defined by [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md).
 
 ## 28. Compatibility and Evolution
 
