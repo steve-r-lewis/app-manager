@@ -6,7 +6,7 @@
 >
 > **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, Version 1 Functional Specifications, `docs/decisions/adr-0001-primary-application-runtime.md`
 >
-> **Related Detailed Designs:** `application-invocation-detailed-design-v01.md`, `execution-outcomes-detailed-design-v01.md`, `managed-project-detailed-design-v01.md`, `configuration-resolution-detailed-design-v01.md`
+> **Related Detailed Designs:** `application-invocation-detailed-design-v01.md`, `execution-outcomes-detailed-design-v01.md`, `managed-project-detailed-design-v01.md`, `configuration-resolution-detailed-design-v01.md`, `application-core-bootstrap-resolution-clarification-v01.md`
 >
 > **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
 
@@ -101,9 +101,10 @@ Application Invocation Contract
         v
 Application Engine authority
         |
+        +--> context-independent / bootstrap configuration where needed
         +--> managed-project resolution
-        +--> configuration resolution
-        +--> policy / safety / authorization
+        +--> project/scope-aware configuration resolution
+        +--> managed-scope / policy / safety / authorization
         +--> domain or use-case orchestration
         |        |
         |        +--> shared capabilities
@@ -124,7 +125,7 @@ AppManager Execution Outcome
 interaction-specific projection
 ```
 
-The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
+Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by `application-core-bootstrap-resolution-clarification-v01.md`. The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
 
 ### 4.1 Authority direction
 
@@ -255,19 +256,19 @@ preview request != applied effects
 
 ### DD-ENG-019 — Managed-project dependency
 
-When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative.
+When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by `application-core-bootstrap-resolution-clarification-v01.md` may contribute before managed-project identity exists.
 
 ### DD-ENG-020 — Managed-scope dependency
 
-Consequential operations shall operate against an operation-specific managed scope. Discovery or recognition alone shall not be substituted for targetability or mutation authority.
+Consequential operations shall operate against an operation-specific managed scope. Discovery or recognition alone shall not be substituted for targetability or mutation authority. Where scope resolution depends upon project- or scope-aware configuration, the required operation-effective configuration shall be resolved before finalizing that scope.
 
 ### DD-ENG-021 — Configuration dependency
 
-When configuration is required, the Engine shall consume governed effective configuration from DD-1.4 rather than permitting the use case or provider to independently select raw configuration sources.
+When configuration is required, the Engine shall consume governed effective configuration from DD-1.4 rather than permitting the use case or provider to independently select raw configuration sources. The Engine shall distinguish bootstrap-effective configuration used during project resolution from the later operation-effective configuration snapshot; a bootstrap value is not automatically the complete operation snapshot.
 
 ### DD-ENG-022 — Configuration snapshot stability
 
-A use case shall normally execute against an immutable effective-configuration snapshot established for the relevant execution phase. Dynamic re-resolution requires explicit workflow semantics.
+A use case shall normally execute against an immutable effective-configuration snapshot established for the relevant execution phase. Dynamic re-resolution requires explicit workflow semantics. A material difference between bootstrap assumptions and the later operation-effective snapshot shall trigger revalidation of dependent project, scope, policy, safety or authorization decisions.
 
 ### DD-ENG-023 — Context completeness
 
@@ -281,16 +282,20 @@ If a material project, scope, configuration, authorization or external-state ass
 
 ## 8. Orchestration Lifecycle
 
-A significant use case conceptually passes through the following lifecycle, with stages omitted where irrelevant:
+A significant use case conceptually passes through the following lifecycle, with stages omitted where irrelevant. Where project resolution depends upon configuration, the bootstrap stages are explicit:
 
 ```text
 invocation accepted
     -> command/use-case resolved
-    -> prerequisite context resolved
-    -> availability established
-    -> invocation/domain validation
-    -> managed scope resolved
-    -> effective configuration established
+    -> prerequisite host/invocation context resolved
+    -> context-independent configuration candidates resolved where required
+    -> bootstrap effective configuration established where required
+    -> managed-project resolution
+    -> sufficient managed-project context established
+    -> project/scope-dependent configuration resolved
+    -> operation effective-configuration snapshot established
+    -> managed scope resolved/finalized
+    -> availability and invocation/domain validation completed as context requires
     -> policy/safety evaluated
     -> authorization established where required
     -> preview/plan produced where requested
@@ -300,7 +305,7 @@ invocation accepted
     -> final outcome published
 ```
 
-This is a semantic lifecycle, not a required synchronous call sequence.
+For operations that do not require project-aware configuration, irrelevant stages may be omitted or collapsed. Availability and validation may also occur at more than one semantic checkpoint as additional context becomes authoritative. This is a semantic dependency lifecycle, not a required synchronous call sequence or a requirement for one physical configuration-resolution pass.
 
 ### DD-ENG-025 — Effects require prerequisite satisfaction
 
@@ -657,15 +662,17 @@ DD-1.1 invocation contract
         v
 Application Engine / domain use-case semantics
         |
+        +--> DD-1.4 bootstrap configuration (when required)
         +--> DD-1.3 managed project
-        +--> DD-1.4 configuration
+        +--> DD-1.4 project/scope-aware configuration
+        +--> DD-1.3 managed scope / targetability
         +--> DD-2 shared capabilities
         |
         v
 DD-1.2 normalized evidence/outcomes
 ```
 
-The representation is conceptual; DD-1 contracts may mutually reference shared types/responsibilities without requiring cyclic implementation modules.
+The representation is conceptual. DD-1.3 and DD-1.4 collaborate through the staged bootstrap contract rather than forming unrestricted circular authority; DD-1 contracts may mutually reference shared types/responsibilities without requiring cyclic implementation modules.
 
 ### DD-ENG-090 — No upward presentation dependency
 
@@ -746,15 +753,16 @@ Every implementation conforming to this Detailed Design shall preserve all of th
 9. capabilities execute bounded responsibilities and return normalized evidence;
 10. provider success is not automatically application success;
 11. managed-project discovery does not grant targetability or mutation authority;
-12. effective configuration is consumed through DD-1.4 rather than ad hoc source reads;
-13. authorization is explicit and re-evaluated after material plan/scope change;
-14. preview/proposed effects remain distinct from applied effects;
-15. cancellation does not imply rollback;
-16. retryability evidence does not grant retry authority;
-17. known effects survive failure, partial success and cancellation reporting;
-18. final status is determined through application acceptance;
-19. interaction modes converge on equivalent semantics;
-20. the Engine boundary does not require one monolithic class/process/package/runtime.
+12. configuration is staged where project identity and project/scope-aware configuration depend on one another: bootstrap-effective configuration may inform DD-1.3 resolution, while the operation-effective snapshot follows sufficient managed-project context and precedes any scope/policy decisions that depend on it;
+13. effective configuration is consumed through DD-1.4 rather than ad hoc source reads;
+14. authorization is explicit and re-evaluated after material plan/scope/configuration change;
+15. preview/proposed effects remain distinct from applied effects;
+16. cancellation does not imply rollback;
+17. retryability evidence does not grant retry authority;
+18. known effects survive failure, partial success and cancellation reporting;
+19. final status is determined through application acceptance;
+20. interaction modes converge on equivalent semantics;
+21. the Engine boundary does not require one monolithic class/process/package/runtime.
 
 ---
 
@@ -894,7 +902,7 @@ Those choices must implement this Detailed Design rather than retroactively rede
 The Application Core Detailed Design family is conformant only if an implementation can demonstrate that:
 
 - semantic invocation reaches one shared application-authority model;
-- project, scope and configuration are resolved through their governed contracts;
+- project, scope and configuration are resolved through their governed contracts, including the staged bootstrap contract where project resolution and configuration applicability depend on one another;
 - domain use cases coordinate capabilities without allowing capabilities to acquire application policy;
 - scanners/resolvers/strategies/providers have bounded, explicit roles;
 - consequential execution is preceded by required scope/policy/authorization decisions;
