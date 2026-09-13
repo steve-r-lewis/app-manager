@@ -2,19 +2,23 @@
 
 ## 1. Purpose
 
-This document defines the Version 1 decomposition, contract map, dependency direction, drafting sequence, and traceability rules for AppManager Detailed Design Specifications.
+This document defines the Version 1 decomposition, canonical Detailed Design register, contract map, dependency direction, drafting sequence, and traceability rules for AppManager Detailed Design Specifications.
 
 It is a **project-management planning document**, not itself a normative Detailed Design Specification.
 
 Its purpose is to prevent the Detailed Design phase from reproducing Functional Specifications as implementation-shaped domain documents, duplicating cross-cutting semantics, or allowing provider and service mechanics to acquire application authority.
 
+This document is also the canonical project-management register for the assignment of stable `DD-<family>.<item>` identities to primary Version 1 Detailed Design Specifications and for their canonical target paths under the repository structure governed by the Project Documentation Guide.
+
 The governing documentation authority remains:
 
-1. `docs/project-documentation-guide-v01.md`;
-2. `docs/appmanager-design-specification-v01.md`;
-3. the Version 1 Functional Specifications under `docs/functional/`;
-4. accepted ADRs, including `docs/decisions/adr-0001-primary-application-runtime.md`;
-5. `docs/project_management/functional-specification-conformance-audit-v01.md` as transition evidence and guardrails.
+1. [Project Documentation Guide](../project-documentation-guide-v01.md);
+2. [AppManager Design Specification](../appmanager-design-specification-v01.md);
+3. the Version 1 Functional Specifications under [`docs/functional/`](../functional/);
+4. accepted ADRs, including [ADR-0001 — Primary Application Runtime](decisions/adr-0001-primary-application-runtime.md);
+5. [Functional Specification Conformance Audit](functional-specification-conformance-audit-v01.md) as transition evidence and guardrails.
+
+The register in Section 5 records identity, decomposition, canonical destination, and drafting status. It does not by itself move files or alter the normative content of a Detailed Design Specification.
 
 ---
 
@@ -65,75 +69,123 @@ The key consequence is:
 
 This avoids independent implementations of invocation, scope, configuration, transformation, diagnostics, cancellation, provider execution, or result normalization inside each domain.
 
----
-
-## 5. Proposed Detailed Design Document Set
-
-Normative Detailed Design Specifications should be placed under:
+The four Version 1 Detailed Design families are subdivisions of Level 3 Detailed Design, not additional specification levels or authority tiers:
 
 ```text
-docs/detailed_design/
+DD-1 — Application Core
+DD-2 — Shared Capabilities
+DD-3 — High-Coupling Domains
+DD-4 — Policy and Resource Domains
 ```
 
-This directory name follows the project rule that directories use underscores while filenames use hyphens.
+Their canonical active directories are:
 
-### 5.1 Application Core Detailed Designs
+```text
+docs/dd_1_application_core/
+docs/dd_2_shared_capabilities/
+docs/dd_3_high_coupling_domains/
+docs/dd_4_policy_and_resource_domains/
+```
+
+---
+
+## 5. Canonical Detailed Design Register
+
+### 5.1 Register Authority and Interpretation
+
+This section is the canonical Version 1 register for primary Detailed Design identities.
+
+For each registered primary Detailed Design Specification it establishes:
+
+- stable Detailed Design ID;
+- canonical title/subject;
+- owning Detailed Design family;
+- canonical target repository path;
+- current drafting status.
+
+The canonical path is the approved destination under the target repository structure. Until the controlled structural migration is complete, an existing completed document may still reside at its legacy path under `docs/detailed_design/`. That temporary physical location does not change its registered identity or canonical target path.
+
+The register must not be reconstructed from alphabetical order, current filenames, current source-code topology, or implementation structure. A primary identifier remains stable across document versions unless the design responsibility itself is deliberately re-decomposed.
+
+Supporting clarifications, reconciliation records, conformance audits, handovers, and other project-management documents do not acquire fictitious primary DD identifiers merely because they relate to a registered design.
+
+### 5.2 DD-1 — Application Core
 
 The first design family defines the permanent Application Engine contracts that every domain depends upon.
 
-Proposed documents:
+| ID | Canonical subject | Canonical target path | Status |
+|---|---|---|---|
+| `DD-1.1` | Application Invocation | `docs/dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md` | Complete |
+| `DD-1.2` | Execution Outcomes | `docs/dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md` | Complete |
+| `DD-1.3` | Managed Project | `docs/dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md` | Complete |
+| `DD-1.4` | Configuration Resolution | `docs/dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md` | Complete |
+| `DD-1.5` | Application Engine | `docs/dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md` | Complete |
 
-```text
-docs/detailed_design/application-invocation-detailed-design-v01.md
-docs/detailed_design/application-engine-detailed-design-v01.md
-docs/detailed_design/managed-project-detailed-design-v01.md
-docs/detailed_design/configuration-resolution-detailed-design-v01.md
-docs/detailed_design/execution-outcomes-detailed-design-v01.md
-```
+These documents are intentionally separated where responsibilities are independently reusable and testable, but they must remain mutually coherent.
 
-These documents are intentionally separated where responsibilities are independently reusable and testable, but must remain mutually coherent.
-
-### 5.2 Shared Capability Detailed Designs
+### 5.3 DD-2 — Shared Capabilities
 
 The second design family defines reusable specialist capabilities behind stable AppManager-oriented boundaries.
 
-Proposed documents:
-
-```text
-docs/detailed_design/resource-access-detailed-design-v01.md
-docs/detailed_design/process-execution-detailed-design-v01.md
-docs/detailed_design/repository-capability-detailed-design-v01.md
-docs/detailed_design/source-intelligence-detailed-design-v01.md
-docs/detailed_design/source-transformation-detailed-design-v01.md
-docs/detailed_design/ai-capability-detailed-design-v01.md
-docs/detailed_design/documentation-capability-detailed-design-v01.md
-docs/detailed_design/quality-capability-detailed-design-v01.md
-docs/detailed_design/nuxt-capability-detailed-design-v01.md
-docs/detailed_design/resource-registry-and-template-detailed-design-v01.md
-```
+| ID | Canonical subject | Canonical target path | Status |
+|---|---|---|---|
+| `DD-2.1` | Resource Access | `docs/dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md` | Complete |
+| `DD-2.2` | Process Execution | `docs/dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md` | Complete |
+| `DD-2.3` | Repository Capability | `docs/dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md` | Complete |
+| `DD-2.4` | Source Intelligence | `docs/dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md` | Complete |
+| `DD-2.5` | Source Transformation | `docs/dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md` | Complete |
+| `DD-2.6` | Resource Registry and Template | `docs/dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md` | Complete |
+| `DD-2.7` | AI Capability | `docs/dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md` | Complete |
+| `DD-2.8` | Quality Capability | `docs/dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md` | Complete |
+| `DD-2.9` | Documentation Capability | `docs/dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md` | Complete |
+| `DD-2.10` | Nuxt Capability | `docs/dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md` | Complete |
 
 These names describe responsibility boundaries, not required classes, services, packages, or processes.
 
-### 5.3 Domain Orchestration Detailed Designs
+The `DD-2.8` Quality / `DD-2.9` Documentation assignment is canonical and reflects the completed Version 1 DD-2 design set and conformance records.
 
-The third design family defines how approved domain use cases coordinate the shared Application Core and capability contracts.
+### 5.4 DD-3 — High-Coupling Domains
 
-Proposed documents:
+The third design family defines how approved high-coupling domain use cases coordinate the shared Application Core and capability contracts.
 
-```text
-docs/detailed_design/app-domain-detailed-design-v01.md
-docs/detailed_design/git-domain-detailed-design-v01.md
-docs/detailed_design/nuxt-domain-detailed-design-v01.md
-docs/detailed_design/docs-domain-detailed-design-v01.md
-docs/detailed_design/quality-domain-detailed-design-v01.md
-docs/detailed_design/settings-domain-detailed-design-v01.md
-docs/detailed_design/ai-domain-detailed-design-v01.md
-docs/detailed_design/utils-domain-detailed-design-v01.md
-```
+| ID | Canonical subject | Canonical target path | Status |
+|---|---|---|---|
+| `DD-3.1` | App Domain | `docs/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md` | Complete |
+| `DD-3.2` | Git Domain | `docs/dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md` | Planned — next domain design |
+| `DD-3.3` | Nuxt Domain | `docs/dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md` | Planned |
+| `DD-3.4` | Docs Domain | `docs/dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md` | Planned |
 
 Domain Detailed Designs own orchestration and domain-specific internal policy. They must not duplicate shared capability implementation contracts.
 
-### 5.4 Detailed Design Conformance Document
+### 5.5 DD-4 — Policy and Resource Domains
+
+The fourth design family covers the lower-coupling policy and resource domains that remain after shared capabilities and the high-coupling domains are established.
+
+| ID | Canonical subject | Canonical target path | Status |
+|---|---|---|---|
+| `DD-4.1` | Quality Domain | `docs/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md` | Planned |
+| `DD-4.2` | Settings Domain | `docs/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md` | Planned |
+| `DD-4.3` | AI Domain | `docs/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md` | Planned |
+| `DD-4.4` | Utils Domain | `docs/dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md` | Planned |
+
+Utils remains last because its design must prove that no residual behavior is being used to bypass a stronger owner.
+
+### 5.6 Supporting Clarifications
+
+Detailed Design clarifications are supporting normative or explanatory documents rather than additional primary decomposition items.
+
+Where family-local placement improves navigation, they may be migrated beneath:
+
+```text
+docs/dd_1_application_core/clarifications/
+docs/dd_2_shared_capabilities/clarifications/
+docs/dd_3_high_coupling_domains/clarifications/
+docs/dd_4_policy_and_resource_domains/clarifications/
+```
+
+A clarification must explicitly identify the DD IDs or contracts it clarifies. Its placement does not transfer responsibility ownership or create a new Detailed Design ID.
+
+### 5.7 Detailed Design Conformance Document
 
 After all Detailed Design documents are drafted, a project-management audit should be created:
 
@@ -535,9 +587,9 @@ Implementation Specification
 concrete source / tests / build / runtime artefacts
 ```
 
-Detailed Design identifiers should be stable enough for Implementation Specifications to reference them.
+Primary Detailed Design identifiers are the stable `DD-<family>.<item>` identities registered in Section 5. Detailed Design documents may additionally define stable internal contract identifiers for their own requirements and traceability.
 
-A proposed identifier scheme is:
+The established contract-identifier families are:
 
 ```text
 DD-INV-*     invocation
@@ -565,64 +617,70 @@ DD-AI-*      ai domain
 DD-UTIL-*    utils domain
 ```
 
-The exact numeric ranges should be assigned when each specification is drafted.
+Contract identifiers are subordinate to the primary document identity. Their numbering is assigned within the owning specification as that specification is drafted.
 
 ---
 
-## 12. Drafting Sequence
+## 12. Drafting Sequence and Current State
 
 ### DD-0 — Decomposition and Contract Map
 
-This document completes DD-0 once approved.
+This document completed the original DD-0 decomposition and now additionally carries the canonical Version 1 Detailed Design register required for structural rationalisation.
 
 ### DD-1 — Application Core
 
-Draft in this order:
+Canonical drafting order:
 
-1. Application Invocation Detailed Design;
-2. Execution Outcomes Detailed Design;
-3. Managed Project Detailed Design;
-4. Configuration Resolution Detailed Design;
-5. Application Engine Detailed Design.
+1. `DD-1.1` — Application Invocation Detailed Design;
+2. `DD-1.2` — Execution Outcomes Detailed Design;
+3. `DD-1.3` — Managed Project Detailed Design;
+4. `DD-1.4` — Configuration Resolution Detailed Design;
+5. `DD-1.5` — Application Engine Detailed Design.
 
 Rationale: the Application Engine should be designed against explicit invocation, outcome, scope, and configuration contracts rather than defining those concerns opportunistically inside engine orchestration.
 
+**Current state:** DD-1 is complete and has passed its Application Core conformance audit/correction work.
+
 ### DD-2 — Shared Capabilities
 
-Draft in this order:
+Canonical drafting order:
 
-1. Resource Access;
-2. Process Execution;
-3. Repository Capability;
-4. Source Intelligence;
-5. Source Transformation;
-6. Registry and Template Resources;
-7. AI Capability;
-8. Quality Capability;
-9. Documentation Capability;
-10. Nuxt Capability.
+1. `DD-2.1` — Resource Access;
+2. `DD-2.2` — Process Execution;
+3. `DD-2.3` — Repository Capability;
+4. `DD-2.4` — Source Intelligence;
+5. `DD-2.5` — Source Transformation;
+6. `DD-2.6` — Resource Registry and Template;
+7. `DD-2.7` — AI Capability;
+8. `DD-2.8` — Quality Capability;
+9. `DD-2.9` — Documentation Capability;
+10. `DD-2.10` — Nuxt Capability.
 
 Rationale: lower-level reusable mechanics should stabilize before higher-coupling capability designs that compose them.
 
+**Current state:** DD-2 is complete; its independent reconciliation and final horizontal conformance closeout have been completed.
+
 ### DD-3 — High-Coupling Domains
 
-Draft:
+Canonical drafting order:
 
-1. App;
-2. Git;
-3. Nuxt;
-4. Docs.
+1. `DD-3.1` — App;
+2. `DD-3.2` — Git;
+3. `DD-3.3` — Nuxt;
+4. `DD-3.4` — Docs.
 
 These domains coordinate the largest number of shared capabilities and should validate the contract architecture early.
 
+**Current state:** DD-3.1 App Domain is complete. DD-3.2 Git Domain is the next design objective after the documentation-structure refactoring session closes.
+
 ### DD-4 — Policy and Resource Domains
 
-Draft:
+Canonical drafting order:
 
-1. Quality;
-2. Settings;
-3. AI;
-4. Utils.
+1. `DD-4.1` — Quality;
+2. `DD-4.2` — Settings;
+3. `DD-4.3` — AI;
+4. `DD-4.4` — Utils.
 
 Utils remains last because its design must prove that no residual behavior is being used to bypass a stronger owner.
 
@@ -695,21 +753,26 @@ The governing balance is:
 
 ---
 
-## 15. Completion Criteria for DD-0
+## 15. Completion and Structural-Rationalisation Criteria
 
-DD-0 is complete when this plan is approved and the project agrees that:
+The original DD-0 decomposition is complete because the project agrees that:
 
-- Detailed Design will be responsibility/contract-oriented rather than one-service-per-domain;
+- Detailed Design is responsibility/contract-oriented rather than one-service-per-domain;
 - shared Application Core contracts are designed first;
 - shared capability contracts precede domain orchestration;
 - domain Detailed Designs cannot redefine cross-cutting Functional authority;
-- `docs/detailed_design/` is the normative location for Detailed Design Specifications;
 - the dependency direction in this document is the planning baseline;
 - traceability from Functional requirements into Detailed Design contracts is mandatory;
 - Implementation-specific reduction to practice remains deferred to the Implementation Specification phase.
 
-Upon completion, the next work item is:
+The former statement that `docs/detailed_design/` is the normative location for Detailed Design Specifications is superseded by the Project Documentation Guide and the canonical family paths registered in Section 5.
 
-```text
-DD-1.1 — Application Invocation Detailed Design
-```
+For the current documentation-structure rationalisation, R-2 is complete when:
+
+- every primary Version 1 DD-1 through DD-4 responsibility has exactly one registered `DD-<family>.<item>` identity;
+- every registered identity has one canonical target path;
+- completed versus planned status is explicit;
+- the register is consistent with completed conformance/reconciliation evidence;
+- no physical file move has been performed as part of R-2.
+
+After R-2 is approved and merged, the next refactoring work package is the repository-wide migration inventory and old-path-to-new-path map before any physical Detailed Design migration occurs.
