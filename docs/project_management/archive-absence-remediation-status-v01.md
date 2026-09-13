@@ -34,6 +34,14 @@ Corrective edits shall:
 - keep historical evidence in non-normative project-management/audit records where useful;
 - treat archive absence as a semantic test, not merely a broken-link test.
 
-## 4. Current State
+## 4. Increment 1 — Functional Specification Analysis
 
-**IN PROGRESS.** The first corrective pass targets the Functional Specification layer identified by the PR #67 audit. DD-2.7 remains blocked until this remediation record reaches a final conformance result.
+The direct-reference scan confirms that the first corrective set is AI, Docs, Quality, Settings, Utils, Managed Project, Configuration and Source Transformation. Application Invocation and App additionally require removal or reframing of historical disposition/reconciliation narrative even where no direct archive path remains.
+
+The AI Functional Specification has now been reviewed requirement-by-requirement for the cleanup. Its enduring requirements are already stated in `FR-AI-001` through `FR-AI-105`; the historical reconciliation section is explanatory provenance rather than required normative substance. Its traceability table must therefore be rewritten against current authority, while all 105 requirements and the primary-intent/Application-Engine authority boundaries remain unchanged.
+
+The same test will be applied to each remaining Functional Specification: historical text is removed only after confirming that every enduring behaviour it describes is already represented by an FR or is restated declaratively in the live specification.
+
+## 5. Current State
+
+**IN PROGRESS.** Functional Specification remediation is the active workstream. DD-2.7 remains blocked until this record reaches a final conformance result.
