@@ -2,7 +2,7 @@
 
 > **Status:** Version 1 Detailed Design Specification
 >
-> **Detailed Design authority:** This document defines the permanent internal design for AppManager execution outcomes, diagnostics, warnings, progress, cancellation, partial completion, consequential-effect reporting, and provider-result normalization. It refines, but does not override, the root Design Specification or Functional Specifications.
+> **Detailed Design authority:** This document is the single canonical Detailed Design authority for shared AppManager execution outcomes, diagnostics, warnings, progress, cancellation, partial completion, consequential-effect reporting, provider-result normalization, and the shared semantic rules governing their composition. It refines, but does not override, the root Design Specification or Functional Specifications.
 >
 > **Governing sources:** `docs/project-documentation-guide-v01.md`, `docs/appmanager-design-specification-v01.md`, `docs/functional/application-invocation-functional-specification-v01.md`
 >
@@ -10,13 +10,15 @@
 >
 > **Preceding Detailed Design:** `docs/detailed_design/application-invocation-detailed-design-v01.md`
 >
+> **Related clarification:** `docs/detailed_design/application-outcome-and-diagnostic-ownership-clarification-v01.md`
+>
 > **Related Functional authorities:** all domain Functional Specifications where command-specific success, failure, partial completion, diagnostics, progress, cancellation, preview, safety, or effect-reporting semantics are defined.
 
 ## 1. Purpose
 
 This specification defines the shared internal contracts by which AppManager represents technical execution evidence and converts it into coherent application-level outcomes.
 
-It establishes one permanent result model for the Application Engine, domain use cases, shared capabilities, invocation adapters, and future integrations to consume rather than allowing each domain or provider to invent incompatible success flags, error shapes, warning conventions, cancellation representations, or partial-success semantics.
+It establishes one permanent canonical semantic result model for the Application Engine, domain use cases, shared capabilities, invocation boundary, adapters, and future integrations to consume rather than allowing each domain, capability, provider, or invocation surface to invent incompatible success flags, error shapes, diagnostic taxonomies, warning conventions, cancellation representations, effect models, or partial-success semantics.
 
 The central design rule is:
 
@@ -30,15 +32,22 @@ A third governing rule is:
 
 > **Failure or cancellation must describe known consequential state; neither implies rollback unless rollback is explicitly guaranteed by the owning use case.**
 
+A fourth ownership rule follows:
+
+> **DD-1.2 owns shared outcome and diagnostic semantics once; consuming designs project, compose, map, or refine them but do not recreate competing base contracts.**
+
+DD-1.1 Application Invocation owns the caller-facing invocation/control and projection boundary. It consumes this canonical model and may define invocation-specific codes or projection details only by mapping them to the semantics defined here.
+
 ## 2. Scope
 
 This design owns permanent internal contracts for:
 
 - normalized execution status;
-- application-level outcome status;
+- canonical application-level outcome status;
+- the shared final outcome envelope semantics;
 - domain-specific result payload attachment;
-- diagnostics and warnings;
-- diagnostic severity and category;
+- canonical diagnostics and warnings;
+- diagnostic severity and broad category taxonomy;
 - causal and contextual relationships among diagnostics;
 - progress and execution events;
 - cancellation observation and completion semantics;
@@ -49,7 +58,7 @@ This design owns permanent internal contracts for:
 - preview/proposed-change reporting;
 - provider/capability execution evidence;
 - provider-result normalization;
-- failure categorization;
+- failure categorization and mapping into canonical diagnostics;
 - recovery guidance;
 - retryability evidence without implicit retry authority;
 - outcome aggregation for multi-stage and multi-target operations;
@@ -57,6 +66,8 @@ This design owns permanent internal contracts for:
 - machine-consumable and human-presentable separation;
 - correlation between execution evidence, events, diagnostics, and final outcomes;
 - cross-domain conformance rules for result production and consumption.
+
+This design does not own domain-specific acceptance policy, command-specific result payload semantics, invocation transport/serialization, or presentation rendering.
 
 ## 3. Out of Scope
 
@@ -84,7 +95,7 @@ These belong to domain Detailed Design or Implementation Specifications as appro
 
 ## 4. Architectural Position
 
-The execution-outcome model sits between technical execution and application-level invocation delivery.
+The execution-outcome model sits between technical execution and invocation-facing delivery.
 
 ```text
 command / use case
@@ -100,10 +111,10 @@ technical evidence
       |
       v
 +---------------------------------------+
-| execution outcome / diagnostic model  |
+| canonical DD-1.2 semantic model       |
 |                                       |
 | normalize evidence                    |
-| classify diagnostics                  |
+| classify/map diagnostics              |
 | record effects                        |
 | represent partial state               |
 | preserve cancellation state           |
@@ -115,28 +126,31 @@ technical evidence
       application acceptance
                    |
                    v
-       final invocation outcome
+       canonical AppManager outcome
+                   |
+                   v
+      DD-1.1 invocation projection
                    |
                    v
        adapter / automation caller
 ```
 
-This model is shared infrastructure. It must not become an alternative policy engine.
+This model is shared infrastructure. It must not become an alternative policy engine, and the invocation boundary must not become an alternative semantic outcome authority.
 
 ## 5. Responsibility Model
 
 The design is decomposed into the following permanent responsibilities:
 
 1. **Execution Evidence Contract** — represents bounded technical facts returned from capabilities or providers.
-2. **Diagnostic Contract** — represents structured problems, warnings, notices, and recovery guidance.
+2. **Diagnostic Contract** — owns the canonical AppManager diagnostic structure, severity model, broad taxonomy, warnings, notices, and recovery guidance semantics.
 3. **Effect Contract** — represents consequential resources or state known to have changed, been created, deleted, skipped, or proposed.
 4. **Progress Event Contract** — represents meaningful execution progression without conflating progress with completion.
 5. **Cancellation State Contract** — represents requested, observed, stopping, and completed cancellation states where relevant.
-6. **Outcome Contract** — represents the Application Engine's final accepted status and domain result payload.
+6. **Outcome Contract** — owns the canonical shared envelope semantics representing the Application Engine's final accepted status and domain result payload attachment.
 7. **Outcome Aggregator** — combines child/stage/target results while preserving information rather than flattening it into a Boolean.
 8. **Provider Result Normalizer** — converts provider-native results and failures into bounded AppManager execution evidence.
 9. **Outcome Interpreter** — applies owning use-case semantics to normalized evidence and determines AppManager-level acceptance.
-10. **Outcome Projection Boundary** — exposes structured outcome information to invocation/adapters without making presentation strings authoritative.
+10. **Outcome Projection Boundary** — defines the semantic obligations that DD-1.1 and adapters must preserve when exposing canonical outcome information without making presentation or transport structures authoritative.
 
 These are logical responsibilities, not a requirement for one implementation class per responsibility.
 
@@ -148,13 +162,13 @@ AppManager shall distinguish at least three status layers:
 
 1. **technical execution status** — what a delegated mechanism reports about its bounded work;
 2. **application interpretation status** — how the owning use case interprets that evidence;
-3. **final invocation status** — the externally visible AppManager outcome after application-level acceptance.
+3. **final invocation status** — the externally visible AppManager outcome after application-level acceptance and projection through DD-1.1.
 
 A provider's `success` cannot be copied directly into the final invocation status without interpretation.
 
 ### 6.2 Final application outcome states
 
-The shared model shall support at least:
+The canonical shared model shall support at least:
 
 | Status | Meaning |
 |---|---|
@@ -183,7 +197,7 @@ A Boolean may be derived at a presentation or compatibility boundary where neces
 
 ## 7. Outcome Contract
 
-### 7.1 Logical outcome shape
+### 7.1 Canonical logical outcome shape
 
 A final AppManager outcome shall be capable of representing:
 
@@ -202,6 +216,8 @@ A final AppManager outcome shall be capable of representing:
 | execution evidence references | bounded supporting technical facts |
 | recovery guidance | safe next actions where determinable |
 | timing/correlation metadata | bounded execution context where useful |
+
+This is the canonical semantic field-family model. DD-1.1 may project, serialize, rename, or omit non-required caller detail at its boundary, but shall not define a second semantic outcome envelope.
 
 Concrete field names and language-level types belong to Implementation Specifications.
 
@@ -263,6 +279,8 @@ Evidence may be produced incrementally during execution, but only the owning App
 
 A diagnostic is a structured explanation of a condition that affects or may affect AppManager execution, acceptance, recovery, or user understanding.
 
+This section is the canonical shared AppManager diagnostic contract. Invocation, domain, and capability designs may define narrower codes, evidence classes, or refinements only by mapping them to this model rather than defining another shared taxonomy.
+
 Diagnostics shall not depend on prose alone for their machine-visible meaning.
 
 ### 9.2 Diagnostic structure
@@ -291,9 +309,9 @@ The common model should support at least:
 
 Severity does not by itself determine the final application outcome. The owning use case applies acceptance semantics.
 
-### 9.4 Diagnostic categories
+### 9.4 Canonical diagnostic categories
 
-The shared taxonomy shall support broad machine-readable categories sufficient for cross-domain handling, including where applicable:
+The canonical cross-application taxonomy shall support broad machine-readable categories sufficient for cross-domain handling, including where applicable:
 
 - invalid invocation;
 - unknown command;
@@ -319,7 +337,7 @@ The shared taxonomy shall support broad machine-readable categories sufficient f
 - application acceptance failure;
 - internal invariant violation.
 
-Domain designs may define narrower subcategories while preserving compatibility with the shared taxonomy.
+Invocation, domain, and capability designs may define narrower subcategories or stable codes while preserving compatibility with this taxonomy. A narrower vocabulary shall identify its canonical parent category where programmatic cross-domain interpretation matters.
 
 ### 9.5 Diagnostic codes
 
@@ -328,6 +346,8 @@ Stable machine-readable diagnostic codes should be defined where callers or test
 Codes must represent AppManager meaning rather than third-party exception class names.
 
 Provider-native codes may be attached as evidence but not substituted for the AppManager code.
+
+A capability-specific failure code, provider classification, or domain finding is not automatically a new canonical diagnostic category. It becomes application-facing diagnostic meaning only when mapped into this model by the relevant capability/use-case boundary.
 
 ## 10. Warnings
 
@@ -565,11 +585,13 @@ A provider normalizer should convert provider-native execution information into:
 
 - technical status;
 - structured evidence;
-- normalized diagnostics;
+- normalized technical diagnostics/evidence;
 - provider availability state;
 - retryability/transience evidence where safely known;
 - timing/termination facts where useful;
 - bounded provider detail for debugging.
+
+Technical diagnostic/failure classes at this boundary are evidence vocabularies, not a second application-wide diagnostic taxonomy. When they become application-facing diagnostics, they shall be mapped into the canonical Section 9 model.
 
 ### 18.3 Provider failures
 
@@ -587,6 +609,8 @@ Provider failure normalization shall distinguish, where meaningful:
 - malformed/invalid provider response;
 - cancellation/termination;
 - unknown provider failure.
+
+These are technical evidence classes. They may map to one or more canonical Section 9 diagnostic categories depending on application context; they do not expand the canonical taxonomy merely by existing.
 
 ### 18.4 No provider policy escalation
 
@@ -707,6 +731,8 @@ The outcome model shall support structured reporting of concurrency-related cond
 
 Such conditions should carry enough bounded identity/version evidence for the owning use case to decide whether to reject, re-resolve, re-plan, or retry.
 
+Where narrower stale/conflict codes are defined by a capability, they shall map into the canonical Section 9 taxonomy rather than becoming independent cross-application categories.
+
 ## 24. Sensitive Information and Redaction
 
 ### 24.1 Principle
@@ -763,25 +789,27 @@ The final result model shall clearly distinguish:
 
 A successful preview does not imply successful future execution.
 
-## 27. Adapter Projection
+## 27. DD-1.1 Invocation Projection
 
 ### 27.1 Structured projection
 
-The Application Invocation boundary consumes the canonical AppManager outcome and projects it to the caller.
+DD-1.1 Application Invocation consumes the canonical AppManager outcome defined here and projects it to the caller.
 
-Adapters may:
+Invocation/adapters may:
 
 - render concise prose;
 - show tables/trees;
 - map severity to UI affordances;
 - stream progress;
 - select appropriate exit codes at implementation level;
-- serialize machine-readable representations.
+- serialize machine-readable representations;
+- omit non-required implementation detail where doing so does not hide material application state.
 
-### 27.2 Prohibited adapter behavior
+### 27.2 Prohibited projection behavior
 
-Adapters shall not:
+DD-1.1/adapters shall not:
 
+- define a second shared outcome envelope or diagnostic taxonomy;
 - reinterpret provider success as application success;
 - suppress material partial effects;
 - convert cancellation to success;
@@ -790,15 +818,19 @@ Adapters shall not:
 - expose secrets from bounded provider evidence;
 - create adapter-specific final status semantics.
 
+The mapping/projection relationship is further defined by `application-outcome-and-diagnostic-ownership-clarification-v01.md`.
+
 ## 28. Compatibility and Evolution
 
 ### 28.1 Stable semantic core
 
-The shared outcome contract shall evolve by preserving the semantic meaning of established status, diagnostic, effect, and cancellation concepts.
+The canonical shared outcome contract shall evolve by preserving the semantic meaning of established status, diagnostic, effect, and cancellation concepts.
 
 ### 28.2 Extensible diagnostics
 
-New diagnostic categories or domain-specific codes may be introduced without breaking the broad shared taxonomy.
+New diagnostic categories should be added to the canonical taxonomy only when the distinction has genuine cross-application semantic value.
+
+Invocation, domain, capability, or provider-specific distinctions should normally use narrower codes/subcategories/evidence classes mapped to an existing canonical category. Additive refinements shall not silently create a second broad taxonomy.
 
 ### 28.3 Extensible payloads
 
@@ -815,7 +847,8 @@ Concrete compatibility/versioning mechanisms belong to Implementation Specificat
 The design shall permit deterministic testing of:
 
 - each final status;
-- diagnostic severity/category mapping;
+- canonical diagnostic severity/category mapping;
+- narrower invocation/domain/capability/provider code-to-category mapping;
 - provider normalization;
 - technical-success/application-failure cases;
 - technical-failure/application-success-or-partial cases where allowed;
@@ -827,7 +860,7 @@ The design shall permit deterministic testing of:
 - recovery guidance;
 - sensitive-value redaction;
 - child-result ordering/correlation;
-- adapter projection without semantic reinterpretation;
+- DD-1.1 projection without semantic reinterpretation;
 - retryability evidence without automatic retry;
 - stale-state/concurrency diagnostics.
 
@@ -840,31 +873,37 @@ The Application Engine shall consume this design as follows:
 1. receive canonical invocation request from DD-1.1;
 2. dispatch the owning use case;
 3. obtain normalized capability/provider evidence from shared capabilities;
-4. accumulate diagnostics, warnings, effects, and subordinate results;
+4. accumulate diagnostics, warnings, effects, and subordinate results under this canonical model;
 5. apply domain/application acceptance rules;
 6. determine terminal AppManager status;
-7. construct the canonical final outcome;
-8. return that outcome through the DD-1.1 invocation boundary.
+7. construct the canonical final outcome defined by this specification;
+8. return that outcome through the DD-1.1 projection/delivery boundary.
 
 The result model supports this authority; it does not replace it.
 
-## 31. Relationship to Future Application Core Designs
+## 31. Relationship to Other Application Core Designs
 
-### 31.1 Managed Project Detailed Design
+### 31.1 DD-1.1 Application Invocation
 
-DD-1.3 shall provide structured context/scope resolution failures and scope evidence that this outcome model can represent without redefining scope semantics.
+DD-1.1 owns invocation requests, discovery, interaction capability, authorization-evidence transport, event/cancellation control, and caller-facing projection/delivery.
 
-### 31.2 Configuration Resolution Detailed Design
+It shall consume the canonical outcome/diagnostic model defined here rather than maintain a separate final-outcome envelope or shared diagnostic taxonomy.
 
-DD-1.4 shall provide configuration-resolution failures, provenance, and validation evidence that this model can carry without owning precedence semantics.
+### 31.2 Managed Project Detailed Design
 
-### 31.3 Application Engine Detailed Design
+DD-1.3 provides structured context/scope resolution failures and scope evidence that this outcome model can represent without redefining scope semantics.
 
-DD-1.5 shall define where and how application-level interpretation and acceptance occur, using the outcome contracts defined here.
+### 31.3 Configuration Resolution Detailed Design
+
+DD-1.4 provides configuration-resolution failures, provenance, and validation evidence that this model can carry without owning precedence semantics.
+
+### 31.4 Application Engine Detailed Design
+
+DD-1.5 defines where and how application-level interpretation and acceptance occur, using the outcome contracts defined here.
 
 ## 32. Relationship to Shared Capabilities
 
-Every DD-2 shared capability shall define its technical evidence in a way that can be normalized into this shared model.
+Every DD-2 shared capability shall define its technical evidence in a way that can be normalized into this canonical shared model.
 
 In particular:
 
@@ -879,16 +918,19 @@ In particular:
 - Nuxt Capability reports Nuxt-specific specialist evidence;
 - Resource Registry/Template capability reports discovery/validation/rendering evidence.
 
+Capability-specific failure classes, finding kinds, provider states, or diagnostics are local technical/domain vocabularies until explicitly mapped to the canonical diagnostic model. They shall not be described as an alternative shared AppManager taxonomy.
+
 None of those capabilities defines the final AppManager application outcome for a domain use case.
 
 ## 33. Domain Design Rules
 
 All DD-3 and DD-4 domain designs shall:
 
-- consume the shared outcome envelope;
+- consume the canonical shared outcome envelope;
 - define domain-specific result payloads only where necessary;
 - define domain acceptance rules explicitly;
 - map capability evidence to application outcomes;
+- map domain-specific diagnostic codes/findings to the canonical broad taxonomy where they become application-facing diagnostics;
 - preserve partial effects;
 - preserve cancellation semantics;
 - preserve diagnostics structurally;
@@ -912,7 +954,10 @@ The following invariants are mandatory:
 9. preview/proposed changes are not represented as applied changes;
 10. retryability evidence does not confer retry authority;
 11. adapters do not reinterpret final semantics;
-12. unknown/ambiguous terminal states fail safe rather than defaulting to success.
+12. unknown/ambiguous terminal states fail safe rather than defaulting to success;
+13. there is one canonical shared AppManager outcome envelope semantic model;
+14. there is one canonical broad AppManager diagnostic taxonomy;
+15. local capability/domain/invocation vocabularies refine or map to the canonical model rather than compete with it.
 
 ## 35. Traceability to Functional Requirements
 
@@ -920,12 +965,12 @@ This design primarily realises the Application Invocation Functional Specificati
 
 | Functional requirements | Detailed Design realization |
 |---|---|
-| `FR-INV-021` | structured machine-consumable outcome contract |
+| `FR-INV-021` | structured machine-consumable canonical outcome contract |
 | `FR-INV-025`–`FR-INV-026` | proposed/preview effects distinct from applied effects |
 | `FR-INV-027`–`FR-INV-029` | structured progress/event model independent of presentation |
 | `FR-INV-030`–`FR-INV-032` | cooperative cancellation state and effect preservation |
-| `FR-INV-033`–`FR-INV-037` | common final status and result envelope |
-| `FR-INV-038`–`FR-INV-040` | diagnostics, warnings, sensitive-information minimization |
+| `FR-INV-033`–`FR-INV-037` | canonical common final status and result envelope |
+| `FR-INV-038`–`FR-INV-040` | canonical diagnostics, warnings, sensitive-information minimization |
 | `FR-INV-041`–`FR-INV-043` | provider normalization and application-level interpretation |
 | `FR-INV-044`–`FR-INV-047` | failure semantics, effect reporting, no false rollback, recovery guidance |
 | `FR-INV-048`–`FR-INV-049` | retryability evidence without implicit retry authority |
@@ -943,7 +988,7 @@ The principal upward traceability is:
 | delegated execution | capability boundaries/providers |
 | structured outcomes | invocation and cross-cutting constraints |
 | presentation independence | interaction/adaptor architecture |
-| progress/cancellation | invocation contract |
+| progress/cancellation | invocation contract plus canonical outcome semantics here |
 | diagnostic safety | security/safety constraints |
 | provider independence | capability boundary architecture |
 
@@ -956,8 +1001,8 @@ The Detailed Design therefore deliberately avoids making `Error`, `AbortSignal`,
 An AppManager component conforms to this Detailed Design only if:
 
 1. it distinguishes provider/capability evidence from final AppManager outcomes;
-2. it uses the shared final status model rather than an incompatible private success/error envelope;
-3. it preserves diagnostics structurally;
+2. it uses the canonical shared final status/outcome model rather than an incompatible private success/error envelope;
+3. it preserves diagnostics structurally and maps application-facing categories/codes to the canonical taxonomy;
 4. it preserves warnings separately from failures;
 5. it preserves known consequential effects after failure, partial success, or cancellation;
 6. it distinguishes proposed effects from applied effects;
@@ -969,14 +1014,16 @@ An AppManager component conforms to this Detailed Design only if:
 12. it supports invocation/stage/target correlation where needed;
 13. it protects sensitive information in structured outputs as well as presentation;
 14. it does not grant retry authority merely because a provider marks a failure transient;
-15. adapters can project its results without needing to reinvent application semantics.
+15. DD-1.1/adapters can project its results without needing to reinvent application semantics;
+16. invocation/domain/capability/provider-specific vocabularies do not become competing shared diagnostic taxonomies.
 
 ## 38. Downstream Implementation Requirements
 
 Implementation Specifications shall map this design to concrete Version 1 structures, including as appropriate:
 
-- TypeScript status/result/diagnostic/effect/event types;
+- canonical TypeScript status/result/diagnostic/effect/event types;
 - discriminated unions or equivalent result modelling;
+- diagnostic-code/subcategory mapping mechanisms;
 - error normalization utilities;
 - provider adapters;
 - correlation identifiers;
@@ -984,18 +1031,18 @@ Implementation Specifications shall map this design to concrete Version 1 struct
 - cancellation primitives;
 - redaction utilities;
 - result aggregation helpers;
-- adapter serializers/renderers;
+- DD-1.1 adapter serializers/renderers/projection types;
 - process exit-code mapping;
 - tests and fixtures.
 
-Implementation work must preserve the distinction among provider evidence, application interpretation, and final invocation outcome.
+Implementation work must preserve the distinction among provider evidence, application interpretation, canonical final AppManager outcome, and invocation/presentation projection.
 
 ## 39. Version 1 Detailed Design Baseline
 
-This document establishes the Version 1 permanent Detailed Design baseline for execution outcomes and diagnostics.
+This document establishes the Version 1 permanent and canonical Detailed Design baseline for shared execution outcomes and diagnostics.
 
 The enduring architectural rule is:
 
 > **Execution mechanisms report facts; AppManager decides what those facts mean.**
 
-This specification therefore creates the shared semantic result model that DD-1.3 through DD-1.5, all DD-2 capability designs, and all domain Detailed Designs shall consume rather than reproduce.
+This specification is the single semantic owner of the shared result, diagnostic, warning, effect, cancellation, and subordinate-result model that DD-1.1, DD-1.3 through DD-1.5, all DD-2 capability designs, and all domain Detailed Designs shall consume rather than reproduce.
