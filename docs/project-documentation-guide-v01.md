@@ -448,20 +448,20 @@ Detailed Design clarifications, reconciliation notes, conformance records, and o
 
 ### 7.7 Detailed Design Families and Self-Documenting Directories
 
-Active primary Detailed Design Specifications must be grouped into self-documenting top-level directories beneath `docs/` whose names identify both the specification level and the semantic family.
+Active primary Detailed Design Specifications must be grouped into concise, self-documenting top-level directories beneath `docs/` whose names identify the Detailed Design family and its semantic responsibility.
 
 The approved Version 1 family structure is:
 
 ```text
-docs/detailed_design_1_application_core/
-docs/detailed_design_2_shared_capabilities/
-docs/detailed_design_3_high_coupling_domains/
-docs/detailed_design_4_policy_and_resource_domains/
+docs/dd_1_application_core/
+docs/dd_2_shared_capabilities/
+docs/dd_3_high_coupling_domains/
+docs/dd_4_policy_and_resource_domains/
 ```
 
-These directory names deliberately spell out `detailed_design` instead of relying only on abbreviations such as `dd1` so that repository navigation remains understandable without prior knowledge of project shorthand.
+The `dd_` prefix is the canonical directory abbreviation for **Detailed Design**. It is intentionally aligned with the established `DD-<family>.<item>` identifier scheme while avoiding unnecessarily long directory names.
 
-The family number is retained in the directory name so that repository order and the stable Detailed Design identifier scheme remain visibly aligned.
+The family number is retained in the directory name so that repository order and the stable Detailed Design identifier scheme remain visibly aligned. The semantic suffix keeps each family understandable without requiring the number alone to carry meaning.
 
 Primary active Detailed Design Specifications should not be placed together in one undifferentiated `docs/detailed_design/` directory once the structured migration is complete. A generic container that requires readers to know the historical drafting sequence is insufficiently self-documenting for the active normative design set.
 
@@ -471,16 +471,16 @@ Example:
 
 ```text
 docs/
-├── detailed_design_1_application_core/
+├── dd_1_application_core/
 │   ├── dd-1-1-application-invocation-detailed-design-v01.md
 │   ├── dd-1-2-execution-outcomes-detailed-design-v01.md
 │   ├── dd-1-3-managed-project-detailed-design-v01.md
 │   ├── dd-1-4-configuration-resolution-detailed-design-v01.md
 │   ├── dd-1-5-application-engine-detailed-design-v01.md
 │   └── clarifications/
-├── detailed_design_2_shared_capabilities/
-├── detailed_design_3_high_coupling_domains/
-└── detailed_design_4_policy_and_resource_domains/
+├── dd_2_shared_capabilities/
+├── dd_3_high_coupling_domains/
+└── dd_4_policy_and_resource_domains/
 ```
 
 The Detailed Design decomposition plan is the canonical project-management register for the assignment of individual documents to family/item identifiers. Filesystem order, alphabetical order, implementation structure, or current source topology must not be used to infer or silently renumber those identifiers.
@@ -522,7 +522,7 @@ A bare code-formatted pathname may still be used where the literal path itself i
 Prefer:
 
 ```markdown
-[DD-1.5 — Application Engine](../detailed_design_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
+[DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
 ```
 
 rather than:
@@ -819,19 +819,19 @@ docs/
 ├── appmanager-design-specification-v01.md
 ├── design/
 ├── functional/
-├── detailed_design_1_application_core/
-├── detailed_design_2_shared_capabilities/
-├── detailed_design_3_high_coupling_domains/
-├── detailed_design_4_policy_and_resource_domains/
+├── dd_1_application_core/
+├── dd_2_shared_capabilities/
+├── dd_3_high_coupling_domains/
+├── dd_4_policy_and_resource_domains/
 ├── implementation/
 ├── project_management/
 │   └── decisions/
 └── archive/
 ```
 
-The four principal specification levels remain Design, Functional, Detailed Design, and Implementation. The four `detailed_design_*` directories above are separate **families within Level 3**, not additional specification levels.
+The four principal specification levels remain Design, Functional, Detailed Design, and Implementation. The four `dd_*` directories above are separate **families within Level 3**, not additional specification levels.
 
-The use of separate self-documenting Detailed Design family directories is deliberate. It provides visible repository-level separation among Application Core, Shared Capability, High-Coupling Domain, and Policy/Resource Domain specifications while keeping the common Detailed Design abstraction level explicit in every directory name.
+The use of separate concise Detailed Design family directories is deliberate. The `dd_` prefix carries the specification-level identity, while the family number and semantic suffix make the responsibility visible without imposing excessively long paths.
 
 The active normative Detailed Design set should therefore migrate away from an undifferentiated `docs/detailed_design/` directory. The migration must preserve content, stable Detailed Design identifiers, history where practical, and all active cross-references.
 
@@ -853,16 +853,16 @@ Example:
 
 ```text
 docs/
-├── detailed_design_1_application_core/
+├── dd_1_application_core/
 │   ├── dd-1-1-application-invocation-detailed-design-v01.md
 │   ├── dd-1-2-execution-outcomes-detailed-design-v01.md
 │   ├── dd-1-3-managed-project-detailed-design-v01.md
 │   ├── dd-1-4-configuration-resolution-detailed-design-v01.md
 │   ├── dd-1-5-application-engine-detailed-design-v01.md
 │   └── clarifications/
-├── detailed_design_2_shared_capabilities/
-├── detailed_design_3_high_coupling_domains/
-└── detailed_design_4_policy_and_resource_domains/
+├── dd_2_shared_capabilities/
+├── dd_3_high_coupling_domains/
+└── dd_4_policy_and_resource_domains/
 ```
 
 The final directory structure should evolve from the current documentation tree through focused, reviewable migrations rather than unreviewed bulk movement.
@@ -1251,10 +1251,10 @@ docs/
 └── archive/
     ├── design/
     ├── functional/
-    ├── detailed_design_1_application_core/
-    ├── detailed_design_2_shared_capabilities/
-    ├── detailed_design_3_high_coupling_domains/
-    ├── detailed_design_4_policy_and_resource_domains/
+    ├── dd_1_application_core/
+    ├── dd_2_shared_capabilities/
+    ├── dd_3_high_coupling_domains/
+    ├── dd_4_policy_and_resource_domains/
     ├── implementation/
     └── project_management/
         └── decisions/
@@ -1626,7 +1626,7 @@ The AppManager documentation system is governed by the following core rules:
 11. Detailed Design describes the permanent internal technical design; transient migration execution does not become permanent design authority.
 12. Primary Detailed Design Specifications use stable `DD-<family>.<item>` identifiers visible in the title, metadata, filename, and cross-references.
 13. Detailed Design families are subdivisions of Level 3, not additional specification levels or authority tiers.
-14. Active primary Detailed Design Specifications are grouped in self-documenting top-level `detailed_design_<family>_<semantic_name>/` directories rather than one undifferentiated Detailed Design directory.
+14. Active primary Detailed Design Specifications are grouped in concise self-documenting top-level `dd_<family>_<semantic_name>/` directories rather than one undifferentiated Detailed Design directory.
 15. Internal document dependencies should use repository-relative Markdown links where practical so the documentation set is directly navigable.
 16. Implementation Specifications own concrete reduction to practice and may record relevant current implementation state; project-management documentation owns migration sequencing, coordination, progress, and temporary states.
 17. Duplication should be replaced by cross-reference and traceability.
@@ -1678,7 +1678,7 @@ Architecture Decision Records answer a different question:
 |---|---|---|
 | Application name in prose | Exact canonical name | `AppManager` |
 | Directory | lowercase with underscores | `license_engine/` |
-| Detailed Design family directory | `detailed_design_<family>_<semantic_name>/` | `detailed_design_2_shared_capabilities/` |
+| Detailed Design family directory | `dd_<family>_<semantic_name>/` | `dd_2_shared_capabilities/` |
 | Filename | lowercase with hyphens | `project-documentation-guide-v01.md` |
 | Detailed Design identifier | `DD-<family>.<item>` | `DD-1.3` |
 | Detailed Design filename | `dd-<family>-<item>-<subject>-detailed-design-v<version>.md` | `dd-1-3-managed-project-detailed-design-v01.md` |
