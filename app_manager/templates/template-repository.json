@@ -189,7 +189,7 @@
           "defaultValue": "Maintainer"
         }
       ],
-      "notes": "This is the version app.setup / nuxt.createLayer should consume for a scaffolded project (per docs/specification/architecture/templates/spec-templates-full-v01.md §1.2): it configures Nuxt's own @nuxt/test-utils/config wrapper. The standalone frameworks/nuxt/project/vitestConfigTemplate.ts is a diverged legacy duplicate written for App Manager's own internal test suite (plain vitest/config, App-Manager-specific paths) and is excluded from this file."
+      "notes": "This is the version app.setup / nuxt.createLayer should consume for a scaffolded project (per docs/archive/specification/architecture/templates/spec-templates-full-v01.md §1.2): it configures Nuxt's own @nuxt/test-utils/config wrapper. The standalone frameworks/nuxt/project/vitestConfigTemplate.ts is a diverged legacy duplicate written for App Manager's own internal test suite (plain vitest/config, App-Manager-specific paths) and is excluded from this file."
     },
     {
       "id": "app-config",
@@ -598,7 +598,7 @@
           ]
         }
       ],
-      "notes": "Known gap carried over from docs/specification/architecture/templates/spec-templates-full-v01.md §5: layerInstallationSection always assumes the layer is host-consumed. It has no standalone-layer variant yet (matching packageJsonTemplate's 'standalone' mode) — flagged there as a required follow-up, not fixed by this data migration."
+      "notes": "Known gap carried over from docs/archive/specification/architecture/templates/spec-templates-full-v01.md §5: layerInstallationSection always assumes the layer is host-consumed. It has no standalone-layer variant yet (matching packageJsonTemplate's 'standalone' mode) — flagged there as a required follow-up, not fixed by this data migration."
     },
     {
       "id": "vue-component",
@@ -739,7 +739,7 @@
           "defaultValue": ""
         }
       ],
-      "notes": "This is the same shape JsonStrategy's 'complex schema' detection matches (per docs/specification/architecture/templates/spec-templates-full-v01.md §7) — distinct from the flat envelope this repository file itself and llmRegistry.json/repositoryRegistry.json use. '{{generatedIsoTimestamp}}' marks fields computed at generation time (new Date().toISOString()), not literal defaults."
+      "notes": "This is the same shape JsonStrategy's 'complex schema' detection matches (per docs/archive/specification/architecture/templates/spec-templates-full-v01.md §7) — distinct from the flat envelope this repository file itself and llmRegistry.json/repositoryRegistry.json use. '{{generatedIsoTimestamp}}' marks fields computed at generation time (new Date().toISOString()), not literal defaults."
     }
   ]
 }

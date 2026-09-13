@@ -878,7 +878,7 @@ Provider-specific features may be exposed only as bounded capability detail wher
 
 ## 30. Current Implementation Reconciliation
 
-The current TypeScript implementation contains `app/services/processService.ts`, historically described by `docs/specification/architecture/services/spec-services-processService-v02.md`.
+The current TypeScript implementation contains `app/services/processService.ts`, historically described by `docs/archive/specification/architecture/services/spec-services-processService-v02.md`.
 
 That implementation is evidence of existing behavior, not the normative source of approved architecture.
 

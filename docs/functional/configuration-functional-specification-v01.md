@@ -466,7 +466,7 @@ This specification primarily refines the following root Design Specification are
 - Section 12 — configuration-source non-authority, deterministic Headless behaviour, sensitive-information minimisation, and authoritative-versus-derived information;
 - Section 14 — Functional Specification responsibility and downward traceability.
 
-The specification also reconciles the configuration-related Functional material identified in `docs/design/appmanager-design-reconciliation-audit-v01.md` and the useful behavioural principles from the historical resolver specification without treating those legacy documents as current architectural authority.
+The specification also reconciles the configuration-related Functional material identified in `docs/archive/design/appmanager-design-reconciliation-audit-v01.md` and the useful behavioural principles from the historical resolver specification without treating those legacy documents as current architectural authority.
 
 ADR-0001 selects the Version 1 primary implementation technology but does not alter these technology-independent Functional requirements.
 

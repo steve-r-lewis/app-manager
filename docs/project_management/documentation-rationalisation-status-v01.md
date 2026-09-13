@@ -151,7 +151,7 @@ The responsibilities previously associated with services, scanners, strategies, 
 Created:
 
 ```text
-docs/design/appmanager-design-reconciliation-audit-v01.md
+docs/archive/design/appmanager-design-reconciliation-audit-v01.md
 ```
 
 The audit reconciles meaningful information from three major legacy sources and classifies content as appropriate for:
@@ -416,7 +416,7 @@ A new AI or human-assisted working session should begin by reading, in order:
 ```text
 docs/project-documentation-guide-v01.md
 docs/appmanager-design-specification-v01.md
-docs/design/appmanager-design-reconciliation-audit-v01.md
+docs/archive/design/appmanager-design-reconciliation-audit-v01.md
 docs/project_management/documentation-rationalisation-status-v01.md
 ```
 
