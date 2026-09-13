@@ -59,7 +59,7 @@ The following are deliberately below the Functional level unless a later accepte
 - concrete resolver or configuration-service classes;
 - physical directory trees and storage paths;
 - file-reading and file-writing mechanisms;
-- exact secret-store technology, encryption mechanism, or operating-system credential API;
+- exact secure-store technology, encryption mechanism, or operating-system credential API;
 - environment-variable naming conventions;
 - concrete cache implementations;
 - persistence APIs;
@@ -177,7 +177,7 @@ For each configuration concern that may have more than one applicable candidate,
 Equivalent configuration concerns shall use the same precedence semantics wherever they are consumed. Commands, adapters, and capability providers shall not independently invent competing precedence chains for the same AppManager configuration item.
 
 **FR-CONFIG-018 — Project override ordering**  
-Where the historical project-local, project-shared, and tool-level settings tiers remain applicable to a configuration item, their precedence shall be:
+Where project-local, project-shared, and tool-level settings tiers are applicable to a configuration item, their precedence shall be:
 
 ```text
 project-local
@@ -312,7 +312,7 @@ A persisted configuration change shall affect only the configuration scope selec
 ## 14. Sensitive Configuration
 
 **FR-CONFIG-053 — Sensitive classification**  
-AppManager shall distinguish sensitive configuration, including secrets, credentials, tokens, private keys, and other protected values, from ordinary shareable configuration.
+AppManager shall distinguish sensitive configuration, including protected authentication and cryptographic material and other protected values, from ordinary shareable configuration.
 
 **FR-CONFIG-054 — Sensitive-source suitability**  
 Sensitive configuration shall not be required to reside in ordinary source-controlled project configuration when doing so would expose protected information.
@@ -320,7 +320,7 @@ Sensitive configuration shall not be required to reside in ordinary source-contr
 **FR-CONFIG-055 — Sensitive-value minimisation**  
 AppManager shall avoid exposing sensitive configuration unnecessarily through logs, diagnostics, reports, structured results, command output, progress information, or presentation surfaces.
 
-**FR-CONFIG-056 — Secret absence versus disclosure**  
+**FR-CONFIG-056 — Sensitive absence versus disclosure**  
 AppManager may report that required sensitive configuration is missing, invalid, inaccessible, or unavailable without reproducing the protected value in the diagnostic.
 
 **FR-CONFIG-057 — Provider secrecy does not transfer authority**  
@@ -407,7 +407,7 @@ Where safely determinable, a configuration-resolution failure should identify a 
 
 Configuration resolution and settings management are related but distinct.
 
-The future `settings-functional-specification-v01.md` owns user- and automation-facing behaviours for inspecting and changing persisted configuration and managed resources such as author metadata, funding metadata, repository metadata, application metadata, environment-related settings, contributors, licences, and templates.
+The Settings Functional Specification owns user- and automation-facing behaviours for inspecting and changing persisted configuration and managed resources such as author metadata, funding metadata, repository metadata, application metadata, environment-related settings, contributors, licences, and templates.
 
 This specification owns how applicable candidates from such configuration become effective for AppManager operations.
 
@@ -417,41 +417,7 @@ A Settings-domain operation that stores or removes a value shall not independent
 **FR-CONFIG-076 — Resolution does not imply CRUD**  
 A command that consumes effective configuration shall not need to expose configuration-management behaviour merely because it requires a value.
 
-## 21. Legacy Requirement Disposition
-
-The following legacy configuration and resolver concepts are retained at the Functional level:
-
-| Legacy concept | Functional disposition |
-|---|---|
-| tool defaults plus project overrides | `FR-CONFIG-009`, `FR-CONFIG-016`–`FR-CONFIG-022` |
-| project-local -> project-shared -> tool precedence where retained | `FR-CONFIG-010`, `FR-CONFIG-018` |
-| effective-value resolution | `FR-CONFIG-016`–`FR-CONFIG-022` |
-| centralised precedence rather than command duplication | `FR-CONFIG-017` |
-| explicit values, persisted settings, environment/detected values, defaults and interaction as possible candidates | `FR-CONFIG-005`–`FR-CONFIG-015` |
-| deterministic resolution | `FR-CONFIG-022`, `FR-CONFIG-039`–`FR-CONFIG-042` |
-| provenance/source reporting | `FR-CONFIG-043`–`FR-CONFIG-046` |
-| pure resolution versus interactive completion | `FR-CONFIG-035`–`FR-CONFIG-038` |
-| persistence separate from resolution | `FR-CONFIG-047`–`FR-CONFIG-052` |
-| cancellation not a resolved value | `FR-CONFIG-038` |
-| safe built-in defaults only | `FR-CONFIG-028`–`FR-CONFIG-031` |
-| shared configuration should not require committed secrets | `FR-CONFIG-053`–`FR-CONFIG-057` |
-| shared settings and machine-local/operational information require different authority/lifecycle treatment | `FR-CONFIG-058`–`FR-CONFIG-061` |
-
-The following legacy material is not propagated as Functional authority:
-
-- `ConfigService`, `SettingsResolver`, `Resolution<T>`, `ResolutionResult<T>`, `ResolutionPolicy`, and concrete TypeScript APIs;
-- exact resolution-source enums and error-code enums;
-- concrete JSON schemas and settings filenames;
-- exact filesystem paths and directory trees;
-- exact persistence calls such as `setSetting()`;
-- prompt-library interfaces;
-- implementation-specific null/undefined types;
-- concrete provider SDKs or environment-variable names;
-- exact storage and encryption mechanisms.
-
-Those concerns require deliberate Detailed Design or Implementation treatment.
-
-## 22. Traceability
+## 21. Traceability
 
 This specification primarily refines the following root Design Specification areas:
 
@@ -466,17 +432,15 @@ This specification primarily refines the following root Design Specification are
 - Section 12 — configuration-source non-authority, deterministic Headless behaviour, sensitive-information minimisation, and authoritative-versus-derived information;
 - Section 14 — Functional Specification responsibility and downward traceability.
 
-The specification also reconciles the configuration-related Functional material identified in `docs/archive/design/appmanager-design-reconciliation-audit-v01.md` and the useful behavioural principles from the historical resolver specification without treating those legacy documents as current architectural authority.
-
 ADR-0001 selects the Version 1 primary implementation technology but does not alter these technology-independent Functional requirements.
 
-## 23. Conformance Criteria
+## 22. Conformance Criteria
 
 An implementation conforms to this Functional Specification only if all of the following are true:
 
 1. configuration is resolved from governed candidate sources rather than read ad hoc by independent commands;
 2. source presence does not equal configuration authority;
-3. project-specific overrides and retained project-local/project-shared/tool precedence behave deterministically;
+3. project-specific overrides and project-local/project-shared/tool precedence behave deterministically;
 4. explicit invocation values can override only where permitted;
 5. invalid, missing, ambiguous, conflicting, or unsupported required configuration is handled explicitly;
 6. effective configuration is deterministic for equivalent inputs and context;
@@ -491,7 +455,7 @@ An implementation conforms to this Functional Specification only if all of the f
 15. configuration semantics remain equivalent across interaction modes and presentation mechanisms;
 16. Settings-domain storage behaviour remains distinct from shared effective-configuration semantics.
 
-## 24. Downstream Specification Requirements
+## 23. Downstream Specification Requirements
 
 Detailed Design Specifications may define, among other things:
 
@@ -512,4 +476,4 @@ Detailed Design Specifications may define, among other things:
 - project-local, project-shared, and tool-level storage design;
 - AppManager management-area layout for configuration and state.
 
-Implementation Specifications may then map those Detailed Designs to the Version 1 Node.js/TypeScript source tree, concrete libraries, file formats, environment conventions, secure-storage facilities, runtime wiring, tests, and migration state.
+Implementation Specifications may then map those Detailed Designs to the Version 1 Node.js/TypeScript source tree, concrete libraries, file formats, environment conventions, secure-storage facilities, runtime wiring, and tests.
