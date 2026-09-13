@@ -8,7 +8,7 @@
 >
 > **Planning source:** `docs/project_management/detailed-design-decomposition-plan-v01.md`
 >
-> **Related Detailed Designs:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`
+> **Related Detailed Designs:** `docs/detailed_design/application-invocation-detailed-design-v01.md`, `docs/detailed_design/execution-outcomes-detailed-design-v01.md`, `docs/detailed_design/configuration-resolution-detailed-design-v01.md`, `docs/detailed_design/application-engine-detailed-design-v01.md`, `docs/detailed_design/application-core-bootstrap-resolution-clarification-v01.md`
 
 ## 1. Purpose
 
@@ -88,7 +88,7 @@ The design defines enduring responsibility and contract boundaries, not one impl
 
 ## 4. Architectural Position
 
-Managed Project sits between invocation intent and domain/capability execution.
+Managed Project sits between invocation intent and domain/capability execution. Where configuration contributes to project resolution, the staged collaboration defined by `application-core-bootstrap-resolution-clarification-v01.md` applies.
 
 ```text
 caller / host / automation
@@ -99,32 +99,43 @@ Application Invocation
           v
 Application Engine
           |
-          +------------------------------+
-          |                              |
-          v                              v
- target-project request          effective configuration
-          |                              |
-          +---------------+--------------+
-                          |
-                          v
-              Managed Project resolution
-                          |
-          +---------------+---------------+
-          |                               |
-          v                               v
- managed-project context          managed-scope resolution
-          |                               |
-          +---------------+---------------+
-                          |
-                          v
-                  targetability view
-                          |
-                          v
-                  domain orchestration
-                          |
-                          v
-                  shared capabilities
+          +--> context-independent configuration candidates
+          |         |
+          |         v
+          |    bootstrap effective configuration
+          |         |
+          +---------+-------------------+
+                                    |
+                                    v
+                         target-project request
+                                    |
+                                    v
+                       Managed Project resolution
+                                    |
+                                    v
+                       managed-project context
+                                    |
+                                    +--> project/scope-aware configuration
+                                    |         |
+                                    |         v
+                                    |   operation effective snapshot
+                                    |         |
+                                    +---------+-------------------+
+                                                              |
+                                                              v
+                                                   managed-scope resolution
+                                                              |
+                                                              v
+                                                       targetability view
+                                                              |
+                                                              v
+                                                      domain orchestration
+                                                              |
+                                                              v
+                                                      shared capabilities
 ```
+
+The diagram is a semantic dependency view, not a required call-stack or physical pipeline. Bootstrap effective configuration may contribute project-resolution evidence only when its applicability does not itself depend on the unresolved managed project. Project/scope-aware configuration becomes eligible after sufficient managed-project context exists and may then participate in managed-scope and targetability decisions without acquiring project authority.
 
 Managed Project is a permanent application-level interpretation boundary. It is not equivalent to:
 
@@ -196,12 +207,14 @@ Project resolution may consume bounded evidence from:
 - explicit invocation target information;
 - invocation location;
 - host integration selections;
-- effective configuration;
+- bootstrap effective configuration valid at the current resolution stage;
 - AppManager-owned project metadata;
 - Nuxt project/layer recognition;
 - repository recognition;
 - project-associated resource recognition;
 - previously resolved context evidence that is still valid.
+
+Before managed-project identity exists, configuration evidence in this list means only the bootstrap subset defined by `application-core-bootstrap-resolution-clarification-v01.md`: concerns and sources whose applicability and effective value do not depend on the unresolved managed project, topology or managed scope. Later project/scope-aware configuration may refine downstream scope, policy or interpretation only after sufficient Managed Project Context exists.
 
 ### 7.2 Evidence is factual, not authoritative
 
@@ -251,7 +264,7 @@ A candidate should be capable of identifying:
 ### 8.2 Deterministic candidate derivation
 
 **DD-PROJ-004 — Deterministic candidate resolution**  
-Materially equivalent evidence and effective configuration shall produce materially equivalent candidate sets and selection decisions.
+Materially equivalent project evidence and materially equivalent applicable bootstrap configuration shall produce materially equivalent candidate sets and selection decisions.
 
 ### 8.3 Candidate ranking and selection
 
@@ -586,7 +599,7 @@ The request must be resolved against:
 - command semantics;
 - Managed Project Context;
 - explicit caller intent;
-- effective configuration;
+- operation-effective configuration available at the scope-resolution stage;
 - project exclusions;
 - domain policy;
 - safety policy;
@@ -879,23 +892,21 @@ Internal resolution may require paths and identifiers, but caller-visible projec
 
 ## 29. Relationship to Configuration Resolution
 
-DD-1.4 Configuration Resolution may use Managed Project Context to determine:
+DD-1.3 and DD-1.4 collaborate through the staged dependency contract defined normatively by `application-core-bootstrap-resolution-clarification-v01.md`.
 
-- project applicability;
-- project-local configuration sources;
-- layer-specific applicability;
-- scope-specific configuration candidates.
+Before authoritative managed-project identity exists, Managed Project may consume only bootstrap effective configuration whose applicability and effective value are independently resolvable without that identity. After sufficient Managed Project Context exists, DD-1.4 may resolve project-, topology-, entity-, repository-, layer-, resource- or scope-dependent concerns. The resulting operation-effective configuration may then contribute to managed-scope, exclusion, targetability and policy decisions where their owning semantics permit it.
 
-Managed Project may in turn consume effective configuration for governed project-resolution hints and exclusion policy.
-
-This creates a deliberate collaboration boundary, not unrestricted circular authority.
-
-To avoid semantic cycles:
+This creates a deliberate collaboration boundary, not unrestricted circular authority. In particular:
 
 1. bootstrap-level project evidence must be resolvable without requiring a fully resolved project-dependent configuration snapshot;
-2. configuration may refine project interpretation only through defined project-resolution inputs;
-3. final project identity remains Managed Project/Application Engine authority;
-4. Settings persistence does not directly redefine project semantics.
+2. project/scope-aware configuration becomes eligible only after sufficient Managed Project Context exists;
+3. configuration may refine later project/scope interpretation only through defined project-resolution inputs;
+4. later project-aware configuration shall not silently replace the selected project with a materially different project;
+5. final project identity, managed scope and targetability remain Managed Project/Application Engine authority;
+6. DD-1.4 remains the sole owner of candidate applicability, precedence, fallback and effective-value construction;
+7. Settings persistence does not directly redefine project semantics.
+
+A material conflict between bootstrap assumptions, resolved project context and later project-aware configuration shall return structured evidence to the Application Engine for explicit revalidation, disambiguation or failure rather than triggering uncontrolled recursive resolution.
 
 ## 30. Relationship to Application Invocation
 
@@ -934,7 +945,7 @@ Project-resolution technical success is not final application success; the ownin
 
 ## 32. Relationship to Application Engine
 
-DD-1.5 shall consume this design as the authoritative project/scope contract.
+DD-1.5 shall consume this design as the authoritative project/scope contract and the bootstrap clarification as the staged DD-1.3/DD-1.4 coordination contract where configuration contributes to project resolution.
 
 The Application Engine shall remain responsible for:
 
@@ -943,7 +954,7 @@ The Application Engine shall remain responsible for:
 - accepting or rejecting resolution results;
 - interpreting partial-scope permissibility;
 - enforcing scope-before-effect gates;
-- coordinating project/configuration resolution;
+- coordinating bootstrap configuration, project resolution, project/scope-aware configuration and managed-scope resolution in the required dependency order;
 - enforcing targetability before consequential capability calls;
 - conflict coordination;
 - final AppManager outcome semantics.
@@ -1019,6 +1030,7 @@ The following invariants are mandatory:
 13. **Headless resolution fails on material ambiguity rather than guessing.**
 14. **Capabilities consume AppManager-oriented project facts rather than reconstructing independent project semantics.**
 15. **Known stale context cannot remain mutation authority where it risks targeting the wrong resource.**
+16. **Project-resolution configuration evidence is bootstrap-scoped until sufficient Managed Project Context exists; project-dependent configuration shall not bootstrap the identity on which its own applicability depends.**
 
 ## 36. Extensibility Rules
 
@@ -1063,7 +1075,9 @@ Tests should be able to supply synthetic evidence and assert:
 - host-context validation;
 - stale-context handling;
 - ownership boundaries;
-- AppManager-resource adjacency protection.
+- AppManager-resource adjacency protection;
+- bootstrap configuration cannot depend on the unresolved project identity it helps resolve;
+- project/scope-aware configuration becomes eligible only after sufficient Managed Project Context exists.
 
 Tests should not require a real TUI or presentation layer to establish project correctness.
 
@@ -1095,11 +1109,11 @@ The following downstream documents shall consume this design without redefining 
 
 ### DD-1.4 — Configuration Resolution
 
-Shall use Managed Project Context for project applicability while preserving configuration resolution as a distinct responsibility.
+Shall use Managed Project Context for project/scope-aware applicability while preserving configuration resolution as a distinct responsibility, and shall use only context-independent/bootstrap configuration before authoritative project identity exists.
 
 ### DD-1.5 — Application Engine
 
-Shall define how context and scope requirements are requested, accepted, cached/reused where appropriate, revalidated, and enforced before capability delegation.
+Shall define how context and scope requirements are requested, accepted, cached/reused where appropriate, revalidated, and enforced before capability delegation, including coordination of the staged bootstrap/project/configuration sequence where required.
 
 ### DD-2 Resource Access
 
@@ -1147,7 +1161,9 @@ A Managed Project implementation conforms to this Detailed Design only if:
 16. stale context is not used for unsafe consequential targeting;
 17. project/scope failures integrate with DD-1.2 structured diagnostics and outcomes;
 18. capabilities receive AppManager-oriented project information instead of reconstructing competing project semantics;
-19. no scanner, resolver, repository provider, framework recognizer, or interaction adapter independently acquires mutation authority.
+19. no scanner, resolver, repository provider, framework recognizer, or interaction adapter independently acquires mutation authority;
+20. configuration used to establish project identity does not depend on that unresolved project identity for its own applicability or effective value;
+21. project/scope-aware effective configuration is resolved only after sufficient Managed Project Context exists and does not acquire project/scope authority.
 
 ## 41. Summary Design Rule
 
