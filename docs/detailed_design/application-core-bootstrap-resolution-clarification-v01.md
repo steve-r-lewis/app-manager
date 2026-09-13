@@ -6,9 +6,9 @@
 >
 > **Corrective source:** `docs/project_management/application-core-detailed-design-conformance-audit-v01.md`, finding MC-001
 >
-> **Normative purpose:** This document closes the cross-contract sequencing ambiguity identified by MC-001. It refines the interaction between DD-1.3 and DD-1.4 without changing their responsibility ownership, and is to be read as part of the Version 1 DD-1 Application Core baseline. Where older generic sequencing prose in DD-1.3, DD-1.4 or DD-1.5 can be read as requiring an incompatible order, this staged dependency contract governs until that prose is consolidated.
+> **Normative purpose:** This document closes the cross-contract sequencing ambiguity identified by MC-001. It refines the interaction between DD-1.3 and DD-1.4 without changing their responsibility ownership, and is to be read as part of the Version 1 DD-1 Application Core baseline. Where older generic sequencing prose in DD-1.3, DD-1.4 or DD-1.5 can be read as requiring an incompatible order, this staged dependency contract governs.
 >
-> **Propagation status:** The staged dependency order is now propagated into DD-1.5 Application Engine. DD-1.3 and DD-1.4 remain semantically governed by this clarification and require explicit backlink/consolidation in a later documentation pass; their existing ownership contracts remain valid.
+> **Propagation status:** The staged dependency order is propagated into DD-1.3 Managed Project, DD-1.4 Configuration Resolution and DD-1.5 Application Engine. Those primary specifications now carry explicit backlinks and local stage-specific bindings while this clarification remains the canonical cross-contract sequencing authority.
 
 ## 1. Purpose
 
@@ -225,6 +225,6 @@ It makes their dependency ordering explicit:
 
 > **context-independent/bootstrap configuration -> managed-project resolution -> project/scope-dependent configuration -> operation snapshot -> managed-scope/policy/use-case execution**
 
-DD-1.5 now carries this staged lifecycle directly. DD-1.3 and DD-1.4 remain governed by this clarification until their related-design/backlink and local wording consolidation is performed.
+DD-1.3, DD-1.4 and DD-1.5 now carry this staged lifecycle through explicit local bindings while this clarification remains the canonical cross-contract sequencing authority.
 
 With these rules in force, MC-001 from the Application Core Detailed Design Conformance Audit remains closed and the DD-1 Application Core is suitable to serve as the governing contract baseline for DD-2 Shared Capability Detailed Design.
