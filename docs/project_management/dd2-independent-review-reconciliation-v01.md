@@ -146,7 +146,7 @@ Application Engine / Nuxt-use-case acceptance
 
 **Classification:** confirmed propagation defect.
 
-The canonical staged dependency remains:
+The canonical staged dependency is:
 
 ```text
 invocation / host context
@@ -159,19 +159,21 @@ invocation / host context
         -> managed scope / policy / use-case execution
 ```
 
-**Correction now applied:**
+**Resolution evidence:**
 
+- PR #91 corrected DD-1.5 Application Engine so the lifecycle no longer implies a universal `managed scope -> effective configuration` order;
 - `application-core-bootstrap-resolution-clarification-v01.md` now states explicit normative precedence where older generic sequencing prose can be read incompatibly;
-- the clarification now states that managed scope does not universally precede configuration and that scope may consume the operation-effective snapshot while retaining DD-1.3 authority;
-- DD-1.5 Application Engine now backlinks the bootstrap clarification directly;
-- DD-1.5 §4 architectural flow now shows bootstrap configuration, managed-project resolution, project/scope-aware configuration and later managed-scope/policy stages distinctly;
-- DD-1.5 §§7–8 now distinguish bootstrap-effective configuration from the operation-effective snapshot and replace the stale `managed scope -> effective configuration` lifecycle with the staged dependency order;
-- DD-1.5 §20 dependency direction and §23 conformance invariants now encode the same staged relationship;
-- DD-1.4 remains the sole owner of applicability, precedence, fallback, provenance and effective-value semantics; staging changes when enough context exists, not who owns configuration resolution.
+- the clarification explicitly distinguishes bootstrap resolution from project/scope-aware configuration and states that Managed Scope does not universally precede configuration;
+- DD-1.5 now backlinks the clarification, distinguishes bootstrap-effective configuration from the operation-effective snapshot, and encodes the staged relationship in its architectural flow, orchestration lifecycle, dependency direction and conformance invariants;
+- the R-04 closeout propagation updates DD-1.3 Managed Project so the staged relationship is visible in its related-design list, project-evidence model, architectural flow, scope-input rules, configuration relationship, invariants, tests and conformance criteria;
+- DD-1.3 now makes explicit that pre-project configuration evidence means only bootstrap-effective configuration whose applicability does not depend upon the unresolved project identity, while operation-effective configuration may later inform configuration-sensitive Managed Scope without transferring scope authority to DD-1.4;
+- final horizontal verification found no remaining live normative assertion of the obsolete universal `managed scope -> effective configuration` ordering;
+- DD-1.4's existing semantics remain compatible with the staged contract: project-scoped sources require sufficient managed-project context, Configuration Resolution cannot expand managed scope, and DD-1.4 remains the sole owner of applicability, validation, precedence, fallback, provenance and effective-value construction;
+- the bootstrap clarification already explicitly declares that it **applies to** DD-1.3, DD-1.4 and DD-1.5. A second duplicate DD-1.4 clarification was therefore not introduced solely to restate the same rule.
 
-**Remaining documentation propagation:** DD-1.3 Managed Project and DD-1.4 Configuration Resolution are semantically governed by the clarification and contain compatible collaboration language, but they still require explicit related-design backlinks/local wording consolidation so the correction is discoverable directly from all three primary documents. This is a documentation-propagation remainder, not an unresolved architectural dependency model.
+**Decision:** DD-1.3 owns project identity/context/scope/targetability; DD-1.4 owns configuration resolution semantics; DD-1.5 owns orchestration of their staged collaboration; the bootstrap clarification owns the cycle-breaking dependency rule. No subsystem is merged and no authority transfers between DD-1.3 and DD-1.4.
 
-**Current status:** **architectural sequencing corrected; DD-1.3/DD-1.4 backlink propagation remains before R-04 can be marked fully resolved**.
+**Current status:** **resolved**.
 
 ### R-05 — Structural fact model
 
@@ -310,6 +312,8 @@ R-04 preserves separate reasons to change while removing a false ordering depend
 
 This is deliberately not solved by merging Managed Project and Configuration Resolution into one subsystem. The correction makes their interface explicit while keeping both replaceable behind their AppManager-oriented contracts.
 
+The R-04 closeout also applies the boilerplate rule directly: the full cycle-breaking semantics remain in the existing bootstrap clarification, while DD-1.3 receives only the binding and Managed-Project-specific delta. No second DD-1.4 addendum was created merely to duplicate the same contract.
+
 ### 4.7 Target outcome
 
 The target is a corpus in which:
@@ -367,6 +371,6 @@ Current project-management gate state:
 
 > **DD-2 RECONCILIATION ACTIVE — DD-3 PAUSED**
 
-R-01, R-02 and R-03 are resolved. R-04 has its architectural sequencing correction applied in the bootstrap clarification and DD-1.5, but DD-1.3/DD-1.4 backlink propagation remains before it is fully closed. R-05 through R-08 remain active.
+R-01 through R-04 are resolved. R-05 through R-08 remain active.
 
 The gate may return to PASS only when all material R-01 through R-08 findings are classified, confirmed defects/clarifications are resolved, and the final cross-document audit explicitly records the resulting state.
