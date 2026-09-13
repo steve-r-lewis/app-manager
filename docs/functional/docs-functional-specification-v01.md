@@ -11,20 +11,18 @@
 > **Related Functional Specifications:** `application-invocation-functional-specification-v01.md`, `managed-project-functional-specification-v01.md`, `configuration-functional-specification-v01.md`, `source-transformation-functional-specification-v01.md`, `nuxt-functional-specification-v01.md`
 >
 > **Planning source:** `docs/project_management/functional-specification-decomposition-plan-v01.md`
->
-> **Legacy reconciliation source:** `docs/archive/design/appmanager-design-reconciliation-audit-v01.md`
 
 ## 1. Purpose
 
 This specification defines the observable Version 1 behaviour of the AppManager `docs` domain.
 
-The `docs` domain owns documentation-oriented application intent: selecting documentable managed-project scope, inspecting that scope, deriving documentation information, generating documentation artefacts and, where retained as an AppManager use case, operating supported documentation tooling for those artefacts.
+The `docs` domain owns documentation-oriented application intent: selecting documentable managed-project scope, inspecting that scope, deriving documentation information, generating documentation artefacts and, where supported as an AppManager use case, operating documentation tooling for those artefacts.
 
 The governing boundary is:
 
 > **The `docs` domain owns documentation intent and documentation outcomes. It does not acquire authority over Nuxt semantics, source transformation, project scope, package execution, AI generation, or documentation-tool implementation merely because those capabilities are used to produce or present documentation.**
 
-This specification preserves the legacy requirements to document the complete application, application source, all layers, a selected layer, tests and a selected file, while reconciling later documentation-generation and documentation-tooling proposals into the approved Version 1 architecture.
+Version 1 supports documentation of the complete application, application source, all layers, a selected layer, tests and a selected file, together with bounded documentation generation, update, extraction, aggregation and tooling workflows.
 
 ---
 
@@ -296,7 +294,7 @@ The functional requirement to document tests shall not prescribe a particular te
 AppManager shall provide a use case for documenting one eligible selected file.
 
 **FR-DOCS-068 — Interactive file selection**  
-Where TUI or another interactive adapter is used, AppManager may present eligible files for interactive selection as required by the legacy product behaviour.
+Where TUI or another interactive adapter is used, AppManager may present eligible files for interactive selection.
 
 **FR-DOCS-069 — Headless file selection**  
 Headless callers shall identify the file through a deterministic selector and shall never be forced into interactive selection.
@@ -370,13 +368,13 @@ Where a deterministic non-AI documentation path exists, failure or unavailabilit
 If required documentation meaning cannot be established without an unavailable capability, AppManager shall report the limitation rather than fabricate content to satisfy apparent completeness.
 
 **FR-DOCS-090 — Sensitive context**  
-Documentation context supplied to AI capabilities shall respect effective policy for sensitive data and shall not include secrets merely because they are present in managed project files or configuration.
+Documentation context supplied to AI capabilities shall respect effective policy for sensitive data and shall not include protected material merely because it is present in managed project files or configuration.
 
 ---
 
 ## 12. Documentation Tooling Workflows
 
-Legacy command specifications proposed a `docs.run` use case for development, build and preview of documentation using VitePress. Version 1 retains the functional concept of operating supported documentation tooling without making VitePress, package-manager commands or process-spawn mechanics part of the Functional contract.
+Version 1 supports operating configured documentation tooling for development, build and preview workflows without making VitePress, package-manager commands or process-spawn mechanics part of the Functional contract.
 
 **FR-DOCS-091 — Documentation-tool operation**  
 Where documentation tooling is configured and supported for a managed documentation target, AppManager may expose documentation development, build and preview operations as Docs use cases.
@@ -407,9 +405,9 @@ Build artefacts produced by delegated documentation tooling shall be reported as
 
 ---
 
-## 13. Documentation Extraction Reconciliation
+## 13. Documentation Extraction and Aggregation
 
-Later technical material introduced `nuxt.extractDocs` to scan layers and aggregate source-derived Markdown. That product intent is retained here but its Nuxt-domain placement is superseded by the current domain model.
+Extraction, aggregation or generation of documentation from managed source is a Docs-domain responsibility when documentation is the primary intent, even where the inspected resources are Nuxt layers. Nuxt-specific recognition remains delegated to Nuxt authority.
 
 **FR-DOCS-100 — Documentation extraction ownership**  
 Extraction, aggregation or generation of documentation from managed source is a Docs-domain responsibility when documentation is the primary intent, even where the inspected resources are Nuxt layers.
@@ -427,7 +425,7 @@ Aggregation shall not require verbatim concatenation of source files; the observ
 The file types and resources included in an aggregation shall be determined by the documentation use case, managed scope and effective configuration rather than by an unbounded recursive scan.
 
 **FR-DOCS-105 — Exclusions**  
-Generated output, dependency trees, caches, secrets and other resources excluded by project or documentation policy shall not be included merely because they are reachable beneath a target directory.
+Generated output, dependency trees, caches, protected data and other resources excluded by project or documentation policy shall not be included merely because they are reachable beneath a target directory.
 
 ---
 
@@ -446,7 +444,7 @@ Multi-target or multi-artefact operations shall represent partial success explic
 Non-fatal omissions, unsupported source types, stale inputs, unavailable optional enrichment and similar conditions shall be exposed as warnings where they materially affect interpretation of the documentation outcome.
 
 **FR-DOCS-110 — Diagnostic sensitivity**  
-Diagnostics shall avoid exposing secrets or unnecessary sensitive project content.
+Diagnostics shall avoid exposing protected information or unnecessary sensitive project content.
 
 **FR-DOCS-111 — Provider abstraction**  
 Machine-consumable outcomes shall not require callers to parse raw provider stdout, stderr, prompts or UI text to determine application-level documentation status.
@@ -481,70 +479,38 @@ Where target, output destination, overwrite intent or consequential scope is amb
 
 ---
 
-## 16. Legacy Reconciliation Decisions
+## 16. Traceability Summary
 
-### 16.1 Retained functional requirements
-
-The following legacy behaviours are retained as explicit Version 1 Docs requirements:
-
-- document the complete application;
-- document application source;
-- document all managed layers;
-- document a selected managed layer;
-- document tests;
-- document a selected file;
-- interactive file selection where an interactive adapter is used.
-
-### 16.2 `nuxt.extractDocs`
-
-The later `nuxt.extractDocs` proposal is not discarded. Its documentation-extraction intent is reclassified into this specification because documentation, not Nuxt management, is the primary product intent. Nuxt-specific recognition remains delegated to Nuxt authority.
-
-### 16.3 `utils.autoDoc`
-
-Legacy automatic-documentation proposals assigned to `utils` shall not create a second documentation authority. Automatic or bulk documentation generation belongs to `docs` when documentation is the primary intent. The future Utils Functional Specification should therefore reference Docs rather than duplicate this behaviour.
-
-### 16.4 `docs.run`
-
-The legacy `docs.run` concept is retained at the functional level as supported documentation development/build/preview operations. Exact VitePress commands, package-manager selection, process invocation and source modules are lower-level concerns.
-
-### 16.5 AppManager repository documentation versus managed-project documentation
-
-The Docs domain may operate documentation tooling for supported targets, but this does not supersede the Project Documentation Guide's governance of AppManager's own repository documentation hierarchy, naming, authority, retirement or change-management rules.
-
----
-
-## 17. Traceability Summary
-
-| Functional area | Requirements | Primary Design / legacy provenance |
+| Functional area | Requirements | Current authority |
 |---|---|---|
 | Domain boundary and authority | FR-DOCS-001–005 | Root Design §§1, 3, 6, 10; decomposition plan §5.2 |
 | Invocation and project context | FR-DOCS-006–018 | Root Design §§4–7; FR-INV, FR-PROJ, FR-CONFIG |
-| Documentation target model | FR-DOCS-019–030 | Reconciliation audit §3.14; FR-PROJ |
-| Complete application | FR-DOCS-031–040 | Reconciliation audit §3.14 |
-| Application source | FR-DOCS-041–050 | Reconciliation audit §3.14; FR-XFORM |
-| Layers | FR-DOCS-051–060 | Reconciliation audit §3.14; FR-PROJ; FR-NUXT |
-| Tests | FR-DOCS-061–066 | Reconciliation audit §3.14 |
-| Selected file | FR-DOCS-067–072 | Reconciliation audit §3.14 |
-| Generation and update | FR-DOCS-073–083 | Root Design code-intelligence/generation boundaries; FR-XFORM |
-| AI assistance | FR-DOCS-084–090 | Root Design capability boundaries; legacy extraction proposals |
-| Documentation tooling | FR-DOCS-091–099 | legacy `docs.run` command specification |
-| Extraction/aggregation | FR-DOCS-100–105 | legacy `nuxt.extractDocs`; decomposition plan §5.2 |
-| Results and diagnostics | FR-DOCS-106–113 | FR-INV; Root Design Application Engine authority |
-| Safety | FR-DOCS-114–119 | Root Design safety principles; FR-XFORM; FR-PROJ |
+| Documentation target model | FR-DOCS-019–030 | This specification §4; FR-PROJ |
+| Complete application | FR-DOCS-031–040 | This specification §5; FR-PROJ |
+| Application source | FR-DOCS-041–050 | This specification §6; FR-XFORM |
+| Layers | FR-DOCS-051–060 | This specification §7; FR-PROJ; FR-NUXT |
+| Tests | FR-DOCS-061–066 | This specification §8; Quality ownership boundary |
+| Selected file | FR-DOCS-067–072 | This specification §9; FR-PROJ |
+| Generation and update | FR-DOCS-073–083 | This specification §10; Root Design generation boundaries; FR-XFORM |
+| AI assistance | FR-DOCS-084–090 | This specification §11; Root Design capability boundaries; FR-AI |
+| Documentation tooling | FR-DOCS-091–099 | This specification §12; Process Execution boundary |
+| Extraction/aggregation | FR-DOCS-100–105 | This specification §13; decomposition plan §5.2; FR-NUXT |
+| Results and diagnostics | FR-DOCS-106–113 | This specification §14; FR-INV; Application Engine authority |
+| Safety | FR-DOCS-114–119 | This specification §15; Root Design safety principles; FR-XFORM; FR-PROJ |
 
 ---
 
-## 18. Downstream Specification Boundary
+## 17. Downstream Specification Boundary
 
 Detailed Design may define permanent internal contracts for documentation inspection, documentation models, generators, renderers, templates, documentation-tool providers, AI-assisted enrichment, aggregation, source-aware documentation transformation and output planning.
 
-Implementation Specifications may define concrete TypeScript modules, VitePress integration, package-manager commands, source paths, parsers, file extensions, templates, process APIs, output directories and migration from current command stubs.
+Implementation Specifications may define concrete TypeScript modules, VitePress integration, package-manager commands, source paths, parsers, file extensions, templates, process APIs and output directories.
 
 Neither level may redefine the functional ownership established here without an approved change to the governing specification hierarchy.
 
 ---
 
-## 19. Version 1 Functional Baseline
+## 18. Version 1 Functional Baseline
 
 This document establishes the Version 1 Functional baseline for the AppManager `docs` domain.
 
