@@ -72,7 +72,8 @@ R-7 reconciles active Detailed Design, Functional, architecture-decision, and cu
 - `docs/project_management/detailed-design-dd1-handover-review-v01.md` — intentional historical / migration evidence; signatures: `docs/detailed_design/, docs/decisions/`.
 - `docs/project_management/detailed-design-decomposition-plan-v01.md` — intentional historical / migration evidence; signatures: `docs/detailed_design/`.
 - `docs/project_management/detailed-design-structure-migration-inventory-v01.md` — intentional historical / migration evidence; signatures: `docs/detailed_design/, docs/decisions/`.
-- `docs/project_management/domain-detailed-design-authoring-guide-v01.md` — active file — reviewed; signatures: `docs/detailed_design/`.
+- `docs/project_management/functional-specification-conformance-audit-v01.md` — intentional historical Functional-phase audit evidence; signatures: `docs/decisions/`.
+- `docs/project_management/functional-specification-decomposition-plan-v01.md` — intentional historical Functional-phase planning evidence; signatures: `docs/decisions/`.
 - `docs/project_management/shared-capability-detailed-design-conformance-audit-v01.md` — intentional historical / migration evidence; signatures: `docs/detailed_design/, docs/decisions/`.
 
 ## 5. Validation

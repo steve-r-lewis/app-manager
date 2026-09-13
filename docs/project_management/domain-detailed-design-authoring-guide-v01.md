@@ -54,10 +54,10 @@ The approved decomposition separates domain Detailed Design into two families.
 DD-3 comprises:
 
 ```text
-docs/detailed_design/app-domain-detailed-design-v01.md
-docs/detailed_design/git-domain-detailed-design-v01.md
-docs/detailed_design/nuxt-domain-detailed-design-v01.md
-docs/detailed_design/docs-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md
+docs/dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md
 ```
 
 These domains coordinate the largest number of DD-1 and DD-2 contracts and therefore act as the first domain-level validation of the established architecture.
@@ -67,10 +67,10 @@ These domains coordinate the largest number of DD-1 and DD-2 contracts and there
 DD-4 comprises:
 
 ```text
-docs/detailed_design/quality-domain-detailed-design-v01.md
-docs/detailed_design/settings-domain-detailed-design-v01.md
-docs/detailed_design/ai-domain-detailed-design-v01.md
-docs/detailed_design/utils-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md
+docs/dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md
 ```
 
 These documents remain subject to the same authoring rules defined here.
