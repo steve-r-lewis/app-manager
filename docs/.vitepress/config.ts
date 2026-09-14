@@ -37,7 +37,7 @@ const dd2ClarificationItems = [
 const dd3Items = [
 	{ text: 'DD-3.1 — App Domain', link: '/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01' },
 	{ text: 'DD-3.2 — Git Domain', link: '/dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01' },
-	{ text: 'DD-3.3 — Nuxt Domain (planned)' },
+	{ text: 'DD-3.3 — Nuxt Domain', link: '/dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01' },
 	{ text: 'DD-3.4 — Docs Domain (planned)' }
 ]
 
