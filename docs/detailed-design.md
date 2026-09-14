@@ -65,12 +65,12 @@ The family number is an organisational identity, not an additional specification
 
 | ID | Detailed Design | Status |
 |---|---|---|
-| DD-4.1 | Quality Domain | Planned — next Detailed Design |
-| DD-4.2 | Settings Domain | Planned |
+| DD-4.1 | [Quality Domain](./dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) | Complete |
+| DD-4.2 | Settings Domain | Planned — next Detailed Design |
 | DD-4.3 | AI Domain | Planned |
 | DD-4.4 | Utils Domain | Planned |
 
-The DD-4 family directory is established in the repository, but no DD-4 normative specification has yet been authored.
+Planned entries are shown for navigation and sequencing only. No empty normative Detailed Design documents are created for unauthored work.
 
 ## Governing Navigation Sources
 
