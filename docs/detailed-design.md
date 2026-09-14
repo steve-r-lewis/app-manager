@@ -68,9 +68,9 @@ The family number is an organisational identity, not an additional specification
 | DD-4.1 | [Quality Domain](./dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) | Complete |
 | DD-4.2 | [Settings Domain](./dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) | Complete |
 | DD-4.3 | [AI Domain](./dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) | Complete |
-| DD-4.4 | Utils Domain | Planned — next Detailed Design |
+| DD-4.4 | [Utils Domain](./dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) | Complete |
 
-Planned entries are shown for navigation and sequencing only. No empty normative Detailed Design documents are created for unauthored work.
+All planned Version 1 primary Detailed Design documents are now represented in the navigation index. Detailed Design conformance remains subject to the project-management audit required by the canonical decomposition plan.
 
 ## Governing Navigation Sources
 
