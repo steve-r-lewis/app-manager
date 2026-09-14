@@ -42,7 +42,7 @@ const dd3Items = [
 ]
 
 const dd4Items = [
-	{ text: 'DD-4.1 — Quality Domain (planned)' },
+	{ text: 'DD-4.1 — Quality Domain', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' },
 	{ text: 'DD-4.2 — Settings Domain (planned)' },
 	{ text: 'DD-4.3 — AI Domain (planned)' },
 	{ text: 'DD-4.4 — Utils Domain (planned)' }
@@ -69,7 +69,7 @@ export default defineConfig({
 					{ text: 'DD-1 — Application Core', link: '/dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01' },
 					{ text: 'DD-2 — Shared Capabilities', link: '/dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01' },
 					{ text: 'DD-3 — High-Coupling Domains', link: '/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01' },
-					{ text: 'DD-4 — Policy & Resource Domains', link: '/detailed-design#dd-4-policy-and-resource-domains' }
+					{ text: 'DD-4 — Policy & Resource Domains', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' }
 				]
 			}
 		],
@@ -110,7 +110,7 @@ export default defineConfig({
 				{ text: 'Other Families', collapsed: true, items: [
 					{ text: 'DD-2 — Shared Capabilities', link: '/dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01' },
 					{ text: 'DD-3 — High-Coupling Domains', link: '/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01' },
-					{ text: 'DD-4 — Policy & Resource Domains', link: '/detailed-design#dd-4-policy-and-resource-domains' }
+					{ text: 'DD-4 — Policy & Resource Domains', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' }
 				] }
 			],
 			'/dd_2_shared_capabilities/': [
@@ -120,7 +120,7 @@ export default defineConfig({
 				{ text: 'Other Families', collapsed: true, items: [
 					{ text: 'DD-1 — Application Core', link: '/dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01' },
 					{ text: 'DD-3 — High-Coupling Domains', link: '/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01' },
-					{ text: 'DD-4 — Policy & Resource Domains', link: '/detailed-design#dd-4-policy-and-resource-domains' }
+					{ text: 'DD-4 — Policy & Resource Domains', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' }
 				] }
 			],
 			'/dd_3_high_coupling_domains/': [
@@ -129,7 +129,16 @@ export default defineConfig({
 				{ text: 'Other Families', collapsed: true, items: [
 					{ text: 'DD-1 — Application Core', link: '/dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01' },
 					{ text: 'DD-2 — Shared Capabilities', link: '/dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01' },
-					{ text: 'DD-4 — Policy & Resource Domains', link: '/detailed-design#dd-4-policy-and-resource-domains' }
+					{ text: 'DD-4 — Policy & Resource Domains', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' }
+				] }
+			],
+			'/dd_4_policy_and_resource_domains/': [
+				{ text: 'Detailed Design', items: [{ text: 'Overview', link: detailedDesignOverview }] },
+				{ text: 'DD-4 — Policy & Resource Domains', items: dd4Items },
+				{ text: 'Other Families', collapsed: true, items: [
+					{ text: 'DD-1 — Application Core', link: '/dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01' },
+					{ text: 'DD-2 — Shared Capabilities', link: '/dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01' },
+					{ text: 'DD-3 — High-Coupling Domains', link: '/dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01' }
 				] }
 			]
 		},
