@@ -67,8 +67,8 @@ The family number is an organisational identity, not an additional specification
 |---|---|---|
 | DD-4.1 | [Quality Domain](./dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) | Complete |
 | DD-4.2 | [Settings Domain](./dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) | Complete |
-| DD-4.3 | AI Domain | Planned — next Detailed Design |
-| DD-4.4 | Utils Domain | Planned |
+| DD-4.3 | [AI Domain](./dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) | Complete |
+| DD-4.4 | Utils Domain | Planned — next Detailed Design |
 
 Planned entries are shown for navigation and sequencing only. No empty normative Detailed Design documents are created for unauthored work.
 
