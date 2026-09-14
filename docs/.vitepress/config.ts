@@ -44,7 +44,7 @@ const dd3Items = [
 const dd4Items = [
 	{ text: 'DD-4.1 — Quality Domain', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' },
 	{ text: 'DD-4.2 — Settings Domain', link: '/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01' },
-	{ text: 'DD-4.3 — AI Domain (planned)' },
+	{ text: 'DD-4.3 — AI Domain', link: '/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01' },
 	{ text: 'DD-4.4 — Utils Domain (planned)' }
 ]
 
