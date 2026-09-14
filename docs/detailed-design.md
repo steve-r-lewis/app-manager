@@ -58,8 +58,8 @@ The family number is an organisational identity, not an additional specification
 |---|---|---|
 | DD-3.1 | [App Domain](./dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md) | Complete |
 | DD-3.2 | [Git Domain](./dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) | Complete |
-| DD-3.3 | Nuxt Domain | Planned — next Detailed Design |
-| DD-3.4 | Docs Domain | Planned |
+| DD-3.3 | [Nuxt Domain](./dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) | Complete |
+| DD-3.4 | Docs Domain | Planned — next Detailed Design |
 
 Planned entries are shown for navigation and sequencing only. No empty normative Detailed Design documents are created for unauthored work.
 
