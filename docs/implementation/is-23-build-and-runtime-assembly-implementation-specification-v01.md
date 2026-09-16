@@ -138,7 +138,7 @@ All primary IS documents now exist. No dependency disposition remains provisiona
 |---|---|---|
 | `@clack/prompts` | IS-22 TUI | **RETAIN** for TUI presentation/input only |
 | `picocolors` | IS-22 TUI | **RETAIN** for presentation only |
-| `simple-git` | IS-6 Repository Capability | **RETAIN / ADAPT** as Git CLI/provider mechanism behind AppManager repository contracts |
+| `simple-git` | IS-6 Repository Capability | **REPLACE / REMOVE from target provider path**; IS-6 selects direct Git CLI execution through IS-5 and does not retain `simple-git` as the Version 1 local Git provider mechanism |
 | `jsonc-parser` | IS-7 / IS-8 | **RETAIN** where selected for JSON/JSONC inspection/transformation; provider objects stay inside owning boundaries |
 | `@google/generative-ai` | IS-10 provider implementation | **REVIEW / REMOVE if unused**; it is not an architectural dependency and remains only if an explicitly implemented provider adapter requires it |
 | `consola` | runtime observability | **RETAIN** as logging mechanism only, not outcome/diagnostic semantics |
@@ -151,7 +151,7 @@ All primary IS documents now exist. No dependency disposition remains provisiona
 | `vitepress` | IS-12 / IS-17 documentation tooling | **RETAIN** as development dependency |
 | `cross-env` | development/test portability | **REVIEW**; remove if unused |
 
-Package location does not redefine semantic ownership.
+Package location does not redefine semantic ownership. Where this assembly-level dependency inventory names a dependency owned by another Implementation Specification, the owning specification's explicit provider decision governs its target use.
 
 ---
 
@@ -252,7 +252,7 @@ Composition connects responsibilities but never transfers authority.
 6. Implement the reconciled launcher -> selected IS-22 adapter -> IS-1 lifecycle.
 7. Remove import-time command registration and deep process lifecycle control.
 8. Adapt logging to explicit assembly.
-9. Apply final dependency dispositions from §9, including removing `@google/generative-ai` if no implemented provider adapter requires it.
+9. Apply final dependency dispositions from §9, including removing `simple-git` from the target local Git provider path in accordance with IS-6 and removing `@google/generative-ai` if no implemented provider adapter requires it.
 10. Add assembly conformance tests and make clean build/typecheck/test a release prerequisite.
 
 No remaining migration step is labelled pending an unauthored primary IS; all owning Level 4 contracts now exist.
