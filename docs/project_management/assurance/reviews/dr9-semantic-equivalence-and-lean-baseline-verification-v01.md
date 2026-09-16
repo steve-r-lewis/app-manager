@@ -1,12 +1,14 @@
 # DR-9 — Semantic Equivalence and Lean-Baseline Verification
 
-> **Status:** Complete on DR-9 review branch; final baseline SHA pending merge/live verification
+> **Status:** Complete — merged and independently verified
 >
 > **Programme:** DR — Documentation Rationalisation
 >
 > **Frozen semantic source baseline:** `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
 >
 > **Verified post-DR-8 branch baseline:** `24571992a833e943ec8217da98843fdc6492f5b6`
+>
+> **Accepted Version 1 lean implementation documentation baseline:** `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7`
 >
 > **Normative product effect:** None. This is final assurance evidence.
 
@@ -18,15 +20,11 @@ The programme requires meaningful baseline propositions to remain either locally
 
 ## 2. Live-State Verification
 
-PR #166, **DR-8 — Documentation and Project-Management Hygiene**, was independently verified closed and merged.
+PR #166, **DR-8 — Documentation and Project-Management Hygiene**, was independently verified closed and merged at `24571992a833e943ec8217da98843fdc6492f5b6`. Live `master` was independently verified at that exact SHA before the DR-9 branch was created.
 
-Its merge commit is:
+DR-9 completed on its review branch and PR #167 was then merged and closed at `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7`. Live `master` was independently fetched after merge and verified at the same SHA. This satisfies the programme's separate post-merge verification rule.
 
-`24571992a833e943ec8217da98843fdc6492f5b6`
-
-Live `master` was independently fetched and verified at that exact SHA before the DR-9 branch was created.
-
-DR-9 therefore starts from the required post-DR-8 live baseline rather than from historical branch assumptions.
+The exact commit `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7` is therefore the accepted **Version 1 lean implementation documentation baseline**.
 
 ## 3. Evidence Read
 
@@ -156,10 +154,12 @@ The only deliberate follow-up debt identified by the hygiene pass is eventual re
 
 DR-9 finds zero unaccounted semantic loss against `fe30f5ad883ce2abeca2e495dd4d7036eef09da6` under the programme accounting relation.
 
-The rationalised corpus on this branch is therefore eligible to become the **lean Version 1 implementation documentation baseline**.
+The post-merge acceptance condition is satisfied. The permanent lean Version 1 implementation documentation baseline is `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7`.
 
-Because programme acceptance requires the package PR to merge and the resulting live `master` to be independently verified, the permanent baseline SHA is not guessed from the branch head. After this PR merges, verify live `master`; that exact merge SHA becomes the lean Version 1 implementation documentation baseline and closes the DR programme.
+DR-9 and the DR programme are therefore closed.
 
 ## 13. Implementation Handoff
 
-After merge/live verification, implementation work may branch from the accepted lean-baseline SHA and must continue to follow the normative hierarchy, accepted ADRs and active clarifications. Historical implementation/source topology remains migration evidence only where it conflicts with normative target specifications.
+Implementation work may branch from the accepted lean-baseline SHA and must continue to follow the normative hierarchy, accepted ADRs and active clarifications. Historical implementation/source topology remains migration evidence only where it conflicts with normative target specifications.
+
+The next project-management activity is to establish the Version 1 implementation programme and dependency-ordered work plan before implementation changes begin.
