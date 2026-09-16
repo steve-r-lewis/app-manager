@@ -2,57 +2,37 @@
 
 > **Document type:** Level 4 Implementation Specification overview and register
 >
-> **Status:** Version 1 register approved for authoring; individual specifications not yet authored
+> **Status:** Version 1 implementation-specification baseline authored and reconciled
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
 >
 > **Selection method:** [Implementation Specification Map](../project_management/implementation-specification-map-v01.md)
+>
+> **Reconciliation record:** [Implementation Specification Conformance and Reconciliation](../project_management/implementation-specification-conformance-reconciliation-v01.md)
 
 ## 1. Purpose
 
 This document is the entry point and canonical register for the Version 1 AppManager Implementation Specifications.
 
-It answers a simple question:
+It records the concrete implementation responsibilities that have their own specification before the approved Detailed Design is reduced to code. All 23 primary Version 1 specifications are authored under `docs/implementation/` and together form the reconciled Level 4 implementation baseline.
 
-> **Which concrete implementation responsibilities need their own specification before the approved Detailed Design is reduced to code?**
-
-The register is based on the completed Detailed Design set, the Implementation Specification selection test, and a read-first comparison with the current repository.
-
-The current source tree is evidence of the starting state. It does not define the target implementation where it conflicts with the approved Detailed Design.
+The register is based on the completed Detailed Design set, the Implementation Specification selection test, and read-first comparison with the repository. Current source remains migration evidence only; it does not define target implementation where it conflicts with normative specifications.
 
 ---
 
 ## 2. Register Rules
 
-A primary Implementation Specification has a stable identifier of the form:
+A primary Implementation Specification has a stable identifier of the form `IS-<number>`. The number is an identity, not an authority level and not a guarantee of implementation order.
 
-```text
-IS-<number>
-```
+Each primary specification is stored under `docs/implementation/` using `is-<number>-<subject>-implementation-specification-v01.md`.
 
-The number is an identity, not an authority level and not a guarantee of implementation order.
-
-Each primary specification will be stored under:
-
-```text
-docs/implementation/
-```
-
-using the filename form:
-
-```text
-is-<number>-<subject>-implementation-specification-v01.md
-```
-
-The register does not imply one Implementation Specification per source file, service, class, command or Detailed Design document.
-
-The Version 1 list below happens to contain 23 primary specifications. That is **not** because Version 1 has 23 Detailed Designs. The number results from applying the selection test independently:
+The register does not imply one Implementation Specification per source file, service, class, command or Detailed Design document. Version 1 contains 23 primary specifications because the selection test was applied independently:
 
 - DD-1.1, DD-1.2 and DD-1.5 are combined in one application-runtime implementation specification;
 - DD-1.3 and DD-1.4 remain separate because their concrete resolution mechanisms and tests are independently meaningful;
 - each DD-2 capability remains separately specified because each has a distinct technical boundary, provider/mechanism surface or safety model;
 - each DD-3/DD-4 domain remains separately specified because each owns distinct use-case orchestration or policy that must not be collapsed into another domain;
-- interaction adapters and runtime/build assembly add two implementation concerns that are concrete Level 4 responsibilities but are not themselves new Detailed Design authorities.
+- interaction adapters and runtime/build assembly add two concrete Level 4 responsibilities without creating new Detailed Design authorities.
 
 ---
 
@@ -60,64 +40,41 @@ The Version 1 list below happens to contain 23 primary specifications. That is *
 
 | ID | Subject | Principal Detailed Design input | Status |
 |---|---|---|---|
-| `IS-1` | Application Runtime and Invocation | DD-1.1, DD-1.2, DD-1.5 | Planned |
-| `IS-2` | Managed Project Resolution | DD-1.3, DD-1.5 | Planned |
-| `IS-3` | Configuration Resolution | DD-1.4, DD-1.5 and bootstrap clarification | Planned |
-| `IS-4` | Resource Access | DD-2.1 | Planned |
-| `IS-5` | Process Execution | DD-2.2 | Planned |
-| `IS-6` | Repository Capability | DD-2.3 | Planned |
-| `IS-7` | Source Intelligence | DD-2.4 | Planned |
-| `IS-8` | Source Transformation | DD-2.5 | Planned |
-| `IS-9` | Resource Registry and Template | DD-2.6 | Planned |
-| `IS-10` | AI Capability | DD-2.7 | Planned |
-| `IS-11` | Quality Capability | DD-2.8 | Planned |
-| `IS-12` | Documentation Capability | DD-2.9 | Planned |
-| `IS-13` | Nuxt Capability | DD-2.10 | Planned |
-| `IS-14` | App Domain | DD-3.1 | Planned |
-| `IS-15` | Git Domain | DD-3.2 | Planned |
-| `IS-16` | Nuxt Domain | DD-3.3 | Planned |
-| `IS-17` | Docs Domain | DD-3.4 | Planned |
-| `IS-18` | Quality Domain | DD-4.1 | Planned |
-| `IS-19` | Settings Domain | DD-4.2 | Planned |
-| `IS-20` | AI Domain | DD-4.3 | Planned |
-| `IS-21` | Utils Domain | DD-4.4 | Planned |
-| `IS-22` | Interaction Adapters | DD-1.1 plus interaction-mode requirements carried through the DD set | Planned |
-| `IS-23` | Build and Runtime Assembly | ADR-0001 and the complete DD dependency model | Planned |
+| `IS-1` | Application Runtime and Invocation | DD-1.1, DD-1.2, DD-1.5 | Authored |
+| `IS-2` | Managed Project Resolution | DD-1.3, DD-1.5 | Authored |
+| `IS-3` | Configuration Resolution | DD-1.4, DD-1.5 and bootstrap clarification | Authored |
+| `IS-4` | Resource Access | DD-2.1 | Authored |
+| `IS-5` | Process Execution | DD-2.2 | Authored |
+| `IS-6` | Repository Capability | DD-2.3 | Authored |
+| `IS-7` | Source Intelligence | DD-2.4 | Authored |
+| `IS-8` | Source Transformation | DD-2.5 | Authored |
+| `IS-9` | Resource Registry and Template | DD-2.6 | Authored |
+| `IS-10` | AI Capability | DD-2.7 | Authored |
+| `IS-11` | Quality Capability | DD-2.8 | Authored |
+| `IS-12` | Documentation Capability | DD-2.9 | Authored |
+| `IS-13` | Nuxt Capability | DD-2.10 | Authored |
+| `IS-14` | App Domain | DD-3.1 | Authored |
+| `IS-15` | Git Domain | DD-3.2 | Authored |
+| `IS-16` | Nuxt Domain | DD-3.3 | Authored |
+| `IS-17` | Docs Domain | DD-3.4 | Authored |
+| `IS-18` | Quality Domain | DD-4.1 | Authored |
+| `IS-19` | Settings Domain | DD-4.2 | Authored |
+| `IS-20` | AI Domain | DD-4.3 | Authored |
+| `IS-21` | Utils Domain | DD-4.4 | Authored |
+| `IS-22` | Interaction Adapters | DD-1.1 plus interaction-mode requirements carried through the DD set | Authored |
+| `IS-23` | Build and Runtime Assembly | ADR-0001 and the complete DD dependency model | Authored |
 
 ---
 
-## 4. Why These Boundaries Were Chosen
+## 4. Boundary Selection Rationale
 
-### 4.1 IS-1 — Application Runtime and Invocation
+### 4.1 Application Core
 
-This specification combines Application Invocation, Execution Outcomes and Application Engine implementation concerns because their concrete runtime wiring is inseparable at the application entry and dispatch boundary.
+IS-1 combines Application Invocation, Execution Outcomes and Application Engine implementation concerns because their concrete runtime wiring is inseparable at application entry and dispatch. It defines bootstrap, use-case registration, request handling, execution-context construction, dispatch, cancellation linkage, canonical outcome construction/projection and application-level interpretation while preserving final Application Engine authority.
 
-It will define the concrete TypeScript modules and interfaces for:
+IS-2 remains separate because project identity, topology, managed entities, repository relationships and operation-specific managed scope are independently testable and must not be conflated with configuration loading.
 
-- application bootstrap;
-- command/use-case registration;
-- invocation request handling;
-- execution-context construction;
-- dispatch;
-- cancellation linkage;
-- canonical outcome construction and projection;
-- application-level interpretation of delegated results.
-
-It must preserve the rule that the Application Engine retains final application authority.
-
-Current repository evidence includes `app/index.ts`, `app/commands/baseCommand.ts` and `app/commands/commandRegistry.ts`, but their present shapes are not presumed to be the target design.
-
-### 4.2 IS-2 — Managed Project Resolution
-
-Managed Project remains separate from Configuration Resolution because it owns a different concrete problem: resolving project identity, topology, managed entities, repository relationships and operation-specific managed scope.
-
-Its implementation must be independently testable without turning configuration loading into project discovery or treating discovery as mutation authority.
-
-### 4.3 IS-3 — Configuration Resolution
-
-Configuration Resolution remains separate because precedence, applicability, provenance, staged bootstrap resolution, sensitive values and immutable operation snapshots form a coherent implementation responsibility independent of project-topology discovery.
-
-The accepted bootstrap order must be preserved:
+IS-3 remains separate because precedence, applicability, provenance, staged bootstrap resolution, sensitive values and immutable operation snapshots are a coherent responsibility distinct from project topology. The accepted order remains:
 
 ```text
 context-independent/bootstrap configuration
@@ -132,201 +89,95 @@ project/scope-dependent configuration
 operation configuration snapshot
 ```
 
-The current `configService.ts` and `settingsResolver.ts` are starting-state evidence only.
+### 4.2 Shared capabilities
 
-### 4.4 IS-4 and IS-5 — Resource Access and Process Execution
+IS-4 Resource Access and IS-5 Process Execution remain split because filesystem/path containment, stale-state and resource mutation have materially different APIs, failure models and tests from executable invocation, environment handling, streaming, exit normalization, cancellation and timeout.
 
-These candidates are **split**, not merged.
+IS-6 separately wraps repository/Git mechanisms behind AppManager facts and bounded primitives without acquiring Git-domain policy.
 
-Resource Access has filesystem/path containment, stale-state, atomic/best-effort mutation and resource-safety concerns.
+IS-7 Source Intelligence and IS-8 Source Transformation remain separate: Source Intelligence is read-only recognition/evidence, while Source Transformation applies approved bounded transformations and therefore owns mutation, stale-source, preservation and validation mechanics.
 
-Process Execution has executable invocation, environment handling, output streaming, exit normalization, cancellation, termination and timeout concerns.
+IS-9 keeps registry identity, template identity, validation, parameter binding, rendering and provenance in one declarative-resource boundary and does not create an executable plugin framework.
 
-They may both be infrastructure, but their APIs, failure models, tests and external boundaries are materially different. The current `fileService.ts` and `processService.ts` reinforce that they can be implemented and tested independently.
+IS-10 remains the replaceable AI provider/model execution and disclosure boundary; IS-11 separately normalizes quality-tool execution without deciding Quality-domain/application acceptance; IS-12 provides shared documentation mechanisms distinct from Docs-domain intent; IS-13 encapsulates framework-specific Nuxt recognition/mechanisms distinct from Nuxt-domain orchestration.
 
-### 4.5 IS-6 — Repository Capability
+### 4.3 Domain implementations
 
-Repository Capability warrants its own specification because it wraps concrete Git/repository mechanisms behind AppManager-oriented facts and primitives.
-
-The implementation must prevent provider-native Git details or `simple-git` behaviour from becoming Git-domain policy or final application outcomes.
-
-### 4.6 IS-7 and IS-8 — Source Intelligence and Source Transformation
-
-These candidates remain **separate** despite sharing source models and possible parser infrastructure.
-
-Source Intelligence is read-only recognition and structural evidence.
-
-Source Transformation applies approved bounded transformation plans and therefore has mutation, stale-source, preservation and validation obligations that require separate review.
-
-The current scanner and strategy families are evidence for these implementation areas but must not be copied mechanically into the target architecture.
-
-### 4.7 IS-9 — Resource Registry and Template
-
-Registry and template mechanics remain one specification because registry identity, template identity, validation, parameter binding, rendering and provenance form one coherent declarative-resource implementation boundary.
-
-This specification must not create a generic executable plugin framework.
-
-### 4.8 IS-10 — AI Capability
-
-AI Capability remains independent because provider/model adapters, disclosure controls, request/context construction, response normalization and structured-output validation form a replaceable external-provider boundary.
-
-The current `llmService.ts` and Google Generative AI dependency are evidence, not architectural authority.
-
-### 4.9 IS-11 — Quality Capability
-
-Quality Capability warrants its own implementation specification because test, coverage, lint, type-check and validation tools must be invoked and normalized without allowing tool completion to become Quality-domain or application acceptance.
-
-### 4.10 IS-12 — Documentation Capability
-
-Documentation Capability remains independent because shared documentation inspection, modeling, rendering, generation and validation are technical mechanisms distinct from Docs-domain application intent.
-
-### 4.11 IS-13 — Nuxt Capability
-
-Nuxt Capability remains independent because framework-specific recognition, configuration inspection and bounded Nuxt mechanisms should be encapsulated behind a technical boundary rather than spread through Nuxt-domain orchestration.
-
-### 4.12 IS-14 through IS-21 — Domain Implementations
-
-The eight domain specifications remain separate after applying the selection test.
-
-This is not because there are eight domain Detailed Designs. It is because each domain has a separately reviewable concrete orchestration/policy responsibility:
+IS-14 through IS-21 remain separate because each owns independently reviewable orchestration/policy:
 
 - App — root application lifecycle and creation intent;
 - Git — repository-management use cases and repository policy;
 - Nuxt — Nuxt application/layer use cases and applicability policy;
 - Docs — documentation use cases and profile/output policy;
 - Quality — quality intent, operation-specific quality policy and gate composition;
-- Settings — explicit settings and metadata-management intent;
+- Settings — explicit persisted settings and metadata-management intent;
 - AI — AI-specific project-resource/instruction intent;
 - Utils — narrowly bounded otherwise-unowned maintenance intent.
 
-Combining these into one "domain implementation" specification would obscure authority boundaries, make traceability poor and create an oversized document whose parts could change independently.
+Individual commands do not receive primary IS identities by default; they are concrete artefacts specified by their owning domain IS.
 
-Individual commands within those domains do **not** receive primary IS identities by default. They are concrete artefacts specified by their owning domain IS.
+### 4.4 Interaction and assembly
 
-### 4.13 IS-22 — Interaction Adapters
+IS-22 separately specifies TUI and Headless adapters because both must translate into/out of the same IS-1 Application Invocation Contract without acquiring application authority.
 
-Interaction adapters warrant a separate specification because the TUI/interactive and Headless implementations must translate into and out of the same Application Invocation Contract without acquiring application authority.
-
-The present `app/modes/interactiveMode.ts` and `app/modes/headlessMode.ts` demonstrate a concrete implementation surface, but the target specification will decide their final module structure.
-
-TUI and Headless remain in one primary IS unless authoring reveals materially separate transports or host lifecycles that satisfy the split test independently.
-
-### 4.14 IS-23 — Build and Runtime Assembly
-
-Build and Runtime Assembly is a concrete implementation responsibility because it turns the separately specified modules into one working Node.js/TypeScript application.
-
-It will cover matters such as:
-
-- package and workspace configuration;
-- executable entry point;
-- TypeScript build configuration;
-- runtime composition/root wiring;
-- package scripts that form part of supported development/build behaviour;
-- dependency assembly;
-- production execution assumptions;
-- integration-level tests of application assembly.
-
-It must not become a miscellaneous document for implementation details owned by another IS.
+IS-23 separately specifies package/workspace configuration, executable entry, TypeScript build, runtime composition, root scripts, dependency assembly, production assumptions and integration-level assembly tests. It connects approved responsibilities without absorbing them.
 
 ---
 
 ## 5. Current Repository Interpretation
 
-The current repository contains historical implementation groupings including:
+Historical groupings such as `app/commands/`, `app/license_engine/`, `app/modes/`, `app/orchestrators/`, `app/resolvers/`, `app/scanners/`, `app/services/`, `app/strategies/` and `app/types/` do not become Implementation Specification boundaries automatically.
 
-```text
-app/commands/
-app/license_engine/
-app/modes/
-app/orchestrators/
-app/resolvers/
-app/scanners/
-app/services/
-app/strategies/
-app/types/
-```
-
-These directories do not become Implementation Specification boundaries automatically.
-
-Examples:
-
-- `app/services/` contains unrelated responsibilities such as resource access, configuration, repository access, AI and process execution, so it cannot map to one `Services` IS;
-- `app/scanners/` and `app/strategies/` contribute to Source Intelligence and Source Transformation but do not independently justify one IS per language or strategy;
-- `app/commands/` contributes primarily to the domain specifications and Application Runtime, rather than defining one specification per command file;
-- `app/license_engine/` must be reconciled through the Settings implementation rather than being preserved as an architectural engine merely because the directory exists;
-- `app/types/` is a storage location for TypeScript declarations, not an implementation responsibility of its own.
+In particular, `app/services/` combines unrelated responsibilities; scanner/strategy families contribute to IS-7/IS-8 rather than defining one IS per language; commands contribute to domains and IS-1 rather than one IS per command; `app/license_engine/` is reconciled through Settings rather than preserved as an architectural engine merely because it exists; and `app/types/` is declaration storage rather than an implementation responsibility.
 
 ---
 
 ## 6. Cross-Cutting Implementation Rules
 
-Every primary Implementation Specification must preserve the following rules where applicable:
+Every primary Implementation Specification preserves these rules where applicable:
 
 1. **Application authority stays with the Application Engine.** Specialist execution does not acquire final application authority.
 2. **Managed scope is explicit.** Discovery, recognition or provider capability does not create mutation authority.
-3. **Configuration resolution is centralized.** Persistence does not define precedence, and consumers must not invent private precedence rules.
-4. **Canonical outcomes remain canonical.** Provider responses, exceptions and exit codes must be normalized rather than leaked as application semantics.
+3. **Configuration resolution is centralized.** Persistence does not define precedence and consumers do not invent private precedence rules.
+4. **Canonical outcomes remain canonical.** Provider responses, exceptions and exit codes are normalized rather than leaked as application semantics.
 5. **Evidence remains evidence until interpreted.** Repository, source, AI, Quality, Documentation and Nuxt capability results do not decide owning-domain acceptance by themselves.
-6. **Source Intelligence stays read-only.** Existing-source mutation must follow Source Transformation semantics.
+6. **Source Intelligence stays read-only.** Existing-source mutation follows Source Transformation semantics.
 7. **AI remains non-authoritative.** AI output is proposal/evidence until accepted by the owning use case.
-8. **Capability/domain pairs stay distinct.** Shared technical execution must not absorb domain intent or policy.
-9. **Provider replaceability is preserved.** A selected Version 1 provider must not leak its native model into general AppManager contracts unless an accepted ADR deliberately changes that rule.
-10. **Implementation structure must not recreate a generic Utils/helper authority.** Helpers remain subordinate to the responsibility they serve.
+8. **Capability/domain pairs stay distinct.** Shared technical execution does not absorb domain intent or policy.
+9. **Provider replaceability is preserved.** Selected providers do not leak native models into general AppManager contracts unless an accepted ADR deliberately changes that rule.
+10. **Implementation structure does not recreate a generic Utils/helper authority.** Helpers remain subordinate to the responsibility they serve.
 
 ---
 
-## 7. Authoring Order
+## 7. Authored Baseline and Implementation Order
 
-The register number is not the writing order. The recommended first-pass writing sequence follows implementation dependency:
+The dependency-aware authoring programme is complete. Its sequencing remains useful as implementation dependency guidance, not as outstanding documentation work:
 
 ```text
 IS-23  Build and Runtime Assembly foundations
   |
-  +--> IS-4   Resource Access
-  +--> IS-5   Process Execution
+  +--> IS-4 / IS-5 infrastructure
   |
   v
-IS-1   Application Runtime and Invocation
+IS-1 Application Runtime and Invocation
   |
-  +--> IS-2   Managed Project Resolution
-  +--> IS-3   Configuration Resolution
-  |
-  +--> IS-6   Repository Capability
-  +--> IS-7   Source Intelligence
-  +--> IS-8   Source Transformation
-  +--> IS-9   Resource Registry and Template
-  +--> IS-10  AI Capability
-  +--> IS-11  Quality Capability
-  +--> IS-12  Documentation Capability
-  +--> IS-13  Nuxt Capability
+  +--> IS-2 / IS-3 Application Core resolution
+  +--> IS-6 .. IS-13 shared capabilities
   |
   v
-IS-14 .. IS-21  Domain implementations
+IS-14 .. IS-21 domain implementations
   |
   v
-IS-22  Interaction Adapters
+IS-22 Interaction Adapters
 ```
 
-This sequence is pragmatic rather than normative. An individual specification may be written earlier where its dependencies are sufficiently understood, but no implementation document may redefine an approved upstream contract for convenience.
-
-A practical starting order is:
-
-1. `IS-23` — Build and Runtime Assembly, limited initially to the build/package/runtime constraints needed by all implementation work;
-2. `IS-4` — Resource Access;
-3. `IS-5` — Process Execution;
-4. `IS-1` — Application Runtime and Invocation;
-5. `IS-2` and `IS-3` — Managed Project and Configuration Resolution;
-6. `IS-6` through `IS-13` — shared capability implementations;
-7. `IS-14` through `IS-21` — domain implementations;
-8. `IS-22` — Interaction Adapters after the invocation/application path is concrete.
-
-The initial portion of `IS-23` must not prematurely prescribe the internal module topology that the later specifications are responsible for deciding.
+Implementation may proceed dependency-aware rather than by IS number. No implementation may redefine an approved upstream contract for convenience.
 
 ---
 
-## 8. Planned Files
+## 8. Canonical Version 1 Files
 
-The Version 1 primary Implementation Specifications are registered at the following paths:
+The complete Version 1 primary set is:
 
 ```text
 docs/implementation/is-1-application-runtime-and-invocation-implementation-specification-v01.md
@@ -354,36 +205,16 @@ docs/implementation/is-22-interaction-adapters-implementation-specification-v01.
 docs/implementation/is-23-build-and-runtime-assembly-implementation-specification-v01.md
 ```
 
-The files should be created as they are authored rather than as empty placeholders.
-
 ---
 
 ## 9. Change Control
 
-The `IS-*` identities in this register are now the Version 1 planning baseline.
-
-They may be deliberately changed if implementation authoring exposes a genuine boundary problem, but they must not drift casually because a current class, directory or helper is renamed.
-
-A proposed split, merge or retirement of a registered primary IS must explain:
-
-- which implementation responsibility changed;
-- which DD contracts are affected;
-- why the existing boundary is no longer coherent;
-- how traceability will be preserved;
-- whether any accepted ADR or higher-level specification is affected.
-
-Routine source refactoring inside a registered responsibility does not require changing its `IS-*` identity.
+The `IS-*` identities are the reconciled Version 1 Level 4 baseline. A proposed split, merge or retirement must explain which responsibility changed, affected DD contracts, why the existing boundary is no longer coherent, how traceability is preserved and whether any accepted ADR or higher-level specification is affected. Routine source refactoring inside a registered responsibility does not change its identity.
 
 ---
 
-## 10. Next Step
+## 10. Lifecycle State
 
-The Version 1 primary Implementation Specification set is now identified.
+The primary Level 4 authoring and horizontal reconciliation programme is complete. The register no longer authorizes additional primary Version 1 IS authoring by default.
 
-The next task is to author the first specification in dependency-aware order while keeping its scope narrow enough not to pre-empt later implementation decisions.
-
-The recommended first document is:
-
-> **IS-23 — Build and Runtime Assembly**, beginning with the concrete Node.js/TypeScript package, build, executable and composition constraints that every subsequent implementation specification must work within.
-
-After that foundation is explicit, Resource Access and Process Execution can be specified against a stable runtime/build environment.
+Implementation may now proceed against the reconciled IS-1 through IS-23 baseline, subject to normal change control. Any implementation discovery that exposes a genuine normative contradiction must be escalated through the documented hierarchy rather than silently changing an owning contract.
