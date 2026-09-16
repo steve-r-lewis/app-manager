@@ -10,92 +10,72 @@
 
 ## 1. Purpose
 
-This document is the required entry point for `docs/project_management/`. It separates active project control from retained assurance evidence and project history so that current state can be established without reconstructing it from old handovers, audits, branches, PRs, or work queues.
-
-Retention preserves evidence and institutional history; it does not make a retained record a current directive.
+This document is the required entry point for `docs/project_management/`. It separates active project control from retained assurance evidence and project history so current state can be established without reconstructing it from historical records.
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design, and Implementation Specification corpus has been authored through Level 4. Level 4 reconciliation closed with PR #152. Work Package 0 — Project Management Information Architecture — merged as PR #153.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. Level 4 reconciliation closed with PR #152; Package 0 merged as PR #153; Package A merged as PR #154.
 
-**Package A — Documentation Governance and State Integrity** is complete on its review branch when this version of the index is read there. Its changes do not become live project state until the Package A PR is merged and verified on `master`.
+Package A was verified on live `master` at `114a07e9d75755876788b1ad2a6aa36e58102528` before Package B began.
+
+**Package B — Specification Defect Verification and Correction** is complete on its review branch. It becomes closed project state only after its PR is merged and the resulting live `master` is verified.
 
 The remediation sequence is:
 
 1. Package 0 — Project Management Information Architecture — complete;
-2. Package A — Documentation Governance and State Integrity — complete pending merge/live-master verification;
-3. Package B — Specification Defect Verification and Correction — next after Package A merge;
-4. Package C — Hierarchical Specification Referencing and Readability;
+2. Package A — Documentation Governance and State Integrity — complete;
+3. Package B — Specification Defect Verification and Correction — complete pending merge/live-master verification;
+4. Package C — Hierarchical Specification Referencing and Readability — next after Package B merge;
 5. Package D — Final Documentation Baseline Verification.
 
-## 3. Information Classes
+## 3. Information Classes and Reading Rule
 
-### 3.1 Active control
-
-Active/reusable project-management documents may establish state, sequencing, document identities, and procedural controls within the Project Documentation Guide. They do not acquire product-design authority merely by being active.
-
-### 3.2 Assurance library
-
-`assurance/` retains completed audits, reviews, and reconciliations. Findings are evidence until corrected in the owning normative specification or accepted decision mechanism.
-
-### 3.3 Project history
-
-`history/` retains completed handovers, closeouts, plans, maps, inventories, migration records, and superseded authoring material. Historical imperative language is not a current directive.
-
-### 3.4 Decisions
-
-`decisions/` remains the dedicated ADR location under Architecture Decision Governance. ADRs are not ordinary assurance/history records.
-
-## 4. Lifecycle Metadata
-
-Project-management role and lifecycle status are separate dimensions. Recommended roles include Plan, Register, Map, Handover, Audit, Review, Reconciliation, Closeout, Inventory, Status, and Guide. Lifecycle states include Active, Completed, Superseded, and Historical.
-
-A role never implies current authority. A completed audit remains evidence; a historical plan remains provenance; an active register may identify documents without owning their product semantics.
-
-## 5. Reading Rule
+`assurance/` retains completed audits, reviews and reconciliations. `history/` retains completed/superseded management activity. `decisions/` remains the ADR location. Active root project-management documents provide current navigation, registers and reusable procedure.
 
 For current work:
 
-1. read this index for current programme state;
+1. read this index;
 2. read the active register/guide applicable to the task;
-3. read the normative product hierarchy applicable to the work;
+3. read the normative product hierarchy;
 4. read accepted ADRs and active clarifications where relevant;
-5. consult assurance/history only for required evidence, provenance, or rationale.
+5. consult assurance/history only for evidence, provenance or rationale.
 
-Always verify live repository state. Historical branch names, PR numbers, commit SHAs, filenames, and status statements describe the baseline they recorded, not necessarily the current repository.
+Always verify live repository state; historical PR/branch/SHA/status statements are not current by implication.
 
-## 6. Active and Reusable Root Documents
+## 4. Active and Reusable Root Documents
 
-- `detailed-design-register-v01.md` — canonical current Version 1 DD identity/lifecycle register;
-- `domain-detailed-design-authoring-guide-v02.md` — reusable drafting guidance with explicit non-authority boundary;
+- `detailed-design-register-v01.md` — current Version 1 DD identity/lifecycle register;
+- `domain-detailed-design-authoring-guide-v02.md` — reusable drafting guidance;
 - `documentation-assurance-guide-v01.md` — reusable vertical + horizontal assurance method;
 - `README.md` — current-state navigation.
 
-The old root paths for `detailed-design-decomposition-plan-v01.md`, `domain-detailed-design-authoring-guide-v01.md`, `implementation-specification-plan-v01.md`, and `implementation-specification-map-v01.md` are compatibility pointers only. Their substantive completed content is retained under `history/programmes/`.
+The old root paths for the Detailed Design decomposition plan/authoring guide v01 and the Implementation Specification plan/map are compatibility pointers. Their substantive completed content is retained under `history/programmes/`.
 
-Current Level 4 identity and lifecycle state is defined by `docs/implementation/implementation-specification-v01.md`, not by the historical IS plan/map.
+## 5. Package B Result
 
-## 7. Package A Corrections
+The Package B review is recorded at `assurance/reviews/specification-defect-verification-and-correction-v01.md`.
 
-Package A resolves the governance/state defects identified after Package 0:
+The candidate set was verified rather than adopted mechanically. Results:
 
-- **Detailed Design register:** stale DD-3/DD-4 planned state is removed from current control. All 23 primary Version 1 DD documents are registered as complete at their canonical active paths.
-- **Implementation Plan/Map:** completed Level 4 planning and mapping are explicitly historical rather than current authoring directives. The authoritative current IS register remains under `docs/implementation/`.
-- **Authoring-guide authority leakage:** Version 02 makes clear that project-management guidance cannot establish product architecture; normative rules must be owned by the specification hierarchy or accepted decision mechanism.
-- **DD-2 assurance lesson:** the reusable assurance method now requires both vertical conformance and horizontal coherence review, with finding classification before normative edits.
-- **Lifecycle truth:** completed plans/maps and superseded authoring material are retained without competing with current project control.
+- Source Intelligence versus Source Transformation separation — allegation not sustained;
+- DD-3.1 `DD-5`/`DD-6` wording — stale phase-label/readability issue assigned to Package C, not a product-semantic defect;
+- DD-3.3 versus IS-16 `inspect_layer_state` identity — confirmed and corrected by active Nuxt operation-identity clarification;
+- Source Intelligence Functional authority — allegation not sustained; it remains a cross-cutting shared capability;
+- AI Functional ownership — ambiguity confirmed and corrected by active Functional clarification separating AI-domain intent from shared AI capability execution;
+- missing load-bearing clarification relationships — general allegation not sustained;
+- Docs capability/domain repeated prose — semantic duplication allegation not sustained; readability remains Package C work;
+- IS-6 versus IS-23 `simple-git` disposition — confirmed Level 4 contradiction; IS-23 corrected to follow IS-6's direct Git CLI through IS-5 provider decision.
 
-## 8. Package A Exit Criteria
+No new product feature, generic framework, domain, capability, provider authority or implementation topology was introduced.
 
-Package A is ready for merge when:
+## 6. Package B Exit Criteria
 
-- current DD lifecycle state can be read without encountering a false future work queue;
-- all Version 1 DD identities have one canonical current register entry;
-- completed IS planning/map material is clearly historical;
-- reusable authoring guidance cannot be mistaken for product-design authority;
-- the DD-2 vertical-versus-horizontal assurance lesson is captured as reusable procedure;
-- no normative product semantics are changed merely to repair project-management state;
-- historical substantive content is preserved;
-- Package B is identified as the next objective only after Package A is merged and live `master` is verified.
+Package B is ready for merge because:
 
-After merge, Package B must begin from the resulting live `master`, not from this branch's historical base assumptions.
+- every identified candidate defect has been classified against the live authoritative corpus;
+- confirmed semantic/Level 4 inconsistencies have an owning normative correction or active clarification;
+- unsupported allegations were not converted into architecture;
+- remaining stale-reference/repetitive-prose issues are explicitly bounded as Package C readability/reference work;
+- DD-1 authority, managed scope/configuration authority, capability/domain separation, provider replaceability and final outcome ownership remain intact.
+
+After merge, verify the resulting live `master`; then begin **Package C — Hierarchical Specification Referencing and Readability** from that exact baseline.
