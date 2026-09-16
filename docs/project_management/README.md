@@ -20,15 +20,15 @@ PR #157's resulting live `master` commit remains frozen as the semantic source b
 
 `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
 
-DR-0 merged as PR #158; DR-1 as #159; DR-2 as #160; DR-3 as #161; DR-4 as #162; DR-5 as #163.
+DR-0 through DR-6 have been merged as PRs #158 through #164 respectively.
 
-PR #163 and live `master` were independently verified at:
+PR #164 and live `master` were independently verified at:
 
-`be682eb3947e2d1447d1f21ff293ea53003f69e1`
+`7bc99614528d45a227c0c17faa7dcade777b1072`
 
-DR-6 was branched from that exact commit.
+DR-7 was branched from that exact commit.
 
-**Current objective:** DR-6 — Functional Corpus Rationalisation — is complete on its review branch and ready for review/merge. After merge and independent live-master verification, proceed to DR-7 — Implementation Specification Rationalisation.
+**Current objective:** DR-7 — Implementation Specification Rationalisation — is complete on its review branch and ready for review/merge. After merge and independent live-master verification, proceed to DR-8 — Documentation and Project-Management Hygiene.
 
 Implementation should not branch from the former Package D “ready” wording while the DR correctness/rationalisation programme remains active. The target implementation baseline is the lean baseline accepted by DR-9.
 
@@ -44,9 +44,9 @@ Programme state:
 4. **DR-3 — Design and Functional Normative Ownership** — merged and independently verified;
 5. **DR-4 — DD-2 Shared Capability Rationalisation** — merged and independently verified;
 6. **DR-5 — DD-3/DD-4 Domain Rationalisation** — merged and independently verified;
-7. **DR-6 — Functional Corpus Rationalisation** — complete on branch, pending merge/live verification;
-8. **DR-7 — Implementation Specification Rationalisation** — next after DR-6 closeout;
-9. **DR-8 — Documentation and Project-Management Hygiene**;
+7. **DR-6 — Functional Corpus Rationalisation** — merged and independently verified;
+8. **DR-7 — Implementation Specification Rationalisation** — complete on branch, pending merge/live verification;
+9. **DR-8 — Documentation and Project-Management Hygiene** — next after DR-7 closeout;
 10. **DR-9 — Semantic Equivalence and Lean-Baseline Verification**.
 
 The governing rationalisation rule is: **state a semantic rule once at its canonical normative owner; downstream documents reference that owner and specify only the local binding and local delta.**
@@ -68,17 +68,19 @@ For current work: read this index; read the active programme/register/guide; rea
 
 ## 6. Completed Correctness and Rationalisation Packages
 
-DR-1 and DR-2 corrected/verified contract, ownership and authority-direction candidates. DR-3 established canonical Design/Functional owner sets. DR-4 rationalised the DD-2 family reading. DR-5 rationalised DD-3/DD-4 domain reading while preserving domain-specific intent/policy/orchestration/evidence interpretation/postconditions.
+DR-1 and DR-2 corrected/verified contract, ownership and authority-direction candidates. DR-3 established canonical Design/Functional owner sets. DR-4 rationalised the DD-2 family reading. DR-5 rationalised DD-3/DD-4 domain reading while preserving domain-specific intent/policy/orchestration/evidence interpretation/postconditions. DR-6 rationalised the Functional corpus reading while preserving every `FR-*` identity and observable obligation.
 
 Their assurance records and semantic disposition registers remain under `assurance/`.
 
-## 7. DR-6 Result
+## 7. DR-7 Result
 
-DR-6 is recorded at `assurance/reviews/dr6-functional-corpus-rationalisation-v01.md`, with semantic accounting at `assurance/reconciliations/dr6-semantic-disposition-register-v01.md` and the active Functional reading clarification at `../functional/clarifications/functional-corpus-rationalisation-clarification-v01.md`.
+DR-7 is recorded at `assurance/reviews/dr7-implementation-specification-rationalisation-v01.md`, with semantic accounting at `assurance/reconciliations/dr7-semantic-disposition-register-v01.md` and the active Level 4 reading clarification at `../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md`.
 
-DR-6 establishes that every `FR-*` obligation remains the owning Functional semantic checksum; repeated Design invariants are inherited bindings while domain-specific observable consequences remain local; Functional traceability distinguishes upstream/same-level normative authority from downstream DD/capability refinement; completed decomposition-plan references are provenance/navigation; the existing Nuxt Functional ownership clarification keeps `FR-NUXT-058/059` self-sufficient and the DD scaffold clarification downstream; and conformance/downstream-boundary sections do not replace requirement bodies.
+DR-7 establishes that repeated upstream architecture in an Implementation Specification is an inherited implementation binding unless concrete Level 4 delta is attached. Interfaces, types, module boundaries, provider/mechanism decisions, algorithms, stale/cancellation/concurrency semantics, migration dispositions, traceability and independently testable conformance obligations remain owned by the relevant IS and are not deduplicated away.
 
-No `FR-*` identity was removed or renumbered and no generic Functional framework was introduced.
+The read-first horizontal review confirmed the deliberate IS-1/IS-22/IS-23 runtime seam; Repository/Git, AI, Quality, Documentation/Docs and Nuxt capability/domain pairs; IS-3/IS-19 configuration/settings separation; direct Git CLI through IS-5 for the IS-6 local Git provider; and current source as migration evidence rather than target architecture.
+
+No primary IS body was mechanically shortened because no corpus-wide deletion class was proven proposition-safe. All 23 IS identities and concrete Level 4 contracts remain intact.
 
 ## 8. Rationalisation Safety Rules
 
@@ -88,4 +90,4 @@ The final acceptance criterion is **zero unaccounted semantic loss** against `fe
 
 ## 9. Next Objective
 
-After the DR-6 PR merges, independently verify the resulting live `master` and close DR-6. Then create a fresh DR-7 branch from that exact commit and rationalise IS-1 through IS-23 conservatively, preserving concrete interfaces, types, provider decisions, current-vs-target evidence, migration dispositions, algorithms/mechanisms and independently testable conformance obligations.
+After the DR-7 PR merges, independently verify the resulting live `master` and close DR-7. Then create a fresh DR-8 branch from that exact commit and perform Documentation and Project-Management Hygiene, checking compatibility value and active references before deleting or standardising low-risk artefacts.
