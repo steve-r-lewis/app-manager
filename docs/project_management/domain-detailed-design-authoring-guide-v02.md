@@ -65,7 +65,9 @@ A draft must preserve the owning normative contracts for:
 
 These items are review checks, not architecture created by this guide.
 
-## 6. Three-Layer Documentation Rule
+## 6. Hierarchical Referencing and Readability
+
+### 6.1 Three-layer rule
 
 For cross-cutting semantics:
 
@@ -74,6 +76,52 @@ For cross-cutting semantics:
 3. define only the domain-specific delta.
 
 Do not reproduce a complete upstream contract merely to make the domain document self-contained. Do retain concise local safety/authority statements where omission would make the domain boundary ambiguous.
+
+### 6.2 State once locally, reference thereafter
+
+Within one specification, a cross-cutting invariant should normally have one primary local statement. Later sections should reference that statement or the canonical upstream owner rather than repeatedly paraphrasing it.
+
+Repetition remains justified when the local section would otherwise be unsafe or materially ambiguous in isolation—for example at a mutation boundary, authorization rule, public contract, or conformance invariant. Repetition for emphasis alone should be removed.
+
+This convention never permits deletion of a domain-specific rule merely because an upstream document contains a related general rule.
+
+### 6.3 Reference the current owner, not programme history
+
+Active normative documents should reference current normative owners, active clarifications, the current Detailed Design register, and the active authoring/assurance guides where procedural navigation is useful.
+
+Completed decomposition plans, handovers, closeouts, historical audits and superseded authoring guides may be cited only when their historical evidence or rationale is itself relevant. They should not appear as if they were current product authorities or active authoring controls.
+
+Planning-stage labels such as historical `DD-5`/`DD-6` phases must not be written in a form that can be mistaken for primary Detailed Design identities. Use descriptive names such as “Detailed Design conformance audit” or “Implementation Specification planning” when historical phase context is genuinely needed.
+
+### 6.4 Worked examples
+
+A worked example is recommended when a contract is difficult to understand from abstract rules alone, especially for multi-stage orchestration, mutation planning, stale-state handling, evidence-versus-interpretation, or structured AI output.
+
+A worked example must be explicitly non-normative unless the owning specification deliberately makes the example normative. It should demonstrate an already-defined contract, not introduce a new command, state, default, provider, file path, or policy.
+
+Preferred shape:
+
+```text
+input/authoritative context
+    -> domain decision
+    -> delegated capability evidence
+    -> domain interpretation
+    -> Application Engine acceptance
+```
+
+### 6.5 Diagrams
+
+Prefer one canonical architecture/authority diagram per document when a diagram materially improves comprehension. Later sections should reference that diagram and describe only their delta. Additional diagrams are appropriate only where they explain a genuinely different state machine, data flow, or use-case sequence.
+
+### 6.6 Conformance and test lists
+
+Large flat lists should be grouped by contract concern where grouping improves reviewability—for example identity/applicability, authority/scope, orchestration, mutation/stale state, failure/cancellation, interaction independence, and provider replaceability.
+
+Grouping must not weaken, merge, renumber, or silently remove independently testable requirements. A concise matrix may replace repeated prose when it preserves the same verification obligations.
+
+### 6.7 Traceability references
+
+Traceability should point to stable requirement/contract identifiers and current owning documents. Section numbers are secondary navigation aids because they are more susceptible to editorial drift. When a section number is useful, pair it with the stable identifier or named contract rather than relying on the number alone.
 
 ## 7. Recommended Document Structure
 
@@ -147,7 +195,9 @@ Completion review must apply the [Documentation Assurance Guide](documentation-a
 - dependency-cycle safety;
 - provider/implementation replaceability;
 - mutation and outcome authority checks;
-- lifecycle/state integrity where project-management material is involved.
+- lifecycle/state integrity where project-management material is involved;
+- hierarchical-reference integrity;
+- readability changes preserve every normative obligation.
 
 The DD-2 programme demonstrated that a vertical pass alone is insufficient to establish horizontal architectural coherence.
 
@@ -162,4 +212,8 @@ Before a domain Detailed Design is accepted, reviewers should be able to answer 
 - Are provider-native representations prevented from becoming accidental shared semantics?
 - Is implementation topology deferred to Level 4?
 - Has horizontal comparison been performed against collaborating domains/capabilities?
+- Are current owners/active clarifications referenced instead of historical programme controls where possible?
+- Is each repeated invariant necessary for local safety or comprehension?
+- Do examples and diagrams demonstrate rather than create semantics?
+- Do grouped conformance/test obligations preserve independently testable requirements?
 - Are unresolved contradictions explicitly recorded rather than silently reconciled?
