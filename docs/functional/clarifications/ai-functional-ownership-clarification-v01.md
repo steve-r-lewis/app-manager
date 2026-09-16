@@ -2,34 +2,47 @@
 
 > **Status:** Active Functional clarification
 >
-> **Clarifies:** AI Functional Specification, DD-2.7 AI Capability, DD-4.3 AI Domain
+> **Clarifies:** AI Functional Specification
 >
-> **Normative scope:** Functional ownership and refinement relationship only
+> **Related downstream refinements:** DD-2.7 AI Capability; DD-4.3 AI Domain
+>
+> **Normative scope:** Functional ownership of observable AI behaviour and cross-domain AI use only
 
 ## 1. Purpose
 
-This clarification removes an ownership ambiguity created by both DD-2.7 and DD-4.3 treating the AI Functional Specification as a primary authority while serving different architectural roles.
+This clarification states the Functional-level ownership of observable AI behaviour without using a Functional document to interpret or govern Detailed Design documents.
+
+The Functional hierarchy remains top-down: this clarification constrains downstream Detailed Design; it does not derive its meaning from DD-2.7 or DD-4.3 and does not assign authority between same-level Detailed Designs.
 
 ## 2. Functional Ownership
 
-The AI Functional Specification is the primary observable-behaviour authority for the **AI functional domain**. DD-4.3 is the primary Detailed Design owner for AI-domain application intent, including supported AI instruction-document/resource use cases and AI-domain acceptance.
+The AI Functional Specification is the primary observable-behaviour authority for the **AI functional domain**.
 
-DD-2.7 is a **shared capability Detailed Design**. It refines the provider-independent AI execution, context, safety, normalization and provider-evidence semantics required to support the AI domain and any other owning domain that delegates bounded AI work. It does not acquire ownership of another domain's use case merely because that use case is constrained by `FR-AI-*` cross-cutting AI requirements.
+At Functional level:
+
+- AI-domain use cases own AI-specific application intent and observable acceptance requirements;
+- applicable `FR-AI-*` requirements govern safe and observable AI use wherever another functional domain delegates bounded AI work;
+- use of AI by another functional domain does not transfer that domain's primary product intent or acceptance responsibility to the `ai` domain;
+- provider completion or generated content does not by itself establish application success or authority;
+- final application authority remains governed by the root Design and Application Invocation functional contract.
 
 ## 3. Cross-Domain AI Use
 
-When Git, Docs, Nuxt, Quality, Settings or another domain invokes DD-2.7:
+When Git, Docs, Nuxt, Quality, Settings or another functional domain uses AI assistance:
 
-- the consuming domain's Functional Specification remains the authority for primary application intent and domain acceptance;
-- applicable `FR-AI-*` requirements constrain safe/observable AI use;
-- DD-2.7 owns bounded AI capability semantics;
-- DD-4.3 does not become the owner of the consuming domain's use case;
-- DD-1 Application Engine retains final application authority.
+- the consuming domain's Functional Specification remains authoritative for its primary application intent and domain-specific acceptance requirements;
+- applicable `FR-AI-*` requirements constrain disclosure, context, generated output and observable AI behaviour;
+- AI-generated proposals remain non-authoritative until accepted through the owning functional workflow;
+- AI use shall not silently broaden managed scope, mutation authority or consequential effects.
 
-## 4. Interpretation of Existing Documents
+## 4. Downstream Refinement Boundary
 
-The DD-2.7 metadata phrase `Primary Functional authority: AI Functional Specification` shall be read as identifying the principal source of functional constraints on the shared AI capability, **not** as assigning the entire AI functional domain to DD-2.7.
+Detailed Design may refine these Functional requirements into separate domain-orchestration and shared-capability contracts where the architecture requires that separation.
 
-DD-4.3's binding of `FR-AI-001`–`FR-AI-105` remains domain-level refinement. Where a requirement concerns provider-independent execution mechanics, DD-4.3 consumes DD-2.7 rather than duplicating or superseding its capability contract.
+Any such Detailed Design decomposition must preserve the Functional ownership stated here. The allocation of responsibility between DD-2.7 and DD-4.3 is therefore a downstream Detailed Design concern and is not normatively established by this Functional clarification.
 
-This clarification introduces no new AI feature, provider, model, mutation authority, autonomous action, or implementation topology.
+A separate Detailed Design clarification records the current DD-2.7/DD-4.3 refinement relationship so that same-level architectural allocation is governed at the correct level.
+
+## 5. Non-Effect
+
+This clarification introduces no new AI feature, provider, model, mutation authority, autonomous action, implementation topology or new functional command. It corrects authority direction only.
