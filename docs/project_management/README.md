@@ -20,15 +20,15 @@ PR #157's resulting live `master` commit remains frozen as the semantic source b
 
 `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
 
-DR-0 merged as PR #158; DR-1 merged as PR #159; DR-2 merged as PR #160.
+DR-0 merged as PR #158; DR-1 merged as PR #159; DR-2 merged as PR #160; DR-3 merged as PR #161.
 
-PR #160 and live `master` were independently verified at:
+PR #161 and live `master` were independently verified at:
 
-`f3e56df744a22c3e6eec9a06bf750ee5233cae87`
+`e2856d9d74890320a4b42c660854b169d8879640`
 
-DR-3 was branched from that exact commit.
+DR-4 was branched from that exact commit.
 
-**Current objective:** DR-3 — Design and Functional Normative Ownership — is complete on its review branch and ready for review/merge. After merge and independent live-master verification, proceed to DR-4 — DD-2 Shared Capability Rationalisation.
+**Current objective:** DR-4 — DD-2 Shared Capability Rationalisation — is complete on its review branch and ready for review/merge. After merge and independent live-master verification, proceed to DR-5 — DD-3/DD-4 Domain Rationalisation.
 
 Implementation should not branch from the former Package D “ready” wording while the DR correctness/rationalisation programme remains active. The target implementation baseline is the lean baseline accepted by DR-9.
 
@@ -41,9 +41,9 @@ Programme state:
 1. **DR-0 — Post-Baseline Verification and Rationalisation Control** — merged and independently verified;
 2. **DR-1 — Contract and Ownership Corrections** — merged and independently verified;
 3. **DR-2 — Authority and Hierarchy Corrections** — merged and independently verified;
-4. **DR-3 — Design and Functional Normative Ownership** — complete on branch, pending merge/live verification;
-5. **DR-4 — DD-2 Shared Capability Rationalisation** — next after DR-3 closeout;
-6. **DR-5 — DD-3/DD-4 Domain Rationalisation**;
+4. **DR-3 — Design and Functional Normative Ownership** — merged and independently verified;
+5. **DR-4 — DD-2 Shared Capability Rationalisation** — complete on branch, pending merge/live verification;
+6. **DR-5 — DD-3/DD-4 Domain Rationalisation** — next after DR-4 closeout;
 7. **DR-6 — Functional Corpus Rationalisation**;
 8. **DR-7 — Implementation Specification Rationalisation**;
 9. **DR-8 — Documentation and Project-Management Hygiene**;
@@ -86,21 +86,24 @@ No `FR-*` obligation, capability safety boundary or domain ownership was removed
 
 DR-3 is recorded at `assurance/reviews/dr3-design-and-functional-normative-ownership-v01.md`, with semantic accounting at `assurance/reconciliations/dr3-semantic-disposition-register-v01.md` and the reusable owner index at `normative-ownership-map-v01.md`.
 
-The nine recurrent clusters now have explicit canonical owner sets:
+The nine recurrent clusters now have explicit canonical owner sets. The existing Design/Functional corpus was found semantically sufficient to own them; no generic invariant framework was created.
 
-- delegated execution versus application authority;
-- recognition/reachability versus mutation authority;
-- technical/provider success versus application success;
-- evidence versus interpretation;
-- generation versus transformation;
-- AI output versus application authority;
-- managed scope versus filesystem/repository reachability;
-- Settings persistence versus effective-configuration precedence;
-- domain intent/policy/orchestration versus capability mechanics.
+## 8. DR-4 Result
 
-The existing Design/Functional corpus was found semantically sufficient to own these clusters. DR-3 therefore did not create a generic invariant framework, delete/renumber `FR-*` requirements, or perform premature broad body reduction. DR-4 through DR-7 will use the map to replace genuine inherited repetition while preserving local deltas.
+DR-4 is recorded at `assurance/reviews/dr4-dd2-shared-capability-rationalisation-v01.md`, with semantic accounting at `assurance/reconciliations/dr4-semantic-disposition-register-v01.md` and the active DD-level reading correction at `../dd_2_shared_capabilities/clarifications/dd2-shared-capability-rationalisation-clarification-v01.md`.
 
-## 8. Rationalisation Safety Rules
+DR-4 establishes that:
+
+- DD-2 numbering/authoring order creates no sibling authority;
+- repeated upstream authority statements are inherited local bindings rather than independent normative owners;
+- generic delegation diagrams are explanatory unless they add capability-specific state/order/safety semantics;
+- current-implementation evidence in DD-2 is provenance, while IS-4 through IS-13 own concrete Level 4 implementation disposition;
+- all capability-specific `DD-*` requirements and local safety/evidence/failure semantics remain in force;
+- naming or shape similarity does not justify a generic shared-capability framework.
+
+The result is semantic rationalisation of the DD-2 family without unsafe bulk deletion of interleaved normative requirements.
+
+## 9. Rationalisation Safety Rules
 
 The DR programme requires:
 
@@ -116,6 +119,6 @@ The DR programme requires:
 
 The final acceptance criterion is **zero unaccounted semantic loss** against `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`, not a predetermined reduction percentage.
 
-## 9. Next Objective
+## 10. Next Objective
 
-After the DR-3 PR merges, independently verify the resulting live `master` and close DR-3. Then create a fresh DR-4 branch from that exact commit and rationalise the ten DD-2 Shared Capability designs using the DR-3 canonical owner map plus the DR-2 sibling-authority correction.
+After the DR-4 PR merges, independently verify the resulting live `master` and close DR-4. Then create a fresh DR-5 branch from that exact commit and rationalise DD-3/DD-4 domain designs while preserving domain intent, policy, orchestration, evidence interpretation and domain-specific acceptance semantics.
