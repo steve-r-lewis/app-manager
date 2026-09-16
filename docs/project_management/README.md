@@ -14,19 +14,19 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. Level 4 reconciliation closed with PR #152; Package 0 merged as PR #153; Package A merged as PR #154.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. Level 4 reconciliation closed with PR #152; Package 0 merged as PR #153; Package A merged as PR #154; Package B merged as PR #155.
 
-Package A was verified on live `master` at `114a07e9d75755876788b1ad2a6aa36e58102528` before Package B began.
+Package B was verified on live `master` at `2750350d798e0f7fe4938724ab67411339330ed3` before Package C began.
 
-**Package B — Specification Defect Verification and Correction** is complete on its review branch. It becomes closed project state only after its PR is merged and the resulting live `master` is verified.
+**Package C — Hierarchical Specification Referencing and Readability** is complete on its review branch. It becomes closed project state only after its PR is merged and the resulting live `master` is verified.
 
 The remediation sequence is:
 
 1. Package 0 — Project Management Information Architecture — complete;
 2. Package A — Documentation Governance and State Integrity — complete;
-3. Package B — Specification Defect Verification and Correction — complete pending merge/live-master verification;
-4. Package C — Hierarchical Specification Referencing and Readability — next after Package B merge;
-5. Package D — Final Documentation Baseline Verification.
+3. Package B — Specification Defect Verification and Correction — complete;
+4. Package C — Hierarchical Specification Referencing and Readability — complete pending merge/live-master verification;
+5. Package D — Final Documentation Baseline Verification — next after Package C merge.
 
 ## 3. Information Classes and Reading Rule
 
@@ -45,7 +45,7 @@ Always verify live repository state; historical PR/branch/SHA/status statements 
 ## 4. Active and Reusable Root Documents
 
 - `detailed-design-register-v01.md` — current Version 1 DD identity/lifecycle register;
-- `domain-detailed-design-authoring-guide-v02.md` — reusable drafting guidance;
+- `domain-detailed-design-authoring-guide-v02.md` — reusable drafting and hierarchical-reference/readability guidance;
 - `documentation-assurance-guide-v01.md` — reusable vertical + horizontal assurance method;
 - `README.md` — current-state navigation.
 
@@ -53,29 +53,38 @@ The old root paths for the Detailed Design decomposition plan/authoring guide v0
 
 ## 5. Package B Result
 
-The Package B review is recorded at `assurance/reviews/specification-defect-verification-and-correction-v01.md`.
+Package B is recorded at `assurance/reviews/specification-defect-verification-and-correction-v01.md`. It corrected the Nuxt operation-identity inconsistency, clarified AI Functional ownership, aligned IS-23 with IS-6's Git provider decision, and rejected unsupported architecture changes.
 
-The candidate set was verified rather than adopted mechanically. Results:
+## 6. Package C Result
 
-- Source Intelligence versus Source Transformation separation — allegation not sustained;
-- DD-3.1 `DD-5`/`DD-6` wording — stale phase-label/readability issue assigned to Package C, not a product-semantic defect;
-- DD-3.3 versus IS-16 `inspect_layer_state` identity — confirmed and corrected by active Nuxt operation-identity clarification;
-- Source Intelligence Functional authority — allegation not sustained; it remains a cross-cutting shared capability;
-- AI Functional ownership — ambiguity confirmed and corrected by active Functional clarification separating AI-domain intent from shared AI capability execution;
-- missing load-bearing clarification relationships — general allegation not sustained;
-- Docs capability/domain repeated prose — semantic duplication allegation not sustained; readability remains Package C work;
-- IS-6 versus IS-23 `simple-git` disposition — confirmed Level 4 contradiction; IS-23 corrected to follow IS-6's direct Git CLI through IS-5 provider decision.
+Package C is recorded at `assurance/reviews/hierarchical-specification-referencing-and-readability-v01.md`.
 
-No new product feature, generic framework, domain, capability, provider authority or implementation topology was introduced.
+The active authoring guide now establishes:
 
-## 6. Package B Exit Criteria
+- three-layer referencing: canonical owner -> concise local binding -> local delta;
+- state-once-locally/reference-thereafter discipline;
+- current-owner rather than historical-programme references in active specifications;
+- explicit treatment of historical `DD-5`/`DD-6` labels as programme phases, not primary DD identities;
+- bounded non-normative worked examples;
+- one-primary-diagram-plus-deltas guidance;
+- grouped conformance/test obligations without information loss;
+- stable requirement/contract IDs as primary traceability anchors.
 
-Package B is ready for merge because:
+`docs/detailed-design.md` has also been reconciled with the current DD register, v02 authoring guide, assurance guide and active Package B clarification set.
 
-- every identified candidate defect has been classified against the live authoritative corpus;
-- confirmed semantic/Level 4 inconsistencies have an owning normative correction or active clarification;
-- unsupported allegations were not converted into architecture;
-- remaining stale-reference/repetitive-prose issues are explicitly bounded as Package C readability/reference work;
-- DD-1 authority, managed scope/configuration authority, capability/domain separation, provider replaceability and final outcome ownership remain intact.
+Package C deliberately does not perform a corpus-wide prose rewrite. Completed specifications retain independently testable obligations and local safety/authority statements; the readability conventions apply prospectively and during substantive revisions so editorial cleanup cannot silently change architecture.
 
-After merge, verify the resulting live `master`; then begin **Package C — Hierarchical Specification Referencing and Readability** from that exact baseline.
+## 7. Package C Exit Criteria
+
+Package C is ready for merge because:
+
+- the reusable hierarchical-reference/readability model is explicit;
+- the principal active Detailed Design navigation surface points to current owners;
+- the DD-5/DD-6 identity ambiguity is bounded without inventing new DDs;
+- repetition may be reduced only after semantic ownership/local safety is preserved;
+- examples/diagrams cannot create hidden semantics;
+- conformance-list grouping cannot reduce verification obligations;
+- traceability is anchored primarily by stable IDs rather than section numbering;
+- no Functional/DD/IS contract or architectural authority was weakened for editorial brevity.
+
+After merge, verify the resulting live `master`; then begin **Package D — Final Documentation Baseline Verification** from that exact baseline.
