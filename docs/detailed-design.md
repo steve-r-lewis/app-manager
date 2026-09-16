@@ -4,7 +4,7 @@
 >
 > **Status:** Version 1 navigation aid
 >
-> **Normative effect:** None. This page provides rendered navigation to the approved Detailed Design structure. Authority, identity, status, and decomposition remain governed by the Project Documentation Guide and the Detailed Design Decomposition Plan and Canonical Register.
+> **Normative effect:** None. This page provides rendered navigation to the approved Detailed Design structure. Product semantics remain governed by the Project Documentation Guide, Design Specification, Functional Specifications, accepted ADRs/active clarifications, and the owning Detailed Designs. Current Detailed Design identity/lifecycle state is recorded by the Detailed Design Register.
 
 ## Detailed Design Structure
 
@@ -61,6 +61,10 @@ The family number is an organisational identity, not an additional specification
 | DD-3.3 | [Nuxt Domain](./dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) | Complete |
 | DD-3.4 | [Docs Domain](./dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md) | Complete |
 
+### DD-3 Clarifications
+
+- [Nuxt Domain Operation Identity](./dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md)
+
 ## DD-4 — Policy and Resource Domains
 
 | ID | Detailed Design | Status |
@@ -70,13 +74,14 @@ The family number is an organisational identity, not an additional specification
 | DD-4.3 | [AI Domain](./dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) | Complete |
 | DD-4.4 | [Utils Domain](./dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) | Complete |
 
-All planned Version 1 primary Detailed Design documents are now represented in the navigation index. Detailed Design conformance remains subject to the project-management audit required by the canonical decomposition plan.
+All Version 1 primary Detailed Design documents are complete. The active register records their canonical identities and paths; completed decomposition/audit programmes are retained as project history rather than current design authority.
 
 ## Governing Navigation Sources
 
 - [Project Documentation Guide](./project-documentation-guide-v01.md)
-- [Detailed Design Decomposition Plan and Canonical Register](./project_management/detailed-design-decomposition-plan-v01.md)
-- [Domain Detailed Design Authoring Guide](./project_management/domain-detailed-design-authoring-guide-v01.md)
-- [Detailed Design Structure Refactoring Closeout](./project_management/detailed-design-structure-refactoring-closeout-v01.md)
+- [Detailed Design Register](./project_management/detailed-design-register-v01.md)
+- [Domain Detailed Design Authoring Guide v02](./project_management/domain-detailed-design-authoring-guide-v02.md)
+- [Documentation Assurance Guide](./project_management/documentation-assurance-guide-v01.md)
+- [Project Management Library](./project_management/README.md)
 
 When this navigation index and a normative source disagree, the normative source governs.
