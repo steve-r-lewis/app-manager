@@ -16,19 +16,21 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. The preceding documentation-remediation sequence (Packages 0/A/B/C/D) is complete.
 
-PR #157, Package D — Final Documentation Baseline Verification, was verified merged and closed. Its resulting live `master` commit remains frozen as the semantic source baseline for the **DR — Documentation Rationalisation** programme:
+PR #157's resulting live `master` commit remains frozen as the semantic source baseline for the **DR — Documentation Rationalisation** programme:
 
 `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
 
-PR #158, DR-0 — Post-Baseline Verification and Rationalisation Control, was subsequently verified merged into live `master` at:
+DR-0 merged as PR #158 and was independently verified at `358d17e3c9651ccda29fbe67215392ef4f6ff799`.
 
-`358d17e3c9651ccda29fbe67215392ef4f6ff799`
+DR-1 merged as PR #159 and was independently verified on live `master` at:
 
-That verification independently closes DR-0. DR-1 was branched from that exact commit.
+`eca2d146b761d70dbef29c2145e50bef374c02f2`
 
-**Current objective:** DR-1 — Contract and Ownership Corrections — is complete on its review branch and ready for review/merge. After its merge and independent live-master verification, proceed to DR-2 — Authority and Hierarchy Corrections.
+DR-2 was branched from that exact commit.
 
-Implementation should not branch from the former Package D “ready” wording while the DR correctness/authority programme remains active. The target implementation baseline is the lean baseline accepted by DR-9.
+**Current objective:** DR-2 — Authority and Hierarchy Corrections — is complete on its review branch and ready for review/merge. After its merge and independent live-master verification, proceed to DR-3 — Design and Functional Normative Ownership.
+
+Implementation should not branch from the former Package D “ready” wording while the DR correctness/rationalisation programme remains active. The target implementation baseline is the lean baseline accepted by DR-9.
 
 ## 3. DR Programme
 
@@ -37,9 +39,9 @@ The active programme plan is `documentation-corpus-rationalisation-programme-v01
 Programme state:
 
 1. **DR-0 — Post-Baseline Verification and Rationalisation Control** — merged and independently verified;
-2. **DR-1 — Contract and Ownership Corrections** — complete on branch, pending merge/live verification;
-3. **DR-2 — Authority and Hierarchy Corrections** — next after DR-1 closeout;
-4. **DR-3 — Design and Functional Normative Ownership**;
+2. **DR-1 — Contract and Ownership Corrections** — merged and independently verified;
+3. **DR-2 — Authority and Hierarchy Corrections** — complete on branch, pending merge/live verification;
+4. **DR-3 — Design and Functional Normative Ownership** — next after DR-2 closeout;
 5. **DR-4 — DD-2 Shared Capability Rationalisation**;
 6. **DR-5 — DD-3/DD-4 Domain Rationalisation**;
 7. **DR-6 — Functional Corpus Rationalisation**;
@@ -77,15 +79,26 @@ The old root paths for the Detailed Design decomposition plan/authoring guide v0
 
 DR-1 is recorded at `assurance/reviews/dr1-contract-and-ownership-corrections-v01.md`.
 
+Its classifications were:
+
+- **IS-1 / IS-22 `InteractionCapabilities` — confirmed defect.** An active Level 4 clarification establishes the five-field IS-1 request contract and adapter-local `AdapterCapabilities`; primary-body fold-forward belongs DR-7.
+- **DD-3.3 / Nuxt operation identity — stale primary text, semantic conflict already resolved.** The active clarification defines eight canonical identities; primary-body fold-forward belongs DR-5.
+- **App root creation / Nuxt configuration ownership — not sustained.** App owns root-creation artefact inclusion/orchestration while Nuxt retains Nuxt-specific configuration/scaffold semantics.
+
+## 7. DR-2 Result
+
+DR-2 is recorded at `assurance/reviews/dr2-authority-and-hierarchy-corrections-v01.md` with semantic accounting at `assurance/reconciliations/dr2-semantic-disposition-register-v01.md`.
+
 Its classifications are:
 
-- **IS-1 / IS-22 `InteractionCapabilities` — confirmed defect.** The application request contract and adapter-local capability description used the same type name for incompatible shapes. `docs/implementation/clarifications/interaction-capabilities-contract-clarification-v01.md` makes the five-field IS-1 contract canonical, renames the six-field IS-22 concept to adapter-local `AdapterCapabilities`, and defines the explicit mapping. Primary-body fold-forward belongs DR-7.
-- **DD-3.3 / Nuxt operation identity — stale primary text, but the semantic conflict is already resolved by the active Nuxt operation-identity clarification.** The primary body still lists `inspect_layer_state`; the active clarification already defines the canonical eight identities and forbids a ninth semantic command. Fold-forward belongs DR-5; a duplicate clarification was deliberately not created.
-- **App root creation / Nuxt configuration ownership — not sustained.** FR-APP-072 owns the required artefact class at Functional level; DD-3.1 explicitly gives App root-creation plan inclusion/orchestration while retaining Nuxt-specific configuration/scaffold semantics under Nuxt ownership.
+- **FR-NUXT-058/059 downward dependency — confirmed authority-direction defect.** A Functional clarification makes the Functional scaffold-ownership rule self-sufficient and treats the DD scaffold clarification as downstream refinement only. Primary fold-forward belongs DR-6.
+- **AI Functional ownership clarification — confirmed mixed-level clarification defect.** Functional semantics remain in the Functional clarification; DD-2.7/DD-4.3 allocation is moved to a DD-level clarification.
+- **DD-2 sibling `Conformance Rules for Later DD-2 Designs` — confirmed authority-presentation defect.** DD numbering/authoring order does not create sibling authority. Valid owner-contract consumption rules remain; primary DD-2 fold-forward belongs DR-4.
+- **DD subsystem names as Functional `current authority` — confirmed traceability vocabulary defect.** A Functional clarification distinguishes upstream/same-level normative authority from downstream architectural refinement destinations; primary table fold-forward belongs DR-6.
 
-No generic framework, new command identity or authority transfer was introduced.
+No `FR-*` obligation, capability safety boundary or domain ownership is removed by DR-2.
 
-## 7. Rationalisation Safety Rules
+## 8. Rationalisation Safety Rules
 
 The DR programme requires:
 
@@ -101,6 +114,6 @@ The DR programme requires:
 
 The final acceptance criterion is **zero unaccounted semantic loss** against `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`, not a predetermined reduction percentage.
 
-## 8. Next Objective
+## 9. Next Objective
 
-After the DR-1 PR merges, independently verify the resulting live `master` and close DR-1. Then create a fresh DR-2 branch from that exact commit and verify the authority/hierarchy candidates defined by the programme before structural rationalisation begins.
+After the DR-2 PR merges, independently verify the resulting live `master` and close DR-2. Then create a fresh DR-3 branch from that exact commit and establish the canonical normative ownership map for recurrent Design/Functional invariants before major corpus rationalisation.
