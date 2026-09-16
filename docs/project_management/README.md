@@ -14,40 +14,60 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4 and the documentation-remediation programme has completed its substantive work.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. The preceding documentation-remediation sequence (Packages 0/A/B/C/D) is complete.
 
-Level 4 reconciliation closed with PR #152; Package 0 merged as PR #153; Package A merged as PR #154; Package B merged as PR #155; Package C merged as PR #156.
+PR #157, Package D — Final Documentation Baseline Verification, was verified merged and closed. The resulting live `master` was independently verified at:
 
-Package C was verified on live `master` at `6953b3e36a078ef4ecba41fb32177d804281c946` before Package D began.
+`fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
 
-**Package D — Final Documentation Baseline Verification** is complete on its review branch with result **PASS — READY FOR IMPLEMENTATION**, subject only to merge of the Package D PR and verification of the resulting live `master`.
+That post-merge verification closes the lifecycle gap left by Package D's necessarily pre-merge status text. The commit above is now frozen as the semantic source baseline for the **DR — Documentation Rationalisation** programme.
 
-The remediation sequence is:
+A new independent external review of the complete `docs/` corpus subsequently identified substantial repetition/duplication and alleged several correctness/authority issues. Those reports are assurance evidence, not product authority. Their findings are being verified through DR before structural rationalisation.
 
-1. Package 0 — Project Management Information Architecture — complete;
-2. Package A — Documentation Governance and State Integrity — complete;
-3. Package B — Specification Defect Verification and Correction — complete;
-4. Package C — Hierarchical Specification Referencing and Readability — complete;
-5. Package D — Final Documentation Baseline Verification — complete pending merge/live-master verification.
+**Current objective:** DR-0 — Post-Baseline Verification and Rationalisation Control — is complete on its branch and ready for review/merge. After its merge and live-master verification, proceed to DR-1 — Contract and Ownership Corrections.
 
-After Package D merges and live `master` is verified, no further remediation package is scheduled. Implementation may proceed against the Version 1 documentation baseline under normal change control.
+Implementation should not branch from the former Package D “ready” wording while DR-1 correctness candidates remain unclassified. The target implementation baseline is the lean baseline accepted by DR-9.
 
-## 3. Information Classes and Reading Rule
+## 3. DR Programme
+
+The active programme plan is:
+
+`documentation-corpus-rationalisation-programme-v01.md`
+
+Its work packages are:
+
+1. **DR-0 — Post-Baseline Verification and Rationalisation Control** — complete on branch;
+2. **DR-1 — Contract and Ownership Corrections** — next;
+3. **DR-2 — Authority and Hierarchy Corrections**;
+4. **DR-3 — Design and Functional Normative Ownership**;
+5. **DR-4 — DD-2 Shared Capability Rationalisation**;
+6. **DR-5 — DD-3/DD-4 Domain Rationalisation**;
+7. **DR-6 — Functional Corpus Rationalisation**;
+8. **DR-7 — Implementation Specification Rationalisation**;
+9. **DR-8 — Documentation and Project-Management Hygiene**;
+10. **DR-9 — Semantic Equivalence and Lean-Baseline Verification**.
+
+The governing rationalisation rule is: **state a semantic rule once at its canonical normative owner; downstream documents reference that owner and specify only the local binding and local delta.**
+
+Reduction is controlled by semantic propositions and accountable dispositions, not by a target percentage of lines or words.
+
+## 4. Information Classes and Reading Rule
 
 `assurance/` retains completed audits, reviews and reconciliations. `history/` retains completed/superseded management activity. `decisions/` remains the ADR location. Active root project-management documents provide current navigation, registers and reusable procedure.
 
 For current work:
 
 1. read this index;
-2. read the active register/guide applicable to the task;
+2. read the active programme/register/guide applicable to the task;
 3. read the normative product hierarchy;
 4. read accepted ADRs and active clarifications where relevant;
 5. consult assurance/history only for evidence, provenance or rationale.
 
 Always verify live repository state; historical PR/branch/SHA/status statements are not current by implication.
 
-## 4. Active and Reusable Root Documents
+## 5. Active and Reusable Root Documents
 
+- `documentation-corpus-rationalisation-programme-v01.md` — active DR programme and semantic-preservation controls;
 - `detailed-design-register-v01.md` — current Version 1 DD identity/lifecycle register;
 - `domain-detailed-design-authoring-guide-v02.md` — reusable drafting and hierarchical-reference/readability guidance;
 - `documentation-assurance-guide-v01.md` — reusable vertical + horizontal assurance method;
@@ -55,19 +75,9 @@ Always verify live repository state; historical PR/branch/SHA/status statements 
 
 The old root paths for the Detailed Design decomposition plan/authoring guide v01 and the Implementation Specification plan/map are compatibility pointers. Their substantive completed content is retained under `history/programmes/`.
 
-## 5. Remediation Results
+## 6. Established Documentation State
 
-Package A established current governance/state integrity: the active DD register is separated from the historical decomposition programme, reusable authoring guidance is non-product-normative, and the active project-management index is the current-state entry point.
-
-Package B is recorded at `assurance/reviews/specification-defect-verification-and-correction-v01.md`. It corrected the Nuxt operation-identity inconsistency, clarified AI Functional ownership, aligned IS-23 with IS-6's Git provider decision, and rejected unsupported architecture changes.
-
-Package C is recorded at `assurance/reviews/hierarchical-specification-referencing-and-readability-v01.md`. It established canonical owner -> concise local binding -> local delta, state-once/reference-thereafter, current-owner referencing, bounded non-normative examples, diagram discipline, grouped conformance obligations without information loss and stable-ID-first traceability. It deliberately did not perform a mechanical corpus-wide prose rewrite.
-
-Package D is recorded at `assurance/reviews/final-documentation-baseline-verification-v01.md`. It verifies the resulting Design -> Functional -> Detailed Design -> Implementation Specification corpus as the Version 1 implementation documentation baseline and records no blocking residual documentation contradiction.
-
-## 6. Baseline State
-
-The current documentation baseline preserves the following lifecycle facts:
+The current pre-rationalisation semantic source preserves these lifecycle facts:
 
 - the Version 1 Design and Functional corpus is established under the Project Documentation Guide;
 - all 23 primary Detailed Designs, DD-1.1 through DD-4.4, are registered `Complete`;
@@ -76,20 +86,30 @@ The current documentation baseline preserves the following lifecycle facts:
 - accepted ADRs remain decision-provenance records alongside, not above or below, the four-level specification hierarchy;
 - historical programme documents remain provenance and are not current by implication.
 
-Implementation may proceed dependency-aware against this baseline after Package D merge/live-master verification. Any implementation discovery that exposes a genuine normative contradiction must be escalated to the owning specification/decision process rather than silently resolved in code.
+These facts do not pre-judge the new external audit's specific semantic allegations. DR-1 and DR-2 must classify those against live authoritative documents before editing.
 
-## 7. Package D Exit Criteria
+## 7. Rationalisation Safety Rules
 
-Package D is ready for merge because:
+The DR programme requires:
 
-- PR #156 was verified merged/closed and the exact resulting `master` baseline was used;
-- current authority/navigation and historical evidence are distinguishable;
-- DD and IS registers agree with the completed Version 1 corpus;
-- the Functional/DD/IS seams corrected by Package B remain represented;
-- Package C's hierarchical-reference/readability controls are active;
-- core application/capability/domain/provider authority boundaries remain intact;
-- no blocking residual documentation-baseline contradiction was found;
-- this index no longer presents Packages A-C as outstanding work;
-- no further remediation package is scheduled after Package D.
+- one canonical normative owner per semantic rule;
+- inherited rules referenced rather than fully restated;
+- concise local bindings retained where needed for safety/authority clarity;
+- only local deltas specified downstream;
+- no architecture inferred from naming/shape similarity;
+- correctness corrections before deduplication;
+- no mechanical corpus-wide rewrite;
+- every meaningful removed/replaced proposition accounted as `RETAIN`, `REFERENCE`, `CONSOLIDATE`, `RELOCATE`, `ILLUSTRATE`, `CORRECT`, or `REMOVE`;
+- post-merge live-master verification before each work package is closed.
 
-After this PR merges, verify the resulting live `master`. That verification closes the documentation-remediation programme and establishes the repository baseline from which implementation work should branch.
+The final acceptance criterion is **zero unaccounted semantic loss** against `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`, not a predetermined reduction percentage.
+
+## 8. Next Objective
+
+After DR-0 merges, verify live `master` and close DR-0. Then create a fresh DR-1 branch from that exact commit and perform a read-first horizontal verification of:
+
+1. IS-1 versus IS-22 `InteractionCapabilities`;
+2. DD-3.3 versus its active Nuxt operation-identity clarification;
+3. App root creation versus Nuxt baseline-configuration ownership.
+
+Classify each as `confirmed defect`, `clarification required`, or `not sustained` before making any normative edit.
