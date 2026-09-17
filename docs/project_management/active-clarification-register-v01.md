@@ -19,6 +19,7 @@ This register provides one current navigation point for Version 1 clarification 
 | [`appmanager-version-1-nuxt-command-model-clarification-v01.md`](../appmanager-version-1-nuxt-command-model-clarification-v01.md) | PBC-1 thirteen-command Nuxt surface. |
 | [`appmanager-version-1-maintenance-domain-clarification-v01.md`](../appmanager-version-1-maintenance-domain-clarification-v01.md) | PBC-1 reclassification of `utils` as bounded `maintenance`, with stronger-owner rule and four renamed identities. |
 | [`appmanager-version-1-ai-project-environment-clarification-v01.md`](../appmanager-version-1-ai-project-environment-clarification-v01.md) | PBC-1 restoration of broader project-side AI development-environment management, 22-command AI surface and automatic-acceptance authority rule. |
+| [`appmanager-version-1-git-coordinated-commit-clarification-v01.md`](../appmanager-version-1-git-coordinated-commit-clarification-v01.md) | PBC-1 coordinated selected-set/all-managed-repository semantics for canonical `git.commit`, preserving eight Git commands. |
 
 ## 3. Functional Clarifications
 
@@ -30,6 +31,7 @@ This register provides one current navigation point for Version 1 clarification 
 | [`app-command-model-functional-clarification-v01.md`](../functional/clarifications/app-command-model-functional-clarification-v01.md) | PBC-1 App command Functional binding. |
 | [`nuxt-command-model-functional-clarification-v01.md`](../functional/clarifications/nuxt-command-model-functional-clarification-v01.md) | PBC-1 Nuxt command Functional binding. |
 | [`maintenance-domain-functional-clarification-v01.md`](../functional/clarifications/maintenance-domain-functional-clarification-v01.md) | PBC-1 Maintenance Functional boundary and four renamed commands. |
+| [`git-coordinated-commit-functional-clarification-v01.md`](../functional/clarifications/git-coordinated-commit-functional-clarification-v01.md) | PBC-1 observable coordinated commit scope, per-repository messages/effects, automatic acceptance and partial completion. |
 | [`functional-corpus-rationalisation-clarification-v01.md`](../functional/clarifications/functional-corpus-rationalisation-clarification-v01.md) | DR-6 rationalised Functional reading. |
 | [`functional-traceability-authority-vocabulary-clarification-v01.md`](../functional/clarifications/functional-traceability-authority-vocabulary-clarification-v01.md) | Functional traceability authority vocabulary. |
 | [`nuxt-layer-scaffold-functional-ownership-clarification-v01.md`](../functional/clarifications/nuxt-layer-scaffold-functional-ownership-clarification-v01.md) | Nuxt layer-scaffold ownership. |
@@ -59,6 +61,7 @@ This register provides one current navigation point for Version 1 clarification 
 |---|---|
 | [`app-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/app-domain-command-model-clarification-v01.md) | PBC-1 DD-3.1 App correction. |
 | [`dd3-dd4-domain-rationalisation-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/dd3-dd4-domain-rationalisation-clarification-v01.md) | DR-5 rationalised domain-DD reading. |
+| [`git-coordinated-commit-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/git-coordinated-commit-clarification-v01.md) | PBC-1 DD-3.2 coordinated commit intent, repository-specific planning and partial-effect semantics. |
 | [`nuxt-domain-operation-identity-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md) | Earlier Nuxt identity correction pending NCR consolidation. |
 | [`nuxt-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-command-model-clarification-v01.md) | PBC-1 DD-3.3 Nuxt extension. |
 | [`maintenance-domain-reclassification-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/maintenance-domain-reclassification-clarification-v01.md) | PBC-1 DD-4.4 reclassification from Utils to Maintenance and stronger-owner gate. |
@@ -71,6 +74,7 @@ This register provides one current navigation point for Version 1 clarification 
 | [`app-command-model-implementation-clarification-v01.md`](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | PBC-1 IS-14 App correction. |
 | [`interaction-capabilities-contract-clarification-v01.md`](../implementation/clarifications/interaction-capabilities-contract-clarification-v01.md) | IS-1/IS-22 interaction-capability distinction. |
 | [`implementation-specification-rationalisation-clarification-v01.md`](../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md) | DR-7 rationalised Level 4 reading. |
+| [`git-coordinated-commit-implementation-clarification-v01.md`](../implementation/clarifications/git-coordinated-commit-implementation-clarification-v01.md) | PBC-1 IS-15 scope-based coordinated commit plans, AI message acceptance and truthful partial completion. |
 | [`nuxt-command-model-implementation-clarification-v01.md`](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | PBC-1 IS-16/IS-13 Nuxt correction. |
 | [`maintenance-domain-implementation-clarification-v01.md`](../implementation/clarifications/maintenance-domain-implementation-clarification-v01.md) | PBC-1 IS-21 reclassification, canonical `maintenance.*` identities and compatibility rule. |
 | [`ai-project-environment-implementation-clarification-v01.md`](../implementation/clarifications/ai-project-environment-implementation-clarification-v01.md) | PBC-1 IS-20 expanded AI environment contracts, 22 identities and automatic acceptance. |
