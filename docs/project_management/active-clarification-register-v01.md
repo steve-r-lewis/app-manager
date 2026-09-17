@@ -19,6 +19,7 @@ If this register and a clarification's live content disagree, the clarification 
 | Clarification | Scope / purpose |
 |---|---|
 | [`appmanager-version-1-interaction-and-portability-clarification-v01.md`](../appmanager-version-1-interaction-and-portability-clarification-v01.md) | PBC-1 restoration of three concrete V1 interaction provisions (TUI, GUI, Headless), modular interface-driven TypeScript architecture and future IDE/plugin portability without making WebStorm a V1 deliverable. |
+| [`appmanager-version-1-app-command-model-clarification-v01.md`](../appmanager-version-1-app-command-model-clarification-v01.md) | PBC-1 correction of the V1 App command surface: simple root-application lifecycle commands, explicit App/Nuxt boundary and supporting-script/provider separation. |
 
 ## 3. Functional Clarifications
 
@@ -26,6 +27,7 @@ If this register and a clarification's live content disagree, the clarification 
 |---|---|
 | [`app-settings-environment-definition-ownership-clarification-v01.md`](../functional/app-settings-environment-definition-ownership-clarification-v01.md) | App/Settings environment-definition ownership. |
 | [`ai-functional-ownership-clarification-v01.md`](../functional/clarifications/ai-functional-ownership-clarification-v01.md) | AI Functional ownership and consuming-domain relationship. |
+| [`app-command-model-functional-clarification-v01.md`](../functional/clarifications/app-command-model-functional-clarification-v01.md) | PBC-1 Functional binding for the corrected eight-command App surface, `prepare`/`generate`, reset+prepare composition and bounded declared-script support. |
 | [`functional-corpus-rationalisation-clarification-v01.md`](../functional/clarifications/functional-corpus-rationalisation-clarification-v01.md) | DR-6 rationalised Functional-corpus reading. |
 | [`functional-traceability-authority-vocabulary-clarification-v01.md`](../functional/clarifications/functional-traceability-authority-vocabulary-clarification-v01.md) | Functional traceability authority vocabulary. |
 | [`nuxt-layer-scaffold-functional-ownership-clarification-v01.md`](../functional/clarifications/nuxt-layer-scaffold-functional-ownership-clarification-v01.md) | Nuxt layer-scaffold Functional ownership, including FR-NUXT-058/059. |
@@ -52,6 +54,7 @@ If this register and a clarification's live content disagree, the clarification 
 
 | Clarification | Scope / purpose |
 |---|---|
+| [`app-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/app-domain-command-model-clarification-v01.md) | PBC-1 DD-3.1 correction for the eight canonical App use cases and supporting declared-script mechanism. |
 | [`dd3-dd4-domain-rationalisation-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/dd3-dd4-domain-rationalisation-clarification-v01.md) | DR-5 rationalised domain-DD reading. |
 | [`nuxt-domain-operation-identity-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md) | Canonical Version 1 Nuxt-domain operation identities. |
 
@@ -59,6 +62,7 @@ If this register and a clarification's live content disagree, the clarification 
 
 | Clarification | Scope / purpose |
 |---|---|
+| [`app-command-model-implementation-clarification-v01.md`](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | PBC-1 IS-14 correction for command registration, provider resolution, reset+prepare composition and supporting declared-script runner. |
 | [`interaction-capabilities-contract-clarification-v01.md`](../implementation/clarifications/interaction-capabilities-contract-clarification-v01.md) | IS-1/IS-22 interaction-capability contract distinction. |
 | [`implementation-specification-rationalisation-clarification-v01.md`](../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md) | DR-7 rationalised Level 4 reading. |
 | [`version-1-gui-and-portability-implementation-clarification-v01.md`](../implementation/clarifications/version-1-gui-and-portability-implementation-clarification-v01.md) | PBC-1 binding correction for IS-22/IS-23: GUI as third concrete V1 adapter and explicit modular typed replaceability/future-host portability. |
