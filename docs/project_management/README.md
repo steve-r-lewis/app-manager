@@ -16,11 +16,11 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed and NCR — Normative Corpus Reduction is established but paused while bounded PBC-1 semantic baseline corrections are completed.
 
-PR #170 restored Version 1 GUI/interaction/portability criteria. PR #171 corrected the App command surface. PR #172 corrected the Nuxt command surface. PR #173 reclassified `utils` as `maintenance`. PR #174 restored the broader project-side AI development-environment requirement. PR #175 corrected coordinated multi-repository `git.commit` semantics and merged to live `master` at `f9679e61f2cf613a46100fac88ec70c23970309d`.
+PR #170 restored Version 1 GUI/interaction/portability criteria. PR #171 corrected the App command surface. PR #172 corrected the Nuxt command surface. PR #173 reclassified `utils` as `maintenance`. PR #174 restored the broader project-side AI development-environment requirement. PR #175 corrected coordinated multi-repository `git.commit` semantics. PR #176 corrected coordinated multi-target/multi-artefact Docs generation/update semantics and merged to live `master` at `a56bface1cef5518112961fabe9c62f4147ee436`.
 
-The subsequent Docs-domain bulk-action review found that Docs already supports multi-target scope, continuation and partial-effect semantics, but generation/update remained insufficiently explicit when one authorised documentation intent plans consequential effects across multiple artefacts. PBC-1 therefore remains open for this bounded Docs clarification before NCR.
+A final cross-domain bulk-action sanity review then examined App, Nuxt, Quality, Settings, AI and Maintenance. App's root-lifecycle boundary is deliberately non-bulk; Quality already has explicit root/layer/subset/all-managed multi-target semantics; Nuxt, Settings and AI have no demonstrated generic bulk-action defect. Maintenance alone remained underdefined for coordinated validation, repair, source-version maintenance and cleanup over multiple eligible resources.
 
-**Current phase:** PBC-1 coordinated Docs generation/update correction in progress. NCR remains paused until this correction merges and live `master` is independently verified.
+**Current phase:** PBC-1 coordinated Maintenance operations correction in progress. NCR remains paused until this correction merges and live `master` is independently verified.
 
 ## 3. Baseline Roles
 
@@ -33,10 +33,11 @@ The subsequent Docs-domain bulk-action review found that Docs already supports m
 | PBC-1 interaction/portability checkpoint | `eacb032fbb7c41bd7479c9d781eb68231a18fe73` | PR #170 merge. |
 | PBC-1 App-command checkpoint | `d36445a560e09f6f9ba6d16a12fb5b53bb6629c7` | PR #171 merge. |
 | PBC-1 Nuxt-command checkpoint | `5f8b640f6b27f3ed486a711a53413ab1a6ad455a` | PR #172 merge. |
-| PBC-1 Maintenance checkpoint | `a1f25d37409872b2d3312eecbd98257b754613af` | Verified PR #173 merge. |
+| PBC-1 Maintenance-reclassification checkpoint | `a1f25d37409872b2d3312eecbd98257b754613af` | Verified PR #173 merge. |
 | PBC-1 AI project-environment checkpoint | `eff7212ab9a44e0889d81d21964618344ae9927b` | Verified PR #174 merge. |
-| PBC-1 coordinated Git checkpoint | `f9679e61f2cf613a46100fac88ec70c23970309d` | Verified PR #175 merge; base for coordinated Docs correction. |
-| Semantically complete pre-NCR baseline | **pending coordinated Docs correction merge verification** | Exact live `master` SHA after the final bounded PBC-1 Docs correction. |
+| PBC-1 coordinated Git checkpoint | `f9679e61f2cf613a46100fac88ec70c23970309d` | Verified PR #175 merge. |
+| PBC-1 coordinated Docs checkpoint | `a56bface1cef5518112961fabe9c62f4147ee436` | Verified PR #176 merge; base for coordinated Maintenance correction. |
+| Semantically complete pre-NCR baseline | **pending coordinated Maintenance correction merge verification** | Exact live `master` SHA after the final bounded PBC-1 Maintenance correction. |
 
 No current commit is designated the final lean implementation documentation baseline; that remains deferred until NCR-5 passes.
 
@@ -64,7 +65,9 @@ The Git correction applies that automation model to canonical `git.commit`: one 
 
 The Docs correction applies the same scope-versus-command principle to documentation production. One Docs intent may resolve multiple semantic documentation targets and plan multiple artefacts. Each artefact independently resolves generation, authorised update, no-effect/refusal or unresolved disposition; coordinated scope never grants overwrite authority. Deterministic non-AI production remains supported. AI enrichment remains subordinate proposal data and may be automatically accepted only under pre-resolved Docs-owned validation criteria. Completed artefact effects remain truthful if later artefacts fail or cancellation occurs.
 
-The Maintenance stronger-owner rule remains unchanged. The earlier `command-ownership-review-v01.md` remains evidence for the 78-command Maintenance review; later AI, Git and Docs corrections supersede only the affected command semantics/cardinality evidence described above.
+The Maintenance correction applies structured cardinality to its existing four operations. Header validation may inspect a selected or complete eligible managed source-header set while retaining per-resource evidence. Header repair and source-version maintenance construct bounded per-resource transformation plans. Cleanup deletes only positively classified disposable Maintenance artefacts. Discovery/globs/filesystem reachability never become mutation authority; the stronger-owner rule remains mandatory. Coordinated mutation is non-transactional across resources unless real transaction/compensation semantics exist, so completed effects remain truthful under later failure, staleness or cancellation.
+
+No AI dependency is introduced for Maintenance because its Version 1 classification and repair/cleanup intents are deterministic and ambiguous evidence must not be converted into mutation authority by generative inference.
 
 PBC-1 clarifications are temporary integration vehicles. NCR shall fold their semantics into canonical primary owners and retire them.
 
@@ -80,11 +83,11 @@ Execution remains:
 4. NCR-4 — Horizontal Reduction;
 5. NCR-5 — Final Cardinality and Semantic Verification.
 
-NCR-1/2/3 shall fold all PBC-1 clarification deltas, including interaction/portability, App, Nuxt, Maintenance, AI project-environment, coordinated Git commit and coordinated Docs generation/update corrections, into their primary normative owners and retire the temporary clarification layer.
+NCR-1/2/3 shall fold all PBC-1 clarification deltas, including interaction/portability, App, Nuxt, Maintenance reclassification, AI project-environment, coordinated Git commit, coordinated Docs generation/update and coordinated Maintenance operations corrections, into their primary normative owners and retire the temporary clarification layer.
 
 ## 6. Anti-Circularity Rule
 
-PBC-1 remains the only pre-NCR correction work package. The coordinated Docs correction was discovered by the authorised pre-NCR domain sanity review and is incorporated into PBC-1 rather than creating PBC-2. No PBC closeout programme, NCR-6 or successor rationalisation programme is planned.
+PBC-1 remains the only pre-NCR correction work package. Git, Docs and Maintenance coordinated-operation corrections were discovered by the authorised pre-NCR domain sanity reviews and are incorporated into PBC-1 rather than creating successor PBC programmes. The cross-domain review found no additional bulk-action correction required for App, Nuxt, Quality, Settings or AI. No PBC closeout programme, NCR-6 or successor rationalisation programme is planned.
 
 Recording/classifying a duplicate is not completion; NCR must physically remove duplicate normative restatement or reduce it to a valid reference/local binding/local delta.
 
@@ -107,10 +110,10 @@ For NCR: read this index and NCR control; read the normative hierarchy and activ
 
 ## 9. Continuing Authority Rules
 
-The established normative hierarchy is unchanged. Project-management records do not become product authority. Similar naming or data shape does not establish semantic equivalence. Maintenance remains bounded and must not become a catch-all namespace. AI Domain ownership follows project-side AI-environment intent; AI Capability use does not transfer another domain's primary intent or authority. Coordinated Git commit remains Git-owned application intent over DD-1-managed scope. Coordinated Docs generation/update remains Docs-owned intent over DD-1-managed documentation scope, with Documentation, Source Transformation, Resource Access and AI capabilities remaining subordinate specialists.
+The established normative hierarchy is unchanged. Project-management records do not become product authority. Similar naming or data shape does not establish semantic equivalence. Maintenance remains bounded and must not become a catch-all namespace. AI Domain ownership follows project-side AI-environment intent; AI Capability use does not transfer another domain's primary intent or authority. Coordinated Git commit remains Git-owned application intent over DD-1-managed scope. Coordinated Docs generation/update remains Docs-owned intent over DD-1-managed documentation scope. Coordinated Maintenance remains Maintenance-owned intent over DD-1-managed scope further narrowed by operation-specific eligibility and the stronger-owner gate. Shared capabilities remain subordinate specialists.
 
 ## 10. Next Objective
 
-After the PBC-1 coordinated Docs correction merges and live `master` is independently verified, designate that exact merge SHA the **semantically complete pre-NCR baseline** and begin **NCR-1 — Design and Functional** directly from it.
+After the PBC-1 coordinated Maintenance correction merges and live `master` is independently verified, designate that exact merge SHA the **semantically complete pre-NCR baseline** and begin **NCR-1 — Design and Functional** directly from it.
 
 No additional planning, closeout or assurance package intervenes.
