@@ -18,6 +18,7 @@ This register provides one current navigation point for Version 1 clarification 
 | [`appmanager-version-1-app-command-model-clarification-v01.md`](../appmanager-version-1-app-command-model-clarification-v01.md) | PBC-1 eight-command App surface and App/Nuxt boundary. |
 | [`appmanager-version-1-nuxt-command-model-clarification-v01.md`](../appmanager-version-1-nuxt-command-model-clarification-v01.md) | PBC-1 thirteen-command Nuxt surface. |
 | [`appmanager-version-1-maintenance-domain-clarification-v01.md`](../appmanager-version-1-maintenance-domain-clarification-v01.md) | PBC-1 reclassification of `utils` as bounded `maintenance`, with stronger-owner rule and four renamed identities. |
+| [`appmanager-version-1-ai-project-environment-clarification-v01.md`](../appmanager-version-1-ai-project-environment-clarification-v01.md) | PBC-1 restoration of broader project-side AI development-environment management, 22-command AI surface and automatic-acceptance authority rule. |
 
 ## 3. Functional Clarifications
 
@@ -25,6 +26,7 @@ This register provides one current navigation point for Version 1 clarification 
 |---|---|
 | [`app-settings-environment-definition-ownership-clarification-v01.md`](../functional/app-settings-environment-definition-ownership-clarification-v01.md) | App/Settings environment-definition ownership. |
 | [`ai-functional-ownership-clarification-v01.md`](../functional/clarifications/ai-functional-ownership-clarification-v01.md) | AI Functional ownership. |
+| [`ai-project-environment-functional-clarification-v01.md`](../functional/clarifications/ai-project-environment-functional-clarification-v01.md) | PBC-1 observable AI project-environment resource families, command identities, policy and automatic acceptance. |
 | [`app-command-model-functional-clarification-v01.md`](../functional/clarifications/app-command-model-functional-clarification-v01.md) | PBC-1 App command Functional binding. |
 | [`nuxt-command-model-functional-clarification-v01.md`](../functional/clarifications/nuxt-command-model-functional-clarification-v01.md) | PBC-1 Nuxt command Functional binding. |
 | [`maintenance-domain-functional-clarification-v01.md`](../functional/clarifications/maintenance-domain-functional-clarification-v01.md) | PBC-1 Maintenance Functional boundary and four renamed commands. |
@@ -60,6 +62,7 @@ This register provides one current navigation point for Version 1 clarification 
 | [`nuxt-domain-operation-identity-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md) | Earlier Nuxt identity correction pending NCR consolidation. |
 | [`nuxt-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-command-model-clarification-v01.md) | PBC-1 DD-3.3 Nuxt extension. |
 | [`maintenance-domain-reclassification-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/maintenance-domain-reclassification-clarification-v01.md) | PBC-1 DD-4.4 reclassification from Utils to Maintenance and stronger-owner gate. |
+| [`ai-project-environment-domain-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/ai-project-environment-domain-clarification-v01.md) | PBC-1 DD-4.3 AI resource graph, provider-neutral representation and automatic-acceptance refinement. |
 
 ## 7. Implementation Clarifications
 
@@ -70,6 +73,7 @@ This register provides one current navigation point for Version 1 clarification 
 | [`implementation-specification-rationalisation-clarification-v01.md`](../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md) | DR-7 rationalised Level 4 reading. |
 | [`nuxt-command-model-implementation-clarification-v01.md`](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | PBC-1 IS-16/IS-13 Nuxt correction. |
 | [`maintenance-domain-implementation-clarification-v01.md`](../implementation/clarifications/maintenance-domain-implementation-clarification-v01.md) | PBC-1 IS-21 reclassification, canonical `maintenance.*` identities and compatibility rule. |
+| [`ai-project-environment-implementation-clarification-v01.md`](../implementation/clarifications/ai-project-environment-implementation-clarification-v01.md) | PBC-1 IS-20 expanded AI environment contracts, 22 identities and automatic acceptance. |
 | [`version-1-gui-and-portability-implementation-clarification-v01.md`](../implementation/clarifications/version-1-gui-and-portability-implementation-clarification-v01.md) | PBC-1 IS-22/IS-23 GUI/portability correction. |
 
 ## 8. Lifecycle Rule
