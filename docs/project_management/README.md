@@ -14,15 +14,15 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is established and ready to execute.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is in progress. NCR-1 — Design and Functional is complete on `ai/ncr1-design-functional` in PR #179, pending review and merge. NCR-2 has not begun.
 
 PRs #170–#177 completed the bounded PBC-1 semantic corrections: Version 1 GUI/interaction/portability restoration; App command correction; Nuxt command correction; `utils` to `maintenance` reclassification; broader project-side AI development-environment restoration; coordinated multi-repository `git.commit`; coordinated multi-target/multi-artefact Docs generation/update; and coordinated multi-resource Maintenance validation/repair/source-version/cleanup semantics.
 
 PR #177 merged and live `master` was independently verified at `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`. That exact SHA is the **semantically complete pre-NCR baseline**.
 
-The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its temporary normative clarification vehicles remain active only as inputs to NCR integration and retirement.
+The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. DD and Implementation vehicles remain active for their respective later NCR passes.
 
-**Current phase:** NCR control re-baselining to the semantically complete pre-NCR checkpoint, immediately followed by NCR-1 — Design and Functional.
+**Current phase:** NCR-1 complete on the PR branch; PR #179 awaits review/merge. The [single working proposition ledger](ncr-working-proposition-ledger-v01.md) records canonical ownership, preservation, physical reduction, clarification retirement and verification. Implementation remains paused until NCR-5 passes and live `master` is verified.
 
 ## 3. Baseline Roles
 
@@ -69,14 +69,14 @@ The Maintenance correction applies structured cardinality to its four operations
 
 PBC-1 clarification documents are temporary integration vehicles. Their semantics are part of the `0d96d6e...` baseline and must be preserved while NCR folds them into canonical primary owners and retires the temporary clarification layer.
 
-## 5. NCR — Ready for Execution
+## 5. NCR — Execution State
 
 NCR's objective remains: every independently meaningful normative proposition has exactly one complete canonical statement at its correct normative owner; other occurrences are references, necessary local bindings or genuine local deltas.
 
 The five-pass decomposition remains unchanged after re-evaluation against the complete semantic baseline:
 
-1. NCR-1 — Design and Functional;
-2. NCR-2 — Detailed Design;
+1. NCR-1 — Design and Functional: complete on PR #179;
+2. NCR-2 — Detailed Design: not begun;
 3. NCR-3 — Implementation Specifications;
 4. NCR-4 — Horizontal Reduction;
 5. NCR-5 — Final Cardinality and Semantic Verification.
@@ -98,6 +98,7 @@ For NCR: read this index and NCR control; read the normative hierarchy and activ
 ## 8. Active and Reusable Root Documents
 
 - `normative-corpus-reduction-programme-v01.md` — NCR execution control;
+- `ncr-working-proposition-ledger-v01.md` — single NCR execution and verification ledger;
 - `normative-ownership-map-v01.md` — canonical Design/Functional ownership index;
 - `detailed-design-register-v01.md` — Version 1 DD lifecycle register;
 - `active-clarification-register-v01.md` — active clarification navigation;
@@ -112,6 +113,6 @@ The established normative hierarchy is unchanged. Project-management records do 
 
 ## 10. Next Objective
 
-Complete this administrative NCR baseline-control correction, merge it, independently verify live `master`, and begin **NCR-1 — Design and Functional** directly from that verified state.
+Review PR #179 against the recorded NCR-1 disposition. After its separately authorised merge, independently verify live `master` before beginning NCR-2. PR #179 has not been merged by this execution; no NCR-2 or implementation work is included.
 
-No additional planning, closeout or assurance package intervenes.
+The authoritative merged PR #178 baseline for PR #179 is `6e5cd1834d2b262ef7822491d6c42edc7b75cb08`. The accidentally advanced local `master` pointer is not a baseline and has been left untouched. Semantic preservation is compared with the immutable pre-NCR SHA in §3.

@@ -6,9 +6,9 @@
 >
 > **Clarifies:** IS-22 — Interaction Adapters and IS-23 — Build and Runtime Assembly; applies to IS-1 through IS-21 only where their existing typed architectural boundaries are implemented or consumed
 >
-> **Governing Design:** [AppManager Design Specification](../../appmanager-design-specification-v01.md) as clarified by [AppManager Version 1 Interaction and Portability Clarification](../../appmanager-version-1-interaction-and-portability-clarification-v01.md)
+> **Governing Design:** [AppManager Design Specification](../../appmanager-design-specification-v01.md) including [Interaction and Portability](../../appmanager-design-specification-v01.md#_4-operating-context-and-interaction-modes)
 >
-> **Governing Functional authority:** [Application Invocation Functional Specification](../../functional/application-invocation-functional-specification-v01.md) as clarified by [Version 1 GUI Interaction Functional Clarification](../../functional/clarifications/version-1-gui-interaction-clarification-v01.md)
+> **Governing Functional authority:** [Application Invocation Functional Specification](../../functional/application-invocation-functional-specification-v01.md) including [GUI Interaction](../../functional/application-invocation-functional-specification-v01.md#_9-4-version-1-graphical-interaction)
 
 ## 1. Purpose
 

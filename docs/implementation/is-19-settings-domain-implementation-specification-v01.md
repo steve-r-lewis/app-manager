@@ -10,7 +10,7 @@
 >
 > **Primary Functional authority:** [Settings Functional Specification](../functional/settings-functional-specification-v01.md)
 >
-> **Binding clarification:** [App / Settings Environment-Definition Ownership Clarification](../functional/app-settings-environment-definition-ownership-clarification-v01.md)
+> **Environment-definition ownership:** [App / Settings Environment-Definition Ownership — App Functional Specification](../functional/app-functional-specification-v01.md#fr-app-016)
 >
 > **Application Core:** [IS-1 — Application Runtime and Invocation](is-1-application-runtime-and-invocation-implementation-specification-v01.md), [IS-2 — Managed Project Resolution](is-2-managed-project-resolution-implementation-specification-v01.md), [IS-3 — Configuration Resolution](is-3-configuration-resolution-implementation-specification-v01.md)
 >

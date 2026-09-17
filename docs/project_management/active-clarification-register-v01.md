@@ -8,38 +8,17 @@
 
 ## 1. Purpose
 
-This register provides one current navigation point for Version 1 clarification documents that remain active after DR and during the bounded PBC-1 pre-NCR baseline correction. A clarification is not a new documentation-hierarchy level and remains subordinate to Design -> Functional -> Detailed Design -> Implementation.
+This register provides one current navigation point for Version 1 clarification documents that remain active during NCR. A clarification is not a new documentation-hierarchy level and remains subordinate to Design -> Functional -> Detailed Design -> Implementation.
 
 ## 2. Design Clarifications
 
-| Clarification | Scope / purpose |
-|---|---|
-| [`appmanager-version-1-interaction-and-portability-clarification-v01.md`](../appmanager-version-1-interaction-and-portability-clarification-v01.md) | PBC-1 TUI/GUI/Headless, modular TypeScript and future-host portability restoration. |
-| [`appmanager-version-1-app-command-model-clarification-v01.md`](../appmanager-version-1-app-command-model-clarification-v01.md) | PBC-1 eight-command App surface and App/Nuxt boundary. |
-| [`appmanager-version-1-nuxt-command-model-clarification-v01.md`](../appmanager-version-1-nuxt-command-model-clarification-v01.md) | PBC-1 thirteen-command Nuxt surface. |
-| [`appmanager-version-1-maintenance-domain-clarification-v01.md`](../appmanager-version-1-maintenance-domain-clarification-v01.md) | PBC-1 reclassification of `utils` as bounded `maintenance`, with stronger-owner rule and four renamed identities. |
-| [`appmanager-version-1-maintenance-coordinated-operations-clarification-v01.md`](../appmanager-version-1-maintenance-coordinated-operations-clarification-v01.md) | PBC-1 coordinated multi-resource Maintenance validation, repair, source-version maintenance and cleanup semantics. |
-| [`appmanager-version-1-ai-project-environment-clarification-v01.md`](../appmanager-version-1-ai-project-environment-clarification-v01.md) | PBC-1 restoration of broader project-side AI development-environment management, 22-command AI surface and automatic-acceptance authority rule. |
-| [`appmanager-version-1-git-coordinated-commit-clarification-v01.md`](../appmanager-version-1-git-coordinated-commit-clarification-v01.md) | PBC-1 coordinated selected-set/all-managed-repository semantics for canonical `git.commit`, preserving eight Git commands. |
-| [`appmanager-version-1-docs-coordinated-generation-clarification-v01.md`](../appmanager-version-1-docs-coordinated-generation-clarification-v01.md) | PBC-1 coordinated multi-target/multi-artefact Docs generation/update with deterministic and AI-assisted production. |
+None remain active after NCR-1. Eight Design clarification vehicles have been integrated into the [root Design Specification](../appmanager-design-specification-v01.md) and the appropriate Functional owners. The [NCR ledger integration table](ncr-working-proposition-ledger-v01.md#_4-clarification-integration-and-retirement) links every retired vehicle to its primary destinations.
 
 ## 3. Functional Clarifications
 
-| Clarification | Scope / purpose |
-|---|---|
-| [`app-settings-environment-definition-ownership-clarification-v01.md`](../functional/app-settings-environment-definition-ownership-clarification-v01.md) | App/Settings environment-definition ownership. |
-| [`ai-functional-ownership-clarification-v01.md`](../functional/clarifications/ai-functional-ownership-clarification-v01.md) | AI Functional ownership. |
-| [`ai-project-environment-functional-clarification-v01.md`](../functional/clarifications/ai-project-environment-functional-clarification-v01.md) | PBC-1 observable AI project-environment resource families, command identities, policy and automatic acceptance. |
-| [`app-command-model-functional-clarification-v01.md`](../functional/clarifications/app-command-model-functional-clarification-v01.md) | PBC-1 App command Functional binding. |
-| [`nuxt-command-model-functional-clarification-v01.md`](../functional/clarifications/nuxt-command-model-functional-clarification-v01.md) | PBC-1 Nuxt command Functional binding. |
-| [`maintenance-domain-functional-clarification-v01.md`](../functional/clarifications/maintenance-domain-functional-clarification-v01.md) | PBC-1 Maintenance Functional boundary and four renamed commands. |
-| [`maintenance-coordinated-operations-functional-clarification-v01.md`](../functional/clarifications/maintenance-coordinated-operations-functional-clarification-v01.md) | PBC-1 observable Maintenance semantic scope, classification, per-resource effects, continuation and partial completion. |
-| [`git-coordinated-commit-functional-clarification-v01.md`](../functional/clarifications/git-coordinated-commit-functional-clarification-v01.md) | PBC-1 observable coordinated commit scope, per-repository messages/effects, automatic acceptance and partial completion. |
-| [`docs-coordinated-generation-functional-clarification-v01.md`](../functional/clarifications/docs-coordinated-generation-functional-clarification-v01.md) | PBC-1 observable coordinated Docs artefact planning, mixed generation/update, AI acceptance and partial effects. |
-| [`functional-corpus-rationalisation-clarification-v01.md`](../functional/clarifications/functional-corpus-rationalisation-clarification-v01.md) | DR-6 rationalised Functional reading. |
-| [`functional-traceability-authority-vocabulary-clarification-v01.md`](../functional/clarifications/functional-traceability-authority-vocabulary-clarification-v01.md) | Functional traceability authority vocabulary. |
-| [`nuxt-layer-scaffold-functional-ownership-clarification-v01.md`](../functional/clarifications/nuxt-layer-scaffold-functional-ownership-clarification-v01.md) | Nuxt layer-scaffold ownership. |
-| [`version-1-gui-interaction-clarification-v01.md`](../functional/clarifications/version-1-gui-interaction-clarification-v01.md) | PBC-1 GUI observable interaction requirements. |
+None remain active after NCR-1. Thirteen Functional clarification vehicles have been integrated into the twelve primary Functional Specifications or their existing Design/governance owners. Their stable requirement identities remain in the primary specifications. See the [NCR ledger](ncr-working-proposition-ledger-v01.md#_4-clarification-integration-and-retirement) for retirement and identity accounting.
+
+The DD and Implementation clarifications below remain active. Their integration belongs to NCR-2 and NCR-3 respectively; NCR-1 has not reduced their normative content.
 
 ## 4. Detailed Design Clarifications — DD-1
 
