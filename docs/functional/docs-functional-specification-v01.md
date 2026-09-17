@@ -10,17 +10,13 @@
 >
 > **Related Functional Specifications:** [application-invocation-functional-specification-v01.md](application-invocation-functional-specification-v01.md), [managed-project-functional-specification-v01.md](managed-project-functional-specification-v01.md), [configuration-functional-specification-v01.md](configuration-functional-specification-v01.md), [source-transformation-functional-specification-v01.md](source-transformation-functional-specification-v01.md), [nuxt-functional-specification-v01.md](nuxt-functional-specification-v01.md)
 >
-> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
+> **Historical planning provenance (non-normative):** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ## 1. Purpose
 
 This specification defines the observable Version 1 behaviour of the AppManager `docs` domain.
 
 The `docs` domain owns documentation-oriented application intent: selecting documentable managed-project scope, inspecting that scope, deriving documentation information, generating documentation artefacts and, where supported as an AppManager use case, operating documentation tooling for those artefacts.
-
-The governing boundary is:
-
-> **The `docs` domain owns documentation intent and documentation outcomes. It does not acquire authority over Nuxt semantics, source transformation, project scope, package execution, AI generation, or documentation-tool implementation merely because those capabilities are used to produce or present documentation.**
 
 Version 1 supports documentation of the complete application, application source, all layers, a selected layer, tests and a selected file, together with bounded documentation generation, update, extraction, aggregation and tooling workflows.
 
@@ -64,100 +60,179 @@ This specification does not define:
 
 ### 2.3 Documentation is not mutation authority
 
+<a id="fr-docs-001"></a>
+
 **FR-DOCS-001 — Documentation intent**  
 A documentation invocation shall identify documentation as its primary application intent and shall not silently become a general-purpose source mutation operation.
 
+<a id="fr-docs-002"></a>
+
 **FR-DOCS-002 — Discovery does not grant mutation authority**  
-Recognition of a source file, test, layer, configuration item, generated artefact or documentation target shall not by itself authorize modification of that resource.
+Recognised documentation inputs/targets shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-docs-003"></a>
 
 **FR-DOCS-003 — Read-only default**  
 Inspection and derivation of documentation information shall be read-only unless the selected use case explicitly includes creation or update of documentation artefacts.
 
+<a id="fr-docs-004"></a>
+
 **FR-DOCS-004 — Documentation-output boundary**  
 Where a use case creates or updates documentation, its mutation authority shall be bounded to the approved documentation output scope and shall not implicitly extend to source code or project configuration.
 
+<a id="fr-docs-005"></a>
+
 **FR-DOCS-005 — Delegated execution**  
-Use of parsers, scanners, generators, templates, AI providers, Nuxt facts, process execution or documentation tools shall not delegate AppManager's authority to determine documentation intent, scope, acceptance or final outcome.
+Docs capability delegation shall conform to [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority), [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+---
+
+### 2.4 Canonical Version 1 Command Surface
+
+The thirteen Docs identities bind to the requirement sections below:
+
+| Identity | Behaviour |
+|---|---|
+| `docs.document-application` | §5 |
+| `docs.document-source` | §6 |
+| `docs.document-layers`, `docs.document-layer` | §7 |
+| `docs.document-tests` | §8 |
+| `docs.document-file` | §9 |
+| `docs.generate`, `docs.update` | §10 |
+| `docs.extract`, `docs.aggregate` | §13 |
+| `docs.develop`, `docs.build`, `docs.preview` | §12 |
+
+No `generate-all`, `update-all`, `bulk-generate`, `bulk-update` or AI-specific competing Docs identity is introduced.
 
 ---
 
 ## 3. Common Documentation Invocation Behaviour
 
+<a id="fr-docs-006"></a>
+
 **FR-DOCS-006 — Structured invocation**  
-Every Docs use case shall participate in the common Application Invocation Contract and return an application-level structured outcome.
+Docs invocation and completion shall apply [FR-INV-007](application-invocation-functional-specification-v01.md#fr-inv-007), [FR-INV-033](application-invocation-functional-specification-v01.md#fr-inv-033).
+
+<a id="fr-docs-007"></a>
 
 **FR-DOCS-007 — Interaction-mode equivalence**  
-TUI, Headless and future adapters shall preserve equivalent documentation intent, scope, validation, safety and outcome semantics even where target selection or presentation differs.
+Documentation intent across TUI, GUI, Headless and future adapters shall apply [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="fr-docs-008"></a>
 
 **FR-DOCS-008 — Deterministic Headless operation**  
-A Headless documentation invocation shall not depend upon an interactive prompt. All information required to resolve the requested documentation target and behaviour shall be supplied or deterministically resolvable.
+Headless documentation shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="fr-docs-009"></a>
 
 **FR-DOCS-009 — Unresolved required input**  
-If required documentation scope or target information cannot be resolved non-interactively, AppManager shall fail without guessing a target.
+Unresolved Headless documentation scope/target shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="fr-docs-010"></a>
 
 **FR-DOCS-010 — Interactive target selection**  
-An interactive adapter may present discovered eligible documentation targets for selection, but the resulting invocation shall resolve to the same underlying documentation semantics available to non-interactive callers.
+Interactive eligible-target selection shall apply [FR-INV-019](application-invocation-functional-specification-v01.md#fr-inv-019).
+
+<a id="fr-docs-011"></a>
 
 **FR-DOCS-011 — Availability**  
-A documentation use case shall distinguish an unknown use case from a known use case that is unavailable because its required project context, target, configuration or delegated capability is absent.
+Unknown or unavailable Docs use cases shall apply [FR-INV-006](application-invocation-functional-specification-v01.md#fr-inv-006), [FR-INV-015](application-invocation-functional-specification-v01.md#fr-inv-015).
+
+<a id="fr-docs-012"></a>
 
 **FR-DOCS-012 — Effective configuration**  
-Documentation behaviour affected by configuration shall consume effective configuration according to the Configuration Functional Specification rather than independently resolving competing configuration semantics.
+Configurable documentation behaviour shall apply [FR-CONFIG-020](configuration-functional-specification-v01.md#fr-config-020).
+
+<a id="fr-docs-013"></a>
 
 **FR-DOCS-013 — Project context**  
-Project-scoped documentation operations shall consume the resolved managed-project context and shall not reconstruct an independent competing model of the project.
+Project-scoped documentation context shall apply [Design §9.2](../appmanager-design-specification-v01.md#_9-2-managed-project-context).
+
+<a id="fr-docs-014"></a>
 
 **FR-DOCS-014 — Managed scope**  
-The documentation target set shall be derived from or validated against managed scope before consequential documentation writes occur.
+Consequential documentation output targeting shall apply [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting), [FR-PROJ-044](managed-project-functional-specification-v01.md#fr-proj-044).
+
+<a id="fr-docs-015"></a>
 
 **FR-DOCS-015 — Outside-scope targets**  
 A requested target outside approved managed scope shall be rejected unless the owning use case explicitly supports an external read-only input and that input is unambiguous.
 
+<a id="fr-docs-016"></a>
+
 **FR-DOCS-016 — Cancellation**  
-Where a documentation operation supports cancellation, cancellation shall stop further work as soon as safely practical and report any artefacts already produced or updated.
+Docs operations supporting cancellation shall stop initiation of further work as soon as safely practical. Created/updated artefacts shall be reported under [FR-INV-031](application-invocation-functional-specification-v01.md#fr-inv-031).
+
+<a id="fr-docs-017"></a>
 
 **FR-DOCS-017 — Progress**  
-Long-running multi-target documentation operations shall expose progress or execution events where useful without making presentation-specific progress UI part of the functional contract.
+Long-running multi-target documentation shall apply [FR-INV-027](application-invocation-functional-specification-v01.md#fr-inv-027).
+
+<a id="fr-docs-018"></a>
 
 **FR-DOCS-018 — Retry authority**  
-Failure of a delegated documentation capability shall not authorize an implicit retry, fallback provider or changed target unless such behaviour is explicitly part of effective policy.
+Docs retries shall apply [FR-INV-049](application-invocation-functional-specification-v01.md#fr-inv-049). Provider fallback or target changes require explicit effective policy.
 
 ---
 
 ## 4. Documentation Target Model
 
+<a id="fr-docs-019"></a>
+
 **FR-DOCS-019 — Target identity**  
-Every documentation operation shall resolve an explicit semantic target rather than relying only on the caller's current working directory.
+Documentation semantic-target resolution shall apply [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution), [FR-PROJ-005](managed-project-functional-specification-v01.md#fr-proj-005).
+
+<a id="fr-docs-020"></a>
 
 **FR-DOCS-020 — Supported target classes**  
 Version 1 shall support documentation intent for at least the complete managed application, application source, all managed layers, one selected managed layer, tests and one selected file.
 
+<a id="fr-docs-021"></a>
+
 **FR-DOCS-021 — Root application distinction**  
-Documentation behaviour shall preserve the distinction between the managed root application and its managed layers.
+Documentation root/layer identity shall apply [Design §9.3](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers).
+
+<a id="fr-docs-022"></a>
 
 **FR-DOCS-022 — Layer independence**  
 A selected layer shall be documentable as a distinct managed unit with its own source, configuration, tests, documentation and other recognized facts where present.
 
+<a id="fr-docs-023"></a>
+
 **FR-DOCS-023 — All-layers target**  
 The all-layers target shall include the managed layers eligible under the resolved project context and documentation scope, not arbitrary directories that merely resemble layers.
+
+<a id="fr-docs-024"></a>
 
 **FR-DOCS-024 — Source target**  
 The application-source target shall represent recognized source content within the approved managed scope and shall exclude unrelated project resources unless the documentation profile explicitly includes them.
 
+<a id="fr-docs-025"></a>
+
 **FR-DOCS-025 — Test target**  
 The tests target shall represent recognized test resources within managed scope independently of whether those tests are executable by the `quality` domain at the time of documentation.
+
+<a id="fr-docs-026"></a>
 
 **FR-DOCS-026 — Selected-file target**  
 A selected-file documentation request shall resolve exactly one eligible file or fail as ambiguous or invalid.
 
+<a id="fr-docs-027"></a>
+
 **FR-DOCS-027 — File eligibility**  
 A file shall not become documentable merely because it exists. Eligibility may depend on managed scope, supported source type, documentation policy and the selected documentation use case.
+
+<a id="fr-docs-028"></a>
 
 **FR-DOCS-028 — Symlink and indirection safety**  
 Target resolution shall not allow filesystem indirection to silently escape the approved documentation scope.
 
+<a id="fr-docs-029"></a>
+
 **FR-DOCS-029 — Duplicate target normalization**  
 Where the same resource is reached through overlapping documentation scopes, AppManager shall avoid unintentionally documenting it multiple times in the same logical operation unless duplication is explicitly requested.
+
+<a id="fr-docs-030"></a>
 
 **FR-DOCS-030 — Stable target reporting**  
 Structured outcomes shall identify the semantic documentation targets acted upon sufficiently for automation to distinguish root application, layer, test, source and file scopes.
@@ -166,32 +241,52 @@ Structured outcomes shall identify the semantic documentation targets acted upon
 
 ## 5. Complete-Application Documentation
 
+<a id="fr-docs-031"></a>
+
 **FR-DOCS-031 — Complete-application use case**  
 AppManager shall provide a use case for documenting the complete managed application.
+
+<a id="fr-docs-032"></a>
 
 **FR-DOCS-032 — Complete means managed composition**  
 Complete-application documentation shall be based on the resolved managed-project composition rather than an unbounded recursive dump of the filesystem.
 
+<a id="fr-docs-033"></a>
+
 **FR-DOCS-033 — Root coverage**  
 Complete-application documentation shall include relevant recognized facts about the root application according to the selected documentation profile.
+
+<a id="fr-docs-034"></a>
 
 **FR-DOCS-034 — Layer coverage**  
 Complete-application documentation shall include relevant recognized facts for eligible managed layers according to the selected documentation profile.
 
+<a id="fr-docs-035"></a>
+
 **FR-DOCS-035 — Source coverage**  
-Where source documentation is part of the selected complete-application profile, source targets shall follow the source-target semantics in this specification.
+Source included by the complete-application profile shall apply [FR-DOCS-024](docs-functional-specification-v01.md#fr-docs-024).
+
+<a id="fr-docs-036"></a>
 
 **FR-DOCS-036 — Test coverage**  
-Where test documentation is part of the selected complete-application profile, test targets shall follow the test-target semantics in this specification.
+Tests included by the complete-application profile shall apply [FR-DOCS-025](docs-functional-specification-v01.md#fr-docs-025).
+
+<a id="fr-docs-037"></a>
 
 **FR-DOCS-037 — Existing documentation**  
 Existing recognized documentation may be inspected and incorporated as context where policy permits, but its presence shall not automatically make it authoritative or permit unrestricted rewriting.
 
+<a id="fr-docs-038"></a>
+
 **FR-DOCS-038 — Partial coverage**  
 If some eligible parts of the managed application cannot be documented, the operation shall distinguish partial documentation from complete success and identify omitted or failed targets.
 
+<a id="fr-docs-039"></a>
+
 **FR-DOCS-039 — Empty categories**  
 Absence of an optional category such as tests or managed layers shall not itself constitute failure where the project context validly contains none.
+
+<a id="fr-docs-040"></a>
 
 **FR-DOCS-040 — Unsupported content**  
 Unsupported content encountered during complete-application documentation shall be reported according to significance rather than silently represented as successfully documented.
@@ -200,88 +295,140 @@ Unsupported content encountered during complete-application documentation shall 
 
 ## 6. Application-Source Documentation
 
+<a id="fr-docs-041"></a>
+
 **FR-DOCS-041 — Source-documentation use case**  
 AppManager shall provide a use case for documenting recognized application source within approved managed scope.
+
+<a id="fr-docs-042"></a>
 
 **FR-DOCS-042 — Structural inspection**  
 Where supported, source documentation shall derive information from structure-aware inspection rather than relying solely on raw text concatenation.
 
+<a id="fr-docs-043"></a>
+
 **FR-DOCS-043 — Source facts**  
 Documentation may include supported facts such as declarations, exports, responsibilities, relationships, metadata and other documentable structural information where reliably recognized.
+
+<a id="fr-docs-044"></a>
 
 **FR-DOCS-044 — No invented source semantics**  
 AppManager shall not present an inferred source meaning as a confirmed structural fact when the available inspection cannot establish it reliably.
 
+<a id="fr-docs-045"></a>
+
 **FR-DOCS-045 — Unsupported source structure**  
 Unsupported or ambiguous source structures shall produce diagnostics or omissions rather than unsafe guessing.
+
+<a id="fr-docs-046"></a>
 
 **FR-DOCS-046 — Preserve source**  
 Source-documentation generation shall not modify the source being documented unless a separately identified and authorized documentation-injection use case explicitly requires source mutation.
 
+<a id="fr-docs-047"></a>
+
 **FR-DOCS-047 — Source transformation dependency**  
-Any supported operation that injects or updates documentation inside existing source shall comply with the Source Transformation Functional Specification.
+Source documentation injection/update shall apply [FR-XFORM-033](source-transformation-functional-specification-v01.md#fr-xform-033).
+
+<a id="fr-docs-048"></a>
 
 **FR-DOCS-048 — Bounded source mutation**  
-A source-documentation update shall be limited to the recognized documentation region or other explicitly approved transformation target and preserve unrelated source content where practical.
+Bounded source-documentation regions shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content), [FR-XFORM-047](source-transformation-functional-specification-v01.md#fr-xform-047).
+
+<a id="fr-docs-049"></a>
 
 **FR-DOCS-049 — Source-level validation**  
-After a documentation transformation of existing source, source-level validity shall be checked where the affected source type supports validation.
+Transformed documentation-bearing source shall apply [FR-XFORM-048](source-transformation-functional-specification-v01.md#fr-xform-048).
+
+<a id="fr-docs-050"></a>
 
 **FR-DOCS-050 — Application-level acceptance**  
-Source-level validity shall not by itself establish success; AppManager shall also determine whether the resulting documentation change satisfies requested intent, managed scope and policy.
+Source-valid documentation changes shall apply [FR-DOCS-113](docs-functional-specification-v01.md#fr-docs-113).
 
 ---
 
 ## 7. Layer Documentation
 
+<a id="fr-docs-051"></a>
+
 **FR-DOCS-051 — All-layers use case**  
 AppManager shall provide a use case for documenting all eligible managed layers.
+
+<a id="fr-docs-052"></a>
 
 **FR-DOCS-052 — Selected-layer use case**  
 AppManager shall provide a use case for documenting one selected managed layer.
 
+<a id="fr-docs-053"></a>
+
 **FR-DOCS-053 — Layer selection**  
 A selected-layer invocation shall identify the layer unambiguously by a stable project-context identity or equivalent semantic selector.
+
+<a id="fr-docs-054"></a>
 
 **FR-DOCS-054 — Ambiguous layer**  
 If a requested layer selector resolves to multiple candidates, AppManager shall require disambiguation rather than choosing one silently.
 
+<a id="fr-docs-055"></a>
+
 **FR-DOCS-055 — Layer-specific facts**  
-Layer documentation may consume Nuxt-specific facts supplied through the Nuxt domain or an approved capability without transferring Nuxt semantic authority to Docs.
+Nuxt facts consumed for layer documentation shall apply [FR-DOCS-101](docs-functional-specification-v01.md#fr-docs-101).
+
+<a id="fr-docs-056"></a>
 
 **FR-DOCS-056 — Repository independence**  
 Whether a layer has its own repository, is represented by a repository relationship, or shares repository topology with another resource shall not determine whether the layer is documentable.
 
+<a id="fr-docs-057"></a>
+
 **FR-DOCS-057 — Standalone layers**  
 A valid standalone managed Nuxt layer may be documented independently of whether it is currently integrated into the root application's Nuxt composition.
 
+<a id="fr-docs-058"></a>
+
 **FR-DOCS-058 — Integrated-layer context**  
-Where useful, documentation may identify that a managed layer is integrated into a host application, but the Nuxt domain remains authoritative for that integration fact.
+Reported layer integration context shall apply [FR-NUXT-016](nuxt-functional-specification-v01.md#fr-nuxt-016), [FR-NUXT-092](nuxt-functional-specification-v01.md#fr-nuxt-092).
+
+<a id="fr-docs-059"></a>
 
 **FR-DOCS-059 — Layer failures**  
-During all-layers documentation, failure to document one layer shall be reported against that layer and shall not be misreported as complete success.
+Failures during all-layers documentation shall apply [FR-INV-036](application-invocation-functional-specification-v01.md#fr-inv-036). Results shall attribute each failure to its layer.
+
+<a id="fr-docs-060"></a>
 
 **FR-DOCS-060 — Continuation after layer failure**  
-A multi-layer operation may continue after an isolated layer failure where doing so is safe and policy permits, with final partial-success reporting.
+Continuation after layer failure shall apply [FR-DOCS-PBC-022](docs-functional-specification-v01.md#fr-docs-pbc-022).
 
 ---
 
 ## 8. Test Documentation
 
+<a id="fr-docs-061"></a>
+
 **FR-DOCS-061 — Test-documentation use case**  
 AppManager shall provide a use case for documenting recognized tests within managed scope.
+
+<a id="fr-docs-062"></a>
 
 **FR-DOCS-062 — Documentation versus execution**  
 Docs shall inspect tests for documentation purposes without assuming authority to execute them; execution and quality-gate semantics belong to `quality`.
 
+<a id="fr-docs-063"></a>
+
 **FR-DOCS-063 — Test structure**  
 Where reliably recognizable, test documentation may describe test suites, cases, fixtures, targets or other structural test facts.
+
+<a id="fr-docs-064"></a>
 
 **FR-DOCS-064 — Test/source relationship**  
 Where a reliable relationship between a test and tested source can be established, documentation may represent that relationship without requiring the resources to reside in the same directory.
 
+<a id="fr-docs-065"></a>
+
 **FR-DOCS-065 — Unresolved relationship**  
 An unresolved test-to-source relationship shall be represented as unresolved or omitted rather than invented.
+
+<a id="fr-docs-066"></a>
 
 **FR-DOCS-066 — Test framework independence**  
 The functional requirement to document tests shall not prescribe a particular test framework.
@@ -290,20 +437,32 @@ The functional requirement to document tests shall not prescribe a particular te
 
 ## 9. Selected-File Documentation
 
+<a id="fr-docs-067"></a>
+
 **FR-DOCS-067 — Selected-file use case**  
 AppManager shall provide a use case for documenting one eligible selected file.
 
+<a id="fr-docs-068"></a>
+
 **FR-DOCS-068 — Interactive file selection**  
-Where TUI or another interactive adapter is used, AppManager may present eligible files for interactive selection.
+Interactive selected-file documentation shall apply [FR-INV-019](application-invocation-functional-specification-v01.md#fr-inv-019).
+
+<a id="fr-docs-069"></a>
 
 **FR-DOCS-069 — Headless file selection**  
-Headless callers shall identify the file through a deterministic selector and shall never be forced into interactive selection.
+Headless selected-file documentation shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="fr-docs-070"></a>
 
 **FR-DOCS-070 — Selected-file inspection**  
 The selected file shall be inspected using the most appropriate supported recognition capability for its type without making the recognition implementation part of this Functional Specification.
 
+<a id="fr-docs-071"></a>
+
 **FR-DOCS-071 — File-specific result**  
 The structured outcome shall identify the selected file and whether documentation was generated, updated, skipped, unsupported or failed.
+
+<a id="fr-docs-072"></a>
 
 **FR-DOCS-072 — Binary or unsupported file**  
 A binary or otherwise unsupported file shall be rejected or reported as unsupported rather than treated as successfully documented text.
@@ -312,63 +471,260 @@ A binary or otherwise unsupported file shall be rejected or reported as unsuppor
 
 ## 10. Documentation Generation and Update
 
+<a id="fr-docs-073"></a>
+
 **FR-DOCS-073 — Generation intent**  
-Creation of a new documentation artefact shall be treated as generation and shall not be conflated with mutation of an existing documentation artefact.
+New documentation artefact production shall apply [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
+<a id="fr-docs-074"></a>
 
 **FR-DOCS-074 — Existing-document update**  
-Updating existing documentation shall be treated as a transformation and shall comply with shared transformation requirements.
+Existing-document updates shall apply [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates), [FR-XFORM-033](source-transformation-functional-specification-v01.md#fr-xform-033).
+
+<a id="fr-docs-075"></a>
 
 **FR-DOCS-075 — Output scope**  
 Before writing documentation, AppManager shall resolve the intended output scope and reject an ambiguous destination.
 
+<a id="fr-docs-076"></a>
+
 **FR-DOCS-076 — Output collision**  
 If generation would overwrite an existing artefact, AppManager shall apply explicit overwrite/update policy rather than silently replacing it.
 
+<a id="fr-docs-077"></a>
+
 **FR-DOCS-077 — Preview where consequential**  
-Where a documentation update would materially replace or restructure existing authored content, AppManager shall support preview or equivalent proposed-change information when required by transformation policy.
+Material replacement/restructuring of authored documentation where preview is required shall apply [FR-INV-025](application-invocation-functional-specification-v01.md#fr-inv-025).
+
+<a id="fr-docs-078"></a>
 
 **FR-DOCS-078 — Preservation of unrelated content**  
-A bounded documentation update shall preserve unrelated authored content where practical and shall not rewrite an entire artefact merely because a narrower recognized update is possible.
+Bounded documentation updates shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content), [FR-XFORM-041](source-transformation-functional-specification-v01.md#fr-xform-041).
+
+<a id="fr-docs-079"></a>
 
 **FR-DOCS-079 — Generated provenance**  
 Where useful to users or automation, generated documentation shall expose sufficient provenance to identify the managed target and generation context without leaking sensitive configuration.
 
+<a id="fr-docs-080"></a>
+
 **FR-DOCS-080 — Repeatability**  
 Repeated generation from materially equivalent project facts and effective configuration should produce semantically stable documentation outcomes, subject to explicitly non-deterministic optional capabilities such as AI assistance.
+
+<a id="fr-docs-081"></a>
 
 **FR-DOCS-081 — No false freshness**  
 AppManager shall not represent stale or failed-to-refresh documentation as newly synchronized merely because an invocation completed other work successfully.
 
+<a id="fr-docs-082"></a>
+
 **FR-DOCS-082 — Partial write reporting**  
-If a multi-artefact documentation operation fails after some writes succeed, the structured outcome shall identify the artefacts written, skipped, unchanged or failed.
+Multi-artefact write failures shall apply [FR-DOCS-PBC-019](docs-functional-specification-v01.md#fr-docs-pbc-019), [FR-INV-045](application-invocation-functional-specification-v01.md#fr-inv-045).
+
+<a id="fr-docs-083"></a>
 
 **FR-DOCS-083 — No universal rollback claim**  
-Version 1 shall not imply that all multi-artefact documentation generation is transactionally rolled back unless a later Detailed Design explicitly provides and validates that guarantee.
+Multi-artefact documentation rollback claims shall apply [FR-INV-046](application-invocation-functional-specification-v01.md#fr-inv-046).
+
+---
+
+### 10.1 Coordinated Artefact Production
+
+A documentation request can cover several semantic targets and produce several artefacts. The plan connects each output to its source evidence and resolves its individual disposition before writes; the coordinated result retains those identities when effects diverge.
+
+<a id="fr-docs-pbc-001"></a>
+
+**FR-DOCS-PBC-001 — Coordinated semantic scope**
+
+A Docs invocation may resolve one semantic target or a bounded semantic target set, including complete-application and all-managed-layer scopes, according to managed-project context and the selected documentation profile.
+
+<a id="fr-docs-pbc-002"></a>
+
+**FR-DOCS-PBC-002 — Cardinality is not command identity**
+
+The number of resolved documentation targets or planned artefacts shall not create a separate bulk/all command identity.
+
+<a id="fr-docs-pbc-003"></a>
+
+**FR-DOCS-PBC-003 — No silent scope broadening**
+
+Single-target documentation requests shall apply [FR-PROJ-042](managed-project-functional-specification-v01.md#fr-proj-042).
+
+<a id="fr-docs-pbc-004"></a>
+
+**FR-DOCS-PBC-004 — Duplicate normalization**
+
+Overlapping coordinated documentation scopes shall apply [FR-DOCS-029](docs-functional-specification-v01.md#fr-docs-029).
+
+<a id="fr-docs-pbc-005"></a>
+
+**FR-DOCS-PBC-005 — Artefact plan before consequential effects**
+
+Before coordinated documentation writes begin, AppManager shall derive a bounded artefact plan retaining each artefact's semantic source target, output identity, evidence/provenance, proposed content and intended mutation disposition.
+
+<a id="fr-docs-pbc-006"></a>
+
+**FR-DOCS-PBC-006 — Independent artefact disposition**
+
+Each planned artefact shall independently resolve generation, explicitly permitted managed-document or managed-region update, already-satisfied no effect, skip, unsupported, collision refusal, blocked or indeterminate disposition. Concrete implementation vocabulary may differ but these observable distinctions shall remain.
+
+<a id="fr-docs-pbc-007"></a>
+
+**FR-DOCS-PBC-007 — Generation remains creation**
+
+Generation in coordinated documentation shall apply [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
+<a id="fr-docs-pbc-008"></a>
+
+**FR-DOCS-PBC-008 — Update remains explicit**
+
+Each existing-resource artefact update shall apply [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates), [FR-XFORM-033](source-transformation-functional-specification-v01.md#fr-xform-033), [FR-XFORM-020](source-transformation-functional-specification-v01.md#fr-xform-020), [FR-XFORM-068](source-transformation-functional-specification-v01.md#fr-xform-068). Explicit update intent and exact target/revision requirements remain applicable.
+
+<a id="fr-docs-pbc-009"></a>
+
+**FR-DOCS-PBC-009 — Mixed dispositions permitted**
+
+One coordinated invocation may validly contain different per-artefact dispositions, including generation for one artefact, managed update for another and already-satisfied or refused status for another.
+
+<a id="fr-docs-pbc-010"></a>
+
+**FR-DOCS-PBC-010 — Deterministic non-AI path**
+
+A coordinated Docs operation shall support deterministic documentation production without requiring AI where the selected documentation profile can be satisfied from accepted evidence, approved declarative resources/templates and deterministic Documentation Capability behaviour.
+
+<a id="fr-docs-pbc-011"></a>
+
+**FR-DOCS-PBC-011 — AI absence does not redefine scope**
+
+Absence or unavailability of optional AI assistance shall not alter the resolved managed documentation scope or silently select different documentation targets.
+
+<a id="fr-docs-pbc-012"></a>
+
+**FR-DOCS-PBC-012 — Bounded AI proposals**
+
+Bounded AI proposals for planned artefacts shall apply [FR-DOCS-084](docs-functional-specification-v01.md#fr-docs-084), [FR-AI-088](ai-functional-specification-v01.md#fr-ai-088), [FR-AI-089](ai-functional-specification-v01.md#fr-ai-089), [FR-AI-096](ai-functional-specification-v01.md#fr-ai-096).
+
+<a id="fr-docs-pbc-013"></a>
+
+**FR-DOCS-PBC-013 — Automatic acceptance under prior policy**
+
+Automatic Docs proposal acceptance shall apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow). Docs shall resolve deterministic target/profile validation and acceptance criteria before generation.
+
+<a id="fr-docs-pbc-014"></a>
+
+**FR-DOCS-PBC-014 — Interactive review remains supported**
+
+Docs policy requiring review, revision or explicit human acceptance shall apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="fr-docs-pbc-015"></a>
+
+**FR-DOCS-PBC-015 — AI cannot authorise effects**
+
+AI contributions to documentation planning and persistence shall apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow). Output destination selection, update authorisation, preservation and disclosure policy remain Docs-owned.
+
+<a id="fr-docs-pbc-016"></a>
+
+**FR-DOCS-PBC-016 — Equivalent postconditions**
+
+AI-assisted and deterministic artefacts under the same target/profile postconditions shall apply [FR-DOCS-PBC-017](docs-functional-specification-v01.md#fr-docs-pbc-017).
+
+<a id="fr-docs-pbc-017"></a>
+
+**FR-DOCS-PBC-017 — Per-artefact validation**
+
+Each consequential artefact shall be evaluated against its resolved target/profile, accepted facts, output policy, preservation requirements and relevant documentation validation before Docs acceptance.
+
+<a id="fr-docs-pbc-018"></a>
+
+**FR-DOCS-PBC-018 — Provider success is insufficient**
+
+Rendering, AI, process and persistence completion shall apply [FR-INV-034](application-invocation-functional-specification-v01.md#fr-inv-034).
+
+<a id="fr-docs-pbc-019"></a>
+
+**FR-DOCS-PBC-019 — Per-target and per-artefact reporting**
+
+The structured result of a coordinated operation shall preserve sufficient target and artefact identity to report generated, updated, already-satisfied, skipped, unsupported, refused, failed, cancelled and indeterminate states without collapsing them into a false uniform result.
+
+<a id="fr-docs-pbc-020"></a>
+
+**FR-DOCS-PBC-020 — Coordinated mutation is non-transactional by default**
+
+Coordinated Docs cross-resource atomicity/rollback shall apply [FR-INV-046](application-invocation-functional-specification-v01.md#fr-inv-046).
+
+<a id="fr-docs-pbc-021"></a>
+
+**FR-DOCS-PBC-021 — Completed effects remain truthful**
+
+Earlier completed artefacts after later failure shall apply [FR-INV-045](application-invocation-functional-specification-v01.md#fr-inv-045).
+
+<a id="fr-docs-pbc-022"></a>
+
+**FR-DOCS-PBC-022 — Explicit continuation policy**
+
+Continuation after an individual target or artefact failure shall follow explicit Docs-domain policy and shall preserve attributable outcomes for work already attempted.
+
+<a id="fr-docs-pbc-023"></a>
+
+**FR-DOCS-PBC-023 — Cancellation**
+
+Coordinated documentation cancellation shall apply [FR-DOCS-016](docs-functional-specification-v01.md#fr-docs-016), [FR-INV-032](application-invocation-functional-specification-v01.md#fr-inv-032). Completed proposals, AI usage and other completed work shall remain attributable alongside writes.
+
+<a id="fr-docs-pbc-024"></a>
+
+**FR-DOCS-PBC-024 — Canonical partial completion**
+
+Per-target and per-artefact evidence aggregation shall apply [FR-INV-033](application-invocation-functional-specification-v01.md#fr-inv-033), [FR-INV-036](application-invocation-functional-specification-v01.md#fr-inv-036).
+
+<a id="fr-docs-pbc-025"></a>
+
+**FR-DOCS-PBC-025 — Deterministic Headless bulk operation**
+
+Headless target/profile, output and AI acceptance/review policy shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="fr-docs-pbc-026"></a>
+
+**FR-DOCS-PBC-026 — Interaction equivalence**
+Coordinated documentation across TUI, GUI and Headless shall apply [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 ---
 
 ## 11. AI-Assisted Documentation
 
+<a id="fr-docs-084"></a>
+
 **FR-DOCS-084 — Optional AI assistance**  
 Docs use cases may employ AI assistance for summarization, drafting or enrichment where policy permits, but AI availability shall not automatically be a prerequisite for documentation that can be produced deterministically without it.
 
+<a id="fr-docs-085"></a>
+
 **FR-DOCS-085 — Domain ownership**  
-Use of AI inside a Docs workflow shall not transfer the use case to the `ai` domain when documentation remains the primary application intent.
+AI assistance in Docs workflows shall apply [Design §10.6](../appmanager-design-specification-v01.md#_10-6-ai-domain).
+
+<a id="fr-docs-086"></a>
 
 **FR-DOCS-086 — Non-authoritative AI output**  
-AI-generated documentation content shall remain proposed or derived content until AppManager validates and accepts it according to the documentation use case.
+Generated documentation proposals shall apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="fr-docs-087"></a>
 
 **FR-DOCS-087 — Fact preservation**  
 AI enrichment shall not replace reliably inspected structural facts with contradictory generated claims.
 
+<a id="fr-docs-088"></a>
+
 **FR-DOCS-088 — AI failure fallback**  
 Where a deterministic non-AI documentation path exists, failure or unavailability of AI assistance may fall back to that path and shall report the omitted enrichment where functionally significant.
+
+<a id="fr-docs-089"></a>
 
 **FR-DOCS-089 — No fabricated completion**  
 If required documentation meaning cannot be established without an unavailable capability, AppManager shall report the limitation rather than fabricate content to satisfy apparent completeness.
 
+<a id="fr-docs-090"></a>
+
 **FR-DOCS-090 — Sensitive context**  
-Documentation context supplied to AI capabilities shall respect effective policy for sensitive data and shall not include protected material merely because it is present in managed project files or configuration.
+Documentation context disclosed for AI assistance shall apply [FR-AI-088](ai-functional-specification-v01.md#fr-ai-088), [FR-AI-089](ai-functional-specification-v01.md#fr-ai-089), [FR-AI-096](ai-functional-specification-v01.md#fr-ai-096).
 
 ---
 
@@ -376,29 +732,47 @@ Documentation context supplied to AI capabilities shall respect effective policy
 
 Version 1 supports operating configured documentation tooling for development, build and preview workflows without making VitePress, package-manager commands or process-spawn mechanics part of the Functional contract.
 
+<a id="fr-docs-091"></a>
+
 **FR-DOCS-091 — Documentation-tool operation**  
 Where documentation tooling is configured and supported for a managed documentation target, AppManager may expose documentation development, build and preview operations as Docs use cases.
+
+<a id="fr-docs-092"></a>
 
 **FR-DOCS-092 — Explicit tooling target**  
 A tooling invocation shall distinguish which documentation project or documentation scope it operates against and shall not silently choose between AppManager's own documentation and a managed target project's documentation.
 
+<a id="fr-docs-093"></a>
+
 **FR-DOCS-093 — Managed-project documentation tooling**  
 Managed-project documentation tooling shall be available only where the required documentation project/tooling capability can be recognized or configured sufficiently to execute the requested operation.
+
+<a id="fr-docs-094"></a>
 
 **FR-DOCS-094 — Tool implementation independence**  
 The Functional Specification shall not require VitePress specifically; a later Detailed Design or effective project configuration may select VitePress or another supported provider.
 
+<a id="fr-docs-095"></a>
+
 **FR-DOCS-095 — Development operation**  
 A supported documentation development operation may be long-running and shall expose execution state and cancellation semantics through the common invocation model where supported.
 
+<a id="fr-docs-096"></a>
+
 **FR-DOCS-096 — Build operation**  
-A supported documentation build operation shall report application-level success or failure independently of provider-specific exit presentation.
+Documentation build completion shall apply [FR-INV-034](application-invocation-functional-specification-v01.md#fr-inv-034).
+
+<a id="fr-docs-097"></a>
 
 **FR-DOCS-097 — Preview operation**  
 A supported documentation preview operation shall report whether the preview capability started successfully and shall not be represented as documentation-generation success merely because a server process launched.
 
+<a id="fr-docs-098"></a>
+
 **FR-DOCS-098 — Delegated tooling failure**  
 A documentation-tool provider failure shall be interpreted and returned as a Docs application outcome rather than exposed only as an unstructured provider error.
+
+<a id="fr-docs-099"></a>
 
 **FR-DOCS-099 — Generated tooling artefacts**  
 Build artefacts produced by delegated documentation tooling shall be reported as delegated effects where functionally relevant but shall not expand Docs mutation authority over unrelated project resources.
@@ -407,22 +781,34 @@ Build artefacts produced by delegated documentation tooling shall be reported as
 
 ## 13. Documentation Extraction and Aggregation
 
-Extraction, aggregation or generation of documentation from managed source is a Docs-domain responsibility when documentation is the primary intent, even where the inspected resources are Nuxt layers. Nuxt-specific recognition remains delegated to Nuxt authority.
+The requirements below bind this concern to its shared and domain-specific owners.
+
+<a id="fr-docs-100"></a>
 
 **FR-DOCS-100 — Documentation extraction ownership**  
 Extraction, aggregation or generation of documentation from managed source is a Docs-domain responsibility when documentation is the primary intent, even where the inspected resources are Nuxt layers.
 
+<a id="fr-docs-101"></a>
+
 **FR-DOCS-101 — Nuxt fact delegation**  
 Docs may consume Nuxt-specific facts from the `nuxt` domain or an approved Nuxt capability without independently redefining Nuxt recognition or configuration semantics.
+
+<a id="fr-docs-102"></a>
 
 **FR-DOCS-102 — Multi-file aggregation**  
 A documentation use case may aggregate information from multiple eligible files into one or more documentation artefacts while preserving target provenance and reporting unsupported or failed inputs.
 
+<a id="fr-docs-103"></a>
+
 **FR-DOCS-103 — No raw-dump requirement**  
 Aggregation shall not require verbatim concatenation of source files; the observable requirement is useful documentation derived from approved facts and content within copyright, security and project policy constraints.
 
+<a id="fr-docs-104"></a>
+
 **FR-DOCS-104 — Selection policy**  
 The file types and resources included in an aggregation shall be determined by the documentation use case, managed scope and effective configuration rather than by an unbounded recursive scan.
+
+<a id="fr-docs-105"></a>
 
 **FR-DOCS-105 — Exclusions**  
 Generated output, dependency trees, caches, protected data and other resources excluded by project or documentation policy shall not be included merely because they are reachable beneath a target directory.
@@ -431,26 +817,42 @@ Generated output, dependency trees, caches, protected data and other resources e
 
 ## 14. Results, Diagnostics and Failure Semantics
 
+<a id="fr-docs-106"></a>
+
 **FR-DOCS-106 — Structured success**  
 A successful documentation result shall identify the requested use case, resolved target scope and resulting artefacts or read-only documentation output as applicable.
+
+<a id="fr-docs-107"></a>
 
 **FR-DOCS-107 — Structured failure**  
 A failed result shall identify the stage and target responsible sufficiently for automation or a user to distinguish target-resolution, inspection, generation, transformation, delegated-tool and acceptance failures.
 
+<a id="fr-docs-108"></a>
+
 **FR-DOCS-108 — Partial success**  
-Multi-target or multi-artefact operations shall represent partial success explicitly rather than collapsing mixed outcomes into success or failure alone.
+Multi-target and multi-artefact documentation shall apply [FR-INV-036](application-invocation-functional-specification-v01.md#fr-inv-036).
+
+<a id="fr-docs-109"></a>
 
 **FR-DOCS-109 — Warnings**  
 Non-fatal omissions, unsupported source types, stale inputs, unavailable optional enrichment and similar conditions shall be exposed as warnings where they materially affect interpretation of the documentation outcome.
 
+<a id="fr-docs-110"></a>
+
 **FR-DOCS-110 — Diagnostic sensitivity**  
-Diagnostics shall avoid exposing protected information or unnecessary sensitive project content.
+Docs diagnostics shall apply [FR-INV-040](application-invocation-functional-specification-v01.md#fr-inv-040).
+
+<a id="fr-docs-111"></a>
 
 **FR-DOCS-111 — Provider abstraction**  
-Machine-consumable outcomes shall not require callers to parse raw provider stdout, stderr, prompts or UI text to determine application-level documentation status.
+Docs results independent of provider output shall apply [FR-INV-021](application-invocation-functional-specification-v01.md#fr-inv-021).
+
+<a id="fr-docs-112"></a>
 
 **FR-DOCS-112 — Consequential effect reporting**  
 When documentation writes or delegated tooling produce consequential effects, the result shall identify those effects sufficiently for callers to understand what changed or was produced.
+
+<a id="fr-docs-113"></a>
 
 **FR-DOCS-113 — Acceptance failure**  
 If generated or transformed documentation is syntactically valid but fails AppManager's intent, scope, safety or acceptance policy, the operation shall not report complete success.
@@ -459,20 +861,32 @@ If generated or transformed documentation is syntactically valid but fails AppMa
 
 ## 15. Safety and Non-Destructive Behaviour
 
+<a id="fr-docs-114"></a>
+
 **FR-DOCS-114 — Source preservation**  
-Documentation generation shall preserve source code and project configuration unless the selected use case explicitly authorizes a bounded documentation transformation of that resource.
+Source/configuration preservation during documentation production shall apply [FR-DOCS-046](docs-functional-specification-v01.md#fr-docs-046).
+
+<a id="fr-docs-115"></a>
 
 **FR-DOCS-115 — No implicit deletion**  
 A documentation generation or update operation shall not delete unrelated documentation artefacts merely because they are absent from the newly generated set.
 
+<a id="fr-docs-116"></a>
+
 **FR-DOCS-116 — Explicit replacement policy**  
 Replacement of substantial existing authored documentation shall require an explicit applicable policy and, where required by invocation or transformation semantics, confirmation or non-interactive authorization.
 
+<a id="fr-docs-117"></a>
+
 **FR-DOCS-117 — Stale-source protection**  
-Where a documentation transformation is based on previously inspected existing content, AppManager shall avoid silently applying a stale plan when the target has materially changed and that change can be detected.
+Previously inspected documentation update targets shall apply [FR-XFORM-020](source-transformation-functional-specification-v01.md#fr-xform-020), [FR-XFORM-068](source-transformation-functional-specification-v01.md#fr-xform-068).
+
+<a id="fr-docs-118"></a>
 
 **FR-DOCS-118 — External effects**  
 Starting a documentation server or invoking external documentation tooling shall be treated as an observable delegated effect and shall not occur as a hidden side effect of a read-only documentation-inspection request.
+
+<a id="fr-docs-119"></a>
 
 **FR-DOCS-119 — Fail-safe ambiguity**  
 Where target, output destination, overwrite intent or consequential scope is ambiguous, AppManager shall fail safely rather than infer the most destructive interpretation.
@@ -481,22 +895,23 @@ Where target, output destination, overwrite intent or consequential scope is amb
 
 ## 16. Traceability Summary
 
-| Functional area | Requirements | Current authority |
-|---|---|---|
-| Domain boundary and authority | FR-DOCS-001–005 | Root Design §§1, 3, 6, 10; decomposition plan §5.2 |
-| Invocation and project context | FR-DOCS-006–018 | Root Design §§4–7; FR-INV, FR-PROJ, FR-CONFIG |
-| Documentation target model | FR-DOCS-019–030 | This specification §4; FR-PROJ |
-| Complete application | FR-DOCS-031–040 | This specification §5; FR-PROJ |
-| Application source | FR-DOCS-041–050 | This specification §6; FR-XFORM |
-| Layers | FR-DOCS-051–060 | This specification §7; FR-PROJ; FR-NUXT |
-| Tests | FR-DOCS-061–066 | This specification §8; Quality ownership boundary |
-| Selected file | FR-DOCS-067–072 | This specification §9; FR-PROJ |
-| Generation and update | FR-DOCS-073–083 | This specification §10; Root Design generation boundaries; FR-XFORM |
-| AI assistance | FR-DOCS-084–090 | This specification §11; Root Design capability boundaries; FR-AI |
-| Documentation tooling | FR-DOCS-091–099 | This specification §12; Process Execution boundary |
-| Extraction/aggregation | FR-DOCS-100–105 | This specification §13; decomposition plan §5.2; FR-NUXT |
-| Results and diagnostics | FR-DOCS-106–113 | This specification §14; FR-INV; Application Engine authority |
-| Safety | FR-DOCS-114–119 | This specification §15; Root Design safety principles; FR-XFORM; FR-PROJ |
+| Functional area | Requirements | Upstream / same-level authority | Downstream refinement destination |
+|---|---|---|---|
+| Domain boundary and authority | FR-DOCS-001–005 | This specification; Root Design §§1, 3, 6, 10 | Owning domain/shared-contract Detailed Design |
+| Invocation and project context | FR-DOCS-006–018 | This specification; Root Design §§4–7; FR-INV, FR-PROJ, FR-CONFIG | Owning domain/shared-contract Detailed Design |
+| Documentation target model | FR-DOCS-019–030 | This specification §4; FR-PROJ | Owning domain/shared-contract Detailed Design |
+| Complete application | FR-DOCS-031–040 | This specification §5; FR-PROJ | Owning domain/shared-contract Detailed Design |
+| Application source | FR-DOCS-041–050 | This specification §6; FR-XFORM | Owning domain/shared-contract Detailed Design |
+| Layers | FR-DOCS-051–060 | This specification §7; FR-PROJ; FR-NUXT | Owning domain/shared-contract Detailed Design |
+| Tests | FR-DOCS-061–066 | This specification §8; Quality Functional Specification | Owning domain/shared-contract Detailed Design |
+| Selected file | FR-DOCS-067–072 | This specification §9; FR-PROJ | Owning domain/shared-contract Detailed Design |
+| Generation and update | FR-DOCS-073–083 | This specification §10; Root Design generation boundaries; FR-XFORM | Owning domain/shared-contract Detailed Design |
+| AI assistance | FR-DOCS-084–090 | This specification §11; Root Design capability boundaries; FR-AI | Owning domain/shared-contract Detailed Design |
+| Documentation tooling | FR-DOCS-091–099 | This specification §12 | Process Execution boundary |
+| Extraction/aggregation | FR-DOCS-100–105 | This specification §13; FR-NUXT | Owning domain/shared-contract Detailed Design |
+| Results and diagnostics | FR-DOCS-106–113 | This specification §14; FR-INV; Application Engine authority | Owning domain/shared-contract Detailed Design |
+| Safety | FR-DOCS-114–119 | This specification §15; Root Design safety principles; FR-XFORM; FR-PROJ | Owning domain/shared-contract Detailed Design |
+| Coordinated artefact production | FR-DOCS-PBC-001–026 | This specification §10.1; Managed Project; Source Transformation; AI | Docs domain and Documentation/AI capabilities |
 
 ---
 
@@ -512,10 +927,4 @@ Neither level may redefine the functional ownership established here without an 
 
 ## 18. Version 1 Functional Baseline
 
-This document establishes the Version 1 Functional baseline for the AppManager `docs` domain.
-
-The central rule is:
-
-> **Documentation may inspect and describe the whole managed application, but its authority to change the project remains limited to the explicitly approved documentation operation and scope.**
-
-This preserves documentation as a first-class AppManager product capability without turning it into an alternate project scanner, Nuxt authority, source-mutation engine, AI authority or application-lifecycle subsystem.
+This document is the Version 1 Functional owner for its stated concern. Its requirement identities remain stable under the [Project Documentation Guide](../project-documentation-guide-v01.md#_9-traceability).

@@ -8,7 +8,7 @@
 >
 > **Related clarification:** [Maintenance Domain Reclassification Clarification](maintenance-domain-reclassification-clarification-v01.md)
 >
-> **Functional binding:** [Maintenance Coordinated Operations Functional Clarification](../../functional/clarifications/maintenance-coordinated-operations-functional-clarification-v01.md)
+> **Functional binding:** [Maintenance Coordinated Operations Functional Specification](../../functional/utils-functional-specification-v01.md#_11-1-coordinated-resource-operations)
 
 ## 1. Purpose
 

@@ -26,6 +26,8 @@ Every other occurrence shall be reduced to one of:
 
 Duplicate normative restatement is not acceptable merely because its canonical owner is known or recorded elsewhere.
 
+Reduction must also preserve the documentation as a usable human specification. A reader of an edited document must be able to understand that document's purpose, local responsibilities, workflow, constraints and relationship to referenced authorities without having the referenced prose copied into the document.
+
 ## 2. Baseline
 
 PR #177 merged at `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`, and live `master` was independently verified at that exact SHA before NCR execution began.
@@ -58,6 +60,8 @@ Downstream documents reference inherited semantics and state only their local bi
 
 A downstream paragraph fails NCR when it substantially restates an inherited proposition even if the paragraph is correct.
 
+A document also fails NCR when technically correct references leave its local design incomprehensible to a human reader. References remove duplicated normative substance; they do not remove the local narrative needed to explain what the document itself owns and how its owned responsibilities fit together.
+
 ## 4. Permitted Occurrence Classes
 
 Every occurrence of a normative proposition is classified as exactly one of:
@@ -70,6 +74,8 @@ Every occurrence of a normative proposition is classified as exactly one of:
 
 There is no general `RETAIN` category for repeated prose. If repeated text is not canonical, a reference, a necessary local binding or a local delta, it is a duplicate.
 
+A `REFERENCE` may include concise orienting prose that tells the reader why the authority is relevant in the present context. That prose must explain the local relationship rather than paraphrase the referenced rule.
+
 ## 5. Reduction Test
 
 For each normative paragraph or mixed paragraph:
@@ -80,7 +86,9 @@ For each normative paragraph or mixed paragraph:
 4. if another document owns it, replace substantive restatement with a precise reference;
 5. if inherited and local semantics are mixed, split them, retain only the local delta and reference the inherited owner;
 6. preserve examples only when they illustrate already-owned semantics and are clearly non-normative;
-7. do not create a generic abstraction merely because several propositions have similar wording or shape.
+7. do not create a generic abstraction merely because several propositions have similar wording or shape;
+8. read the edited section as a human reader who has not memorised the referenced source and confirm that the section still explains its own subject, local responsibility, sequence and constraints;
+9. if a bare reference would make the section cryptic, retain concise contextual narrative that explains the local binding without reproducing the inherited normative proposition.
 
 For PBC-1 clarification propositions, the same test applies. The clarification's temporary location does not become permanent ownership: identify the proper primary owner under Design -> Functional -> Detailed Design -> Implementation, integrate the proposition there as `CANONICAL`, `LOCAL_BINDING` or `LOCAL_DELTA` as appropriate, and remove the temporary duplicate occurrence when its integration obligation is complete.
 
@@ -93,6 +101,8 @@ NCR is one finite programme. The following are execution passes, not independent
 Establish physical single-statement ownership across Design and Functional specifications. Architectural explanation owned by Design is referenced from Functional; Functional retains observable `FR-*` obligations and Functional-owned consequences.
 
 NCR-1 shall also integrate and retire the Design- and Functional-level PBC-1 clarification vehicles after their propositions are accounted at the proper primary owners.
+
+Design and Functional documents must remain independently navigable and comprehensible at their own abstraction level. Functional Specifications should introduce the user-visible concern and explain the local requirement model before using precise Design references; they must not become collections of unexplained cross-references and requirement identifiers.
 
 ### NCR-2 — Detailed Design
 
@@ -132,6 +142,8 @@ and every non-canonical occurrence must be `REFERENCE`, `LOCAL_BINDING` or `LOCA
 
 The comparison shall include the semantics introduced by every accepted PBC-1 correction present at the baseline. A proposition shall not be discarded merely because it originated in a temporary clarification rather than a primary document.
 
+NCR-5 shall additionally perform a human-readability review of each reduced normative document. Passing cardinality is necessary but not sufficient: the resulting corpus must remain coherent, navigable and understandable without requiring a reader to reconstruct sentences from chains of references.
+
 NCR remains open until failures are corrected. A failed verification does **not** create another rationalisation programme.
 
 ## 7. Anti-Circularity Controls
@@ -143,6 +155,7 @@ NCR remains open until failures are corrected. A failed verification does **not*
 5. **No architecture by deduplication.** Reduction may reference existing owners but may not invent product abstractions to make prose shorter.
 6. **No implementation before NCR exit.** Version 1 implementation remains paused until NCR-5 passes and the resulting live `master` is verified.
 7. **No PBC reopening by default.** The semantic baseline is frozen for NCR. Reduction shall not reopen settled command or architecture design merely because integration exposes different wording. Only an actual contradiction, semantic-loss defect or unresolved authoritative conflict may justify a controlled normative correction, and it shall be corrected within NCR rather than spawning another rationalisation programme.
+8. **No reference-only degradation.** NCR shall not optimise for the fewest words or references at the expense of comprehension. Concise local narrative is retained whenever it is needed to explain the document's own model, provided that narrative does not restate inherited normative substance.
 
 ## 8. Working Proposition Ledger
 
@@ -171,9 +184,10 @@ Each execution PR records at minimum:
 - number of canonical references introduced;
 - number of temporary clarification files integrated/retired where applicable;
 - stable `FR-*`, DD and IS identities affected;
-- unresolved NCR failures, if any.
+- unresolved NCR failures, if any;
+- human-readability issues identified and corrected during the pass.
 
-Word/line reduction is evidence of reduced text burden, not the semantic acceptance criterion. The decisive metric is **duplicate normative restatements remaining = 0** at NCR-5.
+Word/line reduction is evidence of reduced text burden, not the semantic acceptance criterion. The decisive structural metric is **duplicate normative restatements remaining = 0** at NCR-5; semantic preservation and human comprehensibility remain co-equal acceptance constraints.
 
 ## 10. Branch and PR Discipline
 
@@ -191,9 +205,10 @@ NCR completes only when all of the following are true:
 4. no semantic proposition present at the semantically complete pre-NCR baseline has been lost except an explicitly controlled normative correction made through its proper owner;
 5. every accepted PBC-1 semantic correction present at the baseline remains accounted after its temporary clarification vehicles are integrated/retired;
 6. all stable Functional requirement, DD and IS identities remain accounted;
-7. the final physical text metrics are recorded;
-8. NCR-5 passes against `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`;
-9. the final NCR PR is merged and live `master` independently verifies the resulting corpus.
+7. every reduced normative document remains coherent, navigable and human-comprehensible at its own abstraction level without restating referenced normative material;
+8. the final physical text metrics are recorded;
+9. NCR-5 passes against `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`;
+10. the final NCR PR is merged and live `master` independently verifies the resulting corpus.
 
 At that point the verified live commit becomes the **Version 1 lean implementation documentation baseline**, and implementation may begin.
 

@@ -6,7 +6,7 @@
 >
 > **Primary Detailed Design:** [DD-4.4 — Utils Domain](../dd-4-4-utils-domain-detailed-design-v01.md)
 >
-> **Functional binding:** [Maintenance Domain Functional Clarification](../../functional/clarifications/maintenance-domain-functional-clarification-v01.md)
+> **Functional binding:** [Maintenance Domain Functional Specification](../../functional/utils-functional-specification-v01.md#_2-1-canonical-version-1-command-surface)
 
 ## 1. Purpose
 

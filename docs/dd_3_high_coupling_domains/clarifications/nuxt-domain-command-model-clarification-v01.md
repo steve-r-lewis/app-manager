@@ -6,7 +6,7 @@
 >
 > **Primary Detailed Design:** [DD-3.3 — Nuxt Domain](../dd-3-3-nuxt-domain-detailed-design-v01.md)
 >
-> **Functional binding:** [Nuxt Command Model Functional Clarification](../../functional/clarifications/nuxt-command-model-functional-clarification-v01.md)
+> **Functional binding:** [Nuxt Command Model Functional Specification](../../functional/nuxt-functional-specification-v01.md#_4-6-canonical-version-1-command-surface)
 
 ## 1. Purpose
 

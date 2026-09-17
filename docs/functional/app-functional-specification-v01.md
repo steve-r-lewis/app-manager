@@ -8,7 +8,7 @@
 >
 > **Related Functional Specifications:** [application-invocation-functional-specification-v01.md](application-invocation-functional-specification-v01.md), [managed-project-functional-specification-v01.md](managed-project-functional-specification-v01.md), [configuration-functional-specification-v01.md](configuration-functional-specification-v01.md), [source-transformation-functional-specification-v01.md](source-transformation-functional-specification-v01.md)
 >
-> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
+> **Historical planning provenance (non-normative):** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ---
 
@@ -21,10 +21,6 @@ The `app` domain owns use cases whose primary product identity is the lifecycle 
 The governing question for this document is:
 
 > **What application-lifecycle behaviour must AppManager provide for a managed root application?**
-
-The central functional boundary is:
-
-> **The `app` domain owns root-application lifecycle intent. It does not own the implementation mechanics of package managers, process execution, Git, Nuxt, source transformation, templates, or host tools used to realise that intent.**
 
 This distinction is essential to prevent lifecycle commands from becoming duplicated wrappers around lower-level mechanisms.
 
@@ -80,9 +76,7 @@ Those concerns belong to other Functional Specifications, Detailed Design Specif
 
 ### 4.1 Root-application lifecycle ownership
 
-`app` is the functional home for user and automation intents that concern the managed root application's lifecycle as an application.
-
-Examples include making an existing checkout ready for development, running the application locally, building it, previewing it, cleaning regenerable state, resetting its generated environment, reinitialising it, and creating a new root application.
+The workflows below follow an existing checkout through preparation, development, build/preview, clean/reset and re-preparation, and separately describe new-root creation. Their product placement is defined in [Design §10.3](../appmanager-design-specification-v01.md#_10-3-app-domain).
 
 ### 4.2 Delegated capabilities
 
@@ -98,24 +92,15 @@ An `app` use case may delegate specialist work to capabilities responsible for a
 - Nuxt-aware operations;
 - logging and diagnostics.
 
-Delegation does not transfer ownership of the application lifecycle use case.
+The owning requirements below define the applicable local contract.
 
 ### 4.3 Relationship to Nuxt-layer creation
 
-Version 1 assigns Nuxt-layer creation singularly to the `nuxt` domain:
-
-> **Creation or provisioning of a Nuxt layer is owned by the `nuxt` domain because the identity and validity of that use case are intrinsically Nuxt-specific.**
-
-The `app` domain may expose a successful root-application creation outcome that recommends or enables a subsequent Nuxt-layer creation use case, but it shall not duplicate the Nuxt-layer creation behaviour.
+A root creation workflow may recommend or coordinate [Nuxt layer creation](nuxt-functional-specification-v01.md#fr-nuxt-051) as its next step under FR-APP-070 and FR-APP-088.
 
 ### 4.4 Relationship to project-package scripts
 
-Executing a package-defined script remains an `app` domain use case where the intent is to operate the managed application through a script that the project itself declares.
-
-This is not authority for arbitrary shell execution. The distinction is:
-
-- **declared project script:** bounded AppManager application operation;
-- **arbitrary command or shell string:** not an `app` functional requirement.
+Declared-script execution supports the lifecycle model under [§4.6](#_4-6-canonical-version-1-command-surface). Its bounded selection and execution contract is in §15.
 
 ### 4.5 Cross-cutting authority
 
@@ -130,81 +115,121 @@ This specification references those behaviours and adds only `app`-specific requ
 
 ---
 
+### 4.6 Canonical Version 1 Command Surface
+
+| Canonical identity | Behavioural owner |
+|---|---|
+| `app.create` | §14, new root application |
+| `app.prepare` | §6, existing-application readiness |
+| `app.develop` | §8, local development |
+| `app.build` | §9, build |
+| `app.preview` | §10, production-build preview |
+| `app.generate` | §10.1, generation/prerender |
+| `app.clean` | §11, regenerable cache/build cleanup |
+| `app.reset` | §12, broader regenerable installation/build reset |
+
+These eight identities are the App catalogue. `app.initialise` is replaced by `app.prepare`. Post-install behaviour (§7) is a subordinate creation/preparation/dependency stage; `app.post-install` is not a public command. Re-preparation (§13) composes reset and prepare, with build when required by the selected workflow; `app.reinitialise` is not a separate command. A convenience adapter action does not add an identity. Declared-script execution (§15) is supporting functionality, not a canonical `app.run-script` command or a namespace of discovered scripts.
+
+---
+
 ## 5. General App-Domain Requirements
 
-### FR-APP-001 — Coherent app-domain semantics
+<a id="fr-app-001"></a>
 
-AppManager shall provide one coherent set of `app` domain semantics across supported interaction modes and host integrations.
+### FR-APP-001 — Coherent app-domain semantics
+App invocation paths shall apply [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="fr-app-002"></a>
 
 ### FR-APP-002 — Application Engine authority
+App lifecycle orchestration shall conform to [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority), [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
-The Application Engine shall retain authority over `app` use-case intent, lifecycle sequencing, application policy, safety decisions, delegated-result interpretation, and final application-level outcomes.
+<a id="fr-app-003"></a>
 
 ### FR-APP-003 — Domain operations represent application intent
+App lifecycle/root-creation intent shall conform to [Design §5.1](../appmanager-design-specification-v01.md#_5-1-domain-oriented-command-model) and the provider boundary in [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
-An `app` operation shall represent a coherent application-lifecycle or root-application-creation intent rather than exposing a lower-level tool mechanism as the primary product abstraction.
+<a id="fr-app-004"></a>
 
 ### FR-APP-004 — Managed project required for existing-project lifecycle operations
+Existing-project lifecycle readiness shall apply [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
-An existing-project lifecycle operation shall require a valid managed-project context sufficient for that operation before consequential effects begin.
+<a id="fr-app-005"></a>
 
 ### FR-APP-005 — Root application targeting
 
 Existing-project lifecycle operations owned by `app` shall target the managed root application unless a use case explicitly defines a narrower valid target.
 
-### FR-APP-006 — No implicit scope expansion
+<a id="fr-app-006"></a>
 
-An `app` lifecycle operation shall not silently expand from the root application's approved managed scope into unrelated layers, repositories, directories, or external resources merely because they are discoverable.
+### FR-APP-006 — No implicit scope expansion
+Root-application lifecycle scope shall apply [FR-PROJ-042](managed-project-functional-specification-v01.md#fr-proj-042).
+
+<a id="fr-app-007"></a>
 
 ### FR-APP-007 — Capability delegation is subordinate
+Package manager, process, filesystem, Git, generation and Nuxt delegation shall conform to [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority), [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
-A package manager, process runner, filesystem mechanism, Git capability, generator, Nuxt capability, or other delegated provider shall not redefine `app` command intent, sequencing, safety, or success criteria.
+<a id="fr-app-008"></a>
 
 ### FR-APP-008 — Effective configuration consumption
+Configurable lifecycle inputs shall apply [FR-CONFIG-020](configuration-functional-specification-v01.md#fr-config-020).
 
-Where an `app` use case depends on configurable values, it shall consume effective configuration according to the Configuration Functional Specification rather than independently interpreting arbitrary raw configuration sources.
+<a id="fr-app-009"></a>
 
 ### FR-APP-009 — Availability is use-case specific
+Lifecycle availability for the resolved project context shall apply [FR-INV-014](application-invocation-functional-specification-v01.md#fr-inv-014).
 
-AppManager shall distinguish whether an `app` use case is available for the resolved project context instead of assuming that every lifecycle operation is valid for every project.
+<a id="fr-app-010"></a>
 
 ### FR-APP-010 — Unavailable is not unknown
+Recognised App operations whose preconditions are unmet shall apply [FR-INV-015](application-invocation-functional-specification-v01.md#fr-inv-015).
 
-Where a recognised `app` operation exists but its preconditions are not met, AppManager shall report it as unavailable or inapplicable rather than as an unknown operation.
+<a id="fr-app-011"></a>
 
 ### FR-APP-011 — Observable precondition failures
 
 When an `app` operation cannot proceed because required project metadata, lifecycle capability, configuration, or target state is absent or invalid, AppManager shall provide structured diagnostics identifying the unmet functional precondition.
 
-### FR-APP-012 — Lower-level success is not automatically app success
+<a id="fr-app-012"></a>
 
-Successful completion of a delegated process, generation step, filesystem operation, or provider call shall not by itself establish successful completion of the `app` use case.
+### FR-APP-012 — Lower-level success is not automatically app success
+Delegated App-stage completion shall apply [FR-INV-034](application-invocation-functional-specification-v01.md#fr-inv-034).
 
 ---
 
-## 6. Initialise Existing Application Environment
+## 6. Prepare Existing Application Environment
 
 ### 6.1 Purpose
 
-Initialisation prepares an already-existing managed root application for normal development or subsequent AppManager lifecycle operations.
+In this specification, existing-project initialisation means the preparation behaviour invoked by `app.prepare`.
 
 It is distinct from creation of a brand-new application.
+
+<a id="fr-app-013"></a>
 
 ### FR-APP-013 — Existing-project initialisation use case
 
 AppManager shall provide an `app` use case that initialises an existing managed root application environment.
 
+<a id="fr-app-014"></a>
+
 ### FR-APP-014 — Initialisation shall not scaffold over an existing project
 
 Initialisation shall treat the resolved project as an existing application to prepare, not as a target to replace with a newly generated root scaffold.
+
+<a id="fr-app-015"></a>
 
 ### FR-APP-015 — Dependency readiness
 
 Where dependency installation or restoration is required to make the managed application development-ready, initialisation shall arrange for that lifecycle step through the appropriate delegated capability.
 
-### FR-APP-016 — Existing environment-example material
+<a id="fr-app-016"></a>
 
-Where the project provides an established environment-example artefact and the corresponding local environment artefact is absent, initialisation may create the local artefact from the project-provided example according to applicable configuration, transformation, generation, and sensitive-information rules.
+### FR-APP-016 — Existing environment-example material
+Where preparation requires a missing local environment definition from an established project example, App shall coordinate [Settings FR-SET-060](settings-functional-specification-v01.md#fr-set-060). App supplies or resolves the managed project, intended definition and approved example/default source, sequences this step with dependency readiness, and interprets the Settings result for lifecycle completion.
+
+<a id="fr-app-017"></a>
 
 ### FR-APP-017 — No secret fabrication
 
@@ -212,13 +237,18 @@ Initialisation shall not invent secret values merely to make an environment arte
 
 Where user-supplied or externally supplied sensitive values remain required, AppManager shall report that requirement without falsely claiming the environment is fully configured.
 
-### FR-APP-018 — Existing environment preservation
+<a id="fr-app-018"></a>
 
-Initialisation shall not overwrite an already-existing user-managed environment artefact merely because an environment-example artefact also exists, unless an explicitly authorised replacement use case requires that behaviour.
+### FR-APP-018 — Existing environment preservation
+Preparation shall consume the existing-definition disposition required by [FR-SET-061](settings-functional-specification-v01.md#fr-set-061); it shall not bypass that protection through an alternate copy path. An explicitly authorised replacement uses the Settings-owned operation.
+
+<a id="fr-app-019"></a>
 
 ### FR-APP-019 — Managed repository relationship readiness
 
 Where existing managed repository relationships are required for the application to be development-ready, initialisation may coordinate the appropriate Git-domain behaviour rather than implementing independent repository synchronisation semantics.
+
+<a id="fr-app-020"></a>
 
 ### FR-APP-020 — Optional development-environment artefacts
 
@@ -226,17 +256,24 @@ Project-local development-environment artefacts may be provisioned during initia
 
 They shall not be treated as universal requirements of every managed project.
 
+<a id="fr-app-021"></a>
+
 ### FR-APP-021 — Host-tool neutrality
 
 Initialisation shall not require a particular IDE or editor in order for the application to be considered successfully initialised.
+
+<a id="fr-app-022"></a>
 
 ### FR-APP-022 — Initialisation completion criteria
 
 A successful initialisation outcome shall identify the lifecycle preparation steps that completed and any remaining user action required before the application is fully usable.
 
-### FR-APP-023 — Initialisation partial completion
+<a id="fr-app-023"></a>
 
-If initialisation consists of multiple consequential steps and only some complete, AppManager shall report the operation as partial or failed according to the invocation specification and identify which lifecycle preparation steps did and did not complete.
+### FR-APP-023 — Initialisation partial completion
+Incomplete multi-stage preparation shall apply [FR-INV-036](application-invocation-functional-specification-v01.md#fr-inv-036). The result shall identify completed and incomplete preparation stages.
+
+<a id="fr-app-024"></a>
 
 ### FR-APP-024 — Idempotent-safe behaviour where practical
 
@@ -246,17 +283,24 @@ Repeated initialisation shall avoid unnecessary destructive replacement of alrea
 
 ## 7. Post-Installation Lifecycle Behaviour
 
-### FR-APP-025 — Post-installation use case
+<a id="fr-app-025"></a>
 
-AppManager shall support project post-installation behaviour as an `app` lifecycle use case when the managed root application declares an applicable post-installation lifecycle action.
+### FR-APP-025 — Post-installation use case
+AppManager shall support the managed root application's declared post-installation behaviour as a subordinate preparation, creation or dependency-readiness stage under §4.6.
+
+<a id="fr-app-026"></a>
 
 ### FR-APP-026 — Declaration-aware availability
 
 Where no applicable project post-installation action is declared, AppManager shall either make the use case unavailable or report explicitly that no such lifecycle action exists; absence shall not be treated as an opaque process failure.
 
+<a id="fr-app-027"></a>
+
 ### FR-APP-027 — Project declaration is the source of action identity
 
 Post-installation execution shall be based on the managed project's declared lifecycle behaviour rather than on an AppManager hard-coded assumption that every project contains the same script or mechanism.
+
+<a id="fr-app-028"></a>
 
 ### FR-APP-028 — Structured completion
 
@@ -266,69 +310,103 @@ Post-installation execution shall expose structured success or failure at the `a
 
 ## 8. Local Development Execution
 
+<a id="fr-app-029"></a>
+
 ### FR-APP-029 — Local development use case
 
 AppManager shall provide an `app` use case for starting the managed root application's local development execution where the project supports such a lifecycle action.
+
+<a id="fr-app-030"></a>
 
 ### FR-APP-030 — Long-running operation semantics
 
 Local development execution shall be treated as a potentially long-running lifecycle operation and shall support appropriate progress, execution-state, and cancellation behaviour through the Application Invocation Contract where supported.
 
+<a id="fr-app-031"></a>
+
 ### FR-APP-031 — Project-defined lifecycle mapping
 
 The concrete mechanism used to start local development shall be resolved from the managed project and effective configuration rather than being defined by this Functional Specification as a fixed command string.
+
+<a id="fr-app-032"></a>
 
 ### FR-APP-032 — Delegated termination interpretation
 
 Termination of the delegated development process shall be interpreted by AppManager as an application-level completion, cancellation, or failure according to the reason and invocation state rather than solely by terminal presentation.
 
-### FR-APP-033 — No interaction-only dependency
+<a id="fr-app-033"></a>
 
-Headless callers shall be able to invoke local development execution without depending on an interactive menu when all required invocation data is supplied or resolvable.
+### FR-APP-033 — No interaction-only dependency
+Headless local-development invocation shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
 
 ---
 
 ## 9. Build
 
+<a id="fr-app-034"></a>
+
 ### FR-APP-034 — Build use case
 
 AppManager shall provide an `app` use case for building the managed root application where the project supports a build lifecycle action.
+
+<a id="fr-app-035"></a>
 
 ### FR-APP-035 — Build availability
 
 A build operation shall be unavailable or shall fail with a specific precondition diagnostic when the managed project does not define or support an applicable build lifecycle.
 
+<a id="fr-app-036"></a>
+
 ### FR-APP-036 — Build result
 
 The build outcome shall distinguish at least successful build completion from delegated execution failure and AppManager-level rejection or invalid postcondition where applicable.
+
+<a id="fr-app-037"></a>
 
 ### FR-APP-037 — Build artefact assumptions are lower-level
 
 This specification shall not require a universal build-output directory or artefact layout. Any such expectation shall come from project context, effective configuration, Nuxt-specific behaviour, or lower-level specifications.
 
-### FR-APP-038 — Build does not silently mutate unrelated source
+<a id="fr-app-038"></a>
 
-A build use case shall not acquire authority to rewrite unrelated user source merely because an underlying tool is capable of doing so. AppManager-controlled source changes remain governed by the Source Transformation Functional Specification.
+### FR-APP-038 — Build does not silently mutate unrelated source
+AppManager-controlled source changes during build shall apply [FR-XFORM-014](source-transformation-functional-specification-v01.md#fr-xform-014).
 
 ---
 
 ## 10. Preview
 
+<a id="fr-app-039"></a>
+
 ### FR-APP-039 — Preview use case
 
 AppManager shall provide an `app` use case for previewing the managed root application where the project supports an applicable preview lifecycle action.
+
+<a id="fr-app-040"></a>
 
 ### FR-APP-040 — Preview prerequisite behaviour
 
 Where preview requires a prior build or another project-specific prerequisite, AppManager shall either validate that prerequisite before execution or allow the delegated lifecycle action to establish the failure, but the chosen behaviour shall be deterministic and documented at the appropriate lower specification level.
 
-### FR-APP-041 — No universal output-layout assumption
+<a id="fr-app-041"></a>
 
-Preview shall not infer a universal build-output location at the Functional level.
+### FR-APP-041 — No universal output-layout assumption
+Preview build-output assumptions shall apply [FR-APP-037](app-functional-specification-v01.md#fr-app-037).
+
+<a id="fr-app-042"></a>
 
 ### FR-APP-042 — Long-running preview semantics
+Long-running preview shall apply [FR-APP-030](app-functional-specification-v01.md#fr-app-030), [FR-APP-032](app-functional-specification-v01.md#fr-app-032).
 
-Where preview is long-running, its execution, cancellation, and termination shall follow the same structured invocation principles as other long-running `app` lifecycle operations.
+---
+
+### 10.1 Generation / Prerender
+
+<a id="fr-app-116"></a>
+
+**FR-APP-116 — Generate lifecycle use case**
+
+AppManager shall provide `app.generate` for generation/prerender of the managed root application where supported. Its mechanism shall be resolved from project evidence and effective configuration under FR-APP-008 rather than fixed provider syntax. The common lifecycle availability, safety and result requirements apply to this operation.
 
 ---
 
@@ -340,29 +418,42 @@ Clean removes regenerable application state that is not intended to represent du
 
 It is intentionally less destructive than reset/empty behaviour.
 
+<a id="fr-app-043"></a>
+
 ### FR-APP-043 — Clean use case
 
 AppManager shall provide an `app` use case for cleaning recognised regenerable cache or build state associated with the managed root application.
+
+<a id="fr-app-044"></a>
 
 ### FR-APP-044 — Clean target classification
 
 The clean operation shall act only on resource classes classified by AppManager as safely regenerable for that use case.
 
+<a id="fr-app-045"></a>
+
 ### FR-APP-045 — Clean shall preserve dependencies and durable source by default
 
 Clean shall not, by default, remove installed dependency state, package-manager lock state, user-authored application source, project metadata, repositories, or other durable resources that belong to the stronger reset/empty or explicitly destructive use cases.
+
+<a id="fr-app-046"></a>
 
 ### FR-APP-046 — Clean target resolution
 
 Concrete clean targets shall be resolved through project knowledge and lower-level design rather than encoded in this Functional Specification as a universal path list.
 
+<a id="fr-app-047"></a>
+
 ### FR-APP-047 — Missing clean targets are not necessarily failures
 
 A recognised clean target that is already absent may be treated as already clean rather than as an operation failure, provided no contradictory project condition exists.
 
-### FR-APP-048 — Clean shall not escape managed scope
+<a id="fr-app-048"></a>
 
-Clean shall not remove resources outside the approved root-application managed scope even if those resources resemble known cache or build artefacts.
+### FR-APP-048 — Clean shall not escape managed scope
+Clean candidates resembling cache/build artefacts outside the approved root scope shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-app-049"></a>
 
 ### FR-APP-049 — Clean outcome
 
@@ -376,41 +467,56 @@ The clean result shall report the resource classes or targets affected, skipped,
 
 Reset or Empty is a stronger lifecycle operation than Clean. It removes regenerable application state sufficiently broadly that dependency installation and subsequent build preparation may be required again.
 
+<a id="fr-app-050"></a>
+
 ### FR-APP-050 — Reset use case
 
 AppManager shall provide a deliberately stronger `app` lifecycle use case for resetting regenerable installation and build state where supported.
+
+<a id="fr-app-051"></a>
 
 ### FR-APP-051 — Functional distinction from Clean
 
 Reset shall be functionally distinct from Clean and shall not be presented as merely an alias for the same effect set.
 
+<a id="fr-app-052"></a>
+
 ### FR-APP-052 — Reset may remove dependency-installation state
 
 Reset may remove installed dependency state and other regenerable installation artefacts when they are within the approved managed scope and are part of the defined reset policy.
+
+<a id="fr-app-053"></a>
 
 ### FR-APP-053 — Lock-state treatment must be explicit
 
 Whether package-manager lock state is retained or removed by Reset shall be an explicit policy decision defined below the Functional level or through effective configuration; AppManager shall not silently treat all lock state as disposable.
 
-### FR-APP-054 — Durable source preservation
+<a id="fr-app-054"></a>
 
-Reset shall preserve user-authored application source, durable project metadata, and unrelated project resources unless the use case explicitly and safely defines otherwise.
+### FR-APP-054 — Durable source preservation
+Reset of regenerable installation/build state shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-app-055"></a>
 
 ### FR-APP-055 — Consequential-operation confirmation
+Reset removing dependency, lock or other materially consequential state shall apply [FR-INV-023](application-invocation-functional-specification-v01.md#fr-inv-023), [FR-INV-022](application-invocation-functional-specification-v01.md#fr-inv-022).
 
-Where Reset removes dependency state, lock state, or other materially consequential resources, AppManager shall require the confirmation or explicit non-interactive authorisation mandated by the Application Invocation Functional Specification.
+<a id="fr-app-056"></a>
 
 ### FR-APP-056 — Reset confirmation must describe effect class
 
 Human-facing confirmation for Reset shall communicate the material classes of state that will be removed rather than using ambiguous wording such as only "clean" or "reset".
 
+<a id="fr-app-057"></a>
+
 ### FR-APP-057 — Reset failure state
 
 If Reset partially removes its intended state and then fails, AppManager shall report the resulting partial state rather than claiming that the environment is either unchanged or fully reset.
 
-### FR-APP-058 — No implied universal rollback
+<a id="fr-app-058"></a>
 
-Reset does not imply a universal rollback guarantee. Where atomicity or rollback is required, it shall be deliberately defined by lower-level specifications and surfaced through the invocation outcome.
+### FR-APP-058 — No implied universal rollback
+Reset rollback claims shall apply [FR-INV-046](application-invocation-functional-specification-v01.md#fr-inv-046).
 
 ---
 
@@ -420,33 +526,44 @@ Reset does not imply a universal rollback guarantee. Where atomicity or rollback
 
 Reinitialisation is a composed lifecycle use case intended to return the managed root application from an explicitly reset generated environment to a known development/build-ready state.
 
-### FR-APP-059 — Reinitialise use case
+<a id="fr-app-059"></a>
 
-AppManager shall provide a reinitialisation use case composed from approved reset, initialisation/install, and build lifecycle behaviour.
+### FR-APP-059 — Reinitialise use case
+AppManager shall support reset followed by preparation as a composition of `app.reset` and `app.prepare`, including approved build behaviour where the selected workflow requires it. The stage requirements below apply without establishing an additional canonical command.
+
+<a id="fr-app-060"></a>
 
 ### FR-APP-060 — Defined sequencing
 
 Reinitialisation shall execute its lifecycle stages in a defined order that preserves their functional dependencies.
 
-### FR-APP-061 — No continuation after prerequisite failure
+<a id="fr-app-061"></a>
 
-If a reinitialisation stage fails and a later stage depends on its successful completion, AppManager shall not silently continue to the dependent stage.
+### FR-APP-061 — No continuation after prerequisite failure
+Dependent re-preparation stages shall apply [FR-APP-113](app-functional-specification-v01.md#fr-app-113).
+
+<a id="fr-app-062"></a>
 
 ### FR-APP-062 — Reuse shared lifecycle semantics
 
 Reinitialisation shall reuse the same functional semantics as the underlying lifecycle behaviours rather than defining a second independent implementation of reset, installation, or build policy.
 
+<a id="fr-app-063"></a>
+
 ### FR-APP-063 — Reinitialisation authorisation
 
 Authorisation for the consequential reset portion of reinitialisation shall be obtained before that effect occurs and shall cover the material reset scope.
+
+<a id="fr-app-064"></a>
 
 ### FR-APP-064 — Reinitialisation result composition
 
 The structured result shall identify the status of each lifecycle stage sufficiently to distinguish complete success, failure before consequential mutation, failure after reset, failure during preparation, build failure, cancellation, and partial completion where applicable.
 
-### FR-APP-065 — Existing durable configuration preservation
+<a id="fr-app-065"></a>
 
-Reinitialisation shall not recreate or overwrite durable user-managed project configuration merely because the operation resets generated installation/build state, unless an explicit underlying lifecycle requirement requires that change.
+### FR-APP-065 — Existing durable configuration preservation
+Durable configuration during re-preparation shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
 ---
 
@@ -456,31 +573,44 @@ Reinitialisation shall not recreate or overwrite durable user-managed project co
 
 Root-application creation scaffolds a brand-new AppManager-oriented root application. It is distinct from initialising an already-existing checkout.
 
-### FR-APP-066 — Root-application creation use case
+<a id="fr-app-066"></a>
 
-AppManager shall provide an `app` use case for creating a new root application suitable for subsequent management by AppManager.
+### FR-APP-066 — Root-application creation use case
+AppManager shall provide `app.create` to create a new root application suitable for management by AppManager. The creation workflow shall complete the selected profile's ordinary readiness obligations without requiring a second `app.prepare` invocation. Optional/deferred dependency installation remains governed by FR-APP-085–086.
+
+<a id="fr-app-067"></a>
 
 ### FR-APP-067 — Creation target identity
 
 Before consequential creation begins, AppManager shall establish the intended target location and application identity sufficiently to prevent accidental creation into an unintended existing project.
 
+<a id="fr-app-068"></a>
+
 ### FR-APP-068 — Existing-project protection
 
 AppManager shall not silently scaffold a new root application over an existing recognised project or an existing target that would cause unsafe replacement of user-owned content.
+
+<a id="fr-app-069"></a>
 
 ### FR-APP-069 — Non-empty target handling
 
 Where the target already contains content that makes safe creation ambiguous, AppManager shall require an explicitly defined safe mode, disambiguation, or refusal rather than treating the location as an empty scaffold target.
 
+<a id="fr-app-070"></a>
+
 ### FR-APP-070 — Root application, not Nuxt layer
 
 The creation use case defined here shall create a root application. Nuxt-layer creation is a distinct `nuxt` domain use case.
+
+<a id="fr-app-071"></a>
 
 ### FR-APP-071 — Generated artefact set
 
 Root-application creation shall generate the project artefact classes required by the selected application profile and effective configuration.
 
 The exact filenames, template functions, and file contents belong below the Functional level.
+
+<a id="fr-app-072"></a>
 
 ### FR-APP-072 — Version 1 generated artefact catalogue
 
@@ -498,45 +628,65 @@ AppManager shall be capable, where applicable to the selected profile, of genera
 
 This catalogue describes functional capability classes and does not mandate a single fixed file set for every profile.
 
+<a id="fr-app-073"></a>
+
 ### FR-APP-073 — Profile-based creation
 
 Where Version 1 exposes minimal, complete, or custom creation choices, each choice shall correspond to a documented functional project profile rather than merely changing hidden template implementation details.
+
+<a id="fr-app-074"></a>
 
 ### FR-APP-074 — Minimal profile
 
 A minimal creation profile, if exposed, shall create only the artefacts and setup necessary to establish a valid supported root application baseline.
 
+<a id="fr-app-075"></a>
+
 ### FR-APP-075 — Complete profile
 
 A complete creation profile, if exposed, may include additional approved AppManager project-management resources and development defaults beyond the minimal baseline.
+
+<a id="fr-app-076"></a>
 
 ### FR-APP-076 — Custom profile
 
 A custom creation profile, if exposed, shall allow callers to select supported creation capabilities without permitting combinations that AppManager knows to be invalid or internally contradictory.
 
-### FR-APP-077 — Effective configuration during creation
+<a id="fr-app-077"></a>
 
-Project identity, author information, licence choice, repository defaults, package-management preferences, or similar configurable creation inputs shall use effective configuration or explicit invocation values according to Configuration Functional Specification semantics.
+### FR-APP-077 — Effective configuration during creation
+Creation identity, author, licence, repository and package-management inputs shall apply [FR-CONFIG-020](configuration-functional-specification-v01.md#fr-config-020).
+
+<a id="fr-app-078"></a>
 
 ### FR-APP-078 — Sensitive configuration during creation
 
 Root-application creation shall not embed secret values into generated shared project artefacts unless the relevant use case explicitly requires that behaviour and the configuration policy permits it.
 
-### FR-APP-079 — Generation is not mutation
+<a id="fr-app-079"></a>
 
-Creating new artefacts in a valid creation target shall follow generation semantics. If the creation workflow encounters an existing artefact that requires modification or replacement, that action becomes subject to the Source Transformation Functional Specification and applicable safety policy.
+### FR-APP-079 — Generation is not mutation
+Creation destinations, including collisions with existing artefacts shall apply [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
+<a id="fr-app-080"></a>
 
 ### FR-APP-080 — Internal AppManager project resources
 
 Where a selected creation profile includes AppManager-owned project resources, those resources shall be distinguishable from user application source and shall follow the managed-project/configuration ownership model.
 
+<a id="fr-app-081"></a>
+
 ### FR-APP-081 — Layers container may be prepared without creating a layer
 
 Root-application creation may prepare project structure intended to contain or reference future Nuxt layers, but it shall not thereby claim that a Nuxt layer has been created.
 
+<a id="fr-app-082"></a>
+
 ### FR-APP-082 — No placeholder relationship required without a relationship
 
 AppManager shall not require an empty repository-relationship artefact solely to imply a future layer relationship when the underlying repository model does not require such an artefact until an actual relationship exists.
+
+<a id="fr-app-083"></a>
 
 ### FR-APP-083 — Optional local repository initialisation
 
@@ -544,33 +694,45 @@ Root-application creation may offer local repository initialisation as a coordin
 
 Repository semantics remain owned by the `git` domain.
 
+<a id="fr-app-084"></a>
+
 ### FR-APP-084 — Repository initialisation failure isolation
 
 If optional repository initialisation fails after the root scaffold has been created successfully, AppManager shall report the scaffold state and repository failure distinctly rather than misrepresenting the entire target as nonexistent.
+
+<a id="fr-app-085"></a>
 
 ### FR-APP-085 — Optional dependency installation
 
 Root-application creation may offer dependency installation as a follow-on lifecycle action.
 
+<a id="fr-app-086"></a>
+
 ### FR-APP-086 — Creation does not require dependency installation
 
 A caller may complete root-application scaffolding without immediately installing dependencies where the selected profile and invocation permit that choice.
+
+<a id="fr-app-087"></a>
 
 ### FR-APP-087 — Creation postconditions
 
 A successful root-application creation result shall identify the created application, selected profile or relevant creation choices, consequential follow-on actions completed, and any recommended next lifecycle actions.
 
-### FR-APP-088 — Nuxt-layer next-step boundary
+<a id="fr-app-088"></a>
 
-Where appropriate, AppManager may identify Nuxt-layer creation as a logical subsequent operation, but shall invoke or recommend the `nuxt` domain use case rather than embedding a separate layer-creation implementation in `app`.
+### FR-APP-088 — Nuxt-layer next-step boundary
+Layer-creation recommendations or follow-on steps shall apply [FR-APP-070](app-functional-specification-v01.md#fr-app-070).
+
+<a id="fr-app-089"></a>
 
 ### FR-APP-089 — Creation partial failure
 
 If project creation partially succeeds, AppManager shall report what was created and what failed sufficiently to permit safe recovery, cleanup, or continuation.
 
-### FR-APP-090 — No false atomicity claim
+<a id="fr-app-090"></a>
 
-Unless lower-level specifications deliberately provide transactional creation, AppManager shall not imply that all project scaffolding is universally atomic.
+### FR-APP-090 — No false atomicity claim
+Root-scaffolding transactionality claims shall apply [FR-INV-046](application-invocation-functional-specification-v01.md#fr-inv-046).
 
 ---
 
@@ -580,33 +742,48 @@ Unless lower-level specifications deliberately provide transactional creation, A
 
 A managed application's package metadata may expose project-defined scripts beyond the named lifecycle operations above. AppManager may execute those scripts as a bounded application capability without becoming a generic shell.
 
+<a id="fr-app-091"></a>
+
 ### FR-APP-091 — Declared-script execution use case
 
 AppManager shall support execution of a selected script declared by the managed root application's recognised package metadata where supported by the project profile.
+
+<a id="fr-app-092"></a>
 
 ### FR-APP-092 — Script discovery
 
 AppManager shall be able to expose the set of eligible project-declared scripts for discovery or explicit selection.
 
+<a id="fr-app-093"></a>
+
 ### FR-APP-093 — Declared scripts only
 
 The generic `app` script-execution use case shall not treat an arbitrary caller-supplied shell command as equivalent to a project-declared package script.
 
-### FR-APP-094 — Script identity validation
+<a id="fr-app-094"></a>
 
-A requested script identity shall be validated against the managed project's recognised script declarations before execution.
+### FR-APP-094 — Script identity validation
+A requested script shall be explicitly selected and validated against recognised project declarations and applicable revision evidence before execution. The facility shall use the recognised package-manager/provider boundary. Named lifecycle commands may consume this facility where appropriate.
+
+<a id="fr-app-095"></a>
 
 ### FR-APP-095 — Named lifecycle precedence
 
 Where a project script corresponds to an AppManager-owned named lifecycle use case such as build, preview, or local development, callers may invoke that named use case to obtain the richer AppManager lifecycle semantics rather than relying on generic script execution.
 
+<a id="fr-app-096"></a>
+
 ### FR-APP-096 — Generic execution does not inherit unrelated lifecycle effects
 
 Executing a declared script generically shall not silently add `app` lifecycle steps such as clean, reset, initialise, build, or repository synchronisation unless those effects are explicitly part of the invoked use case or project-declared script itself.
 
+<a id="fr-app-097"></a>
+
 ### FR-APP-097 — Consequential script warning or policy
 
 Where AppManager can determine that a declared project script carries materially consequential effects, applicable confirmation, policy, and diagnostics shall be enforced according to the invocation and managed-scope authorities.
+
+<a id="fr-app-098"></a>
 
 ### FR-APP-098 — Project script result
 
@@ -616,25 +793,35 @@ The structured result shall identify the requested project script and its AppMan
 
 ## 16. Safety and Non-Destructive Behaviour
 
+<a id="fr-app-099"></a>
+
 ### FR-APP-099 — Lifecycle safety classification
 
 AppManager shall classify `app` lifecycle operations according to their material effect so that non-destructive, regenerable-state, and consequential reset/create behaviours can receive appropriate policy and confirmation treatment.
 
-### FR-APP-100 — Preserve user ownership
+<a id="fr-app-100"></a>
 
-`app` operations shall preserve unrelated user-authored source, project configuration, repository state, and external resources unless the invoked use case explicitly grants authority over those resources.
+### FR-APP-100 — Preserve user ownership
+App lifecycle effects shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-app-101"></a>
 
 ### FR-APP-101 — Discovery is not deletion authority
+Discovered clean/reset candidates shall apply [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
-Discovery of caches, dependencies, build outputs, package files, repositories, layers, or other project resources shall not itself grant an `app` clean/reset operation authority to remove them.
+<a id="fr-app-102"></a>
 
 ### FR-APP-102 — Root-only lifecycle effects by default
 
 Root-application lifecycle operations shall not automatically apply equivalent clean/reset/build/install effects to every managed layer unless a separate approved use case explicitly defines coordinated multi-target behaviour.
 
+<a id="fr-app-103"></a>
+
 ### FR-APP-103 — Destructive ambiguity fails safe
 
 Where AppManager cannot determine whether a candidate clean/reset/create target is safely within the intended managed scope, it shall refuse the consequential effect or require explicit safe disambiguation rather than guessing.
+
+<a id="fr-app-104"></a>
 
 ### FR-APP-104 — External resources require domain authority
 
@@ -644,53 +831,68 @@ An `app` lifecycle operation shall not delete or create remote repositories, cha
 
 ## 17. Interaction-Mode Behaviour
 
-### FR-APP-105 — Equivalent lifecycle semantics
+<a id="fr-app-105"></a>
 
-TUI, Headless, GUI, IDE, CI, automation, and future interaction modes shall expose equivalent `app` lifecycle intent, validation, scope, safety, sequencing, and application-level outcome semantics.
+### FR-APP-105 — Equivalent lifecycle semantics
+Lifecycle intent, sequencing and outcomes across all supported modes shall apply [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="fr-app-106"></a>
 
 ### FR-APP-106 — Interactive menus are presentation
 
 An interactive lifecycle menu may assist selection in TUI or GUI operation but shall not define lifecycle behaviour unavailable to structured Headless invocation.
 
-### FR-APP-107 — Headless completeness
+<a id="fr-app-107"></a>
 
-Every `app` use case intended for automation shall be invokable non-interactively when all required input, configuration, scope, and authorisation can be supplied or resolved without prompting.
+### FR-APP-107 — Headless completeness
+Automatable App use cases shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="fr-app-108"></a>
 
 ### FR-APP-108 — Host context is input, not authority
+IDE/host lifecycle context shall apply [FR-PROJ-006](managed-project-functional-specification-v01.md#fr-proj-006).
 
-An IDE or host-tool adapter may provide project location, selection, or other invocation context, but host context shall remain subject to AppManager project resolution and lifecycle validation.
+<a id="fr-app-109"></a>
 
 ### FR-APP-109 — Human presentation is not the result contract
-
-Lifecycle success, failure, partial completion, cancellation, and diagnostics shall be available through structured invocation outcomes and shall not exist only as terminal text.
+Lifecycle outcomes and diagnostics shall apply [FR-INV-021](application-invocation-functional-specification-v01.md#fr-inv-021).
 
 ---
 
 ## 18. Cancellation, Failure, and Partial Completion
 
+<a id="fr-app-110"></a>
+
 ### FR-APP-110 — Cancellation before consequential effect
 
 Where an `app` operation is cancelled before consequential effects begin, AppManager shall not intentionally perform those effects.
 
-### FR-APP-111 — Cancellation after effects begin
+<a id="fr-app-111"></a>
 
-Where cancellation occurs after lifecycle effects have begun, AppManager shall report the actual resulting state according to the applicable invocation and partial-completion semantics.
+### FR-APP-111 — Cancellation after effects begin
+Cancellation after lifecycle effects begin shall apply [FR-INV-031](application-invocation-functional-specification-v01.md#fr-inv-031), [FR-INV-032](application-invocation-functional-specification-v01.md#fr-inv-032).
+
+<a id="fr-app-112"></a>
 
 ### FR-APP-112 — Lifecycle stage diagnostics
 
 For composed lifecycle operations, diagnostics shall identify the stage at which failure or cancellation occurred where that information materially affects recovery.
 
-### FR-APP-113 — No silent continuation
+<a id="fr-app-113"></a>
 
-A composed `app` workflow shall not silently continue through stages whose functional preconditions have been invalidated by an earlier failure.
+### FR-APP-113 — No silent continuation
+Composed lifecycle workflows shall not continue to a stage whose functional preconditions were invalidated by an earlier failure. FR-APP-060 defines the dependency-aware stage order.
+
+<a id="fr-app-114"></a>
 
 ### FR-APP-114 — No false successful completion
 
 An operation shall not be reported as successful merely because its final attempted delegated process exited successfully when required earlier lifecycle stages failed, were skipped impermissibly, or left invalid postconditions.
 
-### FR-APP-115 — Recovery information
+<a id="fr-app-115"></a>
 
-Where an `app` lifecycle failure leaves a recoverable intermediate state, AppManager should expose sufficient structured information for a caller to determine an appropriate retry, continuation, or repair action without implying that automatic recovery is always possible.
+### FR-APP-115 — Recovery information
+Recoverable lifecycle intermediate states shall apply [FR-INV-047](application-invocation-functional-specification-v01.md#fr-inv-047).
 
 ---
 
@@ -698,52 +900,55 @@ Where an `app` lifecycle failure leaves a recoverable intermediate state, AppMan
 
 ### 19.1 `nuxt`
 
-The `nuxt` domain owns Nuxt-specific management use cases, including Nuxt-layer creation/provisioning and Nuxt-configuration behaviour. `app` may coordinate or recommend those operations but shall not duplicate them.
+Layer and framework follow-on work consumes [Nuxt §11](nuxt-functional-specification-v01.md#_11-nuxt-layer-creation); FR-APP-070 and FR-APP-088 bind root creation to that owner.
 
 ### 19.2 `git`
 
-The `git` domain owns repository initialisation, repository relationships, commit semantics, remote operations, push, synchronisation, and destructive repository actions. `app` may include optional Git follow-on steps in a lifecycle workflow only by delegating to `git` semantics.
+Optional repository follow-on work consumes [Git §7](git-functional-specification-v01.md#_7-repository-initialisation); FR-APP-083–084 defines its relationship to scaffold completion.
 
 ### 19.3 `settings` and configuration
 
-The `settings` domain owns user-facing inspection and mutation of settings. The Configuration Functional Specification owns candidate-to-effective resolution. `app` consumes effective configuration and shall not create its own precedence model.
+Environment readiness consumes [Settings §8](settings-functional-specification-v01.md#_8-environment-variable-definitions) through FR-APP-016–018. [Configuration §6](configuration-functional-specification-v01.md#_6-precedence-and-effective-configuration) governs consumed values.
 
 ### 19.4 `quality`
 
-Build is an application lifecycle use case and therefore remains in `app`. Tests, linting, type checking, coverage, and quality gates belong to `quality` even when they are commonly run near a build.
+Build is described in §9. Adjacent verification consumes the [Quality requirements](quality-functional-specification-v01.md#_5-test-execution), following [Design §10.8](../appmanager-design-specification-v01.md#_10-8-quality-domain).
 
 ### 19.5 `docs`
 
-README or introductory project documentation generated as part of a new-project scaffold may be a creation artefact. Ongoing documentation generation and maintenance belong to `docs`.
+A new-root README is a profile artefact under FR-APP-072. Ongoing documentation uses [Docs §10](docs-functional-specification-v01.md#_10-documentation-generation-and-update).
 
 ### 19.6 `ai`
 
-AI may assist creation or lifecycle workflows only as a delegated capability and shall remain non-authoritative. AI-specific user-facing operations belong to `ai`.
+AI-assisted lifecycle steps consume [AI §7.1](ai-functional-specification-v01.md#_7-1-generated-output-acceptance) and its context/disclosure requirements in §11.
 
-### 19.7 `utils`
+<a id="_19-7-utils"></a>
 
-Generic lifecycle execution, cleaning, reset, or project-package-script execution shall not be moved into `utils` merely because they use reusable low-level mechanisms. Their product identity remains `app`.
+### 19.7 `maintenance`
+
+Maintenance placement follows [Design §10.9](../appmanager-design-specification-v01.md#_10-9-maintenance-domain); the root lifecycle remains defined by this specification.
 
 ---
 
 ## 20. Traceability
 
-| Functional requirement range | Root Design authority | Current cross-cutting authority |
-|---|---|---|
-| `FR-APP-001`–`FR-APP-012` | Sections 1, 2, 5, 6, 10.1, 12 | `FR-INV-*`, `FR-PROJ-*`, `FR-CONFIG-*`; decomposition plan §5.1 |
-| `FR-APP-013`–`FR-APP-024` | Sections 2, 5, 8, 9, 10.1, 12 | This specification §6; `FR-INV-*`, `FR-PROJ-*`, `FR-CONFIG-*` |
-| `FR-APP-025`–`FR-APP-028` | Sections 5, 10.1, 12.9 | This specification §7; Process Execution boundary |
-| `FR-APP-029`–`FR-APP-033` | Sections 4, 5, 10.1, 12.9 | This specification §8; `FR-INV-*` |
-| `FR-APP-034`–`FR-APP-038` | Sections 5, 10.1, 12 | This specification §9; `FR-XFORM-*` |
-| `FR-APP-039`–`FR-APP-042` | Sections 4, 5, 10.1, 12 | This specification §10; `FR-INV-*` |
-| `FR-APP-043`–`FR-APP-049` | Sections 5, 9, 10.1, 12 | This specification §11; `FR-PROJ-*` |
-| `FR-APP-050`–`FR-APP-058` | Sections 5, 9, 10.1, 12 | This specification §12; `FR-INV-*`, `FR-PROJ-*` |
-| `FR-APP-059`–`FR-APP-065` | Sections 5, 6, 10.1, 12 | This specification §13; Application Engine workflow authority |
-| `FR-APP-066`–`FR-APP-090` | Sections 1, 2, 6.7, 8, 9, 10.1, 12.5 | This specification §14; `FR-CONFIG-*`, `FR-XFORM-*`, Git/Nuxt ownership boundaries |
-| `FR-APP-091`–`FR-APP-098` | Sections 5, 10.1, 12.9 | This specification §15; Process Execution boundary |
-| `FR-APP-099`–`FR-APP-104` | Sections 2.3, 9, 12 | This specification §16; `FR-PROJ-*`, `FR-XFORM-*` |
-| `FR-APP-105`–`FR-APP-109` | Section 4 | This specification §17; `FR-INV-*` |
-| `FR-APP-110`–`FR-APP-115` | Sections 5, 11, 12 | This specification §18; `FR-INV-*`; Application Engine workflow authority |
+| Functional requirement range | Root Design authority | Upstream / same-level authority | Downstream refinement destination |
+|---|---|---|---|
+| `FR-APP-001`–`FR-APP-012` | Sections 1, 2, 5, 6, 10.1, 12 | This specification; `FR-INV-*`, `FR-PROJ-*`, `FR-CONFIG-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-013`–`FR-APP-024` | Sections 2, 5, 8, 9, 10.1, 12 | This specification §6; `FR-INV-*`, `FR-PROJ-*`, `FR-CONFIG-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-025`–`FR-APP-028` | Sections 5, 10.1, 12.9 | This specification §7 | Process Execution boundary |
+| `FR-APP-029`–`FR-APP-033` | Sections 4, 5, 10.1, 12.9 | This specification §8; `FR-INV-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-034`–`FR-APP-038` | Sections 5, 10.1, 12 | This specification §9; `FR-XFORM-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-039`–`FR-APP-042` | Sections 4, 5, 10.1, 12 | This specification §10; `FR-INV-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-043`–`FR-APP-049` | Sections 5, 9, 10.1, 12 | This specification §11; `FR-PROJ-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-050`–`FR-APP-058` | Sections 5, 9, 10.1, 12 | This specification §12; `FR-INV-*`, `FR-PROJ-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-059`–`FR-APP-065` | Sections 5, 6, 10.1, 12 | This specification §13; Application Engine workflow authority | Owning domain/shared-contract Detailed Design |
+| `FR-APP-066`–`FR-APP-090` | Sections 1, 2, 6.7, 8, 9, 10.1, 12.5 | This specification §14; `FR-CONFIG-*`, `FR-XFORM-*`, Git and Nuxt Functional Specifications | Owning domain/shared-contract Detailed Design |
+| `FR-APP-091`–`FR-APP-098` | Sections 5, 10.1, 12.9 | This specification §15 | Process Execution boundary |
+| `FR-APP-099`–`FR-APP-104` | Sections 2.3, 9, 12 | This specification §16; `FR-PROJ-*`, `FR-XFORM-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-105`–`FR-APP-109` | Section 4 | This specification §17; `FR-INV-*` | Owning domain/shared-contract Detailed Design |
+| `FR-APP-110`–`FR-APP-115` | Sections 5, 11, 12 | This specification §18; `FR-INV-*`; Application Engine workflow authority | Owning domain/shared-contract Detailed Design |
+| `FR-APP-116` | Sections 6.6 and 10.3 | This specification §10.1; Configuration and Invocation | App domain and Nuxt/Process capabilities |
 
 ADR-0001 selects Node.js/TypeScript for Version 1 implementation but does not materially alter the technology-independent Functional requirements in this document.
 
@@ -751,28 +956,7 @@ ADR-0001 selects Node.js/TypeScript for Version 1 implementation but does not ma
 
 ## 21. Conformance Criteria
 
-An implementation conforms to this Functional Specification only if it satisfies all applicable requirements and, at minimum, demonstrates that:
-
-1. `app` use cases represent root-application lifecycle intent rather than exposing implementation mechanisms as product semantics;
-2. existing-project initialisation is distinct from new-project creation;
-3. initialisation preserves existing user-managed environment material and does not fabricate secrets;
-4. development, build, preview, and post-install operations are based on recognised project lifecycle capability rather than universal hard-coded command assumptions at the Functional level;
-5. Clean is materially less destructive than Reset/Empty;
-6. clean/reset targets cannot escape managed scope merely because matching resources are discoverable;
-7. Reset/Empty receives appropriate authorisation and reports partial state accurately;
-8. Reinitialise composes existing lifecycle semantics and aborts dependent stages after prerequisite failure;
-9. root-application creation refuses unsafe overwrite of an existing project or ambiguous non-empty target;
-10. minimal/complete/custom choices, if exposed, are coherent project profiles rather than arbitrary hidden implementation switches;
-11. root creation can generate the required project artefact classes without prescribing a single universal file set at the Functional level;
-12. generation of new artefacts is distinguished from mutation/replacement of existing source;
-13. optional Git initialisation delegates repository semantics to the Git domain;
-14. root creation does not duplicate Nuxt-layer creation;
-15. project-package-script execution is limited to recognised declared scripts rather than arbitrary shell execution;
-16. lifecycle operations preserve unrelated user-authored source and project resources;
-17. layer/repository discovery does not cause root lifecycle operations to expand their scope implicitly;
-18. Headless callers can invoke supported `app` use cases deterministically without interaction-only business logic;
-19. structured outcomes distinguish application-level success, failure, cancellation, and partial completion without requiring terminal-output parsing;
-20. delegated providers do not acquire authority over AppManager lifecycle policy or final outcomes.
+Conformance is assessed against the applicable requirement bodies in this specification and the canonical contracts they reference. The traceability section identifies the requirement groups; this section creates no additional acceptance checklist.
 
 ---
 

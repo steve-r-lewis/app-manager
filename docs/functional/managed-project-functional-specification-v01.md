@@ -6,17 +6,13 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md)
 >
-> **Planning source:** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
+> **Historical planning provenance (non-normative):** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
 ## 1. Purpose
 
 This specification defines the common functional behaviour by which AppManager determines **which project is being managed**, **which project entities belong to the relevant managed project context**, and **which of those entities are permitted targets of a particular operation**.
 
 It is the shared Functional authority for managed-project context and managed-scope semantics. Domain Functional Specifications define what individual AppManager use cases do; this specification defines the common project-understanding and targeting behaviour those use cases consume.
-
-The central distinction is:
-
-> **Discovery or recognition establishes knowledge. Managed scope establishes operation targeting. Neither discovery nor inclusion in context alone grants mutation authority.**
 
 ## 2. Scope
 
@@ -83,35 +79,47 @@ The sequence above defines functional responsibility and observable behaviour, n
 
 ### 4.1 Application authority
 
-The Application Engine remains authoritative for interpreting project context, operation scope, project relationships, ownership boundaries, and safety policy.
+The requirements below bind this concern to its shared and domain-specific owners.
 
-Adapters, repositories, framework markers, resolvers, configuration sources, external providers, and filesystem layout may provide evidence but do not independently define AppManager project semantics.
+<a id="fr-proj-001"></a>
 
 **FR-PROJ-001 — Single project semantics**  
-All supported interaction modes and host integrations shall use the same AppManager semantics for target-project identity, managed-project context, and managed scope.
+All project-dependent invocation paths shall apply [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="fr-proj-002"></a>
 
 **FR-PROJ-002 — Candidate evidence is not authority**  
-A filesystem location, repository, host-tool selection, configuration source, project marker, or adapter-supplied value may contribute candidate project evidence but shall not independently become authoritative merely because it was discovered or supplied.
+Project evidence from locations, repositories, host selections, configuration, markers and adapters shall conform to [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
 ## 5. Target Project Identification
 
 ### 5.1 Target project
 
+<a id="fr-proj-003"></a>
+
 **FR-PROJ-003 — Target-project identity**  
-For every project-dependent operation, AppManager shall determine the target project to which the operation applies before relying on project-specific behaviour.
+Project-dependent target identity before reliance on project-specific behaviour shall conform to [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="fr-proj-004"></a>
 
 **FR-PROJ-004 — Explicit target preference**  
 Where the invocation explicitly identifies a target project in a valid form, AppManager shall treat that information as project-resolution input and validate it against the managed-project model rather than silently substituting an unrelated project.
 
 ### 5.2 Invocation location and host context
 
+<a id="fr-proj-005"></a>
+
 **FR-PROJ-005 — Invocation-location evidence**  
 The location from which AppManager is invoked may contribute evidence toward target-project resolution, but invocation location alone shall not define the managed project where stronger or conflicting project evidence exists.
+
+<a id="fr-proj-006"></a>
 
 **FR-PROJ-006 — Host-context evidence**  
 IDE, editor, GUI, automation, or other host integrations may supply project, file, directory, layer, or repository context. AppManager shall translate such context into AppManager project semantics and validate it before use.
 
 ### 5.3 No hidden project switching
+
+<a id="fr-proj-007"></a>
 
 **FR-PROJ-007 — No silent project substitution**  
 If supplied and resolved project evidence identifies materially different candidate projects, AppManager shall not silently switch to one candidate merely to continue execution.
@@ -122,15 +130,21 @@ The ambiguity shall be resolved explicitly or the operation shall fail clearly.
 
 ### 6.1 Project root
 
+<a id="fr-proj-008"></a>
+
 **FR-PROJ-008 — Project-root resolution**  
 AppManager shall resolve a project root for operations whose semantics require one.
 
 The resolved project root shall represent the root of the target project rather than merely the caller's current working directory.
 
+<a id="fr-proj-009"></a>
+
 **FR-PROJ-009 — Nested invocation**  
 Invocation from a file, subdirectory, layer, repository subtree, or other nested location shall not require the caller to manually relocate to the project root when AppManager can deterministically resolve the intended target project from supported evidence.
 
 ### 6.2 Invalid roots
+
+<a id="fr-proj-010"></a>
 
 **FR-PROJ-010 — Invalid project root**  
 If a supplied or discovered project root is invalid, unsupported, inaccessible, or inconsistent with the requested operation, AppManager shall reject it with a structured diagnostic rather than treating the path as a valid managed project by default.
@@ -139,88 +153,116 @@ If a supplied or discovered project root is invalid, unsupported, inaccessible, 
 
 ### 7.1 Coherent context
 
-**FR-PROJ-011 — Managed-project context**  
-Before a project-dependent command relies on project identity or structure, AppManager shall resolve one coherent managed-project context representing the AppManager-relevant view of the target project.
+<a id="fr-proj-011"></a>
 
-**FR-PROJ-012 — Context contents**  
-Where relevant and available, the managed-project context shall represent AppManager-oriented information about:
+**FR-PROJ-011 — Managed-project context**
 
-- project identity and project root;
-- the root Nuxt application;
-- managed Nuxt layers;
-- repository relationships;
-- configuration scope;
-- AppManager-owned management resources;
-- relevant source, documentation, tests, generated artefacts, and other command targets.
+Coherent project-context resolution before dependence on project identity or structure shall conform to [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
-The context need not expose implementation-specific structures to callers.
+<a id="fr-proj-012"></a>
+
+**FR-PROJ-012 — Context contents**
+
+Where relevant and available, managed-project context shall represent the entities/resources in [Design §9.1](../appmanager-design-specification-v01.md#_9-1-managed-project-model), together with project identity/root and configuration scope, using the representation boundary in [Design §9.2](../appmanager-design-specification-v01.md#_9-2-managed-project-context).
 
 ### 7.2 Context completeness
 
+<a id="fr-proj-013"></a>
+
 **FR-PROJ-013 — Required context completeness**  
-A command shall not proceed with a project-dependent effect when information required to determine its correct target or safety boundaries remains unresolved.
+Project-dependent effects with unresolved target or safety context shall conform to [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="fr-proj-014"></a>
 
 **FR-PROJ-014 — Operation-specific completeness**  
 Managed-project context need only be complete for the requirements of the requested operation. AppManager shall not require unrelated project facts merely because they could theoretically be discovered.
 
 ### 7.3 Context reuse
 
+<a id="fr-proj-015"></a>
+
 **FR-PROJ-015 — Consistent context within an operation**  
-Within one application operation, commands and participating capabilities shall consume a coherent AppManager interpretation of the target project rather than independently resolving conflicting project identities or relationships.
+One coherent target-project interpretation across participating commands and capabilities shall conform to [Design §9.2](../appmanager-design-specification-v01.md#_9-2-managed-project-context).
 
 ## 8. Root Application and Managed Layers
 
 ### 8.1 Root application
+
+<a id="fr-proj-016"></a>
 
 **FR-PROJ-016 — Root-application recognition**  
 Where the target project contains a supported root Nuxt application, AppManager shall represent it distinctly within the managed-project context.
 
 ### 8.2 Managed layers
 
+<a id="fr-proj-017"></a>
+
 **FR-PROJ-017 — Managed-layer recognition**  
 AppManager shall be able to recognise supported Nuxt layers that form part of the target project's managed application structure.
+
+<a id="fr-proj-018"></a>
 
 **FR-PROJ-018 — Layer identity**  
 Each managed layer shall be distinguishable sufficiently for commands and callers to select the intended layer without depending solely on presentation order or incidental filesystem position.
 
+<a id="fr-proj-019"></a>
+
 **FR-PROJ-019 — Layer independence**  
-A managed layer may have its own source, package metadata, configuration, documentation, tests, repository relationship, and lifecycle characteristics. AppManager shall not require all managed layers to share the root application's repository or management lifecycle.
+Managed-layer independence shall conform to [Design §9.3](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers).
 
 ### 8.3 Root/layer distinction
 
+<a id="fr-proj-020"></a>
+
 **FR-PROJ-020 — Root and layer distinction**  
-AppManager shall distinguish the root application from managed layers even where filesystem or repository layout makes them appear closely nested.
+Root/layer distinction despite nested filesystem or repository layouts shall conform to [Design §9.3](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers).
 
 ## 9. Project Topology and Resource Relationships
 
+<a id="fr-proj-021"></a>
+
 **FR-PROJ-021 — Project topology**  
-AppManager shall represent project relationships sufficiently for operations to determine how the root application, managed layers, repositories, AppManager-owned management resources, and other relevant entities relate to one another.
+Representation of relationships required by project operations shall conform to [Design §9.4](../appmanager-design-specification-v01.md#_9-4-project-topology-and-resource-relationships).
+
+<a id="fr-proj-022"></a>
 
 **FR-PROJ-022 — Semantic relationships over directory containment**  
-Directory containment may contribute evidence to project topology, but AppManager shall not assume that every semantic project relationship is defined solely by physical nesting.
+Directory-containment evidence in project topology shall conform to [Design §9.4](../appmanager-design-specification-v01.md#_9-4-project-topology-and-resource-relationships).
+
+<a id="fr-proj-023"></a>
 
 **FR-PROJ-023 — No uniform-tree assumption**  
-AppManager shall support managed projects whose relevant entities do not all occupy one uniform directory or repository tree.
+Non-uniform directory/repository layouts shall conform to [Design §9.1](../appmanager-design-specification-v01.md#_9-1-managed-project-model).
 
 ## 10. Repository Relationships
 
 ### 10.1 Repository recognition
 
+<a id="fr-proj-024"></a>
+
 **FR-PROJ-024 — Repository recognition**  
 Where repositories are relevant to the requested operation, AppManager shall identify the repository or repositories associated with the applicable managed project entities.
 
+<a id="fr-proj-025"></a>
+
 **FR-PROJ-025 — Repository topology is not project identity**  
-Repository boundaries shall not substitute for managed-project identity or Nuxt application structure.
+Repository topology and Nuxt project identity shall conform to [Design §9.3](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers).
 
 ### 10.2 Multi-repository projects
 
+<a id="fr-proj-026"></a>
+
 **FR-PROJ-026 — Multi-repository support**  
-Managed-project context and managed-scope semantics shall support projects that span multiple repositories or nested repository relationships where those arrangements are supported by AppManager.
+Multi-repository and nested repository support shall conform to [Design §9.5](../appmanager-design-specification-v01.md#_9-5-repository-relationships).
+
+<a id="fr-proj-027"></a>
 
 **FR-PROJ-027 — Repository targeting by project scope**  
-For project-wide, root-application, layer-specific, or otherwise scoped operations, AppManager shall be able to determine which recognised repositories are relevant to that scope without assuming that every managed entity belongs to a single repository.
+Repository relevance for resolved project/root/layer scope shall conform to [Design §9.5](../appmanager-design-specification-v01.md#_9-5-repository-relationships).
 
 ### 10.3 Repository ambiguity
+
+<a id="fr-proj-028"></a>
 
 **FR-PROJ-028 — Ambiguous repository association**  
 If AppManager cannot determine which repository relationship is applicable to a consequential operation, it shall require explicit disambiguation or fail clearly rather than mutate or synchronise an arbitrary repository.
@@ -229,28 +271,27 @@ If AppManager cannot determine which repository relationship is applicable to a 
 
 ### 11.1 Approved evidence classes
 
-**FR-PROJ-029 — Project-resolution evidence**  
-AppManager may derive candidate project information from supported evidence including:
+<a id="fr-proj-029"></a>
 
-- explicit invocation context or supplied target information;
-- invocation location;
-- host-tool context;
-- effective configuration;
-- AppManager-owned project metadata;
-- recognised Nuxt application or layer structure;
-- repository information where relevant.
+**FR-PROJ-029 — Project-resolution evidence**
 
-The precise discovery mechanism for each evidence class belongs below the Functional level.
+Project-context candidate evidence and discovery mechanisms shall conform to [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
 ### 11.2 Deterministic resolution
+
+<a id="fr-proj-030"></a>
 
 **FR-PROJ-030 — Deterministic resolution**  
 Given materially equivalent candidate evidence and effective configuration, project-context resolution shall produce materially equivalent results.
 
+<a id="fr-proj-031"></a>
+
 **FR-PROJ-031 — Headless project resolution**  
-Headless operation shall resolve required project context deterministically from non-interactive evidence or fail clearly. It shall not block waiting for interactive project selection.
+Headless project-context resolution shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
 
 ### 11.3 Interactive disambiguation
+
+<a id="fr-proj-032"></a>
 
 **FR-PROJ-032 — Interactive disambiguation**  
 Where multiple valid candidate project contexts remain and interaction is permitted, an interactive adapter may assist the user in selecting among those candidates.
@@ -259,16 +300,24 @@ The resulting selection shall be validated under the same AppManager project sem
 
 ### 11.4 Ambiguity and conflict
 
+<a id="fr-proj-033"></a>
+
 **FR-PROJ-033 — Ambiguous context**  
 If AppManager cannot resolve one sufficiently coherent managed-project context from the available evidence, the operation shall fail or request permitted disambiguation rather than proceed through a hidden assumption.
+
+<a id="fr-proj-034"></a>
 
 **FR-PROJ-034 — Conflicting evidence**  
 When project evidence conflicts, AppManager shall apply defined project-resolution policy and report unresolved conflicts that materially affect target identity, scope, or safety.
 
 ### 11.5 Insufficient and unsupported context
 
+<a id="fr-proj-035"></a>
+
 **FR-PROJ-035 — Insufficient context**  
 If required project information cannot be resolved, AppManager shall produce a structured failure indicating which project requirement remains unresolved where that information can be determined safely.
+
+<a id="fr-proj-036"></a>
 
 **FR-PROJ-036 — Unsupported project structure**  
 If the target project's structure is recognised but unsupported for the requested operation, AppManager shall distinguish that condition from both an unknown project and a generic execution failure.
@@ -277,34 +326,39 @@ If the target project's structure is recognised but unsupported for the requeste
 
 ### 12.1 Scope definition
 
+<a id="fr-proj-037"></a>
+
 **FR-PROJ-037 — Managed-scope resolution**  
-Before a consequential operation acts on project resources, AppManager shall resolve the bounded set of project entities to which that operation is intended to apply.
+Consequential operation targeting shall apply [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
+
+<a id="fr-proj-038"></a>
 
 **FR-PROJ-038 — Operation-specific scope**  
 Managed scope shall be derived from the requested command semantics, explicit caller intent, resolved managed-project context, effective configuration, applicable exclusions, and AppManager policy.
 
 ### 12.2 Supported scope forms
 
-**FR-PROJ-039 — Scope forms**  
-Where supported by the relevant command, managed scope may identify:
+<a id="fr-proj-039"></a>
 
-- the complete managed project;
-- the root application;
-- all managed layers;
-- one or more selected layers;
-- one or more selected repositories;
-- one or more selected files or directories;
-- another explicitly bounded set of managed project entities.
+**FR-PROJ-039 — Scope forms**
+
+Command-supported scope forms shall conform to [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
 
 ### 12.3 Scope clarity
 
+<a id="fr-proj-040"></a>
+
 **FR-PROJ-040 — Consequential scope clarity**  
-For a consequential operation, the intended managed scope shall be determinable before mutation, remote change, history-changing action, deletion, overwrite, or other significant side effect begins.
+Managed scope before mutation, remote change, history-changing action, deletion, overwrite or other significant effects shall conform to [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
 
 ### 12.4 Scope narrowing
 
+<a id="fr-proj-041"></a>
+
 **FR-PROJ-041 — Scope narrowing**  
 A command or caller may narrow an otherwise broader valid scope where the command permits such targeting. Narrowing shall not implicitly expand any other part of the operation.
+
+<a id="fr-proj-042"></a>
 
 **FR-PROJ-042 — No implicit scope expansion**  
 AppManager shall not silently broaden an explicitly bounded scope merely because additional related resources were discovered.
@@ -313,40 +367,60 @@ AppManager shall not silently broaden an explicitly bounded scope merely because
 
 ### 13.1 Recognition is not authority
 
+<a id="fr-proj-043"></a>
+
 **FR-PROJ-043 — Recognition does not grant mutation authority**  
-A resource becoming recognised or included in managed-project context shall not by itself make that resource eligible for mutation, deletion, overwrite, synchronisation, remote change, or another consequential effect.
+Recognised resources and consequential targetability shall conform to [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
 ### 13.2 Targetability
+
+<a id="fr-proj-044"></a>
 
 **FR-PROJ-044 — Targetability evaluation**  
 Before a consequential operation acts on a recognised resource, AppManager shall determine that the resource belongs to the resolved managed scope and is an eligible target for that command.
 
 ### 13.3 Ownership and permission
 
+<a id="fr-proj-045"></a>
+
 **FR-PROJ-045 — Ownership-sensitive behaviour**  
-AppManager shall distinguish AppManager-owned data from user-authored or externally owned project resources when that distinction affects whether or how a command may modify the resource.
+Ownership distinctions affecting whether/how a resource may be modified shall conform to [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-proj-046"></a>
 
 **FR-PROJ-046 — No adjacent-resource ownership assumption**  
-The presence of AppManager-owned configuration, state, templates, reports, registries, or generated artefacts shall not grant AppManager ownership of adjacent files, directories, repositories, or framework resources.
+Resources adjacent to AppManager-owned management data shall conform to [Design §9.8](../appmanager-design-specification-v01.md#_9-8-appmanager-owned-management-area-and-project-coexistence).
 
 ## 14. Inclusion, Exclusion, and Unmanaged Content
+
+<a id="fr-proj-047"></a>
 
 **FR-PROJ-047 — Explicit exclusion**  
 Where project or command semantics define excluded resources or entities, those exclusions shall remain effective even when the excluded resources are discoverable within the project topology.
 
+<a id="fr-proj-048"></a>
+
 **FR-PROJ-048 — Unmanaged resource protection**  
-Resources outside the resolved managed scope shall not be modified merely because they are accessible from the project root, repository, workspace, or host environment.
+Protection of accessible resources outside resolved managed scope shall conform to [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-proj-049"></a>
 
 **FR-PROJ-049 — Preserve unrelated content**  
-Operations shall preserve unrelated user-authored and unmanaged content wherever practical and shall avoid treating project-wide scope as permission to rewrite all discoverable resources.
+Preservation of unrelated authored/unmanaged content within project-wide operations shall conform to [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
 ## 15. AppManager-Owned Management Resources
 
+<a id="fr-proj-050"></a>
+
 **FR-PROJ-050 — Management-resource recognition**  
-AppManager shall be able to distinguish its own project-associated management resources from the target project's user-authored application resources where that distinction is functionally relevant.
+Distinguishing management resources from authored application resources where functionally relevant shall conform to [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="fr-proj-051"></a>
 
 **FR-PROJ-051 — Coexistence with project structure**  
-AppManager-owned management resources shall coexist with the project's own structure without requiring the project to be reorganised around AppManager internals.
+AppManager resource coexistence shall conform to [Design §9.8](../appmanager-design-specification-v01.md#_9-8-appmanager-owned-management-area-and-project-coexistence).
+
+<a id="fr-proj-052"></a>
 
 **FR-PROJ-052 — Management data does not redefine project structure**  
 AppManager-owned metadata may contribute to project-context resolution but shall not silently override contradictory project reality or redefine user-owned structure without governed application semantics.
@@ -355,10 +429,14 @@ AppManager-owned metadata may contribute to project-context resolution but shall
 
 ### 16.1 Command consumption
 
+<a id="fr-proj-053"></a>
+
 **FR-PROJ-053 — AppManager-oriented project information**  
-Commands and shared capabilities shall receive the project information they require in AppManager-oriented terms rather than each reconstructing target identity, layer relationships, repository relationships, or scope independently.
+Project information supplied to commands and shared capabilities shall conform to [Design §9.2](../appmanager-design-specification-v01.md#_9-2-managed-project-context).
 
 ### 16.2 Caller-visible context
+
+<a id="fr-proj-054"></a>
 
 **FR-PROJ-054 — Observable target information**  
 Where target identity or managed scope materially affects a caller's understanding, safety decision, automation behaviour, or interpretation of the result, AppManager shall expose sufficient structured information to identify the resolved target and scope.
@@ -367,27 +445,41 @@ Exact schemas belong to Detailed Design.
 
 ### 16.3 Diagnostics
 
+<a id="fr-proj-055"></a>
+
 **FR-PROJ-055 — Project-resolution diagnostics**  
 Failures or warnings involving target-project resolution, ambiguity, unsupported structure, inaccessible resources, or scope shall provide diagnostics sufficient to distinguish the material cause without requiring the caller to infer it from incidental filesystem or terminal behaviour.
 
 ## 17. Interaction-Mode Behaviour
 
+<a id="fr-proj-056"></a>
+
 **FR-PROJ-056 — Cross-mode project equivalence**  
-TUI, Headless, GUI, IDE/host-tool, CI, automation-agent, and future supported invocation paths shall preserve equivalent target-project, managed-context, and managed-scope semantics.
+Project identity, context and scope across supported modes shall apply [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="fr-proj-057"></a>
 
 **FR-PROJ-057 — Host selection is contextual input**  
-A selected file, directory, layer, or repository in a host tool may contribute to target or scope resolution but shall not bypass AppManager validation, policy, exclusions, or safety requirements.
+Host-selected files, directories, layers and repositories shall apply [FR-PROJ-006](managed-project-functional-specification-v01.md#fr-proj-006), [FR-PROJ-044](managed-project-functional-specification-v01.md#fr-proj-044), [FR-PROJ-047](managed-project-functional-specification-v01.md#fr-proj-047).
+
+<a id="fr-proj-058"></a>
 
 **FR-PROJ-058 — No interaction-only project semantics**  
-A project-dependent use case that is otherwise suitable for Headless execution shall not require interactive project browsing or selection when all required target information can be supplied or deterministically resolved non-interactively.
+Project-dependent use cases suitable for automation shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020).
 
 ## 18. Safety and Consequential Operations
 
+<a id="fr-proj-059"></a>
+
 **FR-PROJ-059 — Scope before consequential effects**  
-Consequential effects shall not begin until AppManager has resolved sufficient project context and managed scope to determine the intended targets and applicable safety boundaries.
+Project-context and scope readiness before effects shall apply [Design §9.6](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution), [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
+
+<a id="fr-proj-060"></a>
 
 **FR-PROJ-060 — Scope failure is not partial authorisation**  
 Failure to resolve part of a requested consequential scope shall not implicitly authorise execution against the subset that happened to resolve unless the command's Functional Specification explicitly permits partial-scope execution and reports it as such.
+
+<a id="fr-proj-061"></a>
 
 **FR-PROJ-061 — Discovery failure shall fail safe**  
 When project-context or scope uncertainty could cause AppManager to act on the wrong project, repository, layer, file, or external target, AppManager shall fail safely rather than choose the most convenient candidate.
@@ -416,7 +508,7 @@ This specification determines whether a source resource belongs to the relevant 
 
 Domain Functional Specifications shall define domain-specific target choices and use-case semantics while referencing this document for shared project resolution and scope behaviour.
 
-A domain specification may further constrain scope for one command but shall not weaken the cross-cutting rule that discovery does not grant mutation authority.
+The owning requirements below define the applicable local contract.
 
 ## 20. Traceability
 
@@ -438,19 +530,4 @@ A domain specification may further constrain scope for one command but shall not
 
 ## 21. Conformance
 
-A Version 1 implementation conforms to this Functional Specification only if project-dependent operations:
-
-1. resolve a target project and project root where required;
-2. produce one coherent managed-project context before depending on project identity or structure;
-3. distinguish root application, managed layers, repositories, and AppManager-owned management resources where relevant;
-4. resolve an explicit managed scope before consequential effects;
-5. treat discovery, recognition, targeting, and mutation authority as distinct concepts;
-6. handle ambiguity, conflict, insufficiency, and unsupported context explicitly;
-7. remain deterministic in Headless operation;
-8. preserve equivalent project semantics across interaction modes;
-9. protect unmanaged and unrelated user-authored resources;
-10. fail safely when project or scope uncertainty could cause effects against the wrong target.
-
----
-
-**End of Version 1 Managed Project Functional Specification**
+Conformance is assessed against the applicable requirement bodies in this specification and the canonical contracts they reference. The traceability section identifies the requirement groups; this section creates no additional acceptance checklist.
