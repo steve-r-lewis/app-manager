@@ -16,13 +16,11 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. The documentation-remediation sequence (Packages 0/A/B/C/D) and **DR — Documentation Rationalisation** are closed.
 
-DR established semantic ownership, corrected verified defects and demonstrated zero unaccounted semantic loss, but subsequent closeout review identified that it did **not fully complete the intended physical single-statement hierarchical reduction**. In particular, some inherited normative propositions remain substantively restated downstream rather than being reduced to canonical references plus local binding/local delta.
+DR established semantic ownership, corrected verified defects and demonstrated zero unaccounted semantic loss, but subsequent closeout review identified that it did **not fully complete the intended physical single-statement hierarchical reduction**. NCR — Normative Corpus Reduction was therefore established by PR #169.
 
-PR #168 merged at `8d647309e29883922a04eefe01849bd3eb15937f`, and live `master` was independently verified at that exact SHA. That commit is now designated the **semantically reconciled pre-NCR baseline**.
+Before NCR-1 began, PBC-1 identified and restored previously agreed Version 1 criteria that were incompletely carried through the reconciled tree: GUI as a concrete third Version 1 interaction provision alongside TUI and Headless; modular interface-driven TypeScript implementation; deliberate replaceability at architectural seams; and future IDE/WebStorm portability without making a WebStorm plugin a Version 1 deliverable.
 
-The current active programme is **NCR — Normative Corpus Reduction**, governed by `normative-corpus-reduction-programme-v01.md`.
-
-**Current phase:** physical hierarchical reduction of the normative Version 1 corpus. Version 1 implementation is paused until NCR completes.
+**Current phase:** PBC-1 baseline correction pending merge. NCR execution remains paused until this correction PR is merged and live `master` is independently verified.
 
 ## 3. Baseline Roles
 
@@ -30,19 +28,29 @@ The current active programme is **NCR — Normative Corpus Reduction**, governed
 |---|---|---|
 | Pre-DR semantic comparison baseline | `fe30f5ad883ce2abeca2e495dd4d7036eef09da6` | Immutable historical evidence source used by DR semantic accounting. |
 | DR-9 semantic-equivalence checkpoint | `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7` | Verified semantic-equivalence result before formal DR closeout. |
-| Semantically reconciled pre-NCR baseline | `8d647309e29883922a04eefe01849bd3eb15937f` | Live post-PR-168 corpus against which NCR performs and verifies physical hierarchical reduction. |
+| Post-DR / pre-PBC reconciled checkpoint | `8d647309e29883922a04eefe01849bd3eb15937f` | PR #168 closeout state previously called the semantically reconciled pre-NCR baseline; retained as historical comparison after PBC-1 identified omitted criteria. |
+| NCR-control checkpoint | `1268c9c1036637556386ebb3f3ba21029877df33` | PR #169 merge commit establishing NCR control; not the final semantic input because PBC-1 follows. |
+| PBC-1 working base | `c7277dc34267045599545e9bcc920c00d6f0b73a` | Live `master` independently verified immediately before the PBC-1 branch was created. |
+| Semantically complete pre-NCR baseline | **pending PBC-1 merge verification** | The exact live `master` merge SHA after PBC-1 will become NCR's authoritative semantic input baseline. |
 
-No current commit is yet designated the final lean implementation documentation baseline. That designation is deferred until NCR-5 passes and the final NCR merge is independently verified on live `master`.
+No current commit is yet designated the final lean implementation documentation baseline. That designation remains deferred until NCR-5 passes and the final NCR result is independently verified on live `master`.
 
-## 4. DR Programme — Closed, Scope Clarified
+## 4. PBC-1 — Pre-NCR Baseline Correction
 
-DR-0 through DR-9 remain completed historical work. Their semantic corrections, ownership analysis, proposition accounting and assurance evidence remain valid.
+PBC-1 is a single bounded correction work package, not a new documentation programme.
 
-The DR closeout claim that the corpus was ready to serve as the final lean implementation baseline is narrowed by the later finding recorded here and in the DR closeout record: **semantic reconciliation was complete, but physical single-statement reduction was not**.
+It restores four linked criteria before reduction begins:
 
-DR is not reopened. Its result is treated as the reconciled semantic foundation for NCR.
+1. Version 1 provides **TUI, GUI and Headless** as three concrete interaction provisions over one application model.
+2. The GUI is the graphical/WYSIWYG interaction counterpart to the TUI while preserving shared command, policy, scope, safety and outcome semantics.
+3. The publishable Version 1 implementation is modular, interface-driven TypeScript with explicit typed boundaries and explicit composition at deliberately replaceable seams.
+4. Future IDE/plugin portability, including the previously discussed WebStorm direction, constrains Version 1 coupling but does not make the WebStorm plugin, JVM implementation, generic plugin framework or cross-language transport a Version 1 deliverable.
 
-## 5. NCR — Active
+PBC-1 uses the minimum active clarification mechanism necessary to restore the omitted criteria without prematurely performing NCR's physical consolidation. The PBC-1 clarifications are explicitly temporary: NCR shall fold their semantics into canonical primary owners and retire them.
+
+No PBC-2, PBC closeout programme or separate PBC assurance programme is planned.
+
+## 5. NCR — Established, Execution Pending PBC-1 Merge
 
 NCR has one definitive objective:
 
@@ -56,7 +64,7 @@ The execution passes are:
 4. **NCR-4 — Horizontal Reduction**;
 5. **NCR-5 — Final Cardinality and Semantic Verification**.
 
-These are execution passes within one finite programme, not separate documentation programmes. NCR-1 through NCR-4 physically edit the normative corpus; NCR-5 verifies the result. A failed NCR-5 check is corrected inside NCR rather than creating another rationalisation programme.
+NCR-1 must treat the PBC-1 Design and Functional clarifications as active input and fold them into the canonical Design/Functional owners rather than preserving them as an additional permanent documentation layer. NCR-3 does the equivalent for the PBC-1 implementation clarification.
 
 ## 6. Anti-Circularity Rule
 
@@ -64,20 +72,22 @@ NCR deliberately limits project-management overhead. It uses one control documen
 
 Recording or classifying a duplicate is not completion. A duplicate normative restatement must be physically removed or reduced to a valid reference/local binding/local delta.
 
+PBC-1 is the only pre-NCR correction work package. Once merged and verified, newly discovered NCR defects are handled within the appropriate NCR pass rather than spawning further pre-programmes.
+
 There is no NCR-6 and no successor documentation-rationalisation programme.
 
 ## 7. Information Classes and Reading Rule
 
 `assurance/` retains completed audits, reviews and reconciliations. `history/` retains completed/superseded management activity. `decisions/` remains the ADR location. Active root project-management documents provide current navigation, registers and reusable procedure.
 
-For NCR work: read this index and the NCR control; read the normative hierarchy and relevant active clarifications; use DR ownership/disposition evidence where useful; verify the live repository before each branch. Historical DR records are evidence and shall not be repeatedly rewritten to narrate NCR progress.
+For NCR work: read this index and the NCR control; read the normative hierarchy and relevant active clarifications, including PBC-1; use DR ownership/disposition evidence where useful; verify the live repository before each branch. Historical DR records are evidence and shall not be repeatedly rewritten to narrate NCR progress.
 
 ## 8. Active and Reusable Root Documents
 
-- `normative-corpus-reduction-programme-v01.md` — active NCR execution control and definitive exit criteria;
+- `normative-corpus-reduction-programme-v01.md` — NCR execution control and definitive exit criteria;
 - `normative-ownership-map-v01.md` — DR-3 index of canonical Design/Functional owners for recurrent invariants;
 - `detailed-design-register-v01.md` — current Version 1 DD identity/lifecycle register;
-- `active-clarification-register-v01.md` — current navigation across active Functional, DD and Implementation clarifications;
+- `active-clarification-register-v01.md` — current navigation across active Design, Functional, DD and Implementation clarifications, including PBC-1;
 - `domain-detailed-design-authoring-guide-v02.md` — reusable drafting and hierarchical-reference/readability guidance;
 - `documentation-assurance-guide-v01.md` — reusable vertical + horizontal assurance method;
 - `README.md` — current-state navigation.
@@ -86,12 +96,14 @@ The completed `documentation-corpus-rationalisation-programme-v01.md` remains hi
 
 ## 9. Continuing Authority Rules
 
-The established normative hierarchy is unchanged. NCR does not move authority merely to shorten prose. It removes duplicate statements by referencing the existing correct owner and retaining the consumer's genuine local delta.
+The established normative hierarchy is unchanged. PBC-1 restores omitted criteria at their proper levels; NCR subsequently consolidates them into canonical primary owners. Project-management records do not become product authority.
 
-Project-management records do not become product authority. Similar naming or data shape does not establish semantic equivalence or justify new generic architecture. Current source remains migration evidence where normative target specifications exist.
+NCR does not move authority merely to shorten prose. It removes duplicate statements by referencing the existing correct owner and retaining the consumer's genuine local delta.
+
+Similar naming or data shape does not establish semantic equivalence or justify new generic architecture. Current source remains migration evidence where normative target specifications exist. Future plugin portability does not authorize speculative generic plugin, RPC or cross-language abstractions in Version 1.
 
 ## 10. Next Objective
 
-After this baseline-correction PR merges and live `master` is verified, begin **NCR-1 — Design and Functional** from that exact live baseline.
+After the PBC-1 correction PR merges and live `master` is independently verified, designate that exact merge SHA the **semantically complete pre-NCR baseline** and begin **NCR-1 — Design and Functional** directly from it.
 
-Implementation must not begin until NCR-5 satisfies the programme's cardinality and semantic-preservation criteria and the final resulting live `master` is independently verified.
+No additional planning, closeout or assurance package intervenes. Implementation remains paused until NCR-5 satisfies the programme's cardinality and semantic-preservation criteria and the final resulting live `master` is independently verified.
