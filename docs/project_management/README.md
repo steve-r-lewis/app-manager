@@ -14,58 +14,67 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. The documentation-remediation sequence (Packages 0/A/B/C/D) and the complete **DR — Documentation Rationalisation** programme are closed.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. The documentation-remediation sequence (Packages 0/A/B/C/D) and **DR — Documentation Rationalisation** are closed.
 
-The immutable pre-rationalisation semantic comparison baseline remains:
+DR established semantic ownership, corrected verified defects and demonstrated zero unaccounted semantic loss, but subsequent closeout review identified that it did **not fully complete the intended physical single-statement hierarchical reduction**. In particular, some inherited normative propositions remain substantively restated downstream rather than being reduced to canonical references plus local binding/local delta.
 
-`fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
+PR #168 merged at `8d647309e29883922a04eefe01849bd3eb15937f`, and live `master` was independently verified at that exact SHA. That commit is now designated the **semantically reconciled pre-NCR baseline**.
 
-DR-0 through DR-9 were merged as PRs #158 through #167 respectively. PR #167 was independently verified merged and closed, and live `master` was independently verified at its exact merge commit:
+The current active programme is **NCR — Normative Corpus Reduction**, governed by `normative-corpus-reduction-programme-v01.md`.
 
-`bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7`
+**Current phase:** physical hierarchical reduction of the normative Version 1 corpus. Version 1 implementation is paused until NCR completes.
 
-That commit is the accepted **Version 1 lean implementation documentation baseline**.
-
-**Current phase:** Version 1 implementation may begin from the accepted lean baseline under the established normative hierarchy, accepted ADRs and active clarifications. Implementation must not treat the frozen pre-rationalisation comparison baseline, historical handovers, intermediate DR branches or legacy source topology as competing target authority.
-
-## 3. DR Programme — Closed
-
-The completed programme plan is `documentation-corpus-rationalisation-programme-v01.md`.
-
-Final programme state:
-
-1. **DR-0 — Post-Baseline Verification and Rationalisation Control** — merged and independently verified;
-2. **DR-1 — Contract and Ownership Corrections** — merged and independently verified;
-3. **DR-2 — Authority and Hierarchy Corrections** — merged and independently verified;
-4. **DR-3 — Design and Functional Normative Ownership** — merged and independently verified;
-5. **DR-4 — DD-2 Shared Capability Rationalisation** — merged and independently verified;
-6. **DR-5 — DD-3/DD-4 Domain Rationalisation** — merged and independently verified;
-7. **DR-6 — Functional Corpus Rationalisation** — merged and independently verified;
-8. **DR-7 — Implementation Specification Rationalisation** — merged and independently verified;
-9. **DR-8 — Documentation and Project-Management Hygiene** — merged and independently verified;
-10. **DR-9 — Semantic Equivalence and Lean-Baseline Verification** — merged, independently verified and accepted.
-
-Final DR-9 finding: **PASS — semantic equivalence established with accountable corrections; zero unaccounted semantic loss identified.**
-
-The governing rationalisation rule remains useful documentation guidance: **state a semantic rule once at its canonical normative owner; downstream documents reference that owner and specify only the local binding and local delta.**
-
-## 4. Baseline Roles
+## 3. Baseline Roles
 
 | Baseline | SHA | Role |
 |---|---|---|
-| Pre-rationalisation semantic comparison baseline | `fe30f5ad883ce2abeca2e495dd4d7036eef09da6` | Immutable evidence source used to prove semantic accounting through DR-9. Historical comparison baseline only. |
-| Version 1 lean implementation documentation baseline | `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7` | Accepted documentation baseline from which Version 1 implementation planning and implementation work may proceed. |
+| Pre-DR semantic comparison baseline | `fe30f5ad883ce2abeca2e495dd4d7036eef09da6` | Immutable historical evidence source used by DR semantic accounting. |
+| DR-9 semantic-equivalence checkpoint | `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7` | Verified semantic-equivalence result before formal DR closeout. |
+| Semantically reconciled pre-NCR baseline | `8d647309e29883922a04eefe01849bd3eb15937f` | Live post-PR-168 corpus against which NCR performs and verifies physical hierarchical reduction. |
 
-The first baseline is not superseded as evidence; the second supersedes it as the implementation starting point.
+No current commit is yet designated the final lean implementation documentation baseline. That designation is deferred until NCR-5 passes and the final NCR merge is independently verified on live `master`.
 
-## 5. Information Classes and Reading Rule
+## 4. DR Programme — Closed, Scope Clarified
+
+DR-0 through DR-9 remain completed historical work. Their semantic corrections, ownership analysis, proposition accounting and assurance evidence remain valid.
+
+The DR closeout claim that the corpus was ready to serve as the final lean implementation baseline is narrowed by the later finding recorded here and in the DR closeout record: **semantic reconciliation was complete, but physical single-statement reduction was not**.
+
+DR is not reopened. Its result is treated as the reconciled semantic foundation for NCR.
+
+## 5. NCR — Active
+
+NCR has one definitive objective:
+
+> Every normative rule, directive, architectural invariant or design mandate shall have exactly one complete canonical statement at its correct normative owner. Every other occurrence shall be a precise reference, a necessary concise local binding, or a genuine local semantic delta.
+
+The execution passes are:
+
+1. **NCR-1 — Design and Functional**;
+2. **NCR-2 — Detailed Design**;
+3. **NCR-3 — Implementation Specifications**;
+4. **NCR-4 — Horizontal Reduction**;
+5. **NCR-5 — Final Cardinality and Semantic Verification**.
+
+These are execution passes within one finite programme, not separate documentation programmes. NCR-1 through NCR-4 physically edit the normative corpus; NCR-5 verifies the result. A failed NCR-5 check is corrected inside NCR rather than creating another rationalisation programme.
+
+## 6. Anti-Circularity Rule
+
+NCR deliberately limits project-management overhead. It uses one control document and one working proposition ledger as needed for execution and verification. Per-pass narrative assurance reports are not required.
+
+Recording or classifying a duplicate is not completion. A duplicate normative restatement must be physically removed or reduced to a valid reference/local binding/local delta.
+
+There is no NCR-6 and no successor documentation-rationalisation programme.
+
+## 7. Information Classes and Reading Rule
 
 `assurance/` retains completed audits, reviews and reconciliations. `history/` retains completed/superseded management activity. `decisions/` remains the ADR location. Active root project-management documents provide current navigation, registers and reusable procedure.
 
-For implementation work: read this index; read the normative product hierarchy; read accepted ADRs and active clarifications; use the Implementation Specification register and relevant IS documents; consult assurance/history for evidence, provenance or rationale only. Always verify live repository state before creating a work branch.
+For NCR work: read this index and the NCR control; read the normative hierarchy and relevant active clarifications; use DR ownership/disposition evidence where useful; verify the live repository before each branch. Historical DR records are evidence and shall not be repeatedly rewritten to narrate NCR progress.
 
-## 6. Active and Reusable Root Documents
+## 8. Active and Reusable Root Documents
 
+- `normative-corpus-reduction-programme-v01.md` — active NCR execution control and definitive exit criteria;
 - `normative-ownership-map-v01.md` — DR-3 index of canonical Design/Functional owners for recurrent invariants;
 - `detailed-design-register-v01.md` — current Version 1 DD identity/lifecycle register;
 - `active-clarification-register-v01.md` — current navigation across active Functional, DD and Implementation clarifications;
@@ -73,24 +82,16 @@ For implementation work: read this index; read the normative product hierarchy; 
 - `documentation-assurance-guide-v01.md` — reusable vertical + horizontal assurance method;
 - `README.md` — current-state navigation.
 
-The completed `documentation-corpus-rationalisation-programme-v01.md` is retained as programme control/history evidence and is no longer an active work programme.
+The completed `documentation-corpus-rationalisation-programme-v01.md` remains historical DR programme evidence.
 
-## 7. DR Closeout Evidence
+## 9. Continuing Authority Rules
 
-DR-9 is recorded at `assurance/reviews/dr9-semantic-equivalence-and-lean-baseline-verification-v01.md`, with programme-wide proposition accounting at `assurance/reconciliations/dr9-semantic-equivalence-register-v01.md`. Formal programme closeout is recorded at `history/closeouts/documentation-rationalisation-programme-closeout-v01.md`.
+The established normative hierarchy is unchanged. NCR does not move authority merely to shorten prose. It removes duplicate statements by referencing the existing correct owner and retaining the consumer's genuine local delta.
 
-The final review preserved stable Functional requirement identities, Detailed Design contracts accounted by DR-4/DR-5, all 23 primary Implementation Specification identities and concrete Level 4 contracts, the nine DR-3 recurrent invariant owner sets, and every confirmed DR-1/DR-2 correction. No unresolved semantic contradiction requires new normative change control.
+Project-management records do not become product authority. Similar naming or data shape does not establish semantic equivalence or justify new generic architecture. Current source remains migration evidence where normative target specifications exist.
 
-The post-merge verification required by DR-9 is satisfied: PR #167 merged at `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7`, and live `master` was independently verified at the same SHA.
+## 10. Next Objective
 
-## 8. Continuing Documentation Rules
+After this baseline-correction PR merges and live `master` is verified, begin **NCR-1 — Design and Functional** from that exact live baseline.
 
-The final corpus continues to require one canonical normative owner per semantic rule; inherited rules referenced rather than fully restated; concise local safety/authority bindings where needed; only local delta downstream; no architecture inferred from naming/shape similarity; correctness before deduplication; and accountable change control for genuine semantic changes.
-
-Project-management records do not become product authority. Current source remains migration evidence where normative target specifications exist.
-
-## 9. Next Objective
-
-Begin the Version 1 implementation programme from the accepted lean implementation documentation baseline `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7`.
-
-Before implementation changes are made, establish the implementation programme and dependency-ordered work plan from the governing Implementation Specifications. The plan should respect the explicit runtime/assembly path, application authority, shared-capability/domain boundaries, migration dispositions and independently testable conformance obligations rather than assuming numeric IS order is the implementation sequence.
+Implementation must not begin until NCR-5 satisfies the programme's cardinality and semantic-preservation criteria and the final resulting live `master` is independently verified.
