@@ -8,74 +8,70 @@
 
 ## 1. Purpose
 
-This register provides one current navigation point for Version 1 clarification documents that remain active after the DR correctness/rationalisation programme and the PBC-1 pre-NCR baseline correction.
-
-A clarification is not a new documentation-hierarchy level. It clarifies the normative document(s) identified by its own header and remains subordinate to the established Design -> Functional -> Detailed Design -> Implementation direction.
-
-If this register and a clarification's live content disagree, the clarification itself and the governing documentation hierarchy control. Repository state must be verified before relying on lifecycle assumptions.
+This register provides one current navigation point for Version 1 clarification documents that remain active after DR and during the bounded PBC-1 pre-NCR baseline correction. A clarification is not a new documentation-hierarchy level and remains subordinate to Design -> Functional -> Detailed Design -> Implementation.
 
 ## 2. Design Clarifications
 
 | Clarification | Scope / purpose |
 |---|---|
-| [`appmanager-version-1-interaction-and-portability-clarification-v01.md`](../appmanager-version-1-interaction-and-portability-clarification-v01.md) | PBC-1 restoration of three concrete V1 interaction provisions (TUI, GUI, Headless), modular interface-driven TypeScript architecture and future IDE/plugin portability without making WebStorm a V1 deliverable. |
-| [`appmanager-version-1-app-command-model-clarification-v01.md`](../appmanager-version-1-app-command-model-clarification-v01.md) | PBC-1 correction of the V1 App command surface: simple root-application lifecycle commands, explicit App/Nuxt boundary and supporting-script/provider separation. |
-| [`appmanager-version-1-nuxt-command-model-clarification-v01.md`](../appmanager-version-1-nuxt-command-model-clarification-v01.md) | PBC-1 completion of the App/Nuxt boundary and thirteen-command Nuxt surface, including scaffold, module, upgrade, analysis and bounded Nuxt cleanup intent. |
+| [`appmanager-version-1-interaction-and-portability-clarification-v01.md`](../appmanager-version-1-interaction-and-portability-clarification-v01.md) | PBC-1 TUI/GUI/Headless, modular TypeScript and future-host portability restoration. |
+| [`appmanager-version-1-app-command-model-clarification-v01.md`](../appmanager-version-1-app-command-model-clarification-v01.md) | PBC-1 eight-command App surface and App/Nuxt boundary. |
+| [`appmanager-version-1-nuxt-command-model-clarification-v01.md`](../appmanager-version-1-nuxt-command-model-clarification-v01.md) | PBC-1 thirteen-command Nuxt surface. |
+| [`appmanager-version-1-maintenance-domain-clarification-v01.md`](../appmanager-version-1-maintenance-domain-clarification-v01.md) | PBC-1 reclassification of `utils` as bounded `maintenance`, with stronger-owner rule and four renamed identities. |
 
 ## 3. Functional Clarifications
 
 | Clarification | Scope / purpose |
 |---|---|
 | [`app-settings-environment-definition-ownership-clarification-v01.md`](../functional/app-settings-environment-definition-ownership-clarification-v01.md) | App/Settings environment-definition ownership. |
-| [`ai-functional-ownership-clarification-v01.md`](../functional/clarifications/ai-functional-ownership-clarification-v01.md) | AI Functional ownership and consuming-domain relationship. |
-| [`app-command-model-functional-clarification-v01.md`](../functional/clarifications/app-command-model-functional-clarification-v01.md) | PBC-1 Functional binding for the corrected eight-command App surface, `prepare`/`generate`, reset+prepare composition and bounded declared-script support. |
-| [`nuxt-command-model-functional-clarification-v01.md`](../functional/clarifications/nuxt-command-model-functional-clarification-v01.md) | PBC-1 Functional binding for the corrected thirteen-command Nuxt surface and added root/layer-aware Nuxt intents. |
-| [`functional-corpus-rationalisation-clarification-v01.md`](../functional/clarifications/functional-corpus-rationalisation-clarification-v01.md) | DR-6 rationalised Functional-corpus reading. |
+| [`ai-functional-ownership-clarification-v01.md`](../functional/clarifications/ai-functional-ownership-clarification-v01.md) | AI Functional ownership. |
+| [`app-command-model-functional-clarification-v01.md`](../functional/clarifications/app-command-model-functional-clarification-v01.md) | PBC-1 App command Functional binding. |
+| [`nuxt-command-model-functional-clarification-v01.md`](../functional/clarifications/nuxt-command-model-functional-clarification-v01.md) | PBC-1 Nuxt command Functional binding. |
+| [`maintenance-domain-functional-clarification-v01.md`](../functional/clarifications/maintenance-domain-functional-clarification-v01.md) | PBC-1 Maintenance Functional boundary and four renamed commands. |
+| [`functional-corpus-rationalisation-clarification-v01.md`](../functional/clarifications/functional-corpus-rationalisation-clarification-v01.md) | DR-6 rationalised Functional reading. |
 | [`functional-traceability-authority-vocabulary-clarification-v01.md`](../functional/clarifications/functional-traceability-authority-vocabulary-clarification-v01.md) | Functional traceability authority vocabulary. |
-| [`nuxt-layer-scaffold-functional-ownership-clarification-v01.md`](../functional/clarifications/nuxt-layer-scaffold-functional-ownership-clarification-v01.md) | Nuxt layer-scaffold Functional ownership, including FR-NUXT-058/059. |
-| [`version-1-gui-interaction-clarification-v01.md`](../functional/clarifications/version-1-gui-interaction-clarification-v01.md) | PBC-1 GUI-specific Version 1 observable interaction requirements beneath the shared Application Invocation authority. |
+| [`nuxt-layer-scaffold-functional-ownership-clarification-v01.md`](../functional/clarifications/nuxt-layer-scaffold-functional-ownership-clarification-v01.md) | Nuxt layer-scaffold ownership. |
+| [`version-1-gui-interaction-clarification-v01.md`](../functional/clarifications/version-1-gui-interaction-clarification-v01.md) | PBC-1 GUI observable interaction requirements. |
 
 ## 4. Detailed Design Clarifications — DD-1
 
 | Clarification | Scope / purpose |
 |---|---|
-| [`application-core-bootstrap-resolution-clarification-v01.md`](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md) | DD-1 bootstrap/configuration/managed-project resolution relationship. |
-| [`application-outcome-and-diagnostic-ownership-clarification-v01.md`](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md) | Canonical application outcome and diagnostic ownership. |
+| [`application-core-bootstrap-resolution-clarification-v01.md`](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md) | DD-1 bootstrap/configuration/managed-project resolution. |
+| [`application-outcome-and-diagnostic-ownership-clarification-v01.md`](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md) | Canonical application outcome/diagnostic ownership. |
 
 ## 5. Detailed Design Clarifications — DD-2
 
 | Clarification | Scope / purpose |
 |---|---|
-| [`ai-functional-refinement-relationship-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/ai-functional-refinement-relationship-clarification-v01.md) | DD-2.7/AI-domain Functional refinement relationship. |
-| [`dd2-shared-capability-rationalisation-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/dd2-shared-capability-rationalisation-clarification-v01.md) | DR-4 rationalised DD-2 shared-capability reading. |
-| [`dd2-sibling-authority-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/dd2-sibling-authority-clarification-v01.md) | Same-level DD-2 sibling authority and caller-contract interpretation. |
-| [`nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md) | Nuxt layer-scaffold artefact ownership refinement. |
-| [`nuxt-command-model-capability-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/nuxt-command-model-capability-clarification-v01.md) | PBC-1 bounded DD-2.10 technical support required by the expanded Nuxt command model without transferring domain authority. |
-| [`repository-source-intelligence-relationship-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/repository-source-intelligence-relationship-clarification-v01.md) | Repository Capability / Source Intelligence relationship. |
+| [`ai-functional-refinement-relationship-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/ai-functional-refinement-relationship-clarification-v01.md) | DD-2.7/AI Functional refinement. |
+| [`dd2-shared-capability-rationalisation-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/dd2-shared-capability-rationalisation-clarification-v01.md) | DR-4 rationalised DD-2 reading. |
+| [`dd2-sibling-authority-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/dd2-sibling-authority-clarification-v01.md) | DD-2 sibling authority. |
+| [`nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md) | Nuxt layer-scaffold artefact ownership. |
+| [`nuxt-command-model-capability-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/nuxt-command-model-capability-clarification-v01.md) | PBC-1 DD-2.10 support for Nuxt command correction. |
+| [`repository-source-intelligence-relationship-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/repository-source-intelligence-relationship-clarification-v01.md) | Repository/Source Intelligence relationship. |
 
 ## 6. Detailed Design Clarifications — DD-3/DD-4
 
 | Clarification | Scope / purpose |
 |---|---|
-| [`app-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/app-domain-command-model-clarification-v01.md) | PBC-1 DD-3.1 correction for the eight canonical App use cases and supporting declared-script mechanism. |
+| [`app-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/app-domain-command-model-clarification-v01.md) | PBC-1 DD-3.1 App correction. |
 | [`dd3-dd4-domain-rationalisation-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/dd3-dd4-domain-rationalisation-clarification-v01.md) | DR-5 rationalised domain-DD reading. |
-| [`nuxt-domain-operation-identity-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md) | Earlier canonical Nuxt-domain identity correction; read with the PBC-1 command-model clarification until NCR-2 consolidates the primary owner. |
-| [`nuxt-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-command-model-clarification-v01.md) | PBC-1 DD-3.3 extension from eight to thirteen Nuxt intents and their orchestration/target/acceptance boundaries. |
+| [`nuxt-domain-operation-identity-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md) | Earlier Nuxt identity correction pending NCR consolidation. |
+| [`nuxt-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-command-model-clarification-v01.md) | PBC-1 DD-3.3 Nuxt extension. |
+| [`maintenance-domain-reclassification-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/maintenance-domain-reclassification-clarification-v01.md) | PBC-1 DD-4.4 reclassification from Utils to Maintenance and stronger-owner gate. |
 
 ## 7. Implementation Clarifications
 
 | Clarification | Scope / purpose |
 |---|---|
-| [`app-command-model-implementation-clarification-v01.md`](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | PBC-1 IS-14 correction for command registration, provider resolution, reset+prepare composition and supporting declared-script runner. |
-| [`interaction-capabilities-contract-clarification-v01.md`](../implementation/clarifications/interaction-capabilities-contract-clarification-v01.md) | IS-1/IS-22 interaction-capability contract distinction. |
+| [`app-command-model-implementation-clarification-v01.md`](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | PBC-1 IS-14 App correction. |
+| [`interaction-capabilities-contract-clarification-v01.md`](../implementation/clarifications/interaction-capabilities-contract-clarification-v01.md) | IS-1/IS-22 interaction-capability distinction. |
 | [`implementation-specification-rationalisation-clarification-v01.md`](../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md) | DR-7 rationalised Level 4 reading. |
-| [`nuxt-command-model-implementation-clarification-v01.md`](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | PBC-1 IS-16/IS-13 binding for the thirteen-command Nuxt catalogue, typed inputs, domain orchestration and bounded capability/provider seams. |
-| [`version-1-gui-and-portability-implementation-clarification-v01.md`](../implementation/clarifications/version-1-gui-and-portability-implementation-clarification-v01.md) | PBC-1 binding correction for IS-22/IS-23: GUI as third concrete V1 adapter and explicit modular typed replaceability/future-host portability. |
+| [`nuxt-command-model-implementation-clarification-v01.md`](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | PBC-1 IS-16/IS-13 Nuxt correction. |
+| [`maintenance-domain-implementation-clarification-v01.md`](../implementation/clarifications/maintenance-domain-implementation-clarification-v01.md) | PBC-1 IS-21 reclassification, canonical `maintenance.*` identities and compatibility rule. |
+| [`version-1-gui-and-portability-implementation-clarification-v01.md`](../implementation/clarifications/version-1-gui-and-portability-implementation-clarification-v01.md) | PBC-1 IS-22/IS-23 GUI/portability correction. |
 
 ## 8. Lifecycle Rule
 
-When a clarification is folded into all affected primary normative documents and no compatibility or interpretive purpose remains, its lifecycle may be changed deliberately through normal documentation governance. Until then it remains active and should be linked from affected primary documents where necessary for correct interpretation.
-
-Historical assurance records may mention clarifications without making them active. This register lists only live clarification files intended to participate in current Version 1 reading.
-
-PBC-1 clarifications are deliberately temporary integration vehicles. NCR shall fold their semantics into the proper canonical primary owners and retire them rather than preserving an additional permanent layer of documentation.
+When a clarification is folded into all affected primary normative documents and no compatibility or interpretive purpose remains, its lifecycle may be changed deliberately through normal documentation governance. PBC-1 clarifications are temporary integration vehicles; NCR shall fold their semantics into proper canonical primary owners and retire them.
