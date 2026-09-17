@@ -18,9 +18,9 @@ The Version 1 Design, Functional, Detailed Design and Implementation Specificati
 
 DR established semantic ownership, corrected verified defects and demonstrated zero unaccounted semantic loss, but subsequent closeout review identified that it did **not fully complete the intended physical single-statement hierarchical reduction**. NCR — Normative Corpus Reduction was therefore established by PR #169.
 
-Before NCR-1 began, PBC-1 restored previously agreed Version 1 interaction/portability criteria through PR #170. During the required pre-NCR command review, the App command catalogue was also found to preserve historical workflow identities that did not match the intended simple root-application product surface. PBC-1 therefore remains open only long enough to correct that App command model in the immediately following PR.
+Before NCR-1 began, PBC-1 restored previously agreed Version 1 interaction/portability criteria through PR #170. PR #171 then corrected the App command catalogue to the intended simple root-application surface and restored the App/Nuxt boundary. Review of the corresponding Nuxt surface identified the final required PBC-1 command-model correction: Nuxt must own the advanced framework-aware root/layer operations implied by that boundary.
 
-**Current phase:** PBC-1 App-command correction pending merge. NCR execution remains paused until this correction PR is merged and live `master` is independently verified.
+**Current phase:** PBC-1 Nuxt-command correction in progress. NCR execution remains paused until this final correction PR is merged and live `master` is independently verified.
 
 ## 3. Baseline Roles
 
@@ -30,8 +30,9 @@ Before NCR-1 began, PBC-1 restored previously agreed Version 1 interaction/porta
 | DR-9 semantic-equivalence checkpoint | `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7` | Verified semantic-equivalence result before formal DR closeout. |
 | Post-DR / pre-PBC reconciled checkpoint | `8d647309e29883922a04eefe01849bd3eb15937f` | PR #168 closeout state retained as historical comparison after PBC-1 identified omitted criteria. |
 | NCR-control checkpoint | `1268c9c1036637556386ebb3f3ba21029877df33` | PR #169 merge commit establishing NCR control; not the final semantic input because PBC-1 follows. |
-| PBC-1 interaction/portability checkpoint | `eacb032fbb7c41bd7479c9d781eb68231a18fe73` | Verified live `master` merge of PR #170; also the base for the App-command correction. |
-| Semantically complete pre-NCR baseline | **pending App-command correction merge verification** | The exact live `master` merge SHA after the immediately following PBC-1 App-command PR becomes NCR's authoritative semantic input baseline. |
+| PBC-1 interaction/portability checkpoint | `eacb032fbb7c41bd7479c9d781eb68231a18fe73` | Verified live `master` merge of PR #170. |
+| PBC-1 App-command checkpoint | `d36445a560e09f6f9ba6d16a12fb5b53bb6629c7` | Verified live `master` merge of PR #171; base for the corresponding Nuxt-command correction. |
+| Semantically complete pre-NCR baseline | **pending Nuxt-command correction merge verification** | The exact live `master` merge SHA after the final PBC-1 Nuxt-command PR becomes NCR's authoritative semantic input baseline. |
 
 No current commit is yet designated the final lean implementation documentation baseline. That designation remains deferred until NCR-5 passes and the final NCR result is independently verified on live `master`.
 
@@ -39,14 +40,9 @@ No current commit is yet designated the final lean implementation documentation 
 
 PBC-1 is a bounded pre-NCR semantic correction, not a new documentation programme.
 
-PR #170 restored the interaction/portability criteria:
+PR #170 restored the interaction/portability criteria: TUI, GUI and Headless as three concrete V1 provisions over one application model; GUI as the graphical/WYSIWYG TUI counterpart; modular interface-driven TypeScript; and future IDE/plugin portability without making WebStorm/JVM/RPC a V1 deliverable.
 
-1. Version 1 provides **TUI, GUI and Headless** as three concrete interaction provisions over one application model.
-2. The GUI is the graphical/WYSIWYG interaction counterpart to the TUI while preserving shared command, policy, scope, safety and outcome semantics.
-3. The publishable Version 1 implementation is modular, interface-driven TypeScript with explicit typed boundaries and explicit composition at deliberately replaceable seams.
-4. Future IDE/plugin portability, including the previously discussed WebStorm direction, constrains Version 1 coupling but does not make the WebStorm plugin, JVM implementation, generic plugin framework or cross-language transport a Version 1 deliverable.
-
-The immediately following App-command correction establishes the intended simple root-application command surface before NCR canonicalises it:
+PR #171 established the intended simple root-application command surface:
 
 ```text
 app.create
@@ -59,7 +55,25 @@ app.clean
 app.reset
 ```
 
-It also restores the boundary that complex Nuxt-aware monorepo, layer-composition and framework-structural operations belong to the `nuxt` domain rather than the simple `app` surface.
+The corresponding Nuxt correction establishes the framework-aware surface:
+
+```text
+nuxt.inspect
+nuxt.inspect-configuration
+nuxt.list-configuration
+nuxt.add-configuration
+nuxt.remove-configuration
+nuxt.add
+nuxt.add-module
+nuxt.upgrade
+nuxt.analyze
+nuxt.cleanup
+nuxt.create-layer
+nuxt.integrate-layer
+nuxt.detach-layer
+```
+
+The boundary is deliberate: App owns simple root-application lifecycle intent; Nuxt owns Nuxt-aware structure, configuration, framework scaffolding/modules, selected-target upgrade/analysis/cleanup, layer composition and complex root/layer semantics. Quality remains owner of type-check/test/lint/coverage/gate intent even when Nuxt tooling supplies evidence.
 
 PBC-1 clarifications are temporary integration vehicles. NCR shall fold their semantics into canonical primary owners and retire them.
 
@@ -79,7 +93,7 @@ The execution passes are:
 4. **NCR-4 — Horizontal Reduction**;
 5. **NCR-5 — Final Cardinality and Semantic Verification**.
 
-NCR-1 must treat the PBC-1 Design and Functional clarifications as active input and fold them into the canonical Design/Functional owners rather than preserving them as an additional permanent documentation layer. NCR-2/NCR-3 do the equivalent for the PBC-1 DD/Implementation clarifications.
+NCR-1 must treat all PBC-1 Design and Functional clarifications as active input and fold them into the canonical Design/Functional owners rather than preserving them as an additional permanent documentation layer. NCR-2/NCR-3 do the equivalent for the PBC-1 DD/Implementation clarifications.
 
 ## 6. Anti-Circularity Rule
 
@@ -87,7 +101,7 @@ NCR deliberately limits project-management overhead. It uses one control documen
 
 Recording or classifying a duplicate is not completion. A duplicate normative restatement must be physically removed or reduced to a valid reference/local binding/local delta.
 
-PBC-1 is the only pre-NCR correction work package. The App-command correction is part of that same work package, not PBC-2. Once it merges and is verified, newly discovered reduction defects are handled within the appropriate NCR pass.
+PBC-1 is the only pre-NCR correction work package. The interaction, App-command and corresponding Nuxt-command corrections are all part of that same bounded work package, not PBC-2. Once the Nuxt correction merges and is verified, newly discovered reduction defects are handled within the appropriate NCR pass.
 
 There is no NCR-6 and no successor documentation-rationalisation programme.
 
@@ -119,6 +133,6 @@ Similar naming or data shape does not establish semantic equivalence or justify 
 
 ## 10. Next Objective
 
-After the PBC-1 App-command correction PR merges and live `master` is independently verified, designate that exact merge SHA the **semantically complete pre-NCR baseline** and begin **NCR-1 — Design and Functional** directly from it.
+After the PBC-1 Nuxt-command correction PR merges and live `master` is independently verified, designate that exact merge SHA the **semantically complete pre-NCR baseline** and begin **NCR-1 — Design and Functional** directly from it.
 
 No additional planning, closeout or assurance package intervenes. Implementation remains paused until NCR-5 satisfies the programme's cardinality and semantic-preservation criteria and the final resulting live `master` is independently verified.
