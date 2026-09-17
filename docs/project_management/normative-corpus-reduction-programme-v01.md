@@ -10,7 +10,7 @@
 >
 > **Normative product effect:** None. This document controls reduction work; normative authority remains with the established documentation hierarchy.
 >
-> **Semantically reconciled pre-NCR baseline:** `8d647309e29883922a04eefe01849bd3eb15937f`
+> **Semantically complete pre-NCR baseline:** `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`
 
 ## 1. Objective
 
@@ -28,11 +28,20 @@ Duplicate normative restatement is not acceptable merely because its canonical o
 
 ## 2. Baseline
 
-PR #168 merged at `8d647309e29883922a04eefe01849bd3eb15937f`, and live `master` was independently verified at that exact SHA before NCR was established.
+PR #177 merged at `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`, and live `master` was independently verified at that exact SHA before NCR execution began.
 
-That SHA is the **semantically reconciled pre-NCR baseline**. It preserves the completed DR corrections and semantic accounting while acknowledging that physical single-statement reduction remains incomplete.
+That SHA is the **semantically complete pre-NCR baseline**. It contains the completed DR corpus plus the bounded PBC-1 semantic corrections accepted through PRs #170–#177: Version 1 GUI/interaction/portability restoration, App command correction, Nuxt command correction, Utils-to-Maintenance reclassification, AI project-environment restoration, coordinated multi-repository Git commit, coordinated multi-target/multi-artefact Docs generation/update, and coordinated multi-resource Maintenance operations.
 
-The earlier `fe30f5ad883ce2abeca2e495dd4d7036eef09da6` SHA remains the historical pre-DR semantic comparison baseline. The DR-9/PR #167 SHA remains evidence of the semantic-equivalence checkpoint. Neither replaces the post-PR-168 live state as NCR's working comparison baseline.
+The PBC-1 clarification documents present at this baseline are temporary normative integration vehicles. They are part of the semantics NCR must preserve, but they are not intended to survive as a parallel clarification layer: NCR-1, NCR-2 and NCR-3 shall fold each clarification's propositions into the proper primary canonical owner at the corresponding hierarchy level and retire the clarification once all affected owners have absorbed its required local semantics.
+
+Historical baseline roles remain distinct:
+
+- `fe30f5ad883ce2abeca2e495dd4d7036eef09da6` remains the immutable pre-DR semantic comparison baseline;
+- `bf6d01b3fdf2df3bf373b352ee5ee92ae681a8d7` remains the DR-9 semantic-equivalence checkpoint;
+- `8d647309e29883922a04eefe01849bd3eb15937f` remains the post-DR / pre-PBC reconciled checkpoint;
+- `1268c9c1036637556386ebb3f3ba21029877df33` remains the checkpoint at which NCR control was established.
+
+None of those historical checkpoints replaces `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19` as NCR's working or final semantic-preservation comparison baseline.
 
 ## 3. Definitive Rule
 
@@ -73,17 +82,23 @@ For each normative paragraph or mixed paragraph:
 6. preserve examples only when they illustrate already-owned semantics and are clearly non-normative;
 7. do not create a generic abstraction merely because several propositions have similar wording or shape.
 
+For PBC-1 clarification propositions, the same test applies. The clarification's temporary location does not become permanent ownership: identify the proper primary owner under Design -> Functional -> Detailed Design -> Implementation, integrate the proposition there as `CANONICAL`, `LOCAL_BINDING` or `LOCAL_DELTA` as appropriate, and remove the temporary duplicate occurrence when its integration obligation is complete.
+
 ## 6. Execution Passes
 
-NCR is one finite programme. The following are execution passes, not independent meta-programmes.
+NCR is one finite programme. The following are execution passes, not independent meta-programmes. The PBC-1 corrections do not alter this decomposition.
 
 ### NCR-1 — Design and Functional
 
 Establish physical single-statement ownership across Design and Functional specifications. Architectural explanation owned by Design is referenced from Functional; Functional retains observable `FR-*` obligations and Functional-owned consequences.
 
+NCR-1 shall also integrate and retire the Design- and Functional-level PBC-1 clarification vehicles after their propositions are accounted at the proper primary owners.
+
 ### NCR-2 — Detailed Design
 
 Process the complete DD corpus. Replace inherited Design/Functional/DD-owner restatement with references and retain only DD-specific internal design contracts, local bindings and local deltas.
+
+NCR-2 shall integrate the DD-level PBC-1 clarification deltas into the appropriate DD-2, DD-3 or DD-4 primary owner and retire those temporary DD clarification vehicles when fully accounted.
 
 Execution may be batched as DD-1, DD-2 and DD-3/DD-4 for reviewability, but all batches remain NCR-2.
 
@@ -91,15 +106,19 @@ Execution may be batched as DD-1, DD-2 and DD-3/DD-4 for reviewability, but all 
 
 Process all 23 primary IS documents. Retain concrete Level 4 material: interfaces, types, algorithms, provider/mechanism decisions, target layout, stale/cancellation/concurrency behaviour, error mappings, migration dispositions and independently testable conformance obligations. Remove explanatory restatement of upstream Design, Functional and DD semantics and replace it with precise references.
 
+NCR-3 shall integrate the Implementation-level PBC-1 clarification deltas into the appropriate primary IS owners and retire those temporary Implementation clarification vehicles when fully accounted.
+
 Execution may be divided into reviewable IS ranges, but all batches remain NCR-3.
 
 ### NCR-4 — Horizontal Reduction
 
 After vertical reduction, eliminate remaining same-level duplicate normative statements by identifying the legitimate existing owner and referencing it. Similar naming or field shape does not establish semantic identity and shall not cause invention of generic frameworks such as a universal `StructuralFact` or base-domain abstraction.
 
+NCR-4 shall also verify that no PBC-1 clarification survives merely as a duplicate normative restatement. Any clarification retained for a genuine compatibility or interpretive purpose must contain no duplicate canonical semantics.
+
 ### NCR-5 — Final Cardinality and Semantic Verification
 
-Compare the final corpus against the semantically reconciled pre-NCR baseline. For each proposition:
+Compare the final corpus against the semantically complete pre-NCR baseline `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`. For each proposition:
 
 ```text
 canonical_statement_count == 1
@@ -111,6 +130,8 @@ and every non-canonical occurrence must be `REFERENCE`, `LOCAL_BINDING` or `LOCA
 
 `canonical_statement_count == 0` fails NCR because semantics have been lost.
 
+The comparison shall include the semantics introduced by every accepted PBC-1 correction present at the baseline. A proposition shall not be discarded merely because it originated in a temporary clarification rather than a primary document.
+
 NCR remains open until failures are corrected. A failed verification does **not** create another rationalisation programme.
 
 ## 7. Anti-Circularity Controls
@@ -121,6 +142,7 @@ NCR remains open until failures are corrected. A failed verification does **not*
 4. **No documentation-about-documentation proliferation.** NCR uses this control document plus the minimum working proposition ledger required to execute and verify changes. Per-pass narrative reports are not required.
 5. **No architecture by deduplication.** Reduction may reference existing owners but may not invent product abstractions to make prose shorter.
 6. **No implementation before NCR exit.** Version 1 implementation remains paused until NCR-5 passes and the resulting live `master` is verified.
+7. **No PBC reopening by default.** The semantic baseline is frozen for NCR. Reduction shall not reopen settled command or architecture design merely because integration exposes different wording. Only an actual contradiction, semantic-loss defect or unresolved authoritative conflict may justify a controlled normative correction, and it shall be corrected within NCR rather than spawning another rationalisation programme.
 
 ## 8. Working Proposition Ledger
 
@@ -133,9 +155,9 @@ Minimum fields:
 | Proposition ID | Stable NCR verification identity |
 | Canonical owner | Existing normative owner and locator |
 | Canonical statement | Proposition meaning/checksum |
-| Occurrences | Known corpus locations |
+| Occurrences | Known corpus locations, including temporary PBC-1 clarifications where applicable |
 | Occurrence class | `CANONICAL`, `REFERENCE`, `LOCAL_BINDING`, `LOCAL_DELTA`, `DELETE_DUPLICATE` |
-| Action/result | Physical edit/reference result |
+| Action/result | Physical edit/reference/integration/clarification-retirement result |
 
 The ledger shall be updated as execution proceeds rather than spawning separate planning/audit documents.
 
@@ -147,6 +169,7 @@ Each execution PR records at minimum:
 - lines and words before/after for the affected normative corpus;
 - number of duplicate normative occurrences physically removed;
 - number of canonical references introduced;
+- number of temporary clarification files integrated/retired where applicable;
 - stable `FR-*`, DD and IS identities affected;
 - unresolved NCR failures, if any.
 
@@ -156,7 +179,7 @@ Word/line reduction is evidence of reduced text burden, not the semantic accepta
 
 Each execution batch branches from independently verified live `master` after the preceding batch merges. `master` is never edited directly. Each PR identifies its NCR pass and the corpus slice transformed.
 
-Historical DR documents remain historical evidence and are not repeatedly rewritten to track NCR execution.
+Historical DR and PBC project-management evidence remains historical evidence and is not repeatedly rewritten to track NCR execution. Temporary normative PBC-1 clarification vehicles are handled according to Sections 2, 5 and 6 rather than retained as historical normative duplicates.
 
 ## 11. Exit Criteria
 
@@ -165,11 +188,12 @@ NCR completes only when all of the following are true:
 1. every normative proposition examined by the programme has exactly one complete canonical statement;
 2. all other occurrences are precise references, necessary local bindings or genuine local deltas;
 3. duplicate normative restatements have been physically removed;
-4. no baseline semantic proposition has been lost except an explicitly controlled normative correction made through its proper owner;
-5. all stable Functional requirement, DD and IS identities remain accounted;
-6. the final physical text metrics are recorded;
-7. NCR-5 passes against `8d647309e29883922a04eefe01849bd3eb15937f`;
-8. the final NCR PR is merged and live `master` independently verifies the resulting corpus.
+4. no semantic proposition present at the semantically complete pre-NCR baseline has been lost except an explicitly controlled normative correction made through its proper owner;
+5. every accepted PBC-1 semantic correction present at the baseline remains accounted after its temporary clarification vehicles are integrated/retired;
+6. all stable Functional requirement, DD and IS identities remain accounted;
+7. the final physical text metrics are recorded;
+8. NCR-5 passes against `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`;
+9. the final NCR PR is merged and live `master` independently verifies the resulting corpus.
 
 At that point the verified live commit becomes the **Version 1 lean implementation documentation baseline**, and implementation may begin.
 
