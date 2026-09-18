@@ -23,6 +23,8 @@
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
 >
 > **Filename compatibility:** The existing filename is retained for links; it does not establish a `utils` product domain. The canonical domain is `maintenance` (module path `app/domains/maintenance/`, operation identities `maintenance.*`).
+>
+> **Related clarification:** [Maintenance Coordinated Operations Implementation Clarification — Retired](../archive/implementation/maintenance-coordinated-operations-implementation-clarification-v01-retired.md) (its coordinated scope/classification/plan delta is now applied directly in §7–7.2 and §13)
 
 ## 1. Purpose
 
@@ -96,6 +98,8 @@ app/
         │   ├── maintenance-use-case.ts
         │   ├── maintenance-target.ts
         │   ├── maintenance-scope.ts
+        │   ├── maintenance-classification.ts
+        │   ├── coordinated-maintenance-plan.ts
         │   ├── header-model.ts
         │   ├── header-finding.ts
         │   ├── header-repair-intent.ts
@@ -193,16 +197,66 @@ The gate is design-time/catalogue policy plus runtime applicability protection; 
 
 ## 7. Target and Scope Model
 
+DD-4.4 §7.1 defines four supported scope cardinalities: one resource, an explicit set, a semantic managed unit, or the complete eligible managed scope.
+
 ```ts
 export type UtilsMaintenanceScope =
-  | { readonly kind: 'file'; readonly file: ManagedResourceIdentity }
-  | { readonly kind: 'managed_component'; readonly component: ManagedEntityIdentity }
-  | { readonly kind: 'managed_source_set'; readonly project: ManagedProjectIdentity };
+  | { readonly kind: 'resource'; readonly resource: ManagedResourceIdentity }
+  | { readonly kind: 'selected'; readonly resources: readonly ManagedResourceIdentity[] }
+  | { readonly kind: 'managed_unit'; readonly unit: ManagedEntityIdentity }
+  | { readonly kind: 'all_eligible_managed' };
 ```
 
-IS-2 resolves scope. Maintenance may narrow that scope using operation eligibility/exclusion policy but cannot broaden it.
+`resource` and `managed_unit` correspond directly to the former `file` and `managed_component` variants (renamed for consistency with the cardinality language above; no semantic change). `all_eligible_managed` corresponds to the former `managed_source_set`, with its `project` field dropped: IS-2 managed scope already establishes project context, so the variant needs no field of its own. `selected` — an explicit set of specific resources — is genuinely new; Version 1 previously had no way to target more than one resource without falling back to `managed_source_set`'s complete-scope cardinality.
+
+IS-2 resolves scope. Maintenance may narrow that scope using operation eligibility/exclusion policy but cannot broaden it. The target set for any scope is the intersection of IS-2 scope, Maintenance resource-class eligibility and operation applicability; traversal/source discovery supplies evidence within that set, never authority to expand it.
 
 No Maintenance implementation treats `process.cwd()`, recursive filesystem discovery or repository membership as mutation authority.
+
+### 7.1 Coordinated Classification
+
+Before mutation, DD-4.4 §7.1 requires every requested resource to be classified:
+
+```ts
+export type MaintenanceResourceClassification =
+  | { readonly kind: 'eligible'; readonly evidence: MaintenanceEligibilityEvidence }
+  | { readonly kind: 'already_satisfied'; readonly evidence: MaintenanceStateEvidence }
+  | { readonly kind: 'ineligible'; readonly reason: UtilsDiagnostic }
+  | { readonly kind: 'stronger_owned'; readonly owner: DomainId; readonly reason: UtilsDiagnostic }
+  | { readonly kind: 'unsupported'; readonly reason: UtilsDiagnostic }
+  | { readonly kind: 'ambiguous'; readonly reason: UtilsDiagnostic }
+  | { readonly kind: 'protected'; readonly reason: UtilsDiagnostic }
+  | { readonly kind: 'outside_scope'; readonly reason: UtilsDiagnostic }
+  | { readonly kind: 'stale_or_unresolved'; readonly reason: UtilsDiagnostic };
+```
+
+Generative inference cannot turn ambiguous evidence into authority: an `ambiguous` classification stays ambiguous rather than being resolved by a guess. This classification is distinct from the post-execution `UtilsTargetResult` state (§45) — classification happens before a consequential effect is planned; `UtilsTargetResult` reports what actually happened.
+
+### 7.2 Coordinated Resource Plan
+
+For each consequentially eligible resource, DD-4.4 §7.2 requires a frozen per-resource plan before the consequential stage begins:
+
+```ts
+export interface CoordinatedMaintenancePlan {
+  readonly invocationId: InvocationId;
+  readonly operation: UtilsOperationId;
+  readonly scope: UtilsMaintenanceScope;
+  readonly items: readonly MaintenancePlanItem[];
+  readonly continuation: MaintenanceContinuationPolicy;
+}
+
+export interface MaintenancePlanItem {
+  readonly resource: ManagedResourceIdentity;
+  readonly resourceClass: UtilsMaintenanceResourceClass;
+  readonly classification: MaintenanceResourceClassification;
+  readonly proposedEffect?: MaintenanceProposedEffect;
+  readonly preconditions: readonly UtilsPrecondition[];
+  readonly acceptance: MaintenanceAcceptanceCriteria;
+  readonly dependencies: readonly ManagedResourceIdentity[];
+}
+```
+
+Only items classified `eligible` and authorized for a consequential effect may reach mutation/deletion dispatch (§8, §34). A plan item is invalidated/re-resolved rather than silently executed under stale authority when material facts change (§40). This is the same architecture already used for coordinated push/synchronise in IS-15 and the coordinated artefact plan in IS-17; Maintenance does not invent a parallel one.
 
 ---
 
@@ -289,13 +343,24 @@ A valid scope with no eligible source files is `no_eligible_targets`, not “all
 IS-1 invocation
  -> IS-2 managed scope
  -> IS-3 effective maintenance policy
- -> resolve eligible source targets
+ -> resolve eligible source targets (§7 scope, §7.1 classification)
  -> IS-7 fresh source/header facts
  -> derive expected values with provenance
  -> evaluate header convention
  -> retain per-target findings
  -> aggregate Maintenance validation state
  -> IS-1 final acceptance
+```
+
+`maintenance.headers.validate` may run this flow coordinated over any §7 scope cardinality. It retains one result per logical resource plus aggregate Maintenance conformance:
+
+```ts
+export interface HeaderValidationItemResult {
+  readonly resource: ManagedResourceIdentity;
+  readonly classification: MaintenanceResourceClassification;
+  readonly conformance: HeaderConformanceState;
+  readonly diagnostics: readonly UtilsDiagnostic[];
+}
 ```
 
 No source mutation occurs in this path.
@@ -331,7 +396,7 @@ export interface RepairHeadersInput {
 }
 ```
 
-Repair is based on fresh validation facts and explicit intent. A generic `force` flag is not supported.
+Repair is based on fresh validation facts and explicit intent. A generic `force` flag is not supported. For any `scope` cardinality (§7), repair classifies each candidate (§7.1) and constructs a `CoordinatedMaintenancePlan` (§7.2) before any transformation begins; only items classified `eligible` reach IS-8.
 
 ---
 
@@ -406,6 +471,8 @@ An AI proposal cannot establish package identity when authoritative evidence is 
 `maintenance.source-version.maintain` changes source-file header version/revision metadata only.
 
 It does not change application/package/release version, create releases/tags, stage/commit/push, or own release policy.
+
+Over any §7 scope, each changed file is classified independently (§7.1) and given its own plan item (§7.2); one resource's recognized current/next version is never inferred as another's just because both appear in one coordinated invocation.
 
 ---
 
@@ -509,6 +576,8 @@ No failure erases completed effects on other files.
 `maintenance.cleanup` owns only recognized temporary/test/log artefact classes produced by AppManager-managed maintenance/testing workflows and explicitly assigned to Maintenance.
 
 It is not an alternate App clean/reset implementation and never deletes build output, dependencies, caches or lifecycle resources merely because they look temporary.
+
+Candidate discovery/classification (§7.1) completes and a `CoordinatedMaintenancePlan` (§7.2) is constructed before deletion begins, wherever practical, matching §33–34 below.
 
 ---
 
@@ -810,14 +879,15 @@ IS-23 constructs:
 
 1. immutable Maintenance use-case descriptors/ownership declarations;
 2. stronger-owner policy;
-3. header target resolver/expected-value/validator/repair planner/acceptance;
-4. changed-source resolver/increment classifier/revision-note/version planner/acceptance;
-5. cleanup class definitions/resolver/eligibility/acceptance;
-6. injected IS-4/IS-6/IS-7/IS-8/IS-10 collaborators;
-7. effect/aggregate/recovery components;
-8. four canonical Maintenance use cases;
-9. immutable Maintenance catalogue;
-10. IS-1 registrations.
+3. coordinated scope/classification/plan components (§7–7.2);
+4. header target resolver/expected-value/validator/repair planner/acceptance;
+5. changed-source resolver/increment classifier/revision-note/version planner/acceptance;
+6. cleanup class definitions/resolver/eligibility/acceptance;
+7. injected IS-4/IS-6/IS-7/IS-8/IS-10 collaborators;
+8. effect/aggregate/recovery components;
+9. four canonical Maintenance use cases;
+10. immutable Maintenance catalogue;
+11. IS-1 registrations.
 
 No singleton, service locator, import-time project scan, direct `process.cwd()`, direct `process.env`, direct Git CLI/simple-git, direct provider SDK, direct filesystem mutation or adapter prompt is used.
 
@@ -951,9 +1021,15 @@ Core tests cover at least:
 122. no service singleton;
 123. IS-23 explicit composition;
 124. source/repository/AI provider substitution preserves Maintenance policy;
-125. final application acceptance remains IS-1-owned.
+125. final application acceptance remains IS-1-owned;
+126. `selected` scope targets an explicit resource set without falling back to `all_eligible_managed`;
+127. all nine `MaintenanceResourceClassification` variants are preserved distinctly, including `stronger_owned` versus plain `ineligible` and `stale_or_unresolved` versus `ambiguous`;
+128. a `CoordinatedMaintenancePlan` is constructed with one `MaintenancePlanItem` per resource before any consequential effect begins, for every operation and every scope cardinality;
+129. only `eligible`-classified plan items reach mutation/deletion dispatch;
+130. `HeaderValidationItemResult` is populated per logical resource for coordinated `maintenance.headers.validate` runs;
+131. an `ambiguous` classification is never resolved into authority by inference.
 
-Integration tests use controlled IS-4/IS-6/IS-7/IS-8/IS-10 substitutes and fixtures for valid/missing/malformed/inconsistent headers, excluded source, ambiguous expected values, package mismatch, changed-file sets, malformed versions, all increment classes, AI unavailable/invalid classification, Patch fallback, stale source, partial transformations, cleanup candidates, stronger-owner collisions, cancellation and Headless ambiguity.
+Integration tests use controlled IS-4/IS-6/IS-7/IS-8/IS-10 substitutes and fixtures for valid/missing/malformed/inconsistent headers, excluded source, ambiguous expected values, package mismatch, changed-file sets, malformed versions, all increment classes, AI unavailable/invalid classification, Patch fallback, stale source, partial transformations, cleanup candidates, stronger-owner collisions, coordinated multi-resource scopes, cancellation and Headless ambiguity.
 
 ---
 
@@ -987,7 +1063,7 @@ No implementation stub is promoted into a normative design decision merely becau
 
 1. add Maintenance contracts and four canonical semantic IDs;
 2. add immutable ownership declarations and stronger-owner policy;
-3. add managed scope/target model consuming IS-2;
+3. add managed scope/target model consuming IS-2, including the four-cardinality scope, resource classification and `CoordinatedMaintenancePlan` (§7–7.2);
 4. map header recognition evidence from IS-7 into IS-21 header model;
 5. implement expected-value derivation with provenance;
 6. implement read-only header validator and aggregate semantics;
@@ -1024,6 +1100,7 @@ No implementation stub is promoted into a normative design decision merely becau
 | invocation/read-mutation/partial/cancellation | DD-UTIL-006–009; FR-UTIL-010–023 |
 | shared capability subordination | DD-UTIL-010–014; DD-2.1/2.3/2.4/2.5/2.7 |
 | operation/findings/provenance model | DD-UTIL-015–019 |
+| coordinated scope/classification/plan (§7–7.2) | DD-4.4 §7.1–7.2; PBC-FR-MAINT-COORD-001–032 |
 | header inspection/validation | DD-UTIL-020–026 and DD-4.4 header sections; FR-UTIL-024–044 |
 | header repair | DD-4.4 repair sections; FR-UTIL-045–058; IS-8 |
 | narrow package repair | DD-4.4 package-maintenance sections; FR-UTIL-059–065; IS-10/19 |
@@ -1077,4 +1154,4 @@ IS-22 adapter / owning workflow
 
 The non-drift rule is:
 
-> **Version 1 Maintenance owns only genuine otherwise-unowned cross-cutting maintenance intent: AppManager source-header inspection/validation/repair, source-file header-version maintenance, and narrowly classified temporary/test/log artefact cleanup. It never becomes a residual namespace for known App/Docs/Settings/Git/Quality/AI/Nuxt behavior, derives authority from command location, cwd, recursive discovery, repository membership or scanner recognition, turns validation into implicit repair, rewrites valid creation/revision history for convenience, invents expected metadata, auto-versions non-versioned source, confuses source-file versions with application releases, converts repository change evidence into Git authority, treats AI classification as authoritative, hides the Patch fallback, deletes by broad glob/name alone, duplicates App clean/reset, bypasses IS-8 for source mutation or IS-4 for deletion, erases partial effects, invents rollback, or publishes a competing final AppManager outcome.**
+> **Version 1 Maintenance owns only genuine otherwise-unowned cross-cutting maintenance intent across any of its four scope cardinalities (one resource, an explicit set, a managed unit or the complete eligible managed scope): AppManager source-header inspection/validation/repair, source-file header-version maintenance, and narrowly classified temporary/test/log artefact cleanup. It never becomes a residual namespace for known App/Docs/Settings/Git/Quality/AI/Nuxt behavior, derives authority from command location, cwd, recursive discovery, repository membership or scanner recognition, turns validation into implicit repair, resolves an ambiguous classification into authority by inference, dispatches a plan item that was not classified eligible, rewrites valid creation/revision history for convenience, invents expected metadata, auto-versions non-versioned source, confuses source-file versions with application releases, converts repository change evidence into Git authority, treats AI classification as authoritative, hides the Patch fallback, deletes by broad glob/name alone, duplicates App clean/reset, bypasses IS-8 for source mutation or IS-4 for deletion, erases partial effects, invents rollback, or publishes a competing final AppManager outcome.**
