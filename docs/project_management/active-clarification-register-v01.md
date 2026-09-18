@@ -41,7 +41,6 @@ None remain active: 9 vehicles integrated and retired during NCR-2. See the [sin
 | [`nuxt-command-model-implementation-clarification-v01.md`](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | PBC-1 IS-16/IS-13 Nuxt correction. |
 | [`maintenance-coordinated-operations-implementation-clarification-v01.md`](../implementation/clarifications/maintenance-coordinated-operations-implementation-clarification-v01.md) | PBC-1 IS-21 coordinated Maintenance scope/classification plans, runners and per-resource results. |
 | [`ai-project-environment-implementation-clarification-v01.md`](../implementation/clarifications/ai-project-environment-implementation-clarification-v01.md) | PBC-1 IS-20 expanded AI environment contracts, 22 identities and automatic acceptance. |
-| [`version-1-gui-and-portability-implementation-clarification-v01.md`](../implementation/clarifications/version-1-gui-and-portability-implementation-clarification-v01.md) | PBC-1 IS-22/IS-23 GUI/portability correction. |
 
 ## 8. Lifecycle Rule
 

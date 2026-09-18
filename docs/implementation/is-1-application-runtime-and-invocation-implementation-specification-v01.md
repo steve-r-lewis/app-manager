@@ -769,7 +769,7 @@ Truly unrecoverable process-level faults remain an IS-23 launcher/runtime concer
 
 ## 28. Relationship to Interaction Adapters
 
-IS-22 owns TUI, Headless and future adapter mechanics.
+IS-22 owns TUI, GUI, Headless and future adapter mechanics.
 
 The target relationship is:
 

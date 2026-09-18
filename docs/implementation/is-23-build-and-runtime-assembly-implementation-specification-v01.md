@@ -13,6 +13,8 @@
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
 >
 > **Reconciliation record:** [Implementation Specification Conformance and Reconciliation](../project_management/implementation-specification-conformance-reconciliation-v01.md)
+>
+> **Related clarification:** [Version 1 GUI and Portability Implementation Clarification — Retired](../archive/implementation/version-1-gui-and-portability-implementation-clarification-v01-retired.md) (its corrected three-adapter composition is now applied directly in §6.1 and §13)
 
 ## 1. Purpose
 
@@ -44,7 +46,7 @@ The assembly shall preserve these constraints:
 4. composition uses explicit construction/registration, not import-time global registration;
 5. `process.argv`, `process.cwd()`, `process.env`, signals and exit status are translated at controlled boundaries;
 6. build/provider/process success is technical evidence only, not an AppManager outcome;
-7. the selected IS-22 adapter is the interaction entry into IS-1; the launcher is not a third adapter.
+7. the selected IS-22 adapter is the interaction entry into IS-1; the launcher is not a fourth adapter.
 
 ---
 
@@ -81,7 +83,7 @@ thin launcher
 IS-23 composition root
     |
     v
-selected IS-22 adapter (TUI or Headless)
+selected IS-22 adapter (TUI, GUI or Headless)
     |
     v
 IS-1 AppManagerApplication
@@ -98,7 +100,7 @@ launcher process exitCode / orderly shutdown
 
 The launcher may identify installation/runtime location, capture cwd as an input fact, obtain raw CLI arguments, establish process-level signal linkage, construct the composition root, select/launch the appropriate already-composed IS-22 adapter according to host invocation mechanics, receive the adapter's terminal lifecycle result, set final process exit status and perform infrastructure shutdown.
 
-The launcher shall **not** invoke IS-1 directly for normal TUI/Headless operation, implement command parsing/prompting, become a third invocation adapter, register domain workflows, decide application authorization/policy, resolve configuration precedence, or interpret provider evidence.
+The launcher shall **not** invoke IS-1 directly for normal TUI/GUI/Headless operation, implement command parsing/prompting, become a fourth invocation adapter, register domain workflows, decide application authorization/policy, resolve configuration precedence, or interpret provider evidence.
 
 The selected IS-22 adapter alone translates host interaction into `AppManagerApplication.discover/invoke/cancel` semantics and projects canonical outcomes for its transport. IS-1 remains final application authority.
 
@@ -133,6 +135,8 @@ Target assembly injects observability dependencies rather than relying on a glob
 ## 9. Reconciled Dependency Classification
 
 All primary IS documents now exist. No dependency disposition remains provisional merely pending a later IS review.
+
+The GUI adapter's framework/library (IS-22 §19.3) is not yet a current dependency; its selection remains an implementation choice resolved during implementation without changing application semantics, and it is isolated to `app/adapters/gui/` once chosen (IS-22 §3).
 
 | Dependency | Owning responsibility | Reconciled disposition |
 |---|---|---|
@@ -188,7 +192,9 @@ Automated assembly checks verify at minimum that:
 11. tests are absent from production build output;
 12. build does not depend on generated Nuxt state;
 13. provider-native types do not leak across capability boundaries;
-14. TUI and Headless share the same IS-1 application semantics.
+14. TUI, GUI and Headless share the same IS-1 application semantics;
+15. the composition root explicitly composes the GUI adapter alongside TUI/Headless (§6.2, §13);
+16. GUI framework dependencies do not leak across capability/domain boundaries.
 
 Vitest remains the Version 1 runner unless a later approved decision replaces it.
 
@@ -229,6 +235,7 @@ IS-23 composition root
           +--> domain implementations
           +--> IS-1 AppManagerApplication
           +--> IS-22 TUI adapter
+          +--> IS-22 GUI adapter
           +--> IS-22 Headless adapter
           |
           v
@@ -253,7 +260,8 @@ Composition connects responsibilities but never transfers authority.
 7. Remove import-time command registration and deep process lifecycle control.
 8. Adapt logging to explicit assembly.
 9. Apply final dependency dispositions from §9, including removing `simple-git` from the target local Git provider path in accordance with IS-6 and removing `@google/generative-ai` if no implemented provider adapter requires it.
-10. Add assembly conformance tests and make clean build/typecheck/test a release prerequisite.
+10. Compose the IS-22 GUI adapter alongside TUI/Headless in the composition root (§6.2, §13), isolating the selected GUI framework to its adapter boundary.
+11. Add assembly conformance tests and make clean build/typecheck/test a release prerequisite.
 
 No remaining migration step is labelled pending an unauthored primary IS; all owning Level 4 contracts now exist.
 
@@ -271,14 +279,15 @@ No remaining migration step is labelled pending an unauthored primary IS; all ow
 | provider/process evidence not canonical outcome | DD-1.2; capability IS set |
 | explicit context/config rather than ambient globals | DD-1.3; DD-1.4; [DD-1.5 staged lifecycle](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle); IS-2; IS-3 |
 | provider replaceability | ADR-0001; IS-6 through IS-13 |
-| TUI/Headless same application semantics | DD-1.1; IS-22 |
+| TUI/GUI/Headless same application semantics | DD-1.1; FR-INV-GUI-001–010; IS-22 |
+| GUI adapter composed alongside TUI/Headless | Design §§4, 4.4, 4.6, 6.10; IS-22 §§19.1–19.3 |
 | conforming legacy code retained/adapted | ADR-0001; Implementation Specification Plan §9 |
 
 ---
 
 ## 16. Conformance Rules
 
-An implementation conforms only if the supported application runs compiled JavaScript under the declared Node baseline; pnpm/lockfile define reproducible installation; one thin launcher enters one explicit composition path; normal TUI/Headless execution passes through the selected IS-22 adapter before IS-1; the launcher is not a third adapter; launcher/composition contain no domain workflow policy; import-time side effects do not establish use-case state; production inputs exclude tests/accidental Nuxt state; `tsx` is unnecessary in production; process globals are translated at controlled boundaries; observability remains subordinate infrastructure; providers remain replaceable and do not leak native semantics; and legacy implementation is retained/adapted where conforming.
+An implementation conforms only if the supported application runs compiled JavaScript under the declared Node baseline; pnpm/lockfile define reproducible installation; one thin launcher enters one explicit composition path; normal TUI/GUI/Headless execution passes through the selected IS-22 adapter before IS-1; the launcher is not a fourth adapter; launcher/composition contain no domain workflow policy; import-time side effects do not establish use-case state; production inputs exclude tests/accidental Nuxt state; `tsx` is unnecessary in production; process globals are translated at controlled boundaries; observability remains subordinate infrastructure; providers remain replaceable and do not leak native semantics; and legacy implementation is retained/adapted where conforming.
 
 ---
 

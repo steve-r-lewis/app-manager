@@ -1,7 +1,19 @@
+# Version 1 GUI and Portability Implementation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-22 — Interaction Adapters Implementation Specification](../../implementation/is-22-interaction-adapters-implementation-specification-v01.md) §1, §3, §§19.1–19.3 (the GUI adapter itself); [IS-23 — Build and Runtime Assembly Implementation Specification](../../implementation/is-23-build-and-runtime-assembly-implementation-specification-v01.md) §6.1, §13 (its composition).
+>
+> **Disposition:** IS-22's Version 1 adapter set is corrected from two (TUI, Headless) to three (TUI, GUI, Headless), matching [Design §§4, 4.4, 4.6](../../appmanager-design-specification-v01.md#_4-operating-context-and-interaction-modes) and [FR-INV-GUI-001–010](../../functional/application-invocation-functional-specification-v01.md#_9-4-version-1-graphical-interaction), both already-accepted authority. IS-23's composition root, process-path diagrams and conformance rules are updated to compose and route through all three adapters, with the launcher explicitly remaining "not a fourth adapter" (previously "not a third adapter"). Two other documents with a stale two-adapter statement (the Implementation Specification register and IS-1's cross-reference to IS-22) were also corrected as conflicting concrete-coupling statements. No information from this clarification remains solely recorded here.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # Version 1 GUI and Portability Implementation Clarification
 
-> **Document type:** Implementation clarification
->
 > **Status:** Active — Pre-NCR Baseline Correction PBC-1
 >
 > **Clarifies:** IS-22 — Interaction Adapters and IS-23 — Build and Runtime Assembly; applies to IS-1 through IS-21 only where their existing typed architectural boundaries are implemented or consumed
@@ -18,7 +30,7 @@ This clarification binds the corrected implementation target before NCR begins. 
 
 ## 2. Corrected IS-22 Version 1 Adapter Set
 
-Where IS-22 states or implies that Version 1 provides two concrete interaction paths, “both adapters”, “TUI and Headless”, or GUI as a future adapter, the binding Version 1 interpretation is:
+Where IS-22 states or implies that Version 1 provides two concrete interaction paths, "both adapters", "TUI and Headless", or GUI as a future adapter, the binding Version 1 interpretation is:
 
 ```text
 Version 1 concrete IS-22 adapters

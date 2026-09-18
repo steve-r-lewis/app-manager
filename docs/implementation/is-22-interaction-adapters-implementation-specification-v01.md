@@ -23,21 +23,26 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [Version 1 GUI and Portability Implementation Clarification — Retired](../archive/implementation/version-1-gui-and-portability-implementation-clarification-v01-retired.md) (its corrected three-adapter Version 1 set is now applied directly in §1, §3 and §§19.1–19.3)
 
 ## 1. Purpose
 
 IS-22 defines the concrete Node.js/TypeScript interaction adapters by which human users, shell/automation callers and future hosts discover and invoke AppManager through the single IS-1 Application Invocation boundary.
 
-Version 1 provides two concrete interaction paths:
+Version 1 provides three concrete interaction paths:
 
 - an interactive terminal user interface (TUI);
+- a graphical/WYSIWYG GUI (§§19.1–19.3);
 - a deterministic Headless command-line/automation adapter.
+
+All three use only the IS-1 `AppManagerApplication` public surface for discovery/invocation/cancellation/event/outcome semantics (Design §4.6).
 
 The governing rules are:
 
 > **Adapters acquire and present intent; they do not own the meaning, availability, validation, policy, scope, authorization sufficiency, execution workflow, diagnostics or final outcome of that intent.**
 
-> **TUI and Headless are two projections of one AppManager command/use-case model, not two applications.**
+> **TUI, GUI and Headless are three projections of one AppManager command/use-case model, not three applications.**
 
 > **The authoritative catalogue is discovered from IS-1. No adapter-owned registry, menu tree or CLI table may become a competing source of command truth.**
 
@@ -50,6 +55,7 @@ The governing rules are:
 IS-22 owns concrete implementation of:
 
 - TUI startup, navigation, input acquisition and presentation;
+- GUI shell/window lifecycle, navigation, forms/selectors, graphical confirmation and result/progress views (§19.2);
 - Headless argument parsing and machine-oriented projection;
 - mapping raw adapter input to IS-1 `InvocationRequest` values;
 - discovery projection from the authoritative IS-1 catalogue;
@@ -99,6 +105,14 @@ app/
     │   ├── tui-confirmation.ts
     │   ├── tui-progress.ts
     │   └── tui-renderer.ts
+    ├── gui/
+    │   ├── gui-adapter.ts
+    │   ├── gui-shell.ts
+    │   ├── gui-navigation.ts
+    │   ├── gui-forms.ts
+    │   ├── gui-confirmation.ts
+    │   ├── gui-progress.ts
+    │   └── gui-renderer.ts
     └── headless/
         ├── headless-adapter.ts
         ├── cli-parser.ts
@@ -107,7 +121,7 @@ app/
         └── exit-status.ts
 ```
 
-This is an implementation responsibility boundary. Domain-specific prompt definitions may be represented as declarative input metadata/contracts exposed through IS-1/use-case interfaces, but domain workflows do not move into `app/adapters/`.
+This is an implementation responsibility boundary. Domain-specific prompt definitions may be represented as declarative input metadata/contracts exposed through IS-1/use-case interfaces, but domain workflows do not move into `app/adapters/`. The GUI framework/library remains an implementation choice resolved during implementation without changing application semantics (§19.3); no domain/capability/Application Core module imports it.
 
 ---
 
@@ -138,7 +152,7 @@ export interface AdapterCapabilities {
 }
 ```
 
-Version 1 TUI declares interactive input/confirmation/progress/cancellation/human diagnostics. Headless declares structured results and cancellation where the host signal permits it, but never interactive prompting.
+Version 1 TUI and GUI each declare interactive input/confirmation/progress/cancellation/human diagnostics, where the host supports them. Headless declares structured results and cancellation where the host signal permits it, but never interactive prompting.
 
 `AdapterCapabilities` is adapter-local presentation/host capability description. It is distinct from the IS-1 `InteractionCapabilities` request contract (IS-1 §10) and shall not share that name or be assumed structurally interchangeable with it.
 
@@ -339,6 +353,31 @@ A second termination signal may be handled by the launcher as forced process ter
 
 It does not reinterpret raw provider exceptions or invent success/failure based on message severity.
 
+### 19.1 GUI Adapter Contract
+
+GUI implements the same `InteractionAdapter` port (§4) as TUI/Headless rather than a parallel application API. At minimum the GUI implementation must be able to declare and exercise, where supported by the host, interactive input, explicit confirmation, progress/event consumption, cancellation, structured results and human diagnostics (§5). Capability declaration remains descriptive; it does not grant application authority.
+
+GUI discovery/navigation is built from `AppManagerApplication.discover(...)` (§7), following the same authoritative-discovery rules as TUI. GUI invocation maps graphical input to the shared adapter invocation/request builder (§9) and calls `AppManagerApplication.invoke(...)`. GUI progress/state consumes IS-1 events (§29) the same way TUI progress does (§17), and GUI final presentation projects the canonical application outcome (§19) the same way `tui-renderer.ts` does.
+
+### 19.2 GUI Presentation Boundary
+
+GUI-specific modules may own:
+
+- graphical application shell/window lifecycle;
+- navigation and command grouping;
+- forms, selectors and structured input controls;
+- graphical confirmation controls;
+- preview/proposed-effect views;
+- progress/event views;
+- structured result, diagnostic, effect and recovery views;
+- presentation-local state that does not become application policy.
+
+They do not own domain workflows, command existence, availability decisions, managed scope, configuration precedence, authorization sufficiency, provider interpretation or final application acceptance — the same non-ownership boundary §2 already establishes for TUI and Headless.
+
+### 19.3 GUI Framework Choice
+
+The exact GUI framework/library remains an implementation choice to be resolved during implementation without changing application semantics. GUI framework objects remain inside the GUI adapter/presentation boundary (§3) and do not become domain/capability contracts; no domain/capability/Application Core module imports the selected GUI framework to implement application semantics (Design §6.6).
+
 ---
 
 ## 20. Headless Syntax
@@ -536,7 +575,7 @@ Aliases:
 
 ## 37. Interaction-Mode Equivalence
 
-For the same canonical invocation intent and materially equivalent authoritative context, TUI and Headless must reach materially equivalent application validation, policy, scope, safety, execution and final outcome semantics.
+For the same canonical invocation intent and materially equivalent authoritative context, TUI, GUI and Headless must reach materially equivalent application validation, policy, scope, safety, execution and final outcome semantics.
 
 Differences permitted at IS-22 are limited to input acquisition, presentation, progress rendering, confirmation mechanism, structured transport projection and host lifecycle.
 
@@ -544,9 +583,11 @@ Differences permitted at IS-22 are limited to input acquisition, presentation, p
 
 ## 38. Future Adapters
 
-GUI, IDE, CI, automation-agent, RPC or other future adapters must use the same IS-1 contracts.
+GUI is a Version 1 adapter (§19.1–19.3), not a future one. IDE, CI, automation-agent, RPC or other genuinely future adapters must use the same IS-1 contracts.
 
-IS-22 does not define a generic network protocol or plugin framework. A future transport requiring stable wire compatibility, authentication or remote lifecycle semantics requires its own implementation work/decision rather than overloading the Version 1 TUI/Headless abstraction.
+Version 1 does not implement a WebStorm/JetBrains plugin and does not select a future cross-language transport. The implementation nevertheless avoids coupling application/domain semantics to concrete Node-only provider objects or UI libraries across defined architectural boundaries, so a future WebStorm/JetBrains integration may use a bridge, alternate implementation, IPC/RPC boundary or other mechanism selected at that time without forcing Version 1 to implement speculative transport infrastructure now. Native TypeScript contracts remain the Version 1 implementation contracts; they are not required to be wire schemas.
+
+IS-22 does not define a generic network protocol or plugin framework. A future transport requiring stable wire compatibility, authentication or remote lifecycle semantics requires its own implementation work/decision rather than overloading the Version 1 TUI/GUI/Headless abstraction.
 
 ---
 
@@ -557,10 +598,11 @@ IS-23 constructs:
 1. the complete IS-1 `AppManagerApplication` and its catalogue;
 2. shared adapter projection/request-builder components;
 3. TUI renderer/input/navigation components;
-4. Headless parser/output components;
-5. the selected adapter from launcher arguments/environment that are strictly runtime/transport concerns;
-6. cancellation signal linkage;
-7. the thin executable lifecycle.
+4. GUI renderer/shell/navigation/forms components (§19.1–19.3);
+5. Headless parser/output components;
+6. the selected adapter from launcher arguments/environment that are strictly runtime/transport concerns;
+7. cancellation signal linkage;
+8. the thin executable lifecycle.
 
 Adapters receive dependencies explicitly. They do not import mutable singletons for command registry, configuration, logger or AI.
 
@@ -570,7 +612,7 @@ Adapters receive dependencies explicitly. They do not import mutable singletons 
 
 Core conformance tests cover at least:
 
-1. TUI and Headless use the same IS-1 application port;
+1. TUI, GUI and Headless use the same IS-1 application port;
 2. neither adapter calls a domain directly;
 3. neither adapter calls a capability directly;
 4. authoritative discovery comes from IS-1;
@@ -638,7 +680,7 @@ Core conformance tests cover at least:
 66. normal TUI exit permits cleanup;
 67. Ctrl-C signal propagation is testable;
 68. TUI refreshes context-sensitive discovery after material effects;
-69. same canonical request yields equivalent TUI/Headless application semantics;
+69. same canonical request yields equivalent TUI/GUI/Headless application semantics;
 70. presentation differences do not alter request intent;
 71. adapter capability differences do not weaken safety;
 72. direct command registry singleton absent;
@@ -649,9 +691,17 @@ Core conformance tests cover at least:
 77. shared adapter code contains no domain policy;
 78. IS-23 explicit composition supplies dependencies;
 79. canonical outcome remains IS-1-owned;
-80. adapter never publishes a competing success Boolean.
+80. adapter never publishes a competing success Boolean;
+81. GUI does not call domains/capabilities/providers directly;
+82. GUI discovery derives from IS-1 rather than a competing catalogue;
+83. GUI confirmation/preview/progress/outcome presentation does not create competing semantics;
+84. GUI framework dependencies remain isolated to the adapter/presentation boundary;
+85. IS-23 explicitly composes the GUI adapter alongside TUI and Headless;
+86. the composition root can substitute implementations at owning replaceable contracts for conformance tests;
+87. provider-native types do not leak across the owning capability boundaries;
+88. no WebStorm/JVM/RPC dependency is required for Version 1 conformance.
 
-Integration tests run both adapters against the same controlled `AppManagerApplication` substitute and then against the composed application for representative read-only, consequential, preview, unavailable, invalid, partial, cancelled and no-op use cases.
+Integration tests run all three adapters against the same controlled `AppManagerApplication` substitute and then against the composed application for representative read-only, consequential, preview, unavailable, invalid, partial, cancelled and no-op use cases.
 
 ---
 
@@ -659,8 +709,11 @@ Integration tests run both adapters against the same controlled `AppManagerAppli
 
 The live implementation has `app/modes/interactiveMode.ts`, `app/modes/headlessMode.ts` and `app/index.ts`. These contain useful presentation/dispatch mechanisms but also currently cross the approved authority boundaries.
 
+The absence of a current GUI implementation is migration evidence, not authority to omit the Version 1 GUI: a new `app/adapters/gui/` implementation is required as part of the target Version 1 implementation. Existing TUI/Headless migration dispositions below remain valid except where they describe their pair as the complete Version 1 adapter set.
+
 | Current artefact/responsibility | Disposition | Target owner/location | Preserved value | Required change |
 |---|---|---|---|---|
+| absence of a GUI implementation | **ADD** | `app/adapters/gui/` | none required | implement per §19.1–19.3; not an optional/future adapter for Version 1. |
 | `app/modes/interactiveMode.ts` terminal navigation | **RETAIN / ADAPT** | `app/adapters/tui/` | Clack-based interactive menu/navigation mechanism | Build menus from IS-1 discovery; invoke only IS-1; remove domain/service authority. |
 | `interactiveMode.ts` `@clack/prompts` usage | **RETAIN** | TUI adapter | suitable terminal interaction mechanism | isolate to presentation modules. |
 | `interactiveMode.ts` `picocolors` usage | **RETAIN** | TUI renderer | optional terminal styling | ensure colour never carries unique semantics. |
@@ -691,7 +744,7 @@ The classification is responsibility-level. Useful interaction mechanics are pre
 ## 42. Migration Sequence
 
 1. add shared adapter capability/request/outcome projection contracts;
-2. add TUI and Headless adapter module boundaries;
+2. add TUI, GUI and Headless adapter module boundaries;
 3. expose/use the IS-1 application port from IS-23 composition;
 4. replace TUI `commandRegistry` menus with IS-1 discovery projections;
 5. move existing Clack navigation/input mechanics into TUI modules;
@@ -713,8 +766,11 @@ The classification is responsibility-level. Useful interaction mechanics are pre
 21. move normal process lifecycle/exitCode to IS-23 launcher;
 22. implement exact legacy alias table for approved migrated commands;
 23. adapt `app/index.ts` into thin adapter selection over explicit composition;
-24. run cross-mode equivalence and safety tests;
-25. remove/deprecate old `app/modes/` modules once callers/tests use `app/adapters/`.
+24. implement the GUI adapter over the selected framework (§19.1–19.3), mapping discovery/invocation/events/outcome through the same shared components as TUI;
+25. isolate GUI framework dependencies to `app/adapters/gui/`;
+26. add IS-23 explicit composition of the GUI adapter alongside TUI/Headless;
+27. run cross-mode (TUI/GUI/Headless) equivalence and safety tests;
+28. remove/deprecate old `app/modes/` modules once callers/tests use `app/adapters/`.
 
 ---
 
@@ -727,6 +783,7 @@ The classification is responsibility-level. Useful interaction mechanics are pre
 | structured explicit invocation | FR-INV-007–010; DD-1.1 Sections 6, 10–11 |
 | validation/availability | FR-INV-011–016; DD-1.1 Sections 12–13; IS-1 |
 | cross-mode equivalence | FR-INV-017–019 and domain interaction-equivalence requirements |
+| GUI adapter (§19.1–19.3) | FR-INV-GUI-001–010; Design §§4, 4.4, 4.6, 6.10 |
 | deterministic Headless | FR-INV-020–022; DD-1.1 interaction capability contract |
 | confirmation/authorization/preview | FR-INV-023–026; DD-1.1 Section 14; IS-1 |
 | progress/events | FR-INV-027–029; DD-1.1 event contract; IS-1 |
@@ -746,14 +803,14 @@ The classification is responsibility-level. Useful interaction mechanics are pre
 ```text
 human / shell / automation
           |
-          +--------------------+
-          |                    |
-          v                    v
-      TUI adapter        Headless adapter
-          |                    |
-          +---------+----------+
-                    |
-                    v
+          +----------------+----------------+
+          |                |                |
+          v                v                v
+      TUI adapter     GUI adapter     Headless adapter
+          |                |                |
+          +--------+-------+----------------+
+                   |
+                   v
           structured IS-1 request
                     |
                     v
@@ -770,12 +827,12 @@ human / shell / automation
                     v
           canonical IS-1 outcome
                     |
-          +---------+----------+
-          |                    |
-          v                    v
-   TUI presentation      human/JSON + exit
+          +---------+---------+----------+
+          |                   |          |
+          v                   v          v
+   TUI presentation    GUI presentation   human/JSON + exit
 ```
 
 The non-drift rule is:
 
-> **Version 1 interaction adapters remain thin transport/presentation boundaries. They may discover, acquire explicit caller input, carry host hints, request application-required confirmation, submit preview intent, render progress, request cancellation and project canonical outcomes, but they never own a competing command registry, choose application availability, resolve managed scope or configuration precedence, call domain/capability/provider implementations directly, treat cwd as authority, perform startup AI policy, infer authorization, turn menu defaults into consequential intent, use spinner/colour/prose/provider exit codes as application semantics, publish a competing success model, or create different TUI and Headless workflows for the same AppManager use case.**
+> **Version 1 interaction adapters remain thin transport/presentation boundaries. They may discover, acquire explicit caller input, carry host hints, request application-required confirmation, submit preview intent, render progress, request cancellation and project canonical outcomes, but they never own a competing command registry, choose application availability, resolve managed scope or configuration precedence, call domain/capability/provider implementations directly, treat cwd as authority, perform startup AI policy, infer authorization, turn menu defaults into consequential intent, use spinner/colour/prose/provider exit codes as application semantics, let the GUI framework leak into domain/capability contracts, publish a competing success model, or create different TUI, GUI and Headless workflows for the same AppManager use case.**
