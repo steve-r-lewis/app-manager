@@ -10,7 +10,7 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/nuxt-functional-specification-v01.md](../functional/nuxt-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
 >
-> **Authoring controls:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
+> **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 
 ---
 
@@ -114,8 +114,8 @@ This design consumes, but does not redefine:
 - [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md);
 - [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md);
 - [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md);
-- [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md);
-- [Application Outcome and Diagnostic Ownership Clarification](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md);
+- [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle);
+- [Application Outcome and Diagnostic Ownership](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract);
 - [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md).
 
 ### 3.3 Shared capability authorities
@@ -134,7 +134,7 @@ Supporting DD-2 authorities are:
 - DD-2.8 Quality Capability for explicitly required quality evidence;
 - DD-2.9 Documentation Capability for documentation-specific semantics.
 
-The [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md) is binding wherever a Nuxt layer profile includes cross-owned artefact classes.
+The [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) is binding wherever a Nuxt layer profile includes cross-owned artefact classes.
 
 ### 3.4 Related domain authorities
 
@@ -280,23 +280,7 @@ The following are conceptual Nuxt-domain contracts. They define semantic informa
 
 ### DD-NUXT-005 — Nuxt Operation Identity
 
-A `NuxtOperationIdentity` shall identify Nuxt-domain intent independently of provider/tool syntax.
-
-Version 1 identities include at least:
-
-```text
-inspect
-inspect_configuration
-list_configuration
-add_configuration
-remove_configuration
-create_layer
-integrate_layer
-detach_layer
-inspect_layer_state
-```
-
-Presentation aliases shall not create additional semantic owners.
+`NuxtOperationIdentity` binds the thirteen semantic identities in the [Nuxt Functional catalogue](../functional/nuxt-functional-specification-v01.md#_4-6-canonical-version-1-command-surface). Provider syntax and presentation aliases do not add identities. Layer lifecycle-state inspection belongs to `inspect` and relevant operation results; an `inspect_layer_state` surface is permissible only as an alias of `inspect` with the same policy, never as a separate use case.
 
 ### DD-NUXT-006 — Nuxt Target Selection
 
@@ -663,7 +647,7 @@ Nuxt detachment shall not imply deletion of the layer project, local repository,
 
 Repository/submodule cleanup shall be a separately authorized Git-domain operation and shall not be an implicit Nuxt detachment side effect.
 
-### 8.9 Layer lifecycle-state inspection
+### 8.9 Layer lifecycle-state projection under inspect
 
 ### DD-NUXT-042 — Lifecycle state is descriptive
 
@@ -674,6 +658,28 @@ Created-but-unintegrated, integrated-to-host, repository-linked, unsupported and
 A valid standalone layer shall not be classified invalid merely because it is not integrated into the selected root application.
 
 ---
+
+### 8.10 Scaffold an artefact {#add}
+
+For `add`, resolve one existing root/layer, the supported scaffold class and requested artefact identity/name. Determine applicability and collision policy, interpret the [DD-2.10 scaffold evidence/plan](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#operation-evidence), then route new persistence through Resource Access or existing-source changes through Source Transformation. Accept the Nuxt-specific postcondition. This operation is limited to supported Nuxt artefacts, not arbitrary resource generation.
+
+### 8.11 Establish a module {#add-module}
+
+For `add_module`, establish the supported module on one selected target. Classify applicability, already-satisfied state and conflicts before coordinating authorized dependency and configuration work. DD-2.10 supplies module-state interpretation, semantic dependency/configuration requirements and validation evidence; package execution is subordinate work and existing-source configuration uses DD-2.5. The domain evaluates the composed module postcondition.
+
+### 8.12 Upgrade a target {#upgrade}
+
+The input identifies one managed Nuxt target and an explicit supported version/range or upgrade-policy identity. Evaluate applicability, preconditions and proposed effects before authorization, then interpret technical version discovery/execution and resulting Nuxt validation against that requested postcondition. Scope policy cannot implicitly broaden the request to root plus sibling layers.
+
+### 8.13 Analyze a target {#analyze}
+
+For `analyze`, obtain Nuxt-specific analysis for one supported selected target and normalize the evidence/diagnostics into the domain result. Any build/tool execution supplies subordinate evidence. The operation is observational/diagnostic relative to Quality policy and does not produce a competing Quality-gate decision.
+
+### 8.14 Clean supported generated state {#cleanup}
+
+For `cleanup`, select the target and supported Nuxt-generated/cache cleanup class under domain policy. DD-2.10 supplies generated-state eligibility and regeneration/validation facts; Resource Access performs authorized deletion. Accept the requested cleanup postcondition without absorbing App Clean/Reset semantics.
+
+The five workflows above use the existing explicit root/layer selection model. Monorepo membership does not authorize iteration over siblings. A future multi-target operation needs its own approved contract. Their bounded technical collaborators follow [DD-2.10's fact/plan/validation composition](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#operation-evidence), not a mirrored command API. Domain interpretation returns to the Engine for final acceptance.
 
 ## 9. Domain State and State Transitions
 
@@ -736,7 +742,7 @@ Where the primary intent is documentation generation/extraction/update, the Docs
 
 ### DD-NUXT-053 — General application lifecycle remains App-owned
 
-Nuxt-specific generated-state facts shall not create independent Nuxt clean/install/reset/reinitialise lifecycle authority.
+Nuxt generated-state facts support the bounded cleanup workflow in §8.14; they do not confer App Clean/Reset/Prepare authority.
 
 ### DD-NUXT-054 — Quality execution remains Quality-owned
 

@@ -10,7 +10,7 @@
 >
 > **Related Detailed Designs:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
 >
-> **Active clarification:** [Application Core Bootstrap Resolution](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Primary DD contract:** [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
 > **Primary Functional authority:** [Managed Project Functional Specification](../functional/managed-project-functional-specification-v01.md)
 >

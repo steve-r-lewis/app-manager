@@ -10,7 +10,7 @@
 >
 > **Primary Functional authority:** [Nuxt Functional Specification](../functional/nuxt-functional-specification-v01.md)
 >
-> **Binding clarification:** [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
+> **Primary DD contract:** [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 >
 > **Principal shared capability:** [IS-13 — Nuxt Capability](is-13-nuxt-capability-implementation-specification-v01.md)
 >

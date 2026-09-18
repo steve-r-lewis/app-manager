@@ -8,13 +8,13 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for bounded access to filesystem and resource-like project artefacts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
 >
 > **Primary Functional authorities:** [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md), [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
-> **Related domain Functional authorities:** App, Docs, Git, Nuxt, Settings, AI, Quality and Utils Functional Specifications where those domains inspect or mutate project resources.
+> **Related domain Functional authorities:** App, Docs, Git, Nuxt, Settings, AI, Quality and Maintenance Functional Specifications where those domains inspect or mutate project resources.
 
 ## 1. Purpose
 
@@ -946,6 +946,8 @@ These belong to Implementation Specification, later Detailed Design where a perm
 
 ## 34. Current Implementation Evidence and Reconciliation
 
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
+
 The current TypeScript `FileService` demonstrates useful implementation experience:
 
 - asynchronous file reads and writes;
@@ -1002,27 +1004,19 @@ Primary traceability includes:
 - FR-INV-011–013, FR-INV-022–026, FR-INV-030–047;
 - Docs requirements covering target resolution, symlink safety, output collision, partial writes, exclusions, stale-source protection and fail-safe ambiguity;
 - Settings requirements covering explicit read/write intent, managed scope, structured-resource preservation and delegated persistence;
-- Nuxt, App, Git, AI, Quality and Utils requirements wherever bounded resource inspection or mutation is delegated beneath the owning use case.
+- Nuxt, App, Git, AI, Quality and Maintenance requirements wherever bounded resource inspection or mutation is delegated beneath the owning use case.
 
 ### 35.3 Downstream traceability
 
 Implementation Specifications shall map these `DD-RES-*` requirements to concrete TypeScript modules, provider implementations, tests, path handling, filesystem APIs, staging mechanics and migration from current source.
 
-Later DD-2 capability designs shall consume this contract rather than redefine generic file/resource access semantics.
+Consumers of Resource Access shall consume this contract rather than redefine generic file/resource access semantics.
 
-## 36. Conformance Rules for Later DD-2 Designs
+## 36. Contract Consumers and Implementation Dependencies {#_36-conformance-rules-for-later-dd-2-designs}
 
-Later shared capabilities shall conform to the following rules:
+Consumers bind to the resource request, containment, revision and effect contracts defined here. The [Documentation Guide](../project-documentation-guide-v01.md#detailed-design-reading-conventions) governs same-level authority.
 
-1. **Process Execution** shall not perform arbitrary filesystem mutation outside its own explicit process effects and shall report such effects through normalized evidence where observable.
-2. **Repository Capability** shall use Resource Access for generic resource mechanics where appropriate but retain repository-specific semantics itself.
-3. **Source Intelligence** shall treat Resource Access reads as input evidence and remain read-only.
-4. **Source Transformation** shall construct and validate bounded transformation plans before delegating applied resource effects.
-5. **Resource Registry and Template** shall distinguish generation intent from replacement/mutation of existing resources.
-6. **AI Capability** shall not obtain resource mutation authority merely because it can propose content.
-7. **Quality Capability** shall treat files and reports as bounded resources without redefining Resource Access scope.
-8. **Documentation Capability** shall use explicit output scopes and preserve source/documentation ownership distinctions.
-9. **Nuxt Capability** shall not bypass generic resource safety merely because it understands Nuxt-specific paths or artefacts.
+The collaborating contracts are [Process Execution](dd-2-2-process-execution-detailed-design-v01.md) for process effects, [Repository](dd-2-3-repository-capability-detailed-design-v01.md) for repository primitives, [Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md) for read-only facts, [Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md) for source plans, and [Registry/Templates](dd-2-6-resource-registry-and-template-detailed-design-v01.md) for rendered proposals. AI, Quality, Documentation and Nuxt consumers supply their locally resolved bounded resources through this contract; their own specifications define specialist intent/evidence.
 
 ## 37. Version 1 Resource Access Baseline
 

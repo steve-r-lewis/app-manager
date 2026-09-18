@@ -10,11 +10,11 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 >
 > **Preceding Detailed Design:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md)
 >
-> **Related clarification:** [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md)
+> **Related clarification:** [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract)
 >
 > **Related Functional authorities:** all domain Functional Specifications where command-specific success, failure, partial completion, diagnostics, progress, cancellation, preview, safety, or effect-reporting semantics are defined.
 
@@ -203,6 +203,8 @@ A Boolean may be derived at a presentation or compatibility boundary where neces
 
 ### 7.1 Canonical logical outcome shape
 
+#### DD-OUTCLAR-001 — One canonical semantic outcome {#dd-outclar-001}
+
 A final AppManager outcome shall be capable of representing:
 
 | Field family | Purpose |
@@ -283,7 +285,9 @@ Evidence may be produced incrementally during execution, but only the owning App
 
 A diagnostic is a structured explanation of a condition that affects or may affect AppManager execution, acceptance, recovery, or user understanding.
 
-This section is the canonical shared AppManager diagnostic contract. Invocation, domain, and capability designs may define narrower codes, evidence classes, or refinements only by mapping them to this model rather than defining another shared taxonomy.
+#### DD-OUTCLAR-004 — One application taxonomy {#dd-outclar-004}
+
+This section owns the shared AppManager diagnostic taxonomy. Consumers use its categories directly, define documented subcategories, or supply technical evidence that the owning interpreter maps to an application diagnostic. None of these creates another application-wide taxonomy.
 
 Diagnostics shall not depend on prose alone for their machine-visible meaning.
 
@@ -341,7 +345,9 @@ The canonical cross-application taxonomy shall support broad machine-readable ca
 - application acceptance failure;
 - internal invariant violation.
 
-Invocation, domain, and capability designs may define narrower subcategories or stable codes while preserving compatibility with this taxonomy. A narrower vocabulary shall identify its canonical parent category where programmatic cross-domain interpretation matters.
+#### DD-OUTCLAR-006 — Refinement preserves parent meaning {#dd-outclar-006}
+
+Invocation, domain and capability refinements retain the parent category's meaning and explicitly identify that parent where programmatic cross-domain interpretation matters.
 
 ### 9.5 Diagnostic codes
 
@@ -595,7 +601,9 @@ A provider normalizer should convert provider-native execution information into:
 - timing/termination facts where useful;
 - bounded provider detail for debugging.
 
-Technical diagnostic/failure classes at this boundary are evidence vocabularies, not a second application-wide diagnostic taxonomy. When they become application-facing diagnostics, they shall be mapped into the canonical Section 9 model.
+#### DD-OUTCLAR-005 — Provider categories remain evidence {#dd-outclar-005}
+
+Provider exception classes, exit reasons, API codes, parser states and tool findings remain technical evidence. The owning interpretation maps them into [§9](#_9-diagnostic-model); preservation as evidence alone does not make them application categories.
 
 ### 18.3 Provider failures
 
@@ -822,7 +830,7 @@ DD-1.1/adapters shall not:
 - expose secrets from bounded provider evidence;
 - create adapter-specific final status semantics.
 
-The mapping/projection relationship is further defined by [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md).
+The mapping/projection relationship is further defined by [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
 
 ## 28. Compatibility and Evolution
 
@@ -844,7 +852,7 @@ Domain result payloads and provider evidence may evolve independently so long as
 
 Future machine-facing representations should permit older consumers to tolerate additive detail where safe, while unknown final status values must fail safely rather than be guessed as success.
 
-Concrete compatibility/versioning mechanisms belong to Implementation Specifications.
+Separate internal and transport types are permitted; semantic ownership does not require a single interface, module, inheritance hierarchy or serialized format. Tests must demonstrate equivalent shared meanings across the [DD-1.1 projection boundary](dd-1-1-application-invocation-detailed-design-v01.md#_22-invocation-outcome-projection-contract). Capability-specific evidence types remain valid. Concrete compatibility/versioning mechanisms belong to Implementation Specifications.
 
 ## 29. Testability Requirements
 

@@ -10,9 +10,9 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 >
-> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 
 ## 1. Purpose
 
@@ -34,7 +34,7 @@ A second governing rule is:
 
 This Detailed Design therefore separates project evidence acquisition, candidate resolution, project-context construction, operation-specific scope resolution, targetability evaluation, and final application authority.
 
-Where project resolution consumes configuration, the staged dependency rules in [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) apply: pre-project configuration evidence is limited to bootstrap-effective configuration whose applicability does not depend on the unresolved project, while project/scope-dependent configuration is resolved only after sufficient managed-project context exists.
+Where project resolution consumes configuration, the staged dependency rules in [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) apply: pre-project configuration evidence is limited to bootstrap-effective configuration whose applicability does not depend on the unresolved project, while project/scope-dependent configuration is resolved only after sufficient managed-project context exists.
 
 ## 2. Scope
 
@@ -94,7 +94,7 @@ The design defines enduring responsibility and contract boundaries, not one impl
 
 ## 4. Architectural Position
 
-Managed Project sits between invocation intent and domain/capability execution. Where configuration contributes to project resolution, the staged collaboration defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) applies.
+Managed Project sits between invocation intent and domain/capability execution. Where configuration contributes to project resolution, the staged collaboration defined by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) applies.
 
 ```text
 caller / host / automation
@@ -220,7 +220,7 @@ Project resolution may consume bounded evidence from:
 - project-associated resource recognition;
 - previously resolved context evidence that is still valid.
 
-Before managed-project identity exists, configuration evidence in this list means only the bootstrap subset defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md): concerns and sources whose applicability and effective value do not depend on the unresolved managed project, topology or managed scope. Later project/scope-aware configuration may refine downstream scope, policy or interpretation only after sufficient Managed Project Context exists.
+Before managed-project identity exists, configuration evidence in this list means only the bootstrap subset defined by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle): concerns and sources whose applicability and effective value do not depend on the unresolved managed project, topology or managed scope. Later project/scope-aware configuration may refine downstream scope, policy or interpretation only after sufficient Managed Project Context exists.
 
 ### 7.2 Evidence is factual, not authoritative
 
@@ -900,21 +900,13 @@ Internal resolution may require paths and identifiers, but caller-visible projec
 
 ## 29. Relationship to Configuration Resolution
 
-DD-1.3 and DD-1.4 collaborate through the staged dependency contract defined normatively by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md).
+Managed Project consumes the staged inputs coordinated by [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle). [DD-1.4 §8](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context) determines which configuration concerns are eligible at each stage. Before project identity exists, the input is bootstrap effective configuration; later project-aware values can refine project/scope interpretation only through the defined resolution inputs.
 
-Before authoritative managed-project identity exists, Managed Project may consume only bootstrap effective configuration whose applicability and effective value are independently resolvable without that identity. After sufficient Managed Project Context exists, DD-1.4 may resolve project-, topology-, entity-, repository-, layer-, resource- or scope-dependent concerns. The resulting operation-effective configuration may then contribute to managed-scope, exclusion, targetability and policy decisions where their owning semantics permit it.
+### DD-CORE-BOOT-004 — Bootstrap evidence at the project boundary {#dd-core-boot-004}
 
-This creates a deliberate collaboration boundary, not unrestricted circular authority. In particular:
+Apply the [Design project-evidence contract](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) to bootstrap hints and selection constraints: they are inputs to this resolver, not an independently selected project or permission to act. Managed Project retains the identity, topology, ownership, scope and targetability decisions described in this specification; Engine authorization and acceptance remain with DD-1.5.
 
-1. bootstrap-level project evidence must be resolvable without requiring a fully resolved project-dependent configuration snapshot;
-2. project/scope-aware configuration becomes eligible only after sufficient Managed Project Context exists;
-3. configuration may refine later project/scope interpretation only through defined project-resolution inputs;
-4. later project-aware configuration shall not silently replace the selected project with a materially different project;
-5. final project identity, managed scope and targetability remain Managed Project/Application Engine authority;
-6. DD-1.4 remains the sole owner of candidate applicability, precedence, fallback and effective-value construction;
-7. Settings persistence does not directly redefine project semantics.
-
-A material conflict between bootstrap assumptions, resolved project context and later project-aware configuration shall return structured evidence to the Application Engine for explicit revalidation, disambiguation or failure rather than triggering uncontrolled recursive resolution.
+Later configuration shall not silently replace the selected project with a materially different project. A material conflict with resolved identity, topology or target assumptions shall be returned through [DD-1.2 diagnostics](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) to the Engine for explicit handling. Settings persistence does not directly redefine project semantics.
 
 ## 30. Relationship to Application Invocation
 

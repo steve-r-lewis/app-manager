@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for documentation inspection, documentation models, extraction, aggregation, generation, rendering, documentation-tool delegation, optional AI enrichment and documentation-oriented validation beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md)
 >
@@ -718,6 +718,8 @@ Documentation Capability may establish that an output satisfies its bounded rend
 
 ## 30. Current Implementation Evidence and Reconciliation
 
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
+
 Current implementation evidence includes `app/services/codeService.ts`, source strategies and related file/AI services.
 
 Useful concepts demonstrated by current code include:
@@ -877,7 +879,7 @@ A conforming DD-2.9 implementation shall preserve all of the following:
 
 ---
 
-## 35. Downstream Detailed Design Dependencies
+## 35. Contract Consumers and Implementation Dependencies {#_35-downstream-detailed-design-dependencies}
 
 ### 35.1 DD-2.10 Nuxt Capability
 
@@ -885,7 +887,7 @@ Nuxt Capability shall provide Nuxt-specific recognition, metadata and scaffoldin
 
 ### 35.2 Domain Detailed Designs
 
-The later Docs-domain Detailed Design shall define documentation use-case orchestration using DD-2.9 and shall not duplicate shared inspection/model/render/provider contracts. App, Nuxt, Quality, AI and other domain designs may consume documentation models/proposals while retaining their own application authority.
+The Docs-domain Detailed Design shall define documentation use-case orchestration using DD-2.9 and shall not duplicate shared inspection/model/render/provider contracts. App, Nuxt, Quality, AI and other domain designs may consume documentation models/proposals while retaining their own application authority.
 
 ### 35.3 Implementation Specification
 

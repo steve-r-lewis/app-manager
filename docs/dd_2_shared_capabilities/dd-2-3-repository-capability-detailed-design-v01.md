@@ -8,9 +8,9 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for bounded repository inspection and repository-state operations beneath AppManager application and Git-domain authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md)
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md)
 >
 > **Primary Functional authorities:** [docs/functional/git-functional-specification-v01.md](../functional/git-functional-specification-v01.md), [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md)
 >
@@ -1007,7 +1007,7 @@ Known repository effects should identify what changed—such as created commit, 
 
 ## 33. Git-Domain Integration
 
-The later Git-domain Detailed Design shall consume Repository Capability rather than duplicate provider mechanics.
+The Git-domain Detailed Design shall consume Repository Capability rather than duplicate provider mechanics.
 
 The expected relationship is:
 
@@ -1116,6 +1116,8 @@ Provider neutrality does not require a separate process, RPC protocol or languag
 ---
 
 ## 37. Current Implementation Reconciliation
+
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
 
 The current implementation includes `app/services/githubService.ts`, based primarily on `simple-git` plus direct GitHub API access.
 
@@ -1258,11 +1260,11 @@ This Detailed Design realizes the DD-2 Repository Capability portion of the Vers
 
 ---
 
-## 41. Downstream Detailed Design Requirements
+## 41. Contract Consumers and Implementation Dependencies {#_41-downstream-detailed-design-requirements}
 
 ### 41.1 DD-2.4 Source Intelligence
 
-Source Intelligence may consume repository/resource context where needed but shall not treat repository status as source-transformation authority.
+A caller composing repository evidence with source analysis uses [DD-2.4's optional repository-context contract](dd-2-4-source-intelligence-detailed-design-v01.md#repository-context). Repository status/diffs remain this capability's evidence; source parsing and structural interpretation are supplied separately by DD-2.4. This is a permitted composition, not a mandatory dependency or an instruction for DD-2.3 to define source-analysis behavior.
 
 ### 41.2 DD-3 Git Domain Detailed Design
 

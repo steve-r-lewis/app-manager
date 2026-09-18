@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for quality-capability recognition, bounded quality-check execution, normalized findings and measurements, quality-result aggregation, quality-gate evaluation, provider isolation, generated quality artefacts, cancellation and concurrency beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md)
 >
@@ -632,6 +632,8 @@ Mixed target/check states shall be supplied to DD-1.2 rather than collapsed prem
 
 ## 29. Current Implementation Evidence and Reconciliation
 
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
+
 Current live implementation evidence includes project/package quality scripts, Vitest configuration and tests, together with the existing Process Execution service used for command execution.
 
 Useful implementation facts include:
@@ -787,7 +789,7 @@ A conforming DD-2.8 implementation shall preserve all of the following:
 
 ---
 
-## 34. Downstream Detailed Design Dependencies
+## 34. Contract Consumers and Implementation Dependencies {#_34-downstream-detailed-design-dependencies}
 
 ### 34.1 DD-2.9 Documentation Capability
 
@@ -799,7 +801,7 @@ Nuxt Capability may consume bounded Quality evidence, but Nuxt-specific validati
 
 ### 34.3 Domain Detailed Designs
 
-The later Quality-domain Detailed Design shall define Quality application use cases and orchestration using DD-2.8 rather than duplicating provider execution/result/gate contracts. App, Git, Docs, Nuxt and other domain designs may consume Quality evidence while retaining their own workflow authority.
+The Quality-domain Detailed Design shall define Quality application use cases and orchestration using DD-2.8 rather than duplicating provider execution/result/gate contracts. App, Git, Docs, Nuxt and other domain designs may consume Quality evidence while retaining their own workflow authority.
 
 ### 34.4 Implementation Specification
 

@@ -8,13 +8,13 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for read-only source recognition, structural analysis and normalized source facts beneath AppManager application and transformation authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md)
 >
 > **Primary Functional authority:** [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md)
 >
-> **Related domain Functional authorities:** App, Docs, Nuxt, Quality, AI, Settings and Utils where those domains consume source facts or request later source transformation.
+> **Related domain Functional authorities:** App, Docs, Nuxt, Quality, AI, Settings and Maintenance where those domains consume source facts or request later source transformation.
 
 ---
 
@@ -223,6 +223,16 @@ Source Intelligence does not own source persistence. It consumes source content 
 An analysis provider shall not silently bypass governed Resource Access and reread arbitrary project files merely for convenience when doing so could alter scope, freshness or security semantics.
 
 ---
+
+### 7.4 Optional repository context {#repository-context}
+
+The caller may accompany a source snapshot with bounded [Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md) evidence for provenance, freshness or analytical context. That evidence is optional unless the owning use case requires it; a resource's location inside a repository alone does not require a Repository Capability dependency. Source Intelligence continues to determine recognition and structure from its source snapshot.
+
+Repository revisions, refs, status, staging and diff/change records describe repository state. They neither substitute for structural analysis nor determine source confidence or recognition. A workflow needing both kinds of evidence composes the capability results explicitly through its owning use case or another documented capability boundary; neither sibling imposes native identities or a provider model on the other.
+
+Repository revision and source snapshot evidence can correlate without being identical. An uncommitted worktree, an in-memory snapshot, an embedded region or a resource outside a repository needs the freshness evidence appropriate to the actual source fact. Consumers retain that evidence under DD-SINT-006 rather than coercing it into a universal repository revision type.
+
+This composition does not require either capability to call the other, a shared service/provider abstraction, a shared revision type or a particular package/process topology. Repository workflow intent, staging/commit selection and mutation remain outside Source Intelligence's read-only contract; source analysis does not reinterpret refs/remotes/diff semantics or expand the supplied scope.
 
 ## 8. Source-Kind and Language Recognition
 
@@ -753,6 +763,8 @@ Provider replaceability does not require a separate worker process, RPC protocol
 
 ## 36. Current Implementation Reconciliation
 
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
+
 Current implementation and historical technical specifications are evidence, not normative authority.
 
 ### 36.1 Useful concepts retained
@@ -882,7 +894,7 @@ A conforming DD-2.4 implementation shall preserve all of the following:
 
 ---
 
-## 40. Downstream Detailed Design Dependencies
+## 40. Contract Consumers and Implementation Dependencies {#_40-downstream-detailed-design-dependencies}
 
 ### 40.1 DD-2.5 Source Transformation
 
@@ -890,7 +902,7 @@ DD-2.5 shall consume this design's normalized source facts, source ranges, suppo
 
 It shall not redefine recognition as mutation authority.
 
-### 40.2 Later shared capabilities
+### 40.2 Consumers
 
 Documentation, Nuxt, Quality and AI capability designs may consume Source Intelligence where appropriate but shall retain their own capability semantics and authority boundaries.
 

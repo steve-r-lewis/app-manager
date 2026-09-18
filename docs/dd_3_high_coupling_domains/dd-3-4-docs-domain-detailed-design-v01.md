@@ -10,7 +10,7 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/docs-functional-specification-v01.md](../functional/docs-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
 >
-> **Authoring controls:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
+> **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 
 ---
 
@@ -266,6 +266,20 @@ Creating a new documentation artefact and changing an existing artefact shall re
 **DD-DOCS-013 — Output destination is explicit before writes**  
 Consequential documentation work shall resolve the intended output target/scope unambiguously before persistence or transformation.
 
+#### Coordinated artefact plan {#coordinated-artefact-plan}
+
+A multi-target operation constructs its plan from semantic Docs targets, profiles and authoritative DD-1 context, preserving the relationship between each target and its outputs. For each artefact retain:
+
+- semantic target and output identities;
+- selected profile and relevant evidence/provenance;
+- proposed model/content/render evidence;
+- disposition: create, permitted update, already satisfied, skip/refuse or unresolved;
+- update ownership/preservation evidence and existing-resource revision preconditions;
+- validation/acceptance criteria resolved before effects;
+- AI-enrichment mode and acceptance policy where applicable.
+
+The plan remains immutable during the consequential stage; authority/safety-relevant staleness invalidates the affected plan and requires explicit re-resolution. A plan can mix creation, authorized managed-region updates and no-effect items. Each disposition uses the single-artefact policy in §8.7; target cardinality does not relax it.
+
 ### 7.6 Coverage and result payload
 
 **DD-DOCS-014 — Coverage is profile-relative**  
@@ -353,7 +367,7 @@ An existing destination shall trigger the applicable update/replacement/collisio
 Where an existing documentation artefact has a recognized bounded update region, Docs shall prefer the approved bounded transformation path over unnecessary whole-document replacement.
 
 **DD-DOCS-031 — Substantial replacement is explicit**  
-Replacement or material restructuring of existing authored documentation requires explicit applicable policy and authorization/confirmation evidence where required.
+Replacement or material restructuring of existing authored documentation requires managed ownership, explicit applicable policy and authorization/confirmation evidence where required. Unrelated authored documentation remains a refused collision, not an implicit overwrite target.
 
 ### 8.8 AI-assisted documentation
 
@@ -361,7 +375,7 @@ Replacement or material restructuring of existing authored documentation require
 Failure or absence of optional AI enrichment shall not make deterministic documentation unavailable where the requested baseline can be produced without AI.
 
 **DD-DOCS-033 — AI output is proposed documentation evidence**  
-AI-generated prose shall retain generated provenance and shall be accepted or rejected by Docs policy before it contributes to an accepted output.
+For individual artefacts or bounded plan portions, resolve AI acceptance criteria before generation under [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow). Preserve generated provenance. A pre-authorized automatic path accepts only proposals satisfying those criteria; a review-required proposal remains pending until the decision. The proposal cannot change targets/output paths, preservation/sensitivity policy or stale-write checks.
 
 **DD-DOCS-034 — Reliable facts dominate contradictory generated claims**  
 Docs shall not knowingly accept AI prose that contradicts higher-authority structural or domain facts without explicit conflict handling.
@@ -386,6 +400,14 @@ Aggregation shall use approved targets, managed scope, profile and exclusions ra
 Important facts, omissions, unsupported inputs and failures shall remain attributable after multi-file/multi-layer aggregation.
 
 ---
+
+### 8.11 Coordinated execution and acceptance {#coordinated-execution}
+
+Apply the common flow to the [artefact plan](#coordinated-artefact-plan): selected evidence feeds DD-2.9 models/aggregation/rendering, then the output disposition determines authorization and the existing creation/transformation path. Deterministically satisfiable profiles remain available without AI under DD-DOCS-032.
+
+For each consequential artefact retain disposition, delegated evidence, resulting revision/effect, documentation validation, target/profile satisfaction, warnings/omissions/conflicts and domain acceptance. Rendering or writing alone does not satisfy the requested documentation postcondition.
+
+Continuation operates at target/artefact granularity. After failure, refusal or uncertainty, later independent artefacts proceed only under resolved Docs policy and dependency constraints. Check cancellation before each new consequential effect and at other safe boundaries. One stale artefact does not itself authorize replanning or mutation; independent artefacts follow the continuation policy. The result composes these states under §12 and DD-1.2 without a cross-artefact transaction guarantee.
 
 ## 9. Domain State and State Transitions
 

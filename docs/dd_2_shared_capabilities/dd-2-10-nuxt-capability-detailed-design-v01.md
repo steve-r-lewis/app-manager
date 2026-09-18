@@ -8,9 +8,9 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for Nuxt-specific recognition, Nuxt configuration interpretation, supported Nuxt configuration mutation planning, Nuxt layer modeling, layer creation/scaffolding, layer integration/detachment evidence, Nuxt-specific validation and Nuxt provider normalization beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md), [DD-2.9 — Documentation Capability](dd-2-9-documentation-capability-detailed-design-v01.md), [Nuxt Layer Scaffold Artefact Ownership Clarification](clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md), [DD-2.9 — Documentation Capability](dd-2-9-documentation-capability-detailed-design-v01.md), [Nuxt Layer Scaffold Artefact Ownership](dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 >
 > **Primary Functional authority:** [docs/functional/nuxt-functional-specification-v01.md](../functional/nuxt-functional-specification-v01.md), together with owning-domain Functional Specifications where Nuxt facts or Nuxt-generated resources are consumed by another workflow.
 
@@ -194,6 +194,20 @@ A recognized-but-unsupported or ambiguous Nuxt structure shall produce explicit 
 Facts derived from source, configuration or provider tooling shall retain sufficient provenance to distinguish observed structure from inferred or generated state where material.
 
 ---
+
+### 6.1 Technical support for Nuxt operations {#operation-evidence}
+
+The [Nuxt domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) consumes these bounded fact/plan/validation concerns for the operations in the [Functional catalogue](../functional/nuxt-functional-specification-v01.md):
+
+| Concern | Technical evidence supplied when required |
+|---|---|
+| Scaffold artefacts | Supported semantic classes, Nuxt-aware placement and validity constraints |
+| Module establishment | Supported module state and semantic dependency/configuration requirements for the selected target |
+| Upgrade | Current version/framework state, requested-version applicability and resulting-target validity |
+| Analysis | Nuxt-specific analysis invocation and normalized provider results |
+| Cleanup | Positively identified supported generated/cache state and applicable regeneration/validation facts |
+
+These concerns do not imply one capability method per application command. Reuse fact, plan and validation contracts where their semantics coincide; preserve distinct technical contracts where similar provider operations have different meanings. Tool syntax remains behind the existing Process Execution/provider boundary. Domain policy selects the target and accepts the result; creation, source transformation and deletion use the persistence owners already described in this specification.
 
 ## 7. Nuxt Configuration Target Model
 
@@ -413,7 +427,11 @@ selected Nuxt layer profile
             -> owning Nuxt use case / Application Engine acceptance
 ```
 
-This sequence is a delegation composition. It does not require every profile class to pass through every specialist capability; the relevant semantic owner is invoked only where its contract is materially required.
+This sequence separates orchestration, artefact semantics, rendering, persistence and final acceptance. It does not require every profile class to pass through every specialist capability. A semantic class is not an incidental filename; the relevant semantic owner is invoked where its contract is materially required.
+
+For a README/introduction consisting only of an approved bounded declarative template with Nuxt parameters, DD-2.6 can render it directly. If it requires documentation aggregation, explanation, content modeling or update semantics, the profile consumes DD-2.9. These paths retain the same Nuxt profile-completeness decision without creating a second documentation model.
+
+Licence selection comes from explicit invocation/effective configuration. Settings owns licence management and coupled project metadata semantics; DD-2.6 supplies curated-resource provenance and rendering. Nuxt consumes that choice and coordinates the profile contribution. It does not establish a competing licence policy or depend on provider internals.
 
 **DD-NUXTCAP-044 — Templates remain subordinate**  
 Template availability or rendering does not determine Nuxt use-case intent, artefact semantic ownership, target scope, overwrite policy or final acceptance.
@@ -567,7 +585,7 @@ Supported descriptive states may include:
 Reported state shall not itself authorize integration, deletion, repository changes or application lifecycle operations.
 
 **DD-NUXTCAP-070 — App lifecycle remains App-owned**  
-Nuxt-generated state observations shall not create a duplicate clean/install/reset/reinitialise lifecycle beneath Nuxt Capability.
+Nuxt-generated state observations support the bounded cleanup evidence in §6.1; they do not create App Clean/Reset/Prepare semantics within this capability.
 
 ---
 
@@ -723,6 +741,8 @@ Recognition, semantic delegation, rendering, persistence/transformation, Nuxt va
 
 ## 33. Current Implementation Evidence and Reconciliation
 
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
+
 Current implementation evidence includes Nuxt-oriented templates/resource descriptors, source strategies capable of locating relevant source structures, Process Execution, current package metadata and existing command/service code that can coordinate project generation or manipulation.
 
 These artefacts demonstrate useful implementation concerns such as:
@@ -858,11 +878,11 @@ A conforming DD-2.10 implementation shall preserve all of the following:
 
 ---
 
-## 37. Downstream Detailed Design Dependencies
+## 37. Contract Consumers and Implementation Dependencies {#_37-downstream-detailed-design-dependencies}
 
 ### 37.1 Domain Detailed Designs
 
-The later Nuxt-domain Detailed Design shall define concrete Nuxt application use cases and orchestration using DD-2.10 rather than duplicating recognition, config semantics, layer models or provider contracts.
+The Nuxt-domain Detailed Design shall define concrete Nuxt application use cases and orchestration using DD-2.10 rather than duplicating recognition, config semantics, layer models or provider contracts.
 
 App, Git, Docs, Settings, Quality and other domain Detailed Designs may participate in or consume Nuxt workflows while retaining their own semantic/workflow authority. The Nuxt domain may coordinate those contracts for a layer-creation result but shall not absorb their internal semantics.
 

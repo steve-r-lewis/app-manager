@@ -10,9 +10,9 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), Version 1 Functional Specifications, [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 
 ## 1. Purpose
 
@@ -129,7 +129,7 @@ AppManager Execution Outcome
 interaction-specific projection
 ```
 
-Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md). The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
+Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle). The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
 
 ### 4.1 Authority direction
 
@@ -222,7 +222,7 @@ Every executable canonical command shall have one identifiable semantic owner. T
 
 ### DD-ENG-013 — Domain grouping is not execution authority
 
-The approved domains (`app`, `docs`, `git`, `ai`, `nuxt`, `quality`, `utils`, `settings`) organize product behaviour. A domain name does not imply an autonomous engine, service boundary, process or provider.
+The approved domains (`app`, `docs`, `git`, `ai`, `nuxt`, `quality`, `maintenance`, `settings`) organize product behaviour. A domain name does not imply an autonomous engine, service boundary, process or provider.
 
 ### DD-ENG-014 — Commands are not provider methods
 
@@ -260,7 +260,7 @@ preview request != applied effects
 
 ### DD-ENG-019 — Managed-project dependency
 
-When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) may contribute before managed-project identity exists.
+When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) may contribute before managed-project identity exists.
 
 ### DD-ENG-020 — Managed-scope dependency
 
@@ -310,6 +310,24 @@ invocation accepted
 ```
 
 For operations that do not require project-aware configuration, irrelevant stages may be omitted or collapsed. Availability and validation may also occur at more than one semantic checkpoint as additional context becomes authoritative. This is a semantic dependency lifecycle, not a required synchronous call sequence or a requirement for one physical configuration-resolution pass.
+
+### DD-CORE-BOOT-006 — Re-evaluate changed assumptions {#dd-core-boot-006}
+
+When later configuration or project resolution materially changes project, scope, provider, safety, authorization or consequential-effect assumptions, invalidate and re-evaluate the dependent decisions before any dependent effect. Preserve bootstrap provenance so the changed assumption can be identified. No consequential execution begins while a material bootstrap/project conflict remains unresolved.
+
+### DD-CORE-BOOT-007 — Bounded resolution {#dd-core-boot-007}
+
+Where scope determines concern applicability, the Engine may stage configuration and scope refinement explicitly. It shall not permit unrestricted recursive resolution. The owning use case chooses an explicit response to later conflicting context: retain a non-conflicting selection, perform bounded safe re-resolution at a checkpoint, obtain disambiguation or fail with structured diagnostics. A bounded re-resolution policy may permit one retry; this example does not impose a universal pass count.
+
+### DD-CORE-BOOT-008 — Candidate acquisition across modes {#dd-core-boot-008}
+
+The staged lifecycle also applies to Headless, TUI, GUI, IDE and automation callers. Interaction can acquire a permitted candidate but cannot make it effective. If permitted non-interactive inputs cannot supply required bootstrap configuration or disambiguation, Headless execution fails deterministically under the invocation contract.
+
+### DD-CORE-BOOT-009 — Scope checkpoint {#dd-core-boot-009}
+
+Finalize managed scope only after the operation-effective values required by its scope/exclusion decision are available. Scope is not a universal predecessor of project-aware configuration. DD-1.3 makes the scope decision and DD-1.4 constructs the values it consumes; the Engine coordinates their dependency checkpoints.
+
+The lifecycle specifies semantic dependencies, not a class graph, process topology or number of resolver instances. Irrelevant configuration stages can be omitted. Bootstrap eligibility belongs to [DD-1.4 §8](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context), and project conflict reporting to [DD-1.3 §29](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution).
 
 ### DD-ENG-025 — Effects require prerequisite satisfaction
 
@@ -831,7 +849,7 @@ They shall not redefine:
 - generic process/resource/provider mechanics;
 - another domain's specialist semantics.
 
-The `utils` domain shall be designed last so that genuinely cross-cutting maintenance behavior is retained without becoming a residual bypass around stronger owners.
+The [Maintenance domain](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) applies the stronger-owner gate before accepting or planning maintenance work.
 
 ---
 

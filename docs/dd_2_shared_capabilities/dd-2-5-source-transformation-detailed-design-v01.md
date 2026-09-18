@@ -8,13 +8,13 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for bounded source-transformation planning, execution, source-level validation and transformation evidence beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md)
 >
 > **Primary Functional authority:** [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md)
 >
-> **Related domain Functional authorities:** App, Docs, Nuxt, Quality, AI, Settings and Utils where those domains request source changes or validate source-level consequences.
+> **Related domain Functional authorities:** App, Docs, Nuxt, Quality, AI, Settings and Maintenance where those domains request source changes or validate source-level consequences.
 
 ---
 
@@ -932,6 +932,8 @@ Provider replaceability does not require a worker process, RPC layer or language
 
 ## 42. Current Implementation Reconciliation
 
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
+
 Current source and historical technical specifications are implementation evidence only.
 
 ### 42.1 Useful concepts retained
@@ -1088,11 +1090,11 @@ A conforming DD-2.5 implementation shall preserve all of the following:
 
 ---
 
-## 46. Downstream Detailed Design Dependencies
+## 46. Contract Consumers and Implementation Dependencies {#_46-downstream-detailed-design-dependencies}
 
 ### 46.1 DD-2.6 Resource Registry and Template
 
-The next shared capability may generate new artefacts or templates. It must preserve the DD-2.5 distinction between generation and mutation when a target already exists.
+Resource Registry and Template may generate new artefacts or templates. It must preserve the DD-2.5 distinction between generation and mutation when a target already exists.
 
 ### 46.2 Documentation Capability
 
@@ -1102,9 +1104,9 @@ Documentation generation or injection may consume DD-2.4 facts and DD-2.5 transf
 
 Nuxt configuration/source updates may use DD-2.5 but Nuxt retains Nuxt-domain semantics and postconditions.
 
-### 46.4 Settings / Utils / AI
+### 46.4 Settings / Maintenance / AI
 
-Settings and Utils may request bounded source changes; AI may propose edits. None acquires transformation execution authority merely by producing desired content.
+Settings and Maintenance may request bounded source changes; AI may propose edits. None acquires transformation execution authority merely by producing desired content.
 
 ### 46.5 Implementation Specification
 

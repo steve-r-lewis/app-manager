@@ -10,7 +10,7 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/git-functional-specification-v01.md](../functional/git-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
 >
-> **Authoring controls:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [DD-3.2 Git Domain Handover](../project_management/dd3-2-git-domain-handover-v01.md)
+> **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [DD-3.2 Git Domain Handover](../project_management/dd3-2-git-domain-handover-v01.md)
 
 ---
 
@@ -115,8 +115,8 @@ This design consumes, but does not redefine:
 - [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md);
 - [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md);
 - [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md);
-- [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md);
-- [Application Outcome and Diagnostic Ownership Clarification](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md);
+- [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle);
+- [Application Outcome and Diagnostic Ownership](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract);
 - [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md).
 
 ### 3.3 Shared capability authorities
@@ -125,7 +125,7 @@ The principal shared capability is [DD-2.3 — Repository Capability](../dd_2_sh
 
 Supporting capability authorities include Resource Access, Process Execution and AI Capability where required by an approved Git use case. Source Intelligence may be composed by an owning workflow when actual source structure is required, but repository diff/status evidence does not become source-structural evidence by implication.
 
-The [Repository / Source Intelligence Relationship Clarification](../dd_2_shared_capabilities/clarifications/repository-source-intelligence-relationship-clarification-v01.md) governs that distinction.
+The [Repository / Source Intelligence Relationship](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md#repository-context) governs that distinction.
 
 ### 3.4 Accepted runtime decision
 
@@ -300,8 +300,11 @@ target managed repository
 approved change/staging scope
 staging policy
 commit-message source and accepted message
-relevant repository preconditions
+fresh repository/change preconditions
+applicable authorization/effect evidence
 ```
+
+For coordinated scope, derive this intent separately for each eligible repository requiring a commit. The enclosing intent retains the resolved scope/topology revision, application-visible ordering, continuation policy, cancellation linkage and per-repository intent/result correlation. It does not impose one message, revision or staging set across repositories.
 
 The staging policy shall distinguish already-staged changes from changes AppManager is authorized to stage. Arbitrary shell text or an unbounded whole-project assumption shall not satisfy commit intent.
 
@@ -429,7 +432,9 @@ An already recognized repository shall not be silently reinitialised merely to m
 
 ### 8.4 Commit
 
-Commit orchestration applies to one explicitly resolved managed repository in Version 1.
+Commit uses a selected repository, an explicit selected set or all managed repositories resolved through the existing repository-scope contract. Before commit effects, obtain sufficient fresh evidence to classify every requested repository as eligible, ineligible, already satisfied or indeterminate; eligibility can narrow DD-1.3 scope but discovery cannot expand it.
+
+For every eligible repository requiring a commit, apply the sequence below. Review/preview covers the planned scope and materially consequential staging/message policy before execution where required; Headless resolves the same information without prompting. After each effect, retain its resulting evidence before applying the existing continuation/cancellation policy. No-change repositories receive no artificial commit.
 
 The semantic sequence is:
 
@@ -456,7 +461,9 @@ If no eligible change can produce a new commit, the result shall represent the a
 
 ### DD-GIT-023 — Commit message acceptance remains Git/application-owned
 
-A commit message may originate from explicit caller input, an approved deterministic source or an AI proposal, but the message used for commit creation shall be accepted under Git-domain/invocation policy before the commit primitive executes.
+A commit message may originate from explicit caller input, an approved deterministic source or an AI proposal, but the message used for commit creation shall be accepted under Git-domain/invocation policy before the commit primitive executes. Resolve the message per repository. Under [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow), authorized automatic acceptance uses deterministic Git criteria established before proposal generation; retain the distinction between the proposal and accepted message. AI completion does not establish commit success.
+
+The coordinated result adds each repository's eligibility/planning state, material staging effects, accepted-message provenance, resulting revision, skip/already-satisfied reason and remaining/recovery action to the existing repository result. Failure, cancellation, staleness or uncertainty follows §12 without erasing earlier commits. Recovery that changes completed history requires a subsequent explicitly authorized Git operation; it is not an implicit rollback.
 
 ### DD-GIT-024 — AI is optional and subordinate
 

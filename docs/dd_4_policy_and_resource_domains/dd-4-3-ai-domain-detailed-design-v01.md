@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent AI-domain orchestration, policy, state, decision and result contracts for AppManager-owned AI instruction-document management and AI-specific project-resource use cases through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, DD-1 or DD-2 Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [AI Functional Specification](../functional/ai-functional-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [AI Functional Specification](../functional/ai-functional-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md), [DD-2.4 — Source Intelligence](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md), [DD-3.2 — Git Domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md), [DD-3.3 — Nuxt Domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md), [DD-3.4 — Docs Domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md), [DD-4.1 — Quality Domain](dd-4-1-quality-domain-detailed-design-v01.md), [DD-4.2 — Settings Domain](dd-4-2-settings-domain-detailed-design-v01.md)
 
@@ -16,7 +16,7 @@
 
 ## 1. Purpose
 
-This specification defines the permanent domain-level composition by which AppManager discovers, lists, creates, optionally enriches and deletes supported project AI instruction documents without allowing a provider, model, template, discovered project content or shared AI capability to acquire application authority.
+This specification defines the permanent domain-level composition by which AppManager manages the project-side AI development environment and its supported semantic resources without allowing a provider, model, template, discovered project content or shared AI capability to acquire application authority.
 
 The governing rules are:
 
@@ -37,6 +37,8 @@ The governing rules are:
 This design owns permanent AI-domain contracts for:
 
 - AI-domain operation identity and applicability;
+- AI resource identity, graph references and provider/environment representations;
+- aggregate inspection and the resource-family operations defined by the AI Functional catalogue;
 - recognized AI instruction-document type identity;
 - listing supported document types and presence state;
 - conservative observation of likely unregistered AI-oriented documents;
@@ -79,7 +81,7 @@ This design does not own:
 
 ## 3. Governing Requirements and Authorities
 
-The AI Functional Specification defines `FR-AI-001`–`FR-AI-105`. This Detailed Design binds those requirements as follows:
+The AI Functional Specification defines the project-environment requirements `PBC-FR-AI-ENV-001` through `017` alongside `FR-AI-001`–`FR-AI-105`. This Detailed Design binds those requirements as follows:
 
 | Functional area | Requirements | Detailed Design focus |
 |---|---|---|
@@ -215,16 +217,10 @@ The AI domain shall not recreate provider mechanics, generic transformation plan
 
 ### 7.1 AI-domain operation identity
 
-Version 1 AI-domain operation families include:
-
-- list supported/present AI instruction documents;
-- create a supported AI instruction document;
-- optionally enrich a generated document;
-- delete a selected eligible AI instruction document;
-- explicit replacement/update where separately exposed and authorized.
+Operation identity binds the [twenty-two AI Functional commands](../functional/ai-functional-specification-v01.md). Optional enrichment is supporting behavior, not another public command. `ai.instruction.update` owns update intent; targeted transformation or whole-resource replacement is an effect selected by its DD-2.5 plan. There is no `ai.prompt.run` or generic AI execution command.
 
 **DD-AI-017 — Operation identity is semantic**  
-An AI-domain operation shall be identified by application intent and AI-document target, not by one filename, provider, command, parser or SDK method.
+An AI-domain operation shall be identified by application intent and semantic AI-resource target, not by one filename, provider, command, parser or SDK method.
 
 ### 7.2 AI instruction-document type
 
@@ -252,25 +248,20 @@ Provider/tool association shall not imply provider availability, authentication 
 
 ### 7.3 AI-domain result payload
 
-An AI-domain result may carry:
-
-- operation identity;
-- document type and resolved target;
-- recognition/presence state;
-- baseline-generation state;
-- enrichment requested/performed/skipped/failed state;
-- provider/model provenance where useful;
-- capability warnings/failure evidence;
-- persistence/transformation evidence;
-- completed local effects;
-- stale/conflict state;
-- no-op reason;
-- recovery or follow-up guidance.
+An AI-domain result carries the applicable semantic resource identity, resolved representation and target, scope/applicability, graph references, provider/tool association, presence, support/partial-representation state, revision evidence and policy state. For content workflows it distinguishes deterministic baseline, enrichment requested/performed/skipped/failed, and proposed versus accepted content provenance. It composes capability warnings, persistence/transformation effects, stale/conflict and no-op evidence, and recovery guidance beneath the [DD-1.2 outcome](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
 
 **DD-AI-021 — Provider detail remains subordinate**  
 Provider/model metadata may support provenance and diagnostics but shall not become the domain success contract.
 
 ---
+
+### 7.4 Resource graph and representation {#resource-graph}
+
+The graph refines the [Functional resource families](../functional/ai-functional-specification-v01.md#_4-1-project-side-environment-resources): `InstructionResource`, `PromptResource`, `AgentDefinition`, `SkillDefinition`, `ToolIntegration` and `AiPolicy`, with provider/environment mappings. The instruction-document type in §7.2 specializes the instruction family; its baseline/enrichment lifecycle is not imposed on every other family.
+
+Validate references between semantic resources and preserve missing, ambiguous, unsupported and partially representable states. Provider files, directories and schemas are representation evidence: matching names or shapes do not establish equivalent resources. Rules are scoped instructions unless independently distinct semantics are established. MCP represents tool integration; a template is an instantiation mechanism unless it has independently meaningful resource semantics.
+
+AI policy narrows visibility/operation within [DD-1 scope](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md). Credential references follow [Settings ownership](../functional/ai-functional-specification-v01.md#pbc-fr-ai-env-010); a reference is not permission to acquire or disclose the secret.
 
 ## 8. Use-Case Orchestration
 
@@ -281,13 +272,13 @@ A consequential AI-domain use case shall conceptually perform:
 ```text
 resolve normalized invocation
  -> resolve managed project / approved scope
- -> resolve AI-domain operation and document type
+ -> resolve AI-domain operation and semantic resource identity
  -> resolve operation-effective configuration/policy
- -> acquire bounded current-state/document evidence
+ -> acquire bounded current-state/resource evidence
  -> resolve target and eligibility
  -> render/generate deterministic baseline where applicable
  -> optionally invoke DD-2.7 under explicit enrichment policy
- -> validate accepted document content against domain postconditions
+ -> validate proposed content/resource state against domain postconditions
  -> authorize consequential persistence/replacement/deletion
  -> delegate bounded effect mechanics
  -> verify resulting state where applicable
@@ -296,9 +287,9 @@ resolve normalized invocation
 ```
 
 **DD-AI-022 — Target identity precedes consequential work**  
-Creation, replacement and deletion shall resolve one explicit eligible AI-document type and bounded project target before mutation.
+Consequential resource operations resolve the eligible semantic resource and bounded project target before mutation. Instruction creation/update/deletion retains the document-type specialization below.
 
-### 8.2 Listing
+### 8.2 Instruction-resource listing
 
 **DD-AI-023 — Listing is non-mutating**  
 Listing supported or observed AI instruction documents shall not create, normalize, rewrite or delete project resources.
@@ -347,7 +338,7 @@ The AI domain shall choose only project facts/content reasonably necessary for t
 The AI domain shall reject or correct known contradictions between generated enrichment and authoritative project facts where material to document correctness.
 
 **DD-AI-037 — Provider response requires domain acceptance**  
-A DD-2.7-valid provider result shall remain proposed content until the AI domain determines that it is suitable for the selected instruction-document contract.
+For instruction enrichment, apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow): validate suitability for the selected document contract under the acceptance policy resolved before the proposal. The authorized policy may require human review or deterministic automatic acceptance; the provider cannot select it.
 
 ### 8.5 Deletion
 
@@ -361,6 +352,12 @@ Deletion shall affect only the selected document and shall not cascade to templa
 A selected document that is already absent may be reported as no-op/already satisfied without fabricating a destructive effect.
 
 ---
+
+### 8.6 Other resource families and aggregate inspection {#resource-family-lifecycle}
+
+Aggregate inspection reports the resource graph and its representation/support state. Family list operations expose their own selected resource class under the Functional contract. Prompt and agent create/update/delete, skill add/remove, tool add/update/remove, and policy inspect/configure use their respective semantic identities and eligibility constraints; they do not inherit instruction-baseline or enrichment requirements merely because files represent them.
+
+For an authorized change, validate the selected resource, references and representability, establish the requested postcondition, delegate the applicable creation/transformation/removal mechanism and interpret the resulting resource state. Preserve unresolved/partial representation and actual effects in §7.3 rather than claiming complete success from a rendered template, recognized source or configured tool. AI execution, if used, remains with DD-2.7; the AI domain does not absorb Git or Docs intent when those domains consume that same capability.
 
 ## 9. Domain State and State Transitions
 

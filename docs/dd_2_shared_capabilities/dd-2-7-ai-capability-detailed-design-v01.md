@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for bounded AI capability availability, provider/model selection inputs, context construction, request representation, response normalization, structured-output validation, provider-failure evidence, cancellation/timeout propagation and AI safety boundaries beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md)
 >
@@ -594,7 +594,7 @@ Presentation labels shall not be the canonical provider/model selector where sta
 
 ## 21. Cross-Domain Consumption
 
-AI Capability is intentionally shared. It is not equivalent to the AI functional domain.
+AI Capability supplies provider-independent execution, context/disclosure handling and normalized proposal evidence to its consumers. Its metadata designation of the AI Functional Specification as primary Functional authority identifies the principal constraint source, not ownership of the whole AI domain. [DD-4.3](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) refines AI resource intent, policy and orchestration; Git, Docs and other domains retain their own assisted use cases.
 
 Examples:
 
@@ -725,6 +725,8 @@ Provider replaceability does not require a separate process, RPC protocol, langu
 ---
 
 ## 26. Current Implementation Evidence and Reconciliation
+
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
 
 The current implementation includes `app/services/llmService.ts`, provider/model registry data and `app/types/services/llmServiceTypes.ts`.
 
@@ -901,7 +903,7 @@ A conforming DD-2.7 implementation shall preserve all of the following:
 
 ---
 
-## 31. Downstream Detailed Design Dependencies
+## 31. Contract Consumers and Implementation Dependencies {#_31-downstream-detailed-design-dependencies}
 
 ### 31.1 DD-2.8 Quality Capability
 
@@ -917,9 +919,9 @@ Nuxt Capability may use AI for bounded explanatory or generative proposals. Nuxt
 
 ### 31.4 Domain Detailed Designs
 
-Git, Docs, Nuxt, Quality, Settings, AI and Utils domain designs shall consume DD-2.7 rather than defining separate provider-selection, context-safety or response-normalization mechanisms.
+Git, Docs, Nuxt, Quality, Settings, AI and Maintenance domain designs shall consume DD-2.7 rather than defining separate provider-selection, context-safety or response-normalization mechanisms.
 
-The later AI-domain Detailed Design shall define AI-instruction-document application use cases and shall not duplicate this shared provider capability.
+The AI-domain Detailed Design shall define AI-instruction-document application use cases and shall not duplicate this shared provider capability.
 
 ### 31.5 Implementation Specification
 

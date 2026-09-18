@@ -242,9 +242,9 @@ The following families cover recurrent occurrences across the inventory. A `LOCA
 | NCR2-P17 portability/provider topology | Design §§6.10, 13; accepted ADR-0001 | All provider/evidence/reconciliation/deferred sections: direct references, retain provider-specific guarantees/test seams. Historical implementation paragraphs non-normative. | No code topology inferred; no universal provider/plugin/schema framework. IS remains downstream. |
 | NCR2-P18 same-level authority/governance | Documentation Guide; Design §14; current DD register | Sibling/rationalisation vehicles and sequential “later DD” sections: remove rank/authoring-order framing; preserve consumption constraints and navigation. | DD number never creates superior authority. Requirement definitions/anchors survive even when their duplicate body becomes a binding. |
 
-## 9. NCR-2 — Clarification Integration Accounting
+## 9. NCR-2 — Clarification Integration Accounting {#ncr2-clarification-integration}
 
-All seventeen active vehicles are assessed below. These are integration destinations and pending actions at checkpoint A. No vehicle has yet been retired and no semantic-preservation gate is claimed passed.
+The following table records checkpoint A classification and destinations. At checkpoint B all seventeen vehicles have been integrated and retired as recorded in §9.1; the table retains the original occurrence decisions for traceability. Final corpus-wide reduction verification is still pending.
 
 | Active vehicle | Unique delta / canonical primary destination | Other occurrences / intended disposition |
 |---|---|---|
@@ -266,6 +266,54 @@ All seventeen active vehicles are assessed below. These are integration destinat
 | Coordinated Maintenance operations | DD-4.4 classification/plan/operation/continuation/result. | Stable target set, per-resource metadata transitions, positive disposability, independent stale/acceptance evidence; no new AI dependency. |
 | AI project environment domain | DD-4.3 resource graph/representation/result and resource lifecycle. | Six resource classes, references/partial representation, policy narrowing, Settings credential boundary, twenty-two operations; shared proposal rule links upstream. |
 
+### 9.1 Checkpoint B integration and retirement
+
+All 17 vehicles are retired after clause comparison with their primary successors. The nine bootstrap identities and six outcome clarification identities now have one definition each in DD-1; the total definition multiset remains 1,915, including the 1,900 pre-existing primary definitions. No stable DD identity was removed or added.
+
+Bootstrap applicability/source classes and operation-snapshot eligibility are in DD-1.4 §8; project conflict reporting is in DD-1.3 §29; staged dependencies, re-evaluation and bounded resolution are in DD-1.5 §8. Stage-specific diagnostic conditions are in DD-1.4 §32. Outcome/taxonomy/provider mapping is in DD-1.2; caller projection and preview/rejection mapping are in DD-1.1 §22. Compatibility permits separate internal/transport representations with semantic equivalence tests.
+
+Repository/source snapshot distinctions and optional contextual composition are in DD-2.4 §7.4 with a DD-2.3 consumption link. AI Functional metadata allocation is in DD-2.7 §21. Nuxt technical support is in DD-2.10 §6.1; scaffold delegation and the template-only versus modeled README paths are in §16, alongside the Settings/licence binding. Existing primary profile, mutation and acceptance clauses retain the remaining scaffold semantics.
+
+App identity/preparation/create/generate and subordinate stages are integrated in DD-3.1 §§7–8. Nuxt's thirteen-identity binding, lifecycle-state projection and five operation workflows are in DD-3.3 §§7–8. AI's six-family resource graph, representation/reference states and family lifecycle are in DD-4.3 §§7–8. Maintenance display identity and stronger-owner-before-planning gate are integrated in DD-4.4, retaining its filename and DD-UTIL identities. Existing optional AI uses are preserved; coordination introduces no new AI dependency.
+
+Git's per-repository intent and accepted-message provenance are integrated in DD-3.2 §§7–8. Docs' heterogeneous artefact plan, prior criteria, per-artefact acceptance and dependent continuation are in DD-3.4 §§7.5/8.11. Maintenance's classification/resource plan and independent version transitions are in DD-4.4 §§7–8/12. These are distinct domain compositions, not equivalent record shapes or a shared transaction model.
+
+The three sibling/rationalisation vehicles' process rules are integrated into the Documentation Guide §7.10, alongside its existing hierarchy/identity rules. Sequential superiority framing was removed from primary DD-2 sections, historical implementation observations are labeled non-normative, and capability/domain local contracts remain in their owners. Physical inherited-prose reduction continues at checkpoint C; retirement does not certify zero duplicates yet.
+
+Retirement lineage (all non-normative; prior text recoverable at both immutable baselines):
+
+- [ai-functional-refinement-relationship-clarification-v01](../archive/detailed-design/ai-functional-refinement-relationship-clarification-v01-retired.md)
+- [ai-project-environment-domain-clarification-v01](../archive/detailed-design/ai-project-environment-domain-clarification-v01-retired.md)
+- [app-domain-command-model-clarification-v01](../archive/detailed-design/app-domain-command-model-clarification-v01-retired.md)
+- [application-core-bootstrap-resolution-clarification-v01](../archive/detailed-design/application-core-bootstrap-resolution-clarification-v01-retired.md)
+- [application-outcome-and-diagnostic-ownership-clarification-v01](../archive/detailed-design/application-outcome-and-diagnostic-ownership-clarification-v01-retired.md)
+- [dd2-shared-capability-rationalisation-clarification-v01](../archive/detailed-design/dd2-shared-capability-rationalisation-clarification-v01-retired.md)
+- [dd2-sibling-authority-clarification-v01](../archive/detailed-design/dd2-sibling-authority-clarification-v01-retired.md)
+- [dd3-dd4-domain-rationalisation-clarification-v01](../archive/detailed-design/dd3-dd4-domain-rationalisation-clarification-v01-retired.md)
+- [docs-coordinated-generation-clarification-v01](../archive/detailed-design/docs-coordinated-generation-clarification-v01-retired.md)
+- [git-coordinated-commit-clarification-v01](../archive/detailed-design/git-coordinated-commit-clarification-v01-retired.md)
+- [maintenance-coordinated-operations-clarification-v01](../archive/detailed-design/maintenance-coordinated-operations-clarification-v01-retired.md)
+- [maintenance-domain-reclassification-clarification-v01](../archive/detailed-design/maintenance-domain-reclassification-clarification-v01-retired.md)
+- [nuxt-command-model-capability-clarification-v01](../archive/detailed-design/nuxt-command-model-capability-clarification-v01-retired.md)
+- [nuxt-domain-command-model-clarification-v01](../archive/detailed-design/nuxt-domain-command-model-clarification-v01-retired.md)
+- [nuxt-domain-operation-identity-clarification-v01](../archive/detailed-design/nuxt-domain-operation-identity-clarification-v01-retired.md)
+- [nuxt-layer-scaffold-artefact-ownership-clarification-v01](../archive/detailed-design/nuxt-layer-scaffold-artefact-ownership-clarification-v01-retired.md)
+- [repository-source-intelligence-relationship-clarification-v01](../archive/detailed-design/repository-source-intelligence-relationship-clarification-v01-retired.md)
+
+### 9.2 Downstream navigation-only repairs
+
+The following seven Implementation files each change one existing metadata/navigation line only. The complete diffs were inspected; all body content below metadata remains byte-for-byte unchanged. No Implementation clarification is retired or semantically reduced.
+
+- `docs/implementation/is-1-application-runtime-and-invocation-implementation-specification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+- `docs/implementation/is-13-nuxt-capability-implementation-specification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+- `docs/implementation/is-16-nuxt-domain-implementation-specification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+- `docs/implementation/is-2-managed-project-resolution-implementation-specification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+- `docs/implementation/is-3-configuration-resolution-implementation-specification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+- `docs/implementation/clarifications/app-command-model-implementation-clarification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+- `docs/implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md`: direct primary DD authority-source link/label replaces retired clarification navigation.
+
+The two Nuxt Functional links to the scaffold clarification also point directly to DD-2.10 §16; no Functional requirement body or identity changes.
+
 ## 10. NCR-2 — Physical Metrics and Completion Gate
 
 Baseline metrics use UTF-8 source, whitespace-separated words and `splitlines()` physical lines. Archive notices are excluded from active normative totals.
@@ -276,4 +324,4 @@ Baseline metrics use UTF-8 source, whitespace-separated words and `splitlines()`
 | Active DD clarifications | 17 | 12,908 | 1,837 | 104,915 |
 | Total NCR-2 active scope | 40 | 145,587 | 24,584 | 1,197,175 |
 
-Checkpoint A: complete initial inventory and horizontal classification recorded; no primary physical reduction yet. All subsequent corrections, retirement, identity checks, downstream navigation-only edits and final gate results will be recorded here. Counts of remaining duplicate propositions and unresolved semantic/readability findings are **not yet verified**. NCR-2 is not complete. NCR-3 has not begun.
+Checkpoint A is committed as `23c325a871214dc117b3b0f9cfe7bd30d1feaead`; draft [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180) is the single NCR-2 PR. Checkpoint B integrates and retires all seventeen DD vehicles with 1,915 definitions preserved. Limited duplicate bodies directly affected by integration have been removed; complete physical reduction and final horizontal verification remain outstanding. Checkpoint B verification: all 1,915 DD definitions preserved as a multiset; all 17 active DD vehicle files replaced by 17 seven-line lineage notices; new/changed Markdown link targets and anchors resolve; seven IS bodies unchanged below metadata; `git diff --check` passes. Counts of remaining duplicate propositions and unresolved semantic/readability findings are **not yet verified**. NCR-2 is not complete. NCR-3 has not begun.

@@ -10,11 +10,11 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 >
 > **Related Functional authorities:** [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md), [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md)
 >
-> **Related Detailed Designs:** [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md)
+> **Related Detailed Designs:** [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract)
 
 ## 1. Purpose
 
@@ -732,20 +732,13 @@ The canonical final AppManager outcome is defined by DD-1.2. The Invocation Outc
 
 ### 22.2 Projection obligations
 
-The invocation-facing projection shall preserve, where present and caller-relevant, the canonical DD-1.2 meanings of:
+#### DD-OUTCLAR-002 — Traceable caller projection {#dd-outclar-002}
 
-- invocation and command identity;
-- final status;
-- command/domain result payload;
-- diagnostics and warnings;
-- applied and proposed effects;
-- child/target results;
-- cancellation information;
-- bounded execution-evidence references;
-- recovery guidance;
-- timing/correlation metadata.
+The caller projection uses the [DD-1.2 outcome field families](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract). It preserves all caller-relevant meanings and material partial/effect information. An approved serialization or caller view may rename fields, omit irrelevant implementation detail or render them for humans, while remaining traceable to that canonical outcome and preserving its lifecycle states.
 
-A transport or adapter may omit non-required implementation detail, rename serialized fields, or render a human-oriented view, but it shall not alter these semantics, suppress material partial/effect information, or invent an independent terminal status model.
+#### DD-OUTCLAR-003 — Invocation-specific characteristics {#dd-outclar-003}
+
+The projection may expose preview or pre-execution rejection characteristics. Where they affect application meaning, map them explicitly to [DD-1.2 preview semantics](dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview) and its outcome/status model instead of maintaining an invocation-only state model.
 
 ### 22.3 Result payload ownership
 
@@ -1107,7 +1100,7 @@ DD-1.2 is the canonical semantic owner of the shared AppManager outcome, diagnos
 
 This document owns only the invocation-facing request/event/cancellation-control boundary and the projection/delivery of the accepted DD-1.2 outcome. Any invocation-specific diagnostic code or projection field must map to DD-1.2 rather than redefine its shared meanings.
 
-The relationship is further clarified by [Application Outcome and Diagnostic Ownership Clarification](clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md).
+The relationship is further clarified by [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
 
 ### 41.2 DD-1.3 — Managed Project
 

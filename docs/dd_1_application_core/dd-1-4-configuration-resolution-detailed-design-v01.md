@@ -10,9 +10,9 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md)
 >
-> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 
 ## 1. Purpose
 
@@ -30,7 +30,7 @@ A third governing rule is:
 
 > **A value becoming available does not make it effective; source applicability, candidate validity, precedence, fallback policy, sensitivity, and operation context must all be resolved under AppManager semantics.**
 
-Where managed-project identity and configuration applicability depend on one another, this design shall be read with [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md), which defines the staged bootstrap-versus-project-aware resolution contract without changing DD-1.4 ownership of configuration semantics.
+Where managed-project identity and configuration applicability depend on one another, this design shall be read with [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle), which defines the staged bootstrap-versus-project-aware resolution contract without changing DD-1.4 ownership of configuration semantics.
 
 ## 2. Scope
 
@@ -285,11 +285,23 @@ A project fact, selected file, repository identity, host selection, detected fra
 
 ### 8.3 Bootstrap resolution dependency
 
-Before authoritative managed-project identity exists, only concerns and sources whose applicability and effective value do not depend on that unresolved identity, project topology or managed scope may participate. Those concerns form the bounded bootstrap subset defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md).
+Bootstrap resolution supplies the context-independent effective values needed by the [Engine's staged lifecycle](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle). It uses this specification's concern catalogue, validation, precedence, fallback, sensitivity and provenance contracts at both stages.
 
-Bootstrap resolution uses the same concern catalogue, candidate validation, precedence, fallback, sensitivity and provenance semantics as later resolution. It is not a second configuration system.
+#### DD-CORE-BOOT-001 — No circular applicability {#dd-core-boot-001}
 
-Bootstrap effective configuration may contribute governed project hints or other permitted evidence to DD-1.3. It does not itself establish project identity, managed scope, targetability, mutation authority or authorization.
+A candidate cannot establish the project identity on which its own applicability or effective value depends. This excludes candidates requiring unresolved topology, managed entities, repository relationships or managed scope, including project-scoped configuration whose location or interpretation requires that same project.
+
+#### DD-CORE-BOOT-002 — Bootstrap subset {#dd-core-boot-002}
+
+Only concerns and sources explicitly valid without the unresolved project context participate in bootstrap resolution. A concern may permit explicit invocation values, independent host/integration context, tool configuration, environment-derived values, built-in defaults or another explicitly approved context-independent source. This list grants no source universal applicability; the concern's validation and precedence still apply.
+
+#### DD-CORE-BOOT-003 — Project-aware eligibility {#dd-core-boot-003}
+
+Project-, topology-, entity-, repository-, layer-, resource- and scope-dependent candidates become eligible only when DD-1.3 has supplied the context required by the concern. Bootstrap values are passed as [project-resolution evidence](dd-1-3-managed-project-detailed-design-v01.md#dd-core-boot-004).
+
+#### DD-CORE-BOOT-005 — Operation snapshot context {#dd-core-boot-005}
+
+The operation-facing snapshot is accepted only after the context required by its constituent concerns is available. A bootstrap snapshot is therefore not automatically a complete operation snapshot. The scope decision consumes effective values according to [DD-1.5's scope checkpoint](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009).
 
 ### 8.4 Managed Project dependency
 
@@ -1110,38 +1122,11 @@ For example, a value such as `force=true` or a target branch name cannot automat
 
 ## 32. Managed Project Integration
 
-DD-1.3 and DD-1.4 collaborate through the staged contract in [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md); neither is globally upstream of the other for every stage.
+The [resolution context contract in §8](#_8-resolution-context) defines configuration's stage-specific inputs; [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) coordinates the stages. Configuration consumes the project model rather than rediscovering it. Project-side interpretation and conflict reporting follow [DD-1.3 §29](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution).
 
-### 32.1 Bootstrap contribution to DD-1.3
+A scope-sensitive concern may resolve differently for the root application, one or several layers, one or several repositories, or selected resources. Its snapshot preserves the relevant scope association. If a concern instead supplies a value needed to decide scope, it is resolved from sufficient project context and supplied at the Engine's scope checkpoint.
 
-Before authoritative managed-project identity exists, DD-1.4 may supply only governed bootstrap effective configuration whose own applicability does not depend on that unresolved identity. DD-1.3 may consume those values as project-resolution evidence but retains authority over project identity and context.
-
-### 32.2 Project-aware DD-1.3 dependency
-
-After sufficient Managed Project Context exists, Configuration Resolution consumes DD-1.3 project identity, project topology and managed entities to determine project-aware source applicability and effective values.
-
-It does not independently rediscover or replace those project semantics.
-
-### 32.3 Scope-sensitive concerns
-
-A concern may resolve differently for:
-
-- root application;
-- one managed layer;
-- multiple managed layers;
-- one repository;
-- multiple repositories;
-- selected files/resources.
-
-Where the concern requires an already-resolved managed scope, the effective snapshot shall preserve that scope association. Where DD-1.3 scope/exclusion semantics instead require an operation-effective value that can be resolved from sufficient project context, DD-1.4 may supply that value before final scope acceptance.
-
-### 32.4 Configuration cannot expand scope
-
-Even an effective value cannot authorize targets outside the DD-1.3 scope that is ultimately resolved and accepted for the operation. Configuration Resolution supplies governed values; DD-1.3/Application Engine retain scope and targetability authority.
-
-### 32.5 Conflict and re-resolution
-
-Project-aware configuration that materially conflicts with the project identity or bootstrap assumptions shall produce structured evidence for DD-1.5 to handle through explicit revalidation, bounded re-resolution, disambiguation or failure. DD-1.3/DD-1.4 shall not enter an uncontrolled recursive resolution loop.
+Resolution diagnostics should distinguish missing bootstrap values, invalid candidates, inapplicable sources, bootstrap/project evidence conflict, unresolved project identity, premature project-dependent resolution, later configuration/context conflict, unresolved scope-dependent values, required re-resolution and unsafe or unsupported cycles. These are local conditions mapped through [DD-1.2 §9](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model); safe provenance is retained without exposing sensitive configuration values.
 
 ## 33. Provider and Capability Integration
 
@@ -1343,7 +1328,7 @@ DD-1.4 supplies configuration-resolution evidence projected into those models.
 
 DD-1.3 owns project identity, topology, managed entities, managed scope and targetability.
 
-DD-1.4 may first provide bootstrap effective configuration as bounded project-resolution evidence, then consumes sufficient DD-1.3 context to determine project/scope-aware source applicability and effective values. The staged collaboration is governed by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md); neither side acquires the other's authority.
+DD-1.4 may first provide bootstrap effective configuration as bounded project-resolution evidence, then consumes sufficient DD-1.3 context to determine project/scope-aware source applicability and effective values. The staged collaboration is governed by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle); neither side acquires the other's authority.
 
 ### 41.4 DD-1.5 Application Engine
 
@@ -1385,7 +1370,7 @@ Later Detailed Designs shall preserve the following constraints:
 - Documentation, Quality, and Nuxt capabilities must not create private precedence chains;
 - resource registries/templates may define configuration concerns but shall resolve them through this shared model;
 - domain orchestrators must request concern-specific effective values through this boundary;
-- Utils must not become an informal fallback location for ad hoc configuration lookup.
+- Maintenance must not become an informal fallback location for ad hoc configuration lookup.
 
 ## 44. Conformance Criteria
 

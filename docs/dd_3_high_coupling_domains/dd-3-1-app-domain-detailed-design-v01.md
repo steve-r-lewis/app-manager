@@ -10,7 +10,7 @@
 >
 > **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md), [docs/functional/app-settings-environment-definition-ownership-canonical specification-v01.md](../functional/app-functional-specification-v01.md#fr-app-016), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
-> **Authoring controls:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [docs/project_management/domain-detailed-design-authoring-guide-v01.md](../project_management/domain-detailed-design-authoring-guide-v01.md), [docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md](../project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md)
+> **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [docs/project_management/domain-detailed-design-authoring-guide-v02.md](../project_management/domain-detailed-design-authoring-guide-v02.md), [docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md](../project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md)
 
 ---
 
@@ -36,14 +36,14 @@ A second rule is:
 
 This design owns permanent App-domain contracts for:
 
-- existing root-application initialisation;
+- existing root-application preparation;
 - project-declared post-installation lifecycle execution;
-- local development execution;
+- local development and project-resolved generation;
 - build;
 - preview;
 - clean of safely regenerable root-application state;
 - reset/empty of approved regenerable installation and build state;
-- reinitialisation as a composed lifecycle workflow;
+- reset-and-prepare composition as a composed lifecycle workflow;
 - creation of a new AppManager-oriented root application;
 - creation-profile interpretation and orchestration;
 - bounded execution of recognised project-declared package scripts;
@@ -81,28 +81,29 @@ This design does not own or redefine:
 
 ### 3.1 Functional ownership
 
-The App domain owns `FR-APP-001` through `FR-APP-115` from [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md).
+The App domain owns `FR-APP-001` through `FR-APP-116` from [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md).
 
 The principal requirement groups are:
 
 | Functional range | App-domain concern |
 |---|---|
 | `FR-APP-001`–`FR-APP-012` | general lifecycle semantics and authority |
-| `FR-APP-013`–`FR-APP-024` | initialise existing application |
+| `FR-APP-013`–`FR-APP-024` | prepare existing application |
 | `FR-APP-025`–`FR-APP-028` | post-installation lifecycle behaviour |
 | `FR-APP-029`–`FR-APP-033` | local development execution |
 | `FR-APP-034`–`FR-APP-038` | build |
 | `FR-APP-039`–`FR-APP-042` | preview |
 | `FR-APP-043`–`FR-APP-049` | clean regenerable state |
 | `FR-APP-050`–`FR-APP-058` | reset/empty regenerable installation/build state |
-| `FR-APP-059`–`FR-APP-065` | reinitialise |
+| `FR-APP-059`–`FR-APP-065` | reset-and-prepare |
 | `FR-APP-066`–`FR-APP-090` | create new root application |
 | `FR-APP-091`–`FR-APP-098` | declared project-package-script execution |
 | `FR-APP-099`–`FR-APP-104` | safety and non-destructive behaviour |
 | `FR-APP-105`–`FR-APP-109` | interaction-mode behaviour |
+| `FR-APP-116` | root generation |
 | `FR-APP-110`–`FR-APP-115` | cancellation, failure and partial completion |
 
-`FR-APP-013`–`FR-APP-018` are additionally constrained by `app-settings-environment-definition-ownership-clarification-v01.md`: App owns initialisation intent and lifecycle acceptance; Settings owns persisted environment-definition operations.
+`FR-APP-013`–`FR-APP-018` are additionally constrained by [Settings environment-definition requirements](../functional/settings-functional-specification-v01.md#fr-set-060): App owns preparation intent and lifecycle acceptance; Settings owns persisted environment-definition operations.
 
 ### 3.2 Application Core authorities
 
@@ -112,7 +113,7 @@ This design consumes, but does not redefine:
 - [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md);
 - [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md);
 - [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md);
-- [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md);
+- [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle);
 - [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md).
 
 ### 3.3 Shared capability authorities
@@ -162,7 +163,7 @@ The App domain owns:
 | resource mechanics | DD-2 Resource Access | delegates bounded resource operations |
 | process mechanics | DD-2 Process Execution | delegates bounded executable/tool execution |
 | repository primitives | DD-2 Repository Capability | normally reached through Git-domain semantics when repository use-case policy is required |
-| environment-definition persistence | Settings domain | delegates environment operation during initialisation |
+| environment-definition persistence | Settings domain | delegates environment operation during preparation |
 | Nuxt-specific semantics | Nuxt domain / DD-2 Nuxt Capability | coordinates without duplicating Nuxt ownership |
 | templates/registries | DD-2 Resource Registry and Template | resolves/renders selected declarative resources |
 | existing-source mutation | DD-2 Source Transformation | delegates approved bounded transformation |
@@ -239,24 +240,7 @@ The following are conceptual App-domain contracts. They define semantic informat
 
 ### DD-APP-001 — Lifecycle Action Identity
 
-A `LifecycleActionIdentity` shall identify the App-owned lifecycle intent independently of provider/tool syntax.
-
-Version 1 identities include at least:
-
-```text
-initialise
-post_install
-develop
-build
-preview
-clean
-reset
-reinitialise
-create
-run_declared_script
-```
-
-Aliases and presentation labels shall not create additional semantic owners.
+`LifecycleActionIdentity` binds exactly the eight commands in the [App Functional catalogue](../functional/app-functional-specification-v01.md): create, prepare, develop, build, preview, generate, clean and reset. Their identities are independent of provider syntax. Post-install and declared-script identities describe subordinate work, not additional commands; aliases do not extend the catalogue.
 
 ### DD-APP-002 — Lifecycle Applicability
 
@@ -363,7 +347,7 @@ Concrete filesystem paths belong to later implementation design/provider evidenc
 
 ### DD-APP-009 — Declared Script Selection
 
-A declared-script execution request shall identify a script proven to exist in recognised managed-root package metadata. Arbitrary caller-supplied shell text shall not satisfy this contract.
+The bounded supporting collaborator accepts project-declared identity/evidence and delegates actual execution to Process Execution. Discovery does not add command identities. A declared-script execution request shall identify a script proven to exist in recognised managed-root package metadata. Arbitrary caller-supplied shell text shall not satisfy this contract.
 
 ### DD-APP-010 — App Recovery Position
 
@@ -381,6 +365,8 @@ A recovery position is information, not an automatic rollback or resume guarante
 ---
 
 ## 8. Use-Case Orchestration
+
+The sections include public lifecycle operations and explicitly identified supporting stages. Layer, Nuxt-configuration, module/framework and complex monorepo-composition intents remain Nuxt-owned.
 
 ### 8.1 General orchestration rules
 
@@ -408,7 +394,7 @@ A stage is accepted only when its domain-specific postcondition is satisfied. Su
 
 A stage shall not execute when an unsatisfied earlier stage is a prerequisite for it. Independent optional stages may continue only where the workflow explicitly permits that behaviour and the resulting partial state remains safe and accurately reportable.
 
-### 8.2 Initialise existing application
+### 8.2 Prepare existing application
 
 The semantic flow is:
 
@@ -434,36 +420,38 @@ assess lifecycle readiness
 reassess required readiness/postconditions
         |
         v
-App initialisation interpretation
+App preparation interpretation
 ```
 
 ### DD-APP-016 — Existing-project protection
 
-Initialisation shall treat the target as an existing managed application. It shall not invoke root-application scaffold semantics over that project.
+Preparation shall treat the target as an existing managed application. It shall not invoke root-application scaffold semantics over that project.
 
 ### DD-APP-017 — Readiness-derived stage selection
 
-Initialisation shall select only lifecycle preparation stages required or explicitly requested for the resolved project/profile. Already-satisfied stages should not be destructively repeated where their semantics permit safe recognition.
+Preparation shall select only lifecycle preparation stages required or explicitly requested for the resolved project/profile. Already-satisfied stages should not be destructively repeated where their semantics permit safe recognition.
 
 ### DD-APP-018 — Environment-definition delegation
 
-Where environment-definition readiness requires creation of a missing persisted definition from an approved example/default source, App shall delegate the persisted operation to Settings according to `app-settings-environment-definition-ownership-clarification-v01.md`.
+Where environment-definition readiness requires creation of a missing persisted definition from an approved example/default source, App shall delegate the persisted operation to Settings according to [Settings environment-definition requirements](../functional/settings-functional-specification-v01.md#fr-set-060).
 
 App shall not implement an alternate direct-copy path that bypasses Settings protection semantics.
 
 ### DD-APP-019 — No secret-completeness fiction
 
-App initialisation shall distinguish successful creation/management of an environment definition from full environment readiness. Missing required sensitive values shall remain explicit remaining action and shall not be fabricated.
+App preparation shall distinguish successful creation/management of an environment definition from full environment readiness. Missing required sensitive values shall remain explicit remaining action and shall not be fabricated.
 
 ### DD-APP-020 — Repository readiness delegation
 
 Where repository relationships must be prepared for development readiness, App shall coordinate the relevant Git-domain use case. Repository mechanics or Git-domain policy shall not be recreated as App lifecycle stages.
 
-### DD-APP-021 — Initialisation acceptance
+### DD-APP-021 — Preparation acceptance
 
-Initialisation acceptance shall be based on required lifecycle preparation postconditions, not on whether every optional stage was attempted. The result shall expose completed stages and unresolved required user action.
+Preparation acceptance shall be based on required lifecycle preparation postconditions, not on whether every optional stage was attempted. The result shall expose completed stages and unresolved required user action.
 
 ### 8.3 Post-installation lifecycle execution
+
+This is subordinate stage behavior where a lifecycle requires it; it is not a public App use case.
 
 ### DD-APP-022 — Declaration-derived action
 
@@ -541,32 +529,19 @@ The material Reset effect classes shall be known before the authorization checkp
 
 If Reset stops after some effects have completed, the App result shall identify completed, unattempted and failed effect classes. No universal rollback shall be implied.
 
-### 8.9 Reinitialise
+### 8.9 Reset-and-prepare
 
-The permanent composition is:
+A reset-and-prepare convenience flow composes canonical Reset and Prepare through the Application Engine. It has no independent command identity or parallel use-case implementation. A build stage is included only where selected under the [App composition policy](../functional/app-functional-specification-v01.md#fr-app-059).
 
 ```text
-authorized reset
-      |
-      v
-reset accepted
-      |
-      v
-initialisation/preparation
-      |
-      v
-preparation accepted
-      |
-      v
-build
-      |
-      v
-reinitialise acceptance
+authorized reset -> reset accepted -> prepare -> preparation accepted
+                                                   -> optional selected build
+                                                   -> composed result
 ```
 
 ### DD-APP-038 — Reuse, not reimplementation
 
-Reinitialise shall compose the approved Reset, Initialise and Build semantics defined by this specification rather than defining parallel versions of their policies.
+The Engine composes the existing Reset and Prepare intents and, where selected, Build. Each stage retains its own policy and acceptance contract.
 
 ### DD-APP-039 — Authorization before reset
 
@@ -574,9 +549,9 @@ Authorization covering the Reset effect plan shall be obtained before the first 
 
 ### DD-APP-040 — Stage dependency stop
 
-Failure or cancellation of Reset prevents dependent Initialise and Build stages. Failure/cancellation of Initialise prevents dependent Build where the required build preconditions are not satisfied.
+Failure or cancellation of Reset stops dependent Prepare and any selected Build. Failure or cancellation of Prepare stops a selected Build whose preparation prerequisites remain unsatisfied.
 
-### DD-APP-041 — Reinitialise result composition
+### DD-APP-041 — Reset-and-prepare result composition
 
 The App result shall retain stage-by-stage evidence sufficient to distinguish failure before mutation, failure after reset, preparation failure, build failure, cancellation and complete success.
 
@@ -615,6 +590,8 @@ validate creation postconditions
         v
 App creation interpretation + next actions
 ```
+
+Creation includes the initial establishment stages required by its selected profile. It does not require the caller to invoke public Prepare separately to complete those creation postconditions. Optional Git/dependency follow-ons remain distinguishable in the creation result.
 
 ### DD-APP-042 — Creation target safety
 
@@ -681,6 +658,10 @@ The App-specific result shall identify the selected declared script and interpre
 
 ---
 
+### 8.12 Generate {#generate}
+
+`app.generate` applies [FR-APP-116](../functional/app-functional-specification-v01.md#fr-app-116) to the selected managed root. Resolve the supported generation mechanism from project evidence, use the existing applicability/stage contracts, delegate process mechanics and interpret the requested generation postcondition. The provider command is not the application identity.
+
 ## 9. Domain State and State Transitions
 
 The App domain does not require a new persistent global lifecycle state machine in Version 1. Durable project state remains represented by managed resources, project metadata and specialist domain state.
@@ -739,7 +720,7 @@ Where a lifecycle action is project-declared, App policy shall use recognised pr
 
 ### DD-APP-061 — Durable-resource preservation
 
-Clean, Reset, Initialise and Reinitialise shall preserve durable user-authored source, user-managed project configuration and unrelated project resources unless the invoked use case has explicit approved authority over a particular resource.
+Clean, Reset, Prepare and Reset-and-prepare shall preserve durable user-authored source, user-managed project configuration and unrelated project resources unless the invoked use case has explicit approved authority over a particular resource.
 
 ### DD-APP-062 — Optional-stage semantics
 
@@ -848,9 +829,9 @@ Application-level conflict coordination remains under DD-1 Application Engine au
 
 A creation, Clean, Reset or other mutation plan shall be revalidated before application when material target/resource evidence has changed since planning.
 
-### DD-APP-081 — Initialise idempotence
+### DD-APP-081 — Prepare idempotence
 
-Initialise should treat valid already-satisfied preparation stages as satisfied rather than destructively recreating them. This does not permit stale evidence to bypass validation.
+Prepare should treat valid already-satisfied preparation stages as satisfied rather than destructively recreating them. This does not permit stale evidence to bypass validation.
 
 ### DD-APP-082 — Clean idempotence
 
@@ -870,7 +851,7 @@ Root creation shall not treat an already-created or newly non-empty target as eq
 
 ### DD-APP-085 — Environment sensitivity
 
-App initialisation shall not expose or fabricate sensitive environment values. Settings and Configuration sensitive-value contracts remain authoritative for persisted definitions and effective configuration respectively.
+App preparation shall not expose or fabricate sensitive environment values. Settings and Configuration sensitive-value contracts remain authoritative for persisted definitions and effective configuration respectively.
 
 ### DD-APP-086 — Process environment minimization
 
@@ -915,7 +896,7 @@ At minimum, design-level tests shall be able to establish:
 - lifecycle applicability from controlled managed-project/configuration evidence;
 - stage sequencing and prerequisite blocking;
 - provider/capability success not automatically becoming App success;
-- initialisation delegation to Settings without direct environment persistence bypass;
+- preparation delegation to Settings without direct environment persistence bypass;
 - Git readiness/follow-on delegation without duplicated repository policy;
 - clean versus reset effect-class separation;
 - lock-state policy behaviour;
@@ -939,7 +920,7 @@ Concrete test files, frameworks, fixtures and mocks belong to Implementation Spe
 | Detailed Design contracts | Functional authority | Principal DD dependencies |
 |---|---|---|
 | `DD-APP-001`–`DD-APP-015` | `FR-APP-001`–`FR-APP-012`, `FR-APP-099`–`FR-APP-115` | DD-1 Invocation, Engine, Managed Project, Configuration, Outcomes |
-| `DD-APP-016`–`DD-APP-021` | `FR-APP-013`–`FR-APP-024`; `FCL-APPSET-001`–`007` | Settings domain seam, Process Execution, Resource/Template contracts, Git domain |
+| `DD-APP-016`–`DD-APP-021` | `FR-APP-013`–`FR-APP-024`; Settings `FR-SET-060`/`061` | Settings domain seam, Process Execution, Resource/Template contracts, Git domain |
 | `DD-APP-022`–`DD-APP-025` | `FR-APP-025`–`FR-APP-033` | Process Execution, DD-1 Invocation/Outcomes |
 | `DD-APP-026`–`DD-APP-030` | `FR-APP-034`–`FR-APP-042` | Process Execution, Source Transformation boundary, DD-1 Outcomes |
 | `DD-APP-031`–`DD-APP-037` | `FR-APP-043`–`FR-APP-058` | Managed Project, Resource Access, DD-1 authorization/outcomes |
@@ -976,15 +957,15 @@ App shall consume effective configuration rather than reconstructing competing p
 
 ### DD-APP-CI-005 — Settings owns environment persistence
 
-App initialisation shall use the Settings-owned environment-definition operation and shall not create a competing persistence path.
+App preparation shall use the Settings-owned environment-definition operation and shall not create a competing persistence path.
 
 ### DD-APP-CI-006 — Clean and Reset remain distinct
 
 Clean shall remain limited to safely regenerable cache/build state; Reset may be broader only under explicit policy and authorization while preserving durable resources by default.
 
-### DD-APP-CI-007 — Reinitialise composes existing lifecycle semantics
+### DD-APP-CI-007 — Reset-and-prepare composes existing lifecycle semantics
 
-Reinitialise shall not become an independent alternate implementation of Reset, Initialise or Build.
+Reset-and-prepare shall not become an independent alternate implementation of Reset, Prepare or Build.
 
 ### DD-APP-CI-008 — Root creation is not layer creation
 
@@ -1000,7 +981,7 @@ Optional repository initialisation/readiness work shall not create App-owned Git
 
 ### DD-APP-CI-011 — Declared-script execution is bounded
 
-The App generic script use case shall execute only recognised project-declared scripts and shall not become arbitrary shell execution.
+The supporting script collaborator uses DD-APP-009 and DD-APP-050 through DD-APP-054; it does not extend the App command catalogue.
 
 ### DD-APP-CI-012 — Provider completion is evidence
 
