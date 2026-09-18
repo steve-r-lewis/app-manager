@@ -511,23 +511,29 @@ Invocation Coordinator
       |
       +--> command/use-case validation
       |
-      +--> authorization/policy eligibility
+      +--> handoff to Application Engine Dispatch
       |
-      +--> Application Engine executes use case
-      |       |
-      |       +--> capability coordination
-      |       +--> application acceptance
-      |       +--> canonical DD-1.2 outcome
+      v
+   [DD-1.5 §8 staged lifecycle: managed-project resolution, project/
+    scope-aware configuration resolution, managed-scope finalization,
+    policy/safety evaluation, authorization, capability delegation,
+    evidence accumulation, outcome interpretation]
       |
-      +--> project canonical outcome for invocation
+      v
+canonical DD-1.2 outcome
+      |
+      v
+project canonical outcome for invocation
       |
       v
 structured invocation-facing outcome
 ```
 
+This sequence is a local, necessarily abbreviated view of invocation-boundary concerns. Everything from the handoff onward follows [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle), which is authoritative for that ordering; this diagram does not restate it as a second, potentially divergent sequence.
+
 ### 16.3 Application Engine authority
 
-The coordinator is the entry component under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority). It may be implemented within the Engine or as a distinct component.
+The Invocation Coordinator is the DD-1.1-owned boundary component. It does not perform managed-project resolution, configuration resolution, scope finalization, policy evaluation or authorization sequencing itself; it hands the validated request to the Application Engine's Dispatch responsibility ([DD-1.5 DD-ENG-002](dd-1-5-application-engine-detailed-design-v01.md#dd-eng-002)), which owns everything from that point through final outcome publication under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority). This coordinator/Dispatch boundary may be realized as one implementation component or two; the design requires no process or package split.
 
 ## 17. Execution State Model
 

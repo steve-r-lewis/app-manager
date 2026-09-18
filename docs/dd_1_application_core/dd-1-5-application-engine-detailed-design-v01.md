@@ -140,9 +140,13 @@ The Engine shall consume the canonical command catalogue defined by the Applicat
 
 <a id="dd-eng-002"></a>
 
-### DD-ENG-002 — Dispatcher
+### DD-ENG-002 — Dispatch
 
-Dispatch consumes [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_10-invocation-normalization) and [FR-INV-003](../functional/application-invocation-functional-specification-v01.md#fr-inv-003) to select the owner registered under [DD-ENG-001](#dd-eng-001).
+**Purpose.** Dispatch is the single, unambiguous boundary at which a validated request handed off by the [DD-1.1 Invocation Coordinator](dd-1-1-application-invocation-detailed-design-v01.md#_16-invocation-coordinator) enters the Application Engine's internal staged lifecycle ([§8](#_8-orchestration-lifecycle)).
+
+**Handoff boundary.** The Invocation Coordinator's responsibility ends at this handoff: it does not itself perform managed-project resolution, configuration resolution, scope finalization, policy evaluation or authorization sequencing. Those stages, and their order, belong exclusively to [§8](#_8-orchestration-lifecycle) from the point Dispatch accepts the request. DD-1.1's own coordination sequence is a local, necessarily abbreviated view of invocation-boundary concerns; where it and [§8](#_8-orchestration-lifecycle) appear to describe different orderings, [§8](#_8-orchestration-lifecycle) is authoritative for everything after this handoff.
+
+**Position.** Dispatch consumes [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_10-invocation-normalization) and [FR-INV-003](../functional/application-invocation-functional-specification-v01.md#fr-inv-003) to select the owner registered under [DD-ENG-001](#dd-eng-001), then immediately begins [§8](#_8-orchestration-lifecycle) at its first applicable stage.
 
 <a id="dd-eng-003"></a>
 
@@ -165,9 +169,13 @@ The Engine shall establish an invocation-scoped execution context containing the
 
 <a id="dd-eng-004"></a>
 
-### DD-ENG-004 — Policy and safety evaluator
+### DD-ENG-004 — Policy and Safety Evaluation
 
-Application policy and safety constraints shall be evaluated at defined semantic checkpoints before consequential effects and re-evaluated when a material change invalidates prior assumptions.
+**Purpose.** Application policy and safety constraints shall be evaluated at defined semantic checkpoints before consequential effects, and re-evaluated when a material change invalidates prior assumptions ([DD-ENG-024](#dd-eng-024), [DD-ENG-027](#dd-eng-027)).
+
+**Position.** This checkpoint occurs after managed-project resolution, project/scope-aware configuration resolution and managed-scope finalization, and before authorization is established, per the staged lifecycle in [§8](#_8-orchestration-lifecycle). It is not evaluated against unresolved or provisional scope/configuration.
+
+**Detailed obligations.** The full policy and safety contract, including capability-local safety and non-destructive constraints, is defined in [§12](#_12-policy-and-safety).
 
 <a id="dd-eng-005"></a>
 
@@ -179,15 +187,25 @@ The responsibility may be implemented by one or more collaborators but remains s
 
 <a id="dd-eng-006"></a>
 
-### DD-ENG-006 — Capability broker responsibility
+### DD-ENG-006 — Capability Brokerage
 
-Capability access binds [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to approved specialist contracts. Command exposure follows [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_9-4-no-executable-provider-discovery-leakage).
+**Purpose.** Capability brokerage mediates all Engine access to shared capabilities and specialist providers, binding [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to approved specialist contracts. Command exposure follows [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_9-4-no-executable-provider-discovery-leakage).
+
+**Position.** Brokerage occurs after authorization is established and before evidence/effects accumulate, per [§8](#_8-orchestration-lifecycle).
+
+**Detailed obligations.** The full delegation-request, least-authority and evidence-normalization contract is defined in [§10](#_10-capability-delegation).
 
 <a id="dd-eng-007"></a>
 
-### DD-ENG-007 — Result interpreter
+### DD-ENG-007 — Outcome Interpretation
 
-The result interpreter applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) to the normalized evidence model in [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract).
+**Purpose.** Outcome Interpretation is the single named responsibility that applies owning use-case semantics to normalized execution evidence ([DD-1.2 §8](dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract)) under [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) and determines the resulting application-level acceptance decision.
+
+**Canonical naming.** This is the one Engine-owned actor for interpretation and acceptance. It replaces any separate reference to a "Result interpreter" or "Application acceptance" as though they were distinct steps: interpreting normalized evidence and deciding acceptance are the same responsibility, performed once. [DD-ENG-058](#dd-eng-058) records the specific acceptance obligations this responsibility discharges; it is not a second component. [DD-1.2's Acceptance Semantics](dd-1-2-execution-outcomes-detailed-design-v01.md#_5-responsibility-model) define the status model and interpretation examples this responsibility applies; DD-1.2 owns that contract, not the acting component.
+
+**Position.** Outcome Interpretation occurs after evidence/effects have accumulated and before the final outcome is published, per [§8](#_8-orchestration-lifecycle).
+
+**Detailed obligations.** The full acceptance, partial-success, no-op and failure-effect contract is defined in [§14](#_14-application-acceptance-and-outcomes).
 
 <a id="dd-eng-008"></a>
 
@@ -591,7 +609,7 @@ Capability completion follows [Design](../appmanager-design-specification-v01.md
 
 ### DD-ENG-058 — Application acceptance
 
-Acceptance follows [FR-INV-034](../functional/application-invocation-functional-specification-v01.md#fr-inv-034) for the owning use case.
+Application acceptance is the decision produced by [Outcome Interpretation (DD-ENG-007)](#dd-eng-007), not a separate responsibility. It follows [FR-INV-034](../functional/application-invocation-functional-specification-v01.md#fr-inv-034) for the owning use case.
 
 <a id="dd-eng-059"></a>
 
