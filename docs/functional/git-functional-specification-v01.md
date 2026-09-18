@@ -94,7 +94,7 @@ Repository targeting consumes the topology model in [Managed Project FR-PROJ-019
 
 ### 4.4 CI/CD boundary
 
-CI/CD composition and Git-triggered workflows are governed by FR-GIT-096–100 in §15.
+CI/CD composition and Git-triggered workflows are governed by FR-GIT-096–100 in §14.
 
 ### 4.5 Cross-cutting authority
 
@@ -447,32 +447,34 @@ The structured result shall identify the repository, applicable remote(s), and s
 
 ---
 
-## 10. Push All Managed Repositories
+### 9.2 Coordinated Push
+
+One invocation may push the root repository, a selected layer, a selected set, or all eligible managed repositories. Repository cardinality is structured scope on the single push use case, not a separate command; the requirements below bind coordination to the existing push contract rather than introduce a cross-repository transaction. This mirrors [8.1 Coordinated Commit](#_8-1-coordinated-commit).
 
 <a id="fr-git-050"></a>
 
-### FR-GIT-050 — Coordinated multi-repository push
-AppManager shall provide a use case for pushing all eligible managed repositories within an explicitly resolved all-managed-repositories scope.
+### FR-GIT-050 — Canonical identity and coordinated scope
+Coordinated push shall use canonical `git.push`; repository cardinality — root, a selected layer, a selected set, or all eligible managed repositories — shall be expressed as structured scope per [FR-GIT-041](#fr-git-041)–[FR-GIT-043](#fr-git-043), not a separate `push-all` command identity.
 
 <a id="fr-git-051"></a>
 
-### FR-GIT-051 — Root and layers included by topology
-The all-managed-repositories push scope shall include the root repository and eligible managed layer repositories according to the resolved project topology, not according to a hard-coded directory scan.
+### FR-GIT-051 — Topology-driven scope
+All-eligible-repositories push scope shall apply [FR-GIT-008](#fr-git-008) and resolved project topology; it shall not be determined by a hard-coded directory scan.
 
 <a id="fr-git-052"></a>
 
-### FR-GIT-052 — Eligibility filtering
-Repositories that do not require or cannot validly perform the requested push shall be identified as skipped, already current, or ineligible rather than blindly invoked.
+### FR-GIT-052 — Per-repository eligibility
+Each repository in coordinated push scope shall apply [FR-GIT-046](#fr-git-046), [FR-GIT-047](#fr-git-047).
 
 <a id="fr-git-053"></a>
 
-### FR-GIT-053 — Pre-execution scope visibility
-Before a consequential interactive multi-repository push, AppManager shall make the intended repository scope reviewable where required by invocation policy.
+### FR-GIT-053 — Scope visibility
+Before a consequential interactive coordinated push, the intended repository scope shall be reviewable where required by invocation policy.
 
 <a id="fr-git-054"></a>
 
-### FR-GIT-054 — Explicit Headless scope
-Headless all-repository push shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020). The request shall identify all-managed-repositories scope unambiguously.
+### FR-GIT-054 — Headless determinism
+Headless coordinated push shall apply [FR-INV-020](application-invocation-functional-specification-v01.md#fr-inv-020); the request shall identify its scope unambiguously.
 
 <a id="fr-git-055"></a>
 
@@ -482,7 +484,7 @@ Per-repository push results shall apply [FR-INV-036](application-invocation-func
 <a id="fr-git-056"></a>
 
 ### FR-GIT-056 — Continuation policy
-Whether a multi-repository push continues after an individual repository failure shall be an explicit use-case policy. Where continuation is supported, failures shall be accumulated and reported.
+Whether coordinated push continues after an individual repository failure shall be explicit Git-domain continuation policy; where continuation is supported, failures shall be accumulated and reported.
 
 <a id="fr-git-057"></a>
 
@@ -492,11 +494,11 @@ Coordinated push results shall apply [FR-INV-036](application-invocation-functio
 <a id="fr-git-058"></a>
 
 ### FR-GIT-058 — No false transactionality
-Multi-repository push atomicity or rollback claims shall apply [FR-INV-046](application-invocation-functional-specification-v01.md#fr-inv-046).
+Coordinated push atomicity/rollback claims shall apply [FR-INV-046](application-invocation-functional-specification-v01.md#fr-inv-046). The invocation is not one provider-level transaction.
 
 ---
 
-## 11. Synchronisation
+## 10. Synchronisation
 
 ### 11.1 Purpose
 
@@ -579,7 +581,7 @@ Where a deliberately narrower synchronisation scope can leave related managed re
 
 ---
 
-## 12. Managed Repository Relationships
+## 11. Managed Repository Relationships
 
 ### 12.1 Purpose
 
@@ -627,7 +629,7 @@ The result shall identify relationships created, skipped, already existing, fail
 
 ---
 
-## 13. Initialise Layer Repositories
+## 12. Initialise Layer Repositories
 
 <a id="fr-git-082"></a>
 
@@ -656,7 +658,7 @@ Where multiple layer repositories are initialised in one invocation, AppManager 
 
 ---
 
-## 14. Remote Repository Deletion
+## 13. Remote Repository Deletion
 
 ### 14.1 Purpose
 
@@ -709,7 +711,7 @@ Deleting one remote repository shall not implicitly delete related layer reposit
 
 ---
 
-## 15. CI/CD, Automation, and Workflow Composition
+## 14. CI/CD, Automation, and Workflow Composition
 
 <a id="fr-git-096"></a>
 
@@ -738,7 +740,7 @@ CI/CD Git invocations shall apply [Design §4.6](../appmanager-design-specificat
 
 ---
 
-## 16. Safety, Failure, and Multi-Repository Behaviour
+## 15. Safety, Failure, and Multi-Repository Behaviour
 
 <a id="fr-git-101"></a>
 
@@ -792,7 +794,7 @@ A lower-level implementation flag named `force` shall not by itself define appli
 
 ---
 
-## 17. Interaction-Mode Equivalence
+## 16. Interaction-Mode Equivalence
 
 <a id="fr-git-111"></a>
 
@@ -816,7 +818,7 @@ Per-repository results of coordinated Git operations shall apply [FR-INV-021](ap
 
 ---
 
-## 18. Traceability Summary
+## 17. Traceability Summary
 
 | Requirement range | Functional concern | Upstream / same-level authority | Downstream refinement destination |
 |---|---|---|---|
@@ -825,7 +827,7 @@ Per-repository results of coordinated Git operations shall apply [FR-INV-021](ap
 | `FR-GIT-021`–`026` | Repository initialisation | This specification; App Functional Specification §14 | Repository Capability |
 | `FR-GIT-027`–`039` | Commit and optional AI assistance | This specification; Invocation | Repository Capability; AI capability boundary |
 | `FR-GIT-040`–`049` | Root/selected repository push | This specification; Managed Project | Repository Capability |
-| `FR-GIT-050`–`058` | All-managed-repositories push | This specification; Managed Project topology | Repository Capability |
+| `FR-GIT-050`–`058` | Coordinated push (§9.2) | This specification; Managed Project topology | Repository Capability |
 | `FR-GIT-059`–`073` | Scoped synchronisation | This specification; Managed Project | Repository Capability |
 | `FR-GIT-074`–`081` | Managed repository relationships | This specification; Managed Project | Repository Capability |
 | `FR-GIT-082`–`086` | Layer repository initialisation | This specification | Nuxt boundary; Repository Capability |
@@ -838,12 +840,12 @@ Detailed Design shall extend traceability downward to permanent repository contr
 
 ---
 
-## 19. Conformance Summary
+## 18. Conformance Summary
 
 Conformance is assessed against the applicable requirement bodies in this specification and the canonical contracts they reference. The traceability section identifies the requirement groups; this section creates no additional acceptance checklist.
 
 ---
 
-## 20. Version 1 Functional Baseline
+## 19. Version 1 Functional Baseline
 
 This document is the Version 1 Functional owner for its stated concern. Its requirement identities remain stable under the [Project Documentation Guide](../project-documentation-guide-v01.md#_9-traceability).
