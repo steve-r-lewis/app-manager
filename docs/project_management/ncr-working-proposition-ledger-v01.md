@@ -328,7 +328,7 @@ Checkpoint A is committed as `23c325a871214dc117b3b0f9cfe7bd30d1feaead`; draft [
 
 ### 10.1 Physical occurrence decisions
 
-Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`. Its direct destinations name the retained canonical clauses. Unlisted local clauses remain `CANONICAL`/`LOCAL_DELTA` under the complete inventory; their final horizontal review is pending. Stable IDs remain defined once.
+Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`, retaining any unique `LOCAL_DELTA`. Its direct destinations name the retained canonical clauses. Unlisted local clauses remain `CANONICAL`/`LOCAL_DELTA` under the complete inventory; their final horizontal review is pending. Stable IDs remain defined once.
 
 | Occurrence | Direct owner references after reduction |
 |---|---|
@@ -954,9 +954,231 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-NUXT-CI-010` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-NUXT-CI-011` | [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows); [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) |
 | `DD-NUXT-CI-012` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-DOCS-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-DOCS-003` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-DOCS-004` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCS-006` | [FR-DOCS-020](../functional/docs-functional-specification-v01.md#fr-docs-020); [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-DOCS-007` | [Design](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers) |
+| `DD-DOCS-008` | [FR-DOCS-029](../functional/docs-functional-specification-v01.md#fr-docs-029) |
+| `DD-DOCS-011` | [DD-DOCS-010](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-010); [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-DOCS-012` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates); [coordinated artefact plan](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#coordinated-artefact-plan) |
+| `DD-DOCS-013` | [FR-DOCS-075](../functional/docs-functional-specification-v01.md#fr-docs-075) |
+| `DD-DOCS-015` | [DD-1.2 outcome contract](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) |
+| `DD-DOCS-016` | [FR-DOCS-003](../functional/docs-functional-specification-v01.md#fr-docs-003); [FR-DOCS-118](../functional/docs-functional-specification-v01.md#fr-docs-118) |
+| `DD-DOCS-017` | [FR-DOCS-032](../functional/docs-functional-specification-v01.md#fr-docs-032) |
+| `DD-DOCS-018` | [FR-DOCS-038](../functional/docs-functional-specification-v01.md#fr-docs-038); [FR-DOCS-040](../functional/docs-functional-specification-v01.md#fr-docs-040) |
+| `DD-DOCS-019` | [FR-DOCS-039](../functional/docs-functional-specification-v01.md#fr-docs-039); [DD-DOCS-014](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-014) |
+| `DD-DOCS-020` | [FR-DOCS-044](../functional/docs-functional-specification-v01.md#fr-docs-044); [FR-DOCS-045](../functional/docs-functional-specification-v01.md#fr-docs-045) |
+| `DD-DOCS-021` | [FR-DOCS-046](../functional/docs-functional-specification-v01.md#fr-docs-046); [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033) |
+| `DD-DOCS-022` | [FR-DOCS-101](../functional/docs-functional-specification-v01.md#fr-docs-101) |
+| `DD-DOCS-023` | [FR-DOCS-056](../functional/docs-functional-specification-v01.md#fr-docs-056) |
+| `DD-DOCS-024` | [FR-DOCS-PBC-022](../functional/docs-functional-specification-v01.md#fr-docs-pbc-022); [FR-DOCS-059](../functional/docs-functional-specification-v01.md#fr-docs-059) |
+| `DD-DOCS-025` | [FR-DOCS-062](../functional/docs-functional-specification-v01.md#fr-docs-062) |
+| `DD-DOCS-026` | [FR-DOCS-065](../functional/docs-functional-specification-v01.md#fr-docs-065) |
+| `DD-DOCS-027` | [FR-DOCS-026](../functional/docs-functional-specification-v01.md#fr-docs-026); [FR-DOCS-072](../functional/docs-functional-specification-v01.md#fr-docs-072); [FR-DOCS-015](../functional/docs-functional-specification-v01.md#fr-docs-015) |
+| `DD-DOCS-028` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-DOCS-029` | [FR-DOCS-076](../functional/docs-functional-specification-v01.md#fr-docs-076) |
+| `DD-DOCS-030` | [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation) |
+| `DD-DOCS-031` | [FR-DOCS-116](../functional/docs-functional-specification-v01.md#fr-docs-116) |
+| `DD-DOCS-032` | [FR-DOCS-084](../functional/docs-functional-specification-v01.md#fr-docs-084); [FR-DOCS-088](../functional/docs-functional-specification-v01.md#fr-docs-088) |
+| `DD-DOCS-034` | [FR-DOCS-087](../functional/docs-functional-specification-v01.md#fr-docs-087) |
+| `DD-DOCS-035` | [FR-DOCS-092](../functional/docs-functional-specification-v01.md#fr-docs-092) |
+| `DD-DOCS-036` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-DOCS-037` | [FR-DOCS-095](../functional/docs-functional-specification-v01.md#fr-docs-095); [FR-DOCS-097](../functional/docs-functional-specification-v01.md#fr-docs-097) |
+| `DD-DOCS-038` | [FR-DOCS-104](../functional/docs-functional-specification-v01.md#fr-docs-104); [FR-DOCS-105](../functional/docs-functional-specification-v01.md#fr-docs-105); [DD-DOCS-010](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-010) |
+| `DD-DOCS-039` | [FR-DOCS-102](../functional/docs-functional-specification-v01.md#fr-docs-102) |
+| `DD-DOCS-043` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-DOCS-044` | [FR-PROJ-005](../functional/managed-project-functional-specification-v01.md#fr-proj-005) |
+| `DD-DOCS-045` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-DOCS-046` | [FR-DOCS-038](../functional/docs-functional-specification-v01.md#fr-docs-038); [FR-DOCS-040](../functional/docs-functional-specification-v01.md#fr-docs-040); [DD-DOCS-014](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-014) |
+| `DD-DOCS-047` | [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037) |
+| `DD-DOCS-048` | [FR-DOCS-081](../functional/docs-functional-specification-v01.md#fr-docs-081) |
+| `DD-DOCS-049` | [FR-DOCS-018](../functional/docs-functional-specification-v01.md#fr-docs-018) |
+| `DD-DOCS-050` | [FR-DOCS-093](../functional/docs-functional-specification-v01.md#fr-docs-093) |
+| `DD-DOCS-051` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-DOCS-052` | [FR-DOCS-004](../functional/docs-functional-specification-v01.md#fr-docs-004) |
+| `DD-DOCS-053` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-DOCS-054` | [FR-DOCS-028](../functional/docs-functional-specification-v01.md#fr-docs-028) |
+| `DD-DOCS-055` | [FR-DOCS-115](../functional/docs-functional-specification-v01.md#fr-docs-115) |
+| `DD-DOCS-056` | [FR-DOCS-118](../functional/docs-functional-specification-v01.md#fr-docs-118) |
+| `DD-DOCS-057` | [FR-DOCS-107](../functional/docs-functional-specification-v01.md#fr-docs-107) |
+| `DD-DOCS-058` | [DD-DOCS-042](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-042); [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-DOCS-059` | [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-DOCS-060` | [FR-DOCS-016](../functional/docs-functional-specification-v01.md#fr-docs-016); [DD-1.2 cancellation propagation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-DOCS-061` | [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-DOCS-063` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-DOCS-064` | [FR-INV-019](../functional/application-invocation-functional-specification-v01.md#fr-inv-019) |
+| `DD-DOCS-065` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-DOCS-066` | [DD-DOCS-015](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-015); [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021) |
+| `DD-DOCS-068` | [FR-DOCS-080](../functional/docs-functional-specification-v01.md#fr-docs-080) |
+| `DD-DOCS-069` | [FR-DOCS-080](../functional/docs-functional-specification-v01.md#fr-docs-080) |
+| `DD-DOCS-070` | [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020); [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068) |
+| `DD-DOCS-071` | [DD-1.2 no-op interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_15-no-op-already-satisfied-skipped-and-not-attempted-states) |
+| `DD-DOCS-075` | [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040) |
+| `DD-DOCS-077` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCS-078` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCS-079` | [FR-DOCS-084](../functional/docs-functional-specification-v01.md#fr-docs-084); [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-DOCS-081` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-DOCS-CI-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-DOCS-CI-002` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCS-CI-003` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-DOCS-CI-004` | [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037); [FR-DOCS-079](../functional/docs-functional-specification-v01.md#fr-docs-079); [DD-DOCS-034](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md#dd-docs-034) |
+| `DD-DOCS-CI-005` | [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033) |
+| `DD-DOCS-CI-006` | [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) |
+| `DD-DOCS-CI-007` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-DOCS-CI-008` | [FR-DOCS-038](../functional/docs-functional-specification-v01.md#fr-docs-038); [FR-DOCS-040](../functional/docs-functional-specification-v01.md#fr-docs-040); [FR-DOCS-081](../functional/docs-functional-specification-v01.md#fr-docs-081) |
+| `DD-DOCS-CI-009` | [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-DOCS-CI-010` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-DOCS-CI-011` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCS-CI-012` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUAL-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-QUAL-003` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-QUAL-005` | [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067) |
+| `DD-QUAL-007` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-QUAL-008` | [FR-QUAL-025](../functional/quality-functional-specification-v01.md#fr-qual-025) |
+| `DD-QUAL-009` | [FR-QUAL-025](../functional/quality-functional-specification-v01.md#fr-qual-025); [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098) |
+| `DD-QUAL-010` | [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097); [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098); [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099) |
+| `DD-QUAL-011` | [FR-QUAL-072](../functional/quality-functional-specification-v01.md#fr-qual-072); [FR-QUAL-051](../functional/quality-functional-specification-v01.md#fr-qual-051); [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) |
+| `DD-QUAL-012` | [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075); [FR-QUAL-077](../functional/quality-functional-specification-v01.md#fr-qual-077); [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078) |
+| `DD-QUAL-013` | [FR-QUAL-081](../functional/quality-functional-specification-v01.md#fr-qual-081); [FR-QUAL-001](../functional/quality-functional-specification-v01.md#fr-qual-001) |
+| `DD-QUAL-014` | [DD-1.2 outcome contract](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) |
+| `DD-QUAL-015` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-QUAL-017` | [FR-QUAL-032](../functional/quality-functional-specification-v01.md#fr-qual-032) |
+| `DD-QUAL-018` | [FR-QUAL-035](../functional/quality-functional-specification-v01.md#fr-qual-035) |
+| `DD-QUAL-019` | [FR-QUAL-036](../functional/quality-functional-specification-v01.md#fr-qual-036); [FR-QUAL-037](../functional/quality-functional-specification-v01.md#fr-qual-037) |
+| `DD-QUAL-020` | [FR-QUAL-043](../functional/quality-functional-specification-v01.md#fr-qual-043); [FR-QUAL-044](../functional/quality-functional-specification-v01.md#fr-qual-044) |
+| `DD-QUAL-021` | [FR-QUAL-045](../functional/quality-functional-specification-v01.md#fr-qual-045) |
+| `DD-QUAL-022` | [FR-QUAL-048](../functional/quality-functional-specification-v01.md#fr-qual-048); [FR-QUAL-050](../functional/quality-functional-specification-v01.md#fr-qual-050); [FR-QUAL-052](../functional/quality-functional-specification-v01.md#fr-qual-052) |
+| `DD-QUAL-023` | [FR-QUAL-053](../functional/quality-functional-specification-v01.md#fr-qual-053) |
+| `DD-QUAL-024` | [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) |
+| `DD-QUAL-025` | [FR-QUAL-056](../functional/quality-functional-specification-v01.md#fr-qual-056); [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) |
+| `DD-QUAL-026` | [FR-QUAL-064](../functional/quality-functional-specification-v01.md#fr-qual-064) |
+| `DD-QUAL-027` | [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042) |
+| `DD-QUAL-028` | [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066); [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067); [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
+| `DD-QUAL-029` | [FR-QUAL-077](../functional/quality-functional-specification-v01.md#fr-qual-077); [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078) |
+| `DD-QUAL-030` | [FR-QUAL-079](../functional/quality-functional-specification-v01.md#fr-qual-079) |
+| `DD-QUAL-031` | [FR-QUAL-082](../functional/quality-functional-specification-v01.md#fr-qual-082) |
+| `DD-QUAL-032` | [FR-QUAL-083](../functional/quality-functional-specification-v01.md#fr-qual-083) |
+| `DD-QUAL-033` | [FR-QUAL-084](../functional/quality-functional-specification-v01.md#fr-qual-084); [FR-QUAL-085](../functional/quality-functional-specification-v01.md#fr-qual-085) |
+| `DD-QUAL-035` | [FR-QUAL-091](../functional/quality-functional-specification-v01.md#fr-qual-091); [FR-QUAL-001](../functional/quality-functional-specification-v01.md#fr-qual-001) |
+| `DD-QUAL-037` | [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-QUAL-038` | [FR-QUAL-043](../functional/quality-functional-specification-v01.md#fr-qual-043); [FR-QUAL-044](../functional/quality-functional-specification-v01.md#fr-qual-044) |
+| `DD-QUAL-039` | [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099); [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098) |
+| `DD-QUAL-040` | [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042) |
+| `DD-QUAL-042` | [FR-QUAL-051](../functional/quality-functional-specification-v01.md#fr-qual-051); [FR-QUAL-072](../functional/quality-functional-specification-v01.md#fr-qual-072) |
+| `DD-QUAL-043` | [FR-QUAL-074](../functional/quality-functional-specification-v01.md#fr-qual-074) |
+| `DD-QUAL-044` | [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097) |
+| `DD-QUAL-045` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-QUAL-046` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-QUAL-048` | [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) |
+| `DD-QUAL-049` | [FR-QUAL-060](../functional/quality-functional-specification-v01.md#fr-qual-060) |
+| `DD-QUAL-050` | [FR-QUAL-112](../functional/quality-functional-specification-v01.md#fr-qual-112) |
+| `DD-QUAL-051` | [FR-PROJ-061](../functional/managed-project-functional-specification-v01.md#fr-proj-061); [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-QUAL-052` | [DD-PROC-014 structured arguments](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014) |
+| `DD-QUAL-053` | [FR-QUAL-095](../functional/quality-functional-specification-v01.md#fr-qual-095) |
+| `DD-QUAL-054` | [DD-1.2 provider-result normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-QUAL-055` | [FR-QUAL-017](../functional/quality-functional-specification-v01.md#fr-qual-017); [DD-1.2 propagation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-QUAL-056` | [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-QUAL-057` | [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078); [FR-QUAL-086](../functional/quality-functional-specification-v01.md#fr-qual-086) |
+| `DD-QUAL-058` | [FR-QUAL-096](../functional/quality-functional-specification-v01.md#fr-qual-096); [FR-QUAL-087](../functional/quality-functional-specification-v01.md#fr-qual-087) |
+| `DD-QUAL-059` | [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046); [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) |
+| `DD-QUAL-061` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-QUAL-062` | [FR-INV-019](../functional/application-invocation-functional-specification-v01.md#fr-inv-019) |
+| `DD-QUAL-063` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-QUAL-064` | [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021) |
+| `DD-QUAL-065` | [FR-QUAL-045](../functional/quality-functional-specification-v01.md#fr-qual-045) |
+| `DD-QUAL-066` | [FR-QUAL-109](../functional/quality-functional-specification-v01.md#fr-qual-109) |
+| `DD-QUAL-067` | [FR-QUAL-109](../functional/quality-functional-specification-v01.md#fr-qual-109) |
+| `DD-QUAL-068` | [FR-QUAL-103](../functional/quality-functional-specification-v01.md#fr-qual-103) |
+| `DD-QUAL-071` | [FR-QUAL-110](../functional/quality-functional-specification-v01.md#fr-qual-110) |
+| `DD-QUAL-073` | [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040) |
+| `DD-QUAL-075` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-QUAL-077` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUAL-079` | [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066); [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067) |
+| `DD-QUAL-081` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUAL-CI-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-QUAL-CI-002` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUAL-CI-003` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-QUAL-CI-004` | [FR-QUAL-050](../functional/quality-functional-specification-v01.md#fr-qual-050); [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075) |
+| `DD-QUAL-CI-005` | [FR-QUAL-025](../functional/quality-functional-specification-v01.md#fr-qual-025) |
+| `DD-QUAL-CI-006` | [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) |
+| `DD-QUAL-CI-007` | [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067); [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
+| `DD-QUAL-CI-008` | [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097); [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098); [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099); [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-QUAL-CI-009` | [FR-QUAL-005](../functional/quality-functional-specification-v01.md#fr-qual-005); [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-QUAL-CI-010` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUAL-CI-011` | [FR-QUAL-091](../functional/quality-functional-specification-v01.md#fr-qual-091); [FR-QUAL-001](../functional/quality-functional-specification-v01.md#fr-qual-001) |
+| `DD-QUAL-CI-012` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-SET-001` | [FR-SET-101](../functional/settings-functional-specification-v01.md#fr-set-101) |
+| `DD-SET-002` | [FR-CONFIG-075](../functional/configuration-functional-specification-v01.md#fr-config-075); [DD-1.4 resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md) |
+| `DD-SET-003` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-SET-004` | [FR-SET-101](../functional/settings-functional-specification-v01.md#fr-set-101); [FR-SET-042](../functional/settings-functional-specification-v01.md#fr-set-042); [FR-SET-048](../functional/settings-functional-specification-v01.md#fr-set-048) |
+| `DD-SET-005` | [FR-SET-098](../functional/settings-functional-specification-v01.md#fr-set-098) |
+| `DD-SET-006` | [DD-1.1 invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md); [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-SET-007` | [DD-1.2 outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) |
+| `DD-SET-008` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-SET-009` | [DD-1.4 resolution results](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result); [FR-SET-029](../functional/settings-functional-specification-v01.md#fr-set-029) |
+| `DD-SET-010` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-SET-011` | [DD-2.1](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md); [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-SET-012` | [DD-2.4](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-SET-013` | [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033) |
+| `DD-SET-014` | [DD-2.6](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md); [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-SET-015` | [FR-SET-043](../functional/settings-functional-specification-v01.md#fr-set-043); [FR-SET-042](../functional/settings-functional-specification-v01.md#fr-set-042) |
+| `DD-SET-018` | [FR-SET-022](../functional/settings-functional-specification-v01.md#fr-set-022) |
+| `DD-SET-019` | [FR-SET-023](../functional/settings-functional-specification-v01.md#fr-set-023); [DD-SET-032](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md#dd-set-032) |
+| `DD-SET-020` | [FR-SET-029](../functional/settings-functional-specification-v01.md#fr-set-029) |
+| `DD-SET-021` | [FR-SET-017](../functional/settings-functional-specification-v01.md#fr-set-017); [DD-SET-057](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md#dd-set-057) |
+| `DD-SET-022` | [FR-SET-012](../functional/settings-functional-specification-v01.md#fr-set-012); [FR-SET-115](../functional/settings-functional-specification-v01.md#fr-set-115) |
+| `DD-SET-023` | [FR-SET-014](../functional/settings-functional-specification-v01.md#fr-set-014); [FR-SET-015](../functional/settings-functional-specification-v01.md#fr-set-015) |
+| `DD-SET-024` | [FR-CONFIG-051](../functional/configuration-functional-specification-v01.md#fr-config-051) |
+| `DD-SET-025` | [FR-SET-115](../functional/settings-functional-specification-v01.md#fr-set-115); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-SET-026` | [FR-SET-042](../functional/settings-functional-specification-v01.md#fr-set-042) |
+| `DD-SET-027` | [FR-SET-059](../functional/settings-functional-specification-v01.md#fr-set-059) |
+| `DD-SET-028` | [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061) |
+| `DD-SET-029` | [FR-SET-065](../functional/settings-functional-specification-v01.md#fr-set-065); [FR-SET-066](../functional/settings-functional-specification-v01.md#fr-set-066); [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation) |
+| `DD-SET-030` | [FR-SET-070](../functional/settings-functional-specification-v01.md#fr-set-070) |
+| `DD-SET-031` | [FR-SET-060](../functional/settings-functional-specification-v01.md#fr-set-060); [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061); [FR-SET-102](../functional/settings-functional-specification-v01.md#fr-set-102) |
+| `DD-SET-033` | [FR-SET-077](../functional/settings-functional-specification-v01.md#fr-set-077) |
+| `DD-SET-034` | [FR-SET-083](../functional/settings-functional-specification-v01.md#fr-set-083) |
+| `DD-SET-035` | [FR-SET-084](../functional/settings-functional-specification-v01.md#fr-set-084) |
+| `DD-SET-036` | [FR-SET-057](../functional/settings-functional-specification-v01.md#fr-set-057); [FR-SET-086](../functional/settings-functional-specification-v01.md#fr-set-086) |
+| `DD-SET-037` | [FR-SET-096](../functional/settings-functional-specification-v01.md#fr-set-096); [FR-SET-097](../functional/settings-functional-specification-v01.md#fr-set-097) |
+| `DD-SET-038` | [FR-SET-094](../functional/settings-functional-specification-v01.md#fr-set-094); [FR-SET-095](../functional/settings-functional-specification-v01.md#fr-set-095) |
+| `DD-SET-039` | [Design](../appmanager-design-specification-v01.md#_13-2-extension-classes) |
+| `DD-SET-040` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-SET-041` | [FR-SET-016](../functional/settings-functional-specification-v01.md#fr-set-016); [FR-SET-067](../functional/settings-functional-specification-v01.md#fr-set-067) |
+| `DD-SET-042` | [DD-SET-036](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md#dd-set-036); [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-SET-046` | [DD-1.4 resolution results](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result); [FR-CONFIG-045](../functional/configuration-functional-specification-v01.md#fr-config-045) |
+| `DD-SET-047` | [FR-SET-048](../functional/settings-functional-specification-v01.md#fr-set-048); [FR-SET-049](../functional/settings-functional-specification-v01.md#fr-set-049) |
+| `DD-SET-048` | [FR-SET-044](../functional/settings-functional-specification-v01.md#fr-set-044) |
+| `DD-SET-049` | [FR-SET-090](../functional/settings-functional-specification-v01.md#fr-set-090) |
+| `DD-SET-050` | [FR-SET-098](../functional/settings-functional-specification-v01.md#fr-set-098) |
+| `DD-SET-051` | [FR-SET-012](../functional/settings-functional-specification-v01.md#fr-set-012) |
+| `DD-SET-052` | [FR-SET-012](../functional/settings-functional-specification-v01.md#fr-set-012) |
+| `DD-SET-053` | [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023) |
+| `DD-SET-054` | [FR-SET-115](../functional/settings-functional-specification-v01.md#fr-set-115); [DD-SET-036](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md#dd-set-036) |
+| `DD-SET-055` | [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061); [FR-SET-085](../functional/settings-functional-specification-v01.md#fr-set-085); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-SET-058` | [FR-SET-108](../functional/settings-functional-specification-v01.md#fr-set-108) |
+| `DD-SET-059` | [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-SET-060` | [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-SET-061` | [FR-SET-111](../functional/settings-functional-specification-v01.md#fr-set-111); [DD-1.2 cancellation propagation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-SET-062` | [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-SET-064` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-SET-065` | [FR-INV-019](../functional/application-invocation-functional-specification-v01.md#fr-inv-019) |
+| `DD-SET-066` | [FR-SET-116](../functional/settings-functional-specification-v01.md#fr-set-116); [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-SET-067` | [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021); [FR-SET-017](../functional/settings-functional-specification-v01.md#fr-set-017); [DD-SET-057](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md#dd-set-057) |
+| `DD-SET-070` | [FR-SET-054](../functional/settings-functional-specification-v01.md#fr-set-054); [FR-SET-077](../functional/settings-functional-specification-v01.md#fr-set-077); [FR-SET-093](../functional/settings-functional-specification-v01.md#fr-set-093) |
+| `DD-SET-071` | [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068); [FR-XFORM-069](../functional/source-transformation-functional-specification-v01.md#fr-xform-069) |
+| `DD-SET-072` | [DD-SET-036](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md#dd-set-036); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-SET-074` | [FR-SET-017](../functional/settings-functional-specification-v01.md#fr-set-017); [DD-1.2 sensitive-information handling](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-SET-077` | [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040) |
+| `DD-SET-078` | [FR-SET-004](../functional/settings-functional-specification-v01.md#fr-set-004); [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-SET-079` | [FR-SET-095](../functional/settings-functional-specification-v01.md#fr-set-095) |
+| `DD-SET-082` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 
 Checkpoint C interim: 179 reviewed requirement bodies reduced across DD-2.1 through DD-2.5, plus duplicate purpose/conformance summaries in the first three. All 1,915 definitions remain, now with stable direct anchors. New links checked, one synchronization anchor corrected, and `git diff --check` passes after EOF normalization. The rest of the primary corpus and final horizontal review remain outstanding; this is not checkpoint C completion.
 
 Checkpoint C shared-capability interim: the first numbered-clause pass covers all ten DD-2 primaries, with 409 distinct duplicate bodies replaced so far. Duplicate purpose/final rule collections and conformance checklists have been removed from all ten, retaining architecture diagrams and local models/workflows. Same-shaped registry classes, source/domain facts, Quality criteria, and provider lifecycle contracts remain distinct. Definition multiset remains 1,915; new link/anchor checks and `git diff --check` pass. Additional unnumbered DD-2 prose, DD-1 and domain reduction plus final horizontal verification remain outstanding.
 
 The next domain checkpoint reviews App, Git and Nuxt numbered clauses against their Functional owners and shared execution contracts. 622 distinct requirement bodies have now been reduced across the ongoing C pass. App script discovery retains its read-only delta; named lifecycle preference and absence of implicit script lifecycle stages have separate direct Functional references. Git retains exact-target authorization invalidation, operation-specific eligibility, uncertain-effect recovery, non-idempotent commit retry, coordinated commit/message provenance and provider-substitution test obligations. Nuxt retains its independent target/applicability/creation/contribution/relationship/recovery models, required-versus-optional stage rule, host-relative validity, concurrent mutation guards and five integrated operation workflows. These similarly shaped models are domain specializations, not candidates for a universal plan or result framework. The final horizontal review, remaining domains, DD-1 and unnumbered occurrence pass remain open; this is not the NCR-2 completion gate.
+
+The Docs/Quality/Settings checkpoint brings the ongoing C pass to 842 distinct reduced requirement bodies. Docs retains the profile-relative coverage model, per-artefact plan, prior AI criteria, ownership-sensitive replacement delta, indeterminate persistence and dependency-aware continuation. Quality retains operation-policy immutability, eligibility versus gate interpretation, non-pass policy exceptions, provider-content constraints, concurrency handling, deterministic gate evaluation and boundary tests; a measurement, finding and gate decision are distinct contracts. Settings retains class-specific scope/identity, coupled-effect planning, observation/mutation revisions, unsupported-versus-absent state, secret-reveal boundary, sensitivity propagation and external-acquisition constraints. Operator identity, contributor identity and provider/resource identity remain distinct despite similar fields. These passes leave AI, Maintenance, DD-1, unnumbered occurrences and the final full-corpus horizontal verification open. No completion claim is made.

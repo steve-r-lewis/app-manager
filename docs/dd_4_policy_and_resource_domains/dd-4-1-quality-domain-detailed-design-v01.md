@@ -212,7 +212,7 @@ This is an authority model, not a required runtime call graph.
 
 ### DD-QUAL-001 — No local reconstruction of Application Core authority
 
-The Quality domain shall not reconstruct managed scope, effective configuration, invocation semantics or canonical outcome semantics from package scripts, provider discovery, current working directory, CI environment variables or presentation choices.
+Quality consumes Application Core context under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) through §5.
 
 <a id="dd-qual-002"></a>
 
@@ -232,7 +232,7 @@ DD-2.8 supplies target-relative quality capability recognition, bounded provider
 
 ### DD-QUAL-003 — Capability completion is subordinate evidence
 
-Quality Capability or provider completion shall not by itself establish Quality-domain or final AppManager success.
+Check and provider evidence is interpreted under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 <a id="dd-qual-004"></a>
 
@@ -256,7 +256,8 @@ Nuxt, Docs and other domain-specific validations retain their semantic owners ev
 
 ### DD-QUAL-005 — Similar tool mechanics do not transfer semantic ownership
 
-A validation implemented by the same executable/provider as a Quality check shall remain with its approved semantic owner where the primary intent belongs to another domain.
+Tool sharing follows [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067); the executable does not determine the semantic owner.
+
 
 ---
 
@@ -296,13 +297,13 @@ A Quality scope may represent:
 
 ### DD-QUAL-007 — Stable managed identity is required
 
-Consequential or multi-target Quality execution shall bind targets to authoritative managed identities rather than filesystem paths alone.
+Quality targets bind [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) to the target model in §7.
 
 <a id="dd-qual-008"></a>
 
 ### DD-QUAL-008 — Scope is operation-relative
 
-The same managed-project topology may yield different eligible targets for tests, coverage, lint, type checking or another Quality operation.
+The target model applies [FR-QUAL-025](../functional/quality-functional-specification-v01.md#fr-qual-025) separately for tests, coverage, lint, type checking and other approved Quality actions.
 
 ### 7.3 Eligibility decision
 
@@ -317,7 +318,7 @@ An operation-specific eligibility decision shall distinguish at least:
 
 ### DD-QUAL-009 — Managed membership is not quality eligibility
 
-A managed root/layer may exist within approved scope while remaining unavailable or unsupported for a particular Quality action.
+Managed-target applicability applies [FR-QUAL-025](../functional/quality-functional-specification-v01.md#fr-qual-025) and [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098).
 
 ### 7.4 Quality check interpretation
 
@@ -334,7 +335,7 @@ A Quality check result must preserve the distinction between:
 
 ### DD-QUAL-010 — Absence of failure is not pass
 
-Unavailable, skipped, incomplete, indeterminate, cancelled or not-attempted states shall not be promoted to passed unless an explicit governing policy defines their acceptable treatment for the specific higher-level decision.
+Non-pass interpretation applies [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097), [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098) and [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099). Any acceptable treatment of skipped, incomplete, cancelled or not-attempted evidence for a higher-level decision requires explicit governing policy.
 
 ### 7.5 Quality criterion
 
@@ -352,7 +353,7 @@ A Quality criterion binds:
 
 ### DD-QUAL-011 — Criteria originate from approved policy
 
-The Quality domain shall not invent mandatory checks, coverage thresholds or warning-failure rules merely because a provider can expose them.
+Criteria bind [FR-QUAL-072](../functional/quality-functional-specification-v01.md#fr-qual-072), [FR-QUAL-051](../functional/quality-functional-specification-v01.md#fr-qual-051) and [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) to the operation-effective policy.
 
 ### 7.6 Gate result
 
@@ -362,7 +363,7 @@ A gate result shall preserve criterion identity and evidence sufficient to expla
 
 ### DD-QUAL-012 — Gate success is criterion-relative
 
-A passing bounded check does not imply a passing gate when other required criteria remain failed, unavailable, incomplete or indeterminate.
+Gate acceptance applies [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075), [FR-QUAL-077](../functional/quality-functional-specification-v01.md#fr-qual-077) and [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078).
 
 ### 7.7 Composite plan
 
@@ -372,7 +373,7 @@ A composite plan defines selected checks, targets, ordering and continuation pol
 
 ### DD-QUAL-013 — Composite plans remain Quality-bounded
 
-Composite Quality execution shall coordinate only approved Quality checks and shall not silently absorb build, Git, deployment or unrelated workflows.
+The composite plan binds [FR-QUAL-081](../functional/quality-functional-specification-v01.md#fr-qual-081) and [FR-QUAL-001](../functional/quality-functional-specification-v01.md#fr-qual-001).
 
 ### 7.8 Quality result payload
 
@@ -392,7 +393,8 @@ The Quality domain may extend DD-1.2 outcomes with payloads containing:
 
 ### DD-QUAL-014 — No competing outcome envelope
 
-Quality-specific result data shall compose with DD-1.2 rather than define a parallel application success/failure taxonomy.
+Quality-specific data composes the [DD-1.2 outcome contract](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
+
 
 ---
 
@@ -417,7 +419,7 @@ A consequential Quality use case shall conceptually:
 
 ### DD-QUAL-015 — Target set precedes execution
 
-The Quality domain shall establish the intended managed target set before provider execution and shall not allow provider discovery to silently broaden it.
+Establish the Quality target set under [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) before provider execution.
 
 <a id="dd-qual-016"></a>
 
@@ -433,19 +435,19 @@ All-tests, unit-tests and end-to-end-tests remain semantically distinct.
 
 ### DD-QUAL-017 — Category fidelity is preserved
 
-The Quality domain shall preserve requested test-category semantics even when one provider implements multiple categories.
+Test category fidelity applies [FR-QUAL-032](../functional/quality-functional-specification-v01.md#fr-qual-032).
 
 <a id="dd-qual-018"></a>
 
 ### DD-QUAL-018 — No-tests is interpreted deliberately
 
-A reliable no-tests state shall remain distinct from tests-passed and provider-unavailable; any acceptable treatment is operation/policy specific.
+No-tests interpretation applies [FR-QUAL-035](../functional/quality-functional-specification-v01.md#fr-qual-035); acceptable treatment is operation/policy specific.
 
 <a id="dd-qual-019"></a>
 
 ### DD-QUAL-019 — Assertion failure and infrastructure failure remain distinct
 
-Tests that execute and fail assertions shall not be collapsed with inability to start/complete the provider.
+Test execution interpretation applies [FR-QUAL-036](../functional/quality-functional-specification-v01.md#fr-qual-036) and [FR-QUAL-037](../functional/quality-functional-specification-v01.md#fr-qual-037).
 
 ### 8.3 Test UI orchestration
 
@@ -453,13 +455,13 @@ Tests that execute and fail assertions shall not be collapsed with inability to 
 
 ### DD-QUAL-020 — Test UI launch is not test success
 
-Successfully starting a supported test UI establishes a long-running Quality tool state, not a passing test or gate result.
+Test UI state applies [FR-QUAL-043](../functional/quality-functional-specification-v01.md#fr-qual-043) and [FR-QUAL-044](../functional/quality-functional-specification-v01.md#fr-qual-044).
 
 <a id="dd-qual-021"></a>
 
 ### DD-QUAL-021 — Headless validation never depends on test UI
 
-Non-interactive Quality assurance shall remain expressible through non-UI operations with machine-consumable outcomes.
+Automation uses [FR-QUAL-045](../functional/quality-functional-specification-v01.md#fr-qual-045).
 
 ### 8.4 Coverage orchestration
 
@@ -467,13 +469,13 @@ Non-interactive Quality assurance shall remain expressible through non-UI operat
 
 ### DD-QUAL-022 — Measurement and threshold acceptance are separate
 
-Coverage collection success shall be interpreted separately from satisfaction of configured coverage criteria.
+Coverage collection and acceptance apply [FR-QUAL-048](../functional/quality-functional-specification-v01.md#fr-qual-048), [FR-QUAL-050](../functional/quality-functional-specification-v01.md#fr-qual-050) and [FR-QUAL-052](../functional/quality-functional-specification-v01.md#fr-qual-052).
 
 <a id="dd-qual-023"></a>
 
 ### DD-QUAL-023 — Partial coverage cannot represent complete scope
 
-Coverage evidence that applies to only part of the requested scope shall retain that limitation.
+Coverage completeness applies [FR-QUAL-053](../functional/quality-functional-specification-v01.md#fr-qual-053).
 
 ### 8.5 Lint orchestration
 
@@ -481,13 +483,13 @@ Coverage evidence that applies to only part of the requested scope shall retain 
 
 ### DD-QUAL-024 — Lint is non-mutating by default
 
-Ordinary lint execution shall not enable autofix or other provider mutation modes.
+Ordinary lint binds [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) to provider mode selection.
 
 <a id="dd-qual-025"></a>
 
 ### DD-QUAL-025 — Warning significance is policy-driven
 
-Provider warning labels shall contribute according to effective Quality policy rather than universal hard-coded failure semantics.
+Warning interpretation follows [FR-QUAL-056](../functional/quality-functional-specification-v01.md#fr-qual-056) and [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039).
 
 ### 8.6 Type-check orchestration
 
@@ -495,13 +497,13 @@ Provider warning labels shall contribute according to effective Quality policy r
 
 ### DD-QUAL-026 — Type diagnostics differ from provider failure
 
-Type findings returned by a completed type-check provider shall remain distinct from provider launch/configuration/infrastructure failure.
+Type-check findings and infrastructure failure apply [FR-QUAL-064](../functional/quality-functional-specification-v01.md#fr-qual-064).
 
 <a id="dd-qual-027"></a>
 
 ### DD-QUAL-027 — Type-check scope cannot silently broaden
 
-Provider project mechanics shall not substitute a broader Quality scope without explicit operation semantics.
+Type-check provider project mechanics apply [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042) to the resolved Quality scope.
 
 ### 8.7 Residual validation
 
@@ -509,7 +511,7 @@ Provider project mechanics shall not substitute a broader Quality scope without 
 
 ### DD-QUAL-028 — Quality validation is residual
 
-General validation belongs to Quality only when validation is the primary intent and no more specific domain or DD-2.5 transformation contract owns the semantic purpose.
+Residual validation applies [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066) and [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067); transformation validation remains governed by [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048).
 
 ### 8.8 Quality-gate orchestration
 
@@ -527,13 +529,13 @@ A gate flow shall conceptually:
 
 ### DD-QUAL-029 — Required unavailable/incomplete work blocks an ordinary complete pass
 
-A required criterion that cannot be established shall not silently become passing merely because no explicit failure finding exists.
+Required unavailable/incomplete criteria apply [FR-QUAL-077](../functional/quality-functional-specification-v01.md#fr-qual-077) and [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078).
 
 <a id="dd-qual-030"></a>
 
 ### DD-QUAL-030 — Advisory state remains separate
 
-Advisory failure/unavailability shall remain distinguishable from required gate failure according to effective policy.
+Advisory checks apply [FR-QUAL-079](../functional/quality-functional-specification-v01.md#fr-qual-079).
 
 ### 8.9 Composite Quality orchestration
 
@@ -541,19 +543,19 @@ Advisory failure/unavailability shall remain distinguishable from required gate 
 
 ### DD-QUAL-031 — Composite check set is explicit
 
-The selected use case/effective policy shall define the checks included; package-script discovery shall not define composite semantics.
+Composite membership follows [FR-QUAL-082](../functional/quality-functional-specification-v01.md#fr-qual-082).
 
 <a id="dd-qual-032"></a>
 
 ### DD-QUAL-032 — Ordering is deterministic where significant
 
-When order affects observable behavior, the Quality domain shall supply an explicit deterministic order.
+Significant check ordering follows [FR-QUAL-083](../functional/quality-functional-specification-v01.md#fr-qual-083).
 
 <a id="dd-qual-033"></a>
 
 ### DD-QUAL-033 — Fail-fast versus continuation is explicit policy
 
-Stopping after a failed required check versus continuing for fuller evidence shall not be an accidental provider property.
+Continuation decisions apply [FR-QUAL-084](../functional/quality-functional-specification-v01.md#fr-qual-084) and [FR-QUAL-085](../functional/quality-functional-specification-v01.md#fr-qual-085).
 
 <a id="dd-qual-034"></a>
 
@@ -567,7 +569,8 @@ Checks not attempted because of fail-fast, cancellation or prerequisite failure 
 
 ### DD-QUAL-035 — Passing Quality does not push, build or deploy
 
-A passing Quality result may be consumed by another workflow, but the Quality domain shall not perform or authorize Git push, build or deployment as an implicit consequence.
+Quality completion applies [FR-QUAL-091](../functional/quality-functional-specification-v01.md#fr-qual-091) and [FR-QUAL-001](../functional/quality-functional-specification-v01.md#fr-qual-001) in enclosing workflows.
+
 
 ---
 
@@ -607,19 +610,20 @@ Provider running/exited states and Quality check/gate states shall remain distin
 
 ### DD-QUAL-037 — Completed evidence remains immutable history
 
-Later cancellation or another check's failure shall not retroactively erase already completed check evidence.
+Completed evidence applies [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) when another check fails or cancellation occurs.
 
 <a id="dd-qual-038"></a>
 
 ### DD-QUAL-038 — Long-running UI state is explicit
 
-An active test UI may remain running without forcing the parent Quality operation into a fabricated completed-test state.
+An active test UI follows [FR-QUAL-043](../functional/quality-functional-specification-v01.md#fr-qual-043) and [FR-QUAL-044](../functional/quality-functional-specification-v01.md#fr-qual-044).
 
 <a id="dd-qual-039"></a>
 
 ### DD-QUAL-039 — Indeterminate is first-class
 
-Where reliable pass/fail interpretation is impossible, the state shall remain indeterminate/unavailable as appropriate rather than defaulting to success.
+Unreliable pass/fail interpretation applies [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099); unavailable capability applies [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098).
+
 
 ---
 
@@ -629,7 +633,7 @@ Where reliable pass/fail interpretation is impossible, the state shall remain in
 
 ### DD-QUAL-040 — Scope never broadens by convenience
 
-Missing capability or provider constraints shall not cause automatic expansion from a selected target to a broader managed scope.
+Missing capability/provider constraints remain subject to [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042).
 
 <a id="dd-qual-041"></a>
 
@@ -641,31 +645,32 @@ Provider default thresholds, warning treatment, discovery scope or fail-fast beh
 
 ### DD-QUAL-042 — No invented thresholds
 
-Absence of configured coverage or other numeric criteria shall not cause the Quality domain to invent one.
+Missing numeric criteria apply [FR-QUAL-051](../functional/quality-functional-specification-v01.md#fr-qual-051). Other required criteria must be supplied under [FR-QUAL-072](../functional/quality-functional-specification-v01.md#fr-qual-072).
 
 <a id="dd-qual-043"></a>
 
 ### DD-QUAL-043 — Required/advisory semantics are explicit
 
-Criteria shall not become required merely because they are available or commonly run in CI.
+Required/advisory roles apply [FR-QUAL-074](../functional/quality-functional-specification-v01.md#fr-qual-074); availability or CI convention does not select the role.
 
 <a id="dd-qual-044"></a>
 
 ### DD-QUAL-044 — Skipped is not unavailable
 
-Intentional policy skip shall remain distinct from inability to execute a capability.
+Policy skip applies [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097).
 
 <a id="dd-qual-045"></a>
 
 ### DD-QUAL-045 — No provider-success shortcut
 
-A zero exit code or technically completed provider run shall not bypass findings, measurements, completeness or gate policy interpretation.
+Provider completion is interpreted under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) using the findings, measurement, completeness and gate models in §7.
 
 <a id="dd-qual-046"></a>
 
 ### DD-QUAL-046 — CI context does not alter Quality meaning
 
-Equivalent Quality intent executed manually, Headless or within CI shall use equivalent scope, policy and interpretation semantics.
+CI/manual/Headless Quality intent applies [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
 
 ---
 
@@ -683,31 +688,32 @@ Discovery of tests, scripts, tools, reports or configuration shall not independe
 
 ### DD-QUAL-048 — Ordinary Quality checks prohibit source autofix
 
-Tests, coverage, lint, type checking and validation shall not silently invoke provider mutation modes.
+Tests, coverage, lint, type checking and validation bind [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) to provider mode selection.
 
 <a id="dd-qual-049"></a>
 
 ### DD-QUAL-049 — Future mutating Quality intents require separate authority
 
-Any approved future autofix/remediation use case shall be explicitly identified and shall route source changes through the owning domain/DD-2.5 transformation contracts.
+Future autofix uses [FR-QUAL-060](../functional/quality-functional-specification-v01.md#fr-qual-060); other remediation requires separately approved intent and the owning domain/DD-2.5 transformation contracts.
 
 <a id="dd-qual-050"></a>
 
 ### DD-QUAL-050 — Generated reports do not expand mutation scope
 
-Permission for a provider to create an approved report/cache/snapshot does not authorize modification of unrelated source or configuration.
+Reports/caches/snapshots apply [FR-QUAL-112](../functional/quality-functional-specification-v01.md#fr-qual-112).
 
 <a id="dd-qual-051"></a>
 
 ### DD-QUAL-051 — Ambiguous scope fails safely
 
-Unresolved target, provider or gate-policy ambiguity shall not be resolved by selecting the broadest or most consequential interpretation.
+Ambiguous target/provider/gate policy uses [FR-PROJ-061](../functional/managed-project-functional-specification-v01.md#fr-proj-061) and [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) where Headless.
 
 <a id="dd-qual-052"></a>
 
 ### DD-QUAL-052 — Target-derived provider inputs remain bounded
 
-Paths, filters, test names and related data shall remain structured provider inputs rather than unchecked shell fragments.
+Target paths, filters and test names use [DD-PROC-014 structured arguments](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014).
+
 
 ---
 
@@ -717,43 +723,43 @@ Paths, filters, test names and related data shall remain structured provider inp
 
 ### DD-QUAL-053 — Quality defect differs from infrastructure failure
 
-A failed assertion, lint finding, type error or threshold miss shall remain distinguishable from inability to invoke or complete the provider.
+Failure classification applies [FR-QUAL-095](../functional/quality-functional-specification-v01.md#fr-qual-095) to assertions, lint findings, type errors, thresholds and execution infrastructure.
 
 <a id="dd-qual-054"></a>
 
 ### DD-QUAL-054 — Provider failure remains subordinate evidence
 
-A provider start/timeout/runtime failure shall be normalized and interpreted in the context of the requested Quality operation rather than becoming an unstructured application result.
+Provider start/timeout/runtime evidence is normalized under [DD-1.2 provider-result normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) and interpreted for the requested check.
 
 <a id="dd-qual-055"></a>
 
 ### DD-QUAL-055 — Cancellation stops future work
 
-Once cancellation is safely observed, new checks shall not be started and active providers shall receive cancellation where supported.
+Check cancellation applies [FR-QUAL-017](../functional/quality-functional-specification-v01.md#fr-qual-017) and [DD-1.2 propagation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 <a id="dd-qual-056"></a>
 
 ### DD-QUAL-056 — Cancellation does not erase completed checks
 
-Already completed check results and generated effects shall remain truthful after cancellation.
+Completed check results and generated effects apply [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
 
 <a id="dd-qual-057"></a>
 
 ### DD-QUAL-057 — Incomplete required work cannot be complete pass
 
-Cancellation, timeout or partial provider completion of required checks shall prevent a fabricated complete gate/composite pass.
+Required incomplete work applies [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078) and [FR-QUAL-086](../functional/quality-functional-specification-v01.md#fr-qual-086).
 
 <a id="dd-qual-058"></a>
 
 ### DD-QUAL-058 — Partial execution is first-class
 
-Multi-target/composite operations shall preserve exactly which checks/targets passed, failed, were skipped, unavailable, incomplete or not attempted.
+Composite/multi-target evidence applies [FR-QUAL-096](../functional/quality-functional-specification-v01.md#fr-qual-096) and [FR-QUAL-087](../functional/quality-functional-specification-v01.md#fr-qual-087) with the local state distinctions in §7.
 
 <a id="dd-qual-059"></a>
 
 ### DD-QUAL-059 — No universal rollback claim
 
-Ordinary Quality checks are generally non-mutating; generated provider artefacts or future authorised effects shall be reported truthfully rather than assumed rolled back.
+Generated/provider effects apply [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046). Ordinary check behavior follows [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004).
 
 <a id="dd-qual-060"></a>
 
@@ -769,31 +775,32 @@ A retry after provider failure, timeout, cancellation or stale-context detection
 
 ### DD-QUAL-061 — One semantic model across adapters
 
-TUI, Headless, CI, IDE and future adapters shall express equivalent Quality intent through the same domain semantics.
+Quality adapter intent follows [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 <a id="dd-qual-062"></a>
 
 ### DD-QUAL-062 — Interactive selection is presentation
 
-Menus for selecting checks, targets or gates shall not own semantic identity or policy.
+Check/target/gate selection uses [FR-INV-019](../functional/application-invocation-functional-specification-v01.md#fr-inv-019) and the semantic models in §7.
 
 <a id="dd-qual-063"></a>
 
 ### DD-QUAL-063 — Headless ambiguity fails
 
-Headless/CI execution shall not prompt for unresolved required target, provider or gate-policy information.
+Headless/CI missing target/provider/gate inputs apply [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020).
 
 <a id="dd-qual-064"></a>
 
 ### DD-QUAL-064 — Machine-consumable results are required
 
-Automation shall be able to determine per-check/per-target state, gate decision and relevant diagnostics without parsing terminal-formatted provider text.
+Per-check/per-target and gate results apply [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021).
 
 <a id="dd-qual-065"></a>
 
 ### DD-QUAL-065 — Test UI is not required for automation
 
-Headless quality validation shall remain possible even where an interactive provider UI is unavailable or unsupported.
+Test UI availability follows [FR-QUAL-045](../functional/quality-functional-specification-v01.md#fr-qual-045) for automation.
+
 
 ---
 
@@ -803,19 +810,19 @@ Headless quality validation shall remain possible even where an interactive prov
 
 ### DD-QUAL-066 — Concurrent provider interference is handled deliberately
 
-Where Quality executions can contend for ports, browsers, snapshots, caches, reports or provider-global state, the implementation shall isolate, serialize or reject according to explicit semantics.
+Provider contention applies [FR-QUAL-109](../functional/quality-functional-specification-v01.md#fr-qual-109). Ports, browsers, snapshots, caches, reports and provider-global state shall be isolated, serialized or rejected according to explicit semantics.
 
 <a id="dd-qual-067"></a>
 
 ### DD-QUAL-067 — Result attribution survives concurrency
 
-Reports, findings and generated artefacts shall remain attributable to the correct invocation when concurrent execution is allowed.
+Concurrent invocation attribution applies [FR-QUAL-109](../functional/quality-functional-specification-v01.md#fr-qual-109) to reports, findings and generated artefacts.
 
 <a id="dd-qual-068"></a>
 
 ### DD-QUAL-068 — Read-only checks are repeatable, not necessarily identical
 
-Equivalent invocations against materially equivalent state should be semantically repeatable, while timing, external services or nondeterministic tests may legitimately vary.
+Check repeatability applies [FR-QUAL-103](../functional/quality-functional-specification-v01.md#fr-qual-103), including legitimate timing, external-service and non-deterministic test variation.
 
 <a id="dd-qual-069"></a>
 
@@ -833,7 +840,8 @@ One provider's internal watcher/server/cache state shall not define the AppManag
 
 ### DD-QUAL-071 — Stale context is deliberate
 
-Detected material changes to managed-project/configuration/source context between resolution and execution/acceptance shall produce revalidation, stale evidence or safe failure rather than unquestioned reuse.
+Detected context changes apply [FR-QUAL-110](../functional/quality-functional-specification-v01.md#fr-qual-110). Source changes detected before execution or acceptance shall likewise produce revalidation, stale evidence or safe failure.
+
 
 ---
 
@@ -849,7 +857,7 @@ Provider reports/stdout/stderr/findings shall not redefine AppManager commands, 
 
 ### DD-QUAL-073 — Sensitive diagnostics are minimized
 
-Results and diagnostics shall identify useful Quality failures without unnecessarily reproducing credentials, protected environment values or sensitive source content.
+Quality diagnostics and results apply [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040) to credentials, protected environment and sensitive source.
 
 <a id="dd-qual-074"></a>
 
@@ -861,7 +869,7 @@ Provider output retained for diagnostics shall be bounded/normalized according t
 
 ### DD-QUAL-075 — External tool execution stays within approved target
 
-Provider working directory, project/config file and filters shall remain bounded by the approved Quality target/scope.
+Provider working directory, project/configuration file and filters bind [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) to the Quality target.
 
 <a id="dd-qual-076"></a>
 
@@ -877,7 +885,7 @@ If AI is used to explain findings, normalized provider evidence and effective Qu
 
 ### DD-QUAL-077 — Provider replacement preserves Quality semantics
 
-Replacing Vitest, a linter, a type checker, a coverage engine or another concrete provider shall not require callers to adopt provider-native result semantics.
+DD-2.8 provider substitution follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qual-078"></a>
 
@@ -889,7 +897,7 @@ A new check may enter Quality only when its intent/result semantics and ownershi
 
 ### DD-QUAL-079 — No generic validation sink
 
-The residual validation operation shall not become a catch-all for behaviors with stronger App, Git, Docs, Nuxt, Settings or transformation ownership.
+Residual validation ownership follows [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066) and [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067).
 
 <a id="dd-qual-080"></a>
 
@@ -901,7 +909,8 @@ Common provider patterns do not require one executable plugin system, shared bas
 
 ### DD-QUAL-081 — Implementation topology remains open
 
-These contracts do not imply one Quality service, orchestrator class, package, process, registry or module per responsibility.
+Concrete service/orchestrator/package/process/registry/module choices follow [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
@@ -985,74 +994,70 @@ This grouped traceability does not imply one implementation component per requir
 
 ### DD-QUAL-CI-001 — Application authority remains DD-1-owned
 
-Quality shall not independently redefine managed scope, effective configuration, canonical outcomes, invocation semantics or final Application Engine acceptance.
+Quality consumes [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) through §5.
 
 <a id="dd-qual-ci-002"></a>
 
 ### DD-QUAL-CI-002 — DD-2.8 remains the bounded Quality technical capability
 
-Quality-domain intent/policy/orchestration shall remain distinct from capability recognition, provider mechanics, findings normalization and criterion evaluation.
+The Quality/DD-2.8 seam in §6 binds [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qual-ci-003"></a>
 
 ### DD-QUAL-CI-003 — Provider execution is not Quality success
 
-Process launch/completion/exit status shall remain subordinate evidence until interpreted against the requested Quality intent.
+Provider evidence is interpreted under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 <a id="dd-qual-ci-004"></a>
 
 ### DD-QUAL-CI-004 — Check state and gate state remain distinct
 
-A passing check or coverage measurement shall not automatically establish a passing quality gate.
+Check/measurement versus gate acceptance follows [FR-QUAL-050](../functional/quality-functional-specification-v01.md#fr-qual-050) and [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075).
 
 <a id="dd-qual-ci-005"></a>
 
 ### DD-QUAL-CI-005 — Managed membership and Quality eligibility remain distinct
 
-A managed target shall not be treated as supporting every Quality action merely because it belongs to the managed project.
+Managed-target eligibility applies [FR-QUAL-025](../functional/quality-functional-specification-v01.md#fr-qual-025).
 
 <a id="dd-qual-ci-006"></a>
 
 ### DD-QUAL-CI-006 — Ordinary Quality remains non-source-mutating
 
-Tests, coverage, lint, type checking and validation shall not silently enable autofix or unrelated source mutation.
+Ordinary checks apply [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004).
 
 <a id="dd-qual-ci-007"></a>
 
 ### DD-QUAL-CI-007 — Domain-specific validation remains with its owner
 
-Nuxt, Docs, Source Transformation or another stronger semantic owner shall not be absorbed into Quality merely because similar tools or findings are involved.
+Domain/transformation validation ownership follows [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067) and [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048).
 
 <a id="dd-qual-ci-008"></a>
 
 ### DD-QUAL-CI-008 — Partial and non-pass states remain truthful
 
-Unavailable, incomplete, indeterminate, cancelled, skipped and not-attempted states shall not silently become pass, and completed evidence shall survive cancellation/failure.
+Non-pass states apply [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097), [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098), [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099) and [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078); completed evidence applies [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
 
 <a id="dd-qual-ci-009"></a>
 
 ### DD-QUAL-CI-009 — CI is an invocation context, not Quality ownership expansion
 
-Execution from CI shall preserve Quality semantics and shall not transfer complete CI/CD workflow authority into DD-4.1.
+CI participation applies [FR-QUAL-005](../functional/quality-functional-specification-v01.md#fr-qual-005) and [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 <a id="dd-qual-ci-010"></a>
 
 ### DD-QUAL-CI-010 — Provider independence is preserved
 
-No concrete test runner, linter, type checker, coverage engine, package script, report format or provider-native model becomes the general Quality-domain contract.
+The DD-2.8 provider seam applies [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qual-ci-011"></a>
 
 ### DD-QUAL-CI-011 — Passing Quality does not authorize unrelated effects
 
-Quality evidence may be consumed by other workflows, but Quality shall not implicitly build, push, deploy or mutate source as a consequence of a pass.
+Enclosing workflows consume Quality evidence under [FR-QUAL-091](../functional/quality-functional-specification-v01.md#fr-qual-091) and [FR-QUAL-001](../functional/quality-functional-specification-v01.md#fr-qual-001).
 
 <a id="dd-qual-ci-012"></a>
 
 ### DD-QUAL-CI-012 — Detailed Design remains topology-independent
 
-No responsibility in this document requires a particular TypeScript module, class, service, directory, package, process, provider registry or CI topology.
-
----
-
-This document establishes the Version 1 DD-4.1 Quality-domain baseline. Implementation Specifications may reduce these contracts to concrete Node.js/TypeScript modules, provider bindings, quality tools, process integrations and tests under ADR-0001, but shall preserve the authority, scope, policy, evidence, safety and replaceability boundaries defined here.
+Concrete module/class/service/directory/package/process/registry/CI topology follows [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
