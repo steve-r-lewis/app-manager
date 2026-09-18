@@ -346,6 +346,15 @@ Horizontal preservation correction: DD-QUALCAP-093 retains the complete local un
 
 Horizontal collaboration checkpoint: 1110 distinct numbered replacement decisions and 218 unnumbered decisions are recorded. All ten DD-2 consumer maps now bind sibling owners directly where edited; domain purpose narratives retain their local models/workflows with direct upstream context. The Settings, AI and Maintenance repeated closing invariant lists were removed. The complete active DD/IS navigation scan checks existing as well as new inbound links. Final semantic/cardinality review remains open.
 
+
+Documentation preservation correction: DD-DOCCAP-097 is the complete canonical untrusted-content clause, incorporating the template/command-authority coverage formerly repeated by DD-DOCS-074. The domain now binds it directly. A broad Design provider-boundary reference was insufficient for that full content contract.
+
+Safety-list classification: DD-2.8 §30, DD-2.9 §31 and DD-2.10 §29 retain local threat/exposure examples as LOCAL_BINDING indexes to the local safety clauses and Design §9.9. Their repeated mandatory-list wrapper is removed; numbered safety requirements and distinct local exposure cases remain.
+
+Retirement navigation sweep: primary DD metadata and prose now identify integrated bootstrap, outcome, scaffold and App/Settings owners directly rather than referring to retired clarification vehicles by name. Header lists are labeled sources/navigation so lifecycle registers and authoring guidance are not presented as product authority. Stable decomposition and requirement identities are unchanged.
+
+Horizontal distinction checkpoint: 1121 distinct numbered reduction decisions and 218 unnumbered decisions are recorded. Similarity candidates were reviewed semantically: Source Intelligence fact substitution differs from Source Transformation plan/preservation substitution; AI output capability, Quality report/UI support and Documentation profile/tooling support have different compatibility predicates; App recovery and Nuxt recovery remain separate compositions (Nuxt includes actual relationship state); concrete provider tests remain capability-specific. Repeated no-framework clauses now bind DD-ENG-046/Design §13.2 without introducing an abstraction. Quality technical-check registration binds the domain semantic-owner decision. Explicit DD-ID reference graph: zero cycles; two multi-edge paths link distinct complete snapshot/scope and stage/plan contracts rather than duplicate aliases. Active DD/IS navigation: 1,969 targets checked, zero errors; new-link check: 2,056 targets, zero errors; all 1,915 DD definitions preserved. Complete semantic/cardinality verification remains open.
+
 ### 10.1 Physical occurrence decisions
 
 Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`, retaining identified `LOCAL_DELTA`. Canonical clauses restored during preservation review are excluded from this deletion table. Unlisted local clauses remain subject to final horizontal review.
@@ -650,7 +659,7 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-QUALCAP-049` | [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
 | `DD-QUALCAP-065` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
 | `DD-QUALCAP-079` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
-| `DD-QUALCAP-088` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUALCAP-088` | [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046); [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes); [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 | `DD-QUALCAP-092` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 | `DD-QUALCAP-094` | [DD-2.2 argument structure](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014) |
 | `DD-DOCCAP-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
@@ -672,7 +681,6 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-DOCCAP-088` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-DOCCAP-093` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
 | `DD-DOCCAP-095` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
-| `DD-DOCCAP-097` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-DOCCAP-012` | [DD-DOCCAP-006](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-006) |
 | `DD-DOCCAP-025` | [DD-DOCCAP-007](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-007) |
 | `DD-DOCCAP-035` | [DD-DOCCAP-030](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-030) |
@@ -702,7 +710,7 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-DOCCAP-066` | [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
 | `DD-DOCCAP-077` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
 | `DD-DOCCAP-083` | [DD-XFORM-029](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-029); [DD-XFORM-030](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-030) |
-| `DD-DOCCAP-092` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-DOCCAP-092` | [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046); [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes); [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 | `DD-DOCCAP-096` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 | `DD-NUXTCAP-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-NUXTCAP-002` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
@@ -1462,6 +1470,18 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-ENG-102` | [Design](../appmanager-design-specification-v01.md#_8-7-sensitive-configuration); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
 | `DD-QUAL-072` | [Quality Capability untrusted-evidence boundary](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-093) |
 | `DD-SET-073` | [sensitivity propagation](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_22-4-sensitivity-propagation) |
+| `DD-APP-092` | [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) |
+| `DD-GIT-073` | [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) |
+| `DD-NUXT-089` | [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) |
+| `DD-DOCS-080` | [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) |
+| `DD-SET-081` | [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) |
+| `DD-UTIL-104` | [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) |
+| `DD-QUAL-080` | [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046); [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes); [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUALCAP-007` | [Quality semantic-ownership decision](../dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md#dd-qual-078) |
+| `DD-QUALCAP-015` | [Design provider encapsulation contract](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-AICAP-016` | [Design provider encapsulation contract](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCCAP-011` | [Design provider encapsulation contract](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCS-074` | [Documentation Capability untrusted-content boundary](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-097) |
 
 ### 10.2 Unnumbered occurrence decisions
 

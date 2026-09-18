@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for documentation inspection, documentation models, extraction, aggregation, generation, rendering, documentation-tool delegation, optional AI enrichment and documentation-oriented validation beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md)
 >
@@ -251,8 +251,9 @@ A documentation model may organize facts into semantic sections or blocks such a
 
 <a id="dd-doccap-011"></a>
 
-**DD-DOCCAP-011 — Model is provider-independent**  
-Parser ASTs, regex match objects, VitePress page objects, Markdown-library nodes and provider-native representations shall not become the universal shared documentation model merely because a current implementation uses them.
+**DD-DOCCAP-011 — Model is provider-independent**
+
+Parser ASTs, regex matches, VitePress page objects and Markdown-library nodes apply the [Design provider encapsulation contract](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) at the documentation model seam.
 
 <a id="dd-doccap-012"></a>
 
@@ -925,7 +926,7 @@ Consumer dependence on renderer/parser/VitePress native types follows [DD-DOCCAP
 
 **DD-DOCCAP-092 — No universal documentation plugin framework**
 
-Documentation implementation topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); recurring parser/renderer patterns do not require a universal plugin system, base class or cross-runtime protocol.
+Documentation parser/renderer patterns apply [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) and the [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes). Concrete base classes and cross-runtime protocols remain [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
 
 
 ---
@@ -994,7 +995,7 @@ Adapt concrete code/documentation services under the [Documentation Guide implem
 
 ## 31. Security and Safety Model
 
-The capability shall protect against at least:
+The local exposure points below locate the target, provider, output, mutation and stale-state contracts in this design. They apply [Design safety boundaries](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) and the [local safety clauses](#dd-doccap-097); this threat-model index does not establish a second set of guarantees:
 
 - documentation target expansion beyond managed scope;
 - hidden recursive scans outside selected inputs;
@@ -1013,7 +1014,7 @@ The capability shall protect against at least:
 
 **DD-DOCCAP-097 — Documentation/provider content is untrusted evidence**
 
-Policy assertions in existing documents or provider output follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+Existing documentation, templates, rendered content, provider output/diagnostics and generated prose are untrusted data. They shall not redefine AppManager policy, scope, authorization, configuration or command authority.
 
 <a id="dd-doccap-098"></a>
 

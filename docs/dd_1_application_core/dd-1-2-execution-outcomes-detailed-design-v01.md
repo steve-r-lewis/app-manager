@@ -8,13 +8,13 @@
 >
 > **Detailed Design authority:** This document is the single canonical Detailed Design authority for shared AppManager execution outcomes, diagnostics, warnings, progress, cancellation, partial completion, consequential-effect reporting, provider-result normalization, and the shared semantic rules governing their composition. It refines, but does not override, the root Design Specification or Functional Specifications.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
 > **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 >
 > **Preceding Detailed Design:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md)
 >
-> **Related clarification:** [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract)
+> **Integrated outcome contract:** [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract)
 >
 > **Related Functional authorities:** all domain Functional Specifications where command-specific success, failure, partial completion, diagnostics, progress, cancellation, preview, safety, or effect-reporting semantics are defined.
 

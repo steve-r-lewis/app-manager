@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent Quality-domain orchestration, target/scope policy, quality-gate policy, decision, state and result contracts by which AppManager realises quality-assurance use cases through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/quality-functional-specification-v01.md](../functional/quality-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/quality-functional-specification-v01.md](../functional/quality-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
 > **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md)
 
@@ -94,7 +94,7 @@ The Quality domain owns `FR-QUAL-001` through `FR-QUAL-116` from [docs/functiona
 
 ### 3.2 Application Core authorities
 
-This design consumes, but does not redefine, DD-1.1 through DD-1.5 and the active Application Core clarifications. In particular:
+This design consumes, but does not redefine, DD-1.1 through DD-1.5 including the [Engine bootstrap lifecycle](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) and [outcome contract](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract). In particular:
 
 - DD-1.1 supplies normalized invocation, explicit selections, cancellation and interaction-independent inputs;
 - DD-1.2 owns canonical outcomes, diagnostics, warnings, effects, cancellation and subordinate-result semantics;
@@ -889,7 +889,7 @@ Residual validation ownership follows [FR-QUAL-066](../functional/quality-functi
 
 ### DD-QUAL-080 — No universal provider framework from shape similarity
 
-Common provider patterns do not require one executable plugin system, shared base class or transport protocol in Version 1.
+Quality provider composition apply [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) and the [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes). Concrete base classes and cross-runtime protocols remain [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
 
 <a id="dd-qual-081"></a>
 

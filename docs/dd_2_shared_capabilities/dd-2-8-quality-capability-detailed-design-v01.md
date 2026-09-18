@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for quality-capability recognition, bounded quality-check execution, normalized findings and measurements, quality-result aggregation, quality-gate evaluation, provider isolation, generated quality artefacts, cancellation and concurrency beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md)
 >
@@ -159,8 +159,10 @@ All-tests, unit-tests, end-to-end-tests, coverage, lint and type checking remain
 
 <a id="dd-qualcap-007"></a>
 
-**DD-QUALCAP-007 — Extension requires defined semantics**  
-Additional validation/check classes may be registered only where their result semantics and ownership are sufficiently defined; arbitrary executable scripts shall not automatically become Quality capabilities.
+**DD-QUALCAP-007 — Extension requires defined semantics**
+
+Registration of an additional technical check class consumes the [Quality semantic-ownership decision](../dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md#dd-qual-078).
+
 
 ---
 
@@ -226,8 +228,10 @@ Where multiple materially different providers remain eligible and governing poli
 
 <a id="dd-qualcap-015"></a>
 
-**DD-QUALCAP-015 — Provider details remain below the shared contract**  
-Executable names, package-manager syntax, command-line flags, SDK objects and provider report schemas shall not become universal Quality Capability contracts.
+**DD-QUALCAP-015 — Provider details remain below the shared contract**
+
+Executable names, package-manager syntax, command flags, SDK objects and report schemas apply the [Design provider encapsulation contract](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) at the Quality seam.
+
 
 ---
 
@@ -818,7 +822,7 @@ Toolchain-native data in consumer contracts follows [DD-QUALCAP-015](#dd-qualcap
 
 **DD-QUALCAP-088 — No universal provider framework**
 
-Quality implementation topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); recurring providers do not require a universal plugin system, base class or cross-runtime protocol.
+Quality provider patterns apply [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) and the [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes). Concrete base classes and cross-runtime protocols remain [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
 
 
 ---
@@ -886,7 +890,7 @@ Adapt concrete quality scripts/providers under the [Documentation Guide implemen
 
 ## 30. Security and Safety
 
-The capability shall protect against at least:
+The local exposure points below locate the target, provider, output, mutation and stale-state contracts in this design. They apply [Design safety boundaries](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) and the [local safety clauses](#dd-qualcap-093); this threat-model index does not establish a second set of guarantees:
 
 - execution against unmanaged targets;
 - command/argument injection through target or filter data;

@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent Docs-domain orchestration, documentation-target policy, decision, state and result contracts by which AppManager realises documentation inspection, derivation, generation, update, aggregation and documentation-tooling use cases through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/docs-functional-specification-v01.md](../functional/docs-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/docs-functional-specification-v01.md](../functional/docs-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
 > **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 
@@ -99,7 +99,7 @@ The Docs domain owns `FR-DOCS-001` through `FR-DOCS-119` from [docs/functional/d
 
 ### 3.2 Application Core authorities
 
-DD-3.4 consumes DD-1.1 Application Invocation, DD-1.2 Execution Outcomes, DD-1.3 Managed Project, DD-1.4 Configuration Resolution and DD-1.5 Application Engine. It also remains governed by the Application Core bootstrap-resolution and outcome/diagnostic-ownership clarifications.
+DD-3.4 consumes DD-1.1 Application Invocation, DD-1.2 Execution Outcomes, DD-1.3 Managed Project, DD-1.4 Configuration Resolution and DD-1.5 Application Engine. Its staged context and result interpretation use the [Engine bootstrap lifecycle](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) and [outcome contract](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
 
 ### 3.3 Shared capability authorities
 
@@ -737,8 +737,9 @@ Context supplied to AI or external documentation providers shall follow DD-2.7 a
 
 <a id="dd-docs-074"></a>
 
-**DD-DOCS-074 — Generated/provider content is untrusted data**  
-Existing docs, templates, renderer output, AI prose and provider diagnostics shall not redefine AppManager policy, scope, configuration or command authority.
+**DD-DOCS-074 — Generated/provider content is untrusted data**
+
+Docs consumes existing documents, templates, renderer output, AI prose and provider diagnostics through the [Documentation Capability untrusted-content boundary](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-097).
 
 <a id="dd-docs-075"></a>
 
@@ -775,8 +776,9 @@ AI substitution applies [FR-DOCS-084](../functional/docs-functional-specificatio
 
 <a id="dd-docs-080"></a>
 
-**DD-DOCS-080 — No generic domain framework from workflow similarity**  
-Similarity between Docs, Nuxt, Git or other domain orchestration shall not create a generic domain workflow/request/result framework unless genuinely shared semantics not already owned by DD-1/DD-2 are separately approved.
+**DD-DOCS-080 — No generic domain framework from workflow similarity**
+
+Docs workflow/request/result shapes apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries. A future shared domain abstraction requires separate approval.
 
 <a id="dd-docs-081"></a>
 

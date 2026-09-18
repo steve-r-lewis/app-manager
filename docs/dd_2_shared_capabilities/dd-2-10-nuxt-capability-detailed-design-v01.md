@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for Nuxt-specific recognition, Nuxt configuration interpretation, supported Nuxt configuration mutation planning, Nuxt layer modeling, layer creation/scaffolding, layer integration/detachment evidence, Nuxt-specific validation and Nuxt provider normalization beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md), [DD-2.9 — Documentation Capability](dd-2-9-documentation-capability-detailed-design-v01.md), [Nuxt Layer Scaffold Artefact Ownership](dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 >
@@ -882,7 +882,7 @@ Nuxt implementation topology follows the [Documentation Guide](../project-docume
 
 ## 29. Sensitive Information and Safety
 
-The capability shall protect against at least:
+The local exposure points below locate the target, provider, output, mutation and stale-state contracts in this design. They apply [Design safety boundaries](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) and the [local safety clauses](#dd-nuxtcap-086); this threat-model index does not establish a second set of guarantees:
 
 - unmanaged/out-of-scope source mutation;
 - path/symlink escape;
@@ -1084,7 +1084,7 @@ Review target/fact/configuration contracts, supported add/remove semantics, Nuxt
 | Nuxt facts/recognition | `FR-NUXT-013`–`020`; DD-1.3; DD-2.4 |
 | config inspection/listing | `FR-NUXT-021`–`033`; DD-2.4 Source Intelligence |
 | config add/remove | `FR-NUXT-034`–`050`; DD-2.5 Source Transformation |
-| layer creation/scaffold orchestration | `FR-NUXT-051`–`070`; DD-2.1, DD-2.5, DD-2.6, DD-2.7, DD-2.9, Settings/application semantic boundaries, Repository/Git boundaries; scaffold ownership clarification |
+| layer creation/scaffold orchestration | `FR-NUXT-051`–`070`; DD-2.1, DD-2.5, DD-2.6, DD-2.7, DD-2.9, Settings/application semantic boundaries, Repository/Git boundaries; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | integration/detachment | `FR-NUXT-071`–`088`; DD-2.5; Repository/Git boundaries |
 | lifecycle facts | `FR-NUXT-089`–`092`; DD-1.3 managed-project model |
 | generic file/docs/app boundaries | `FR-NUXT-093`–`102`; DD-2.6, DD-2.9, Settings and App ownership |

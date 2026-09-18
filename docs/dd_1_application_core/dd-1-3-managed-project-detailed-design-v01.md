@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent internal design by which AppManager identifies, resolves, validates, represents, and scopes the project being managed. It refines, but does not override, the root Design Specification or Functional Specifications.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md)
 >
 > **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 >

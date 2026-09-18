@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent Git-domain orchestration, repository-scope policy, decision, state and result contracts by which AppManager realises managed-repository use cases through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/git-functional-specification-v01.md](../functional/git-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/git-functional-specification-v01.md](../functional/git-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
 > **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [DD-3.2 Git Domain Handover](../project_management/dd3-2-git-domain-handover-v01.md)
 
@@ -937,7 +937,7 @@ AI provider substitution preserves [FR-GIT-033](../functional/git-functional-spe
 
 ### DD-GIT-073 — No generic repository workflow framework by similarity
 
-Repeated repository-scoped orchestration across push, synchronisation or future Git operations shall not by itself justify a new generic framework. Shared abstraction requires genuinely shared semantics not already owned by DD-1 or DD-2.
+Repository-scoped push/synchronization orchestration apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
 
 <a id="dd-git-074"></a>
 

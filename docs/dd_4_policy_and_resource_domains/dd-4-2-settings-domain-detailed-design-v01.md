@@ -6,9 +6,9 @@
 >
 > **Status:** Version 1 Detailed Design Specification
 >
-> **Detailed Design authority:** This document defines the permanent Settings-domain orchestration, settings-scope policy, metadata/resource-management decisions, state and result contracts for explicit AppManager settings, managed-project metadata, environment definitions, contributors, licence resources and declarative template resources through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted clarifications, ADRs, DD-1 or DD-2 Detailed Designs.
+> **Detailed Design authority:** This document defines the permanent Settings-domain orchestration, settings-scope policy, metadata/resource-management decisions, state and result contracts for explicit AppManager settings, managed-project metadata, environment definitions, contributors, licence resources and declarative template resources through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs within their scope, or consumed DD-1/DD-2 contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Settings Functional Specification](../functional/settings-functional-specification-v01.md), [App / Settings Environment-Definition Ownership — App Functional Specification](../functional/app-functional-specification-v01.md#fr-app-016), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Settings Functional Specification](../functional/settings-functional-specification-v01.md), [App / Settings Environment-Definition Ownership — App Functional Specification](../functional/app-functional-specification-v01.md#fr-app-016), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md), [DD-2.3 — Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-3.1 — App Domain](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md), [DD-3.2 — Git Domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md), [DD-3.3 — Nuxt Domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md), [DD-3.4 — Docs Domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md)
 
@@ -735,8 +735,9 @@ A new class may be introduced only when its semantic scope, validation, mutation
 
 <a id="dd-set-081"></a>
 
-**DD-SET-081 — No generic domain framework from shape similarity**  
-Repeated CRUD terminology or similarly shaped metadata records shall not justify a universal domain base service/request/result abstraction.
+**DD-SET-081 — No generic domain framework from shape similarity**
+
+Settings CRUD and metadata record shapes apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
 
 <a id="dd-set-082"></a>
 
@@ -816,7 +817,7 @@ Cross-authority traceability:
 - DD-2.4/DD-2.5: recognition/transformation — `DD-SET-012`–`013`, `023`, `025`, `068`, `071`;
 - DD-2.6: registries/templates — `DD-SET-014`, `034`–`039`, `079`;
 - DD-2.3/DD-3.2: repository facts/effects boundary — `DD-SET-015`, `026`;
-- DD-3.1 plus App/Settings clarification: environment-definition delegation — `DD-SET-031`.
+- DD-3.1 plus [FR-APP-016](../functional/app-functional-specification-v01.md#fr-app-016): environment-definition delegation — `DD-SET-031`.
 
 ---
 

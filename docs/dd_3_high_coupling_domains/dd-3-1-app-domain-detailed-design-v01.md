@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent domain-specific orchestration, policy, state, decision and result contracts by which AppManager realises root-application lifecycle and root-application creation use cases through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md), [docs/functional/app-settings-environment-definition-ownership-canonical specification-v01.md](../functional/app-functional-specification-v01.md#fr-app-016), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/app-functional-specification-v01.md](../functional/app-functional-specification-v01.md), [docs/functional/app-settings-environment-definition-ownership-canonical specification-v01.md](../functional/app-functional-specification-v01.md#fr-app-016), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
 > **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [docs/project_management/domain-detailed-design-authoring-guide-v02.md](../project_management/domain-detailed-design-authoring-guide-v02.md), [docs/project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md](../project_management/dd2-final-horizontal-reconciliation-conformance-closeout-v01.md)
 
@@ -1028,7 +1028,8 @@ Additional creation profiles or approved profile choices may extend the declarat
 
 ### DD-APP-092 — No generic orchestration framework requirement
 
-Repeated stage shapes across App, Git, Nuxt or Docs do not require a shared domain-orchestration base framework. Any future abstraction must demonstrate genuinely shared semantics not already owned by DD-1/DD-2.
+App lifecycle stages apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
+
 
 ---
 

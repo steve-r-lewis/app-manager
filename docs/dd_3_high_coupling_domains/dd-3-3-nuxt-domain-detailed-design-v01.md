@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent Nuxt-domain orchestration, target/applicability policy, decision, state and result contracts by which AppManager realises Nuxt-specific project inspection, configuration management, layer creation, layer integration and detachment through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/nuxt-functional-specification-v01.md](../functional/nuxt-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/nuxt-functional-specification-v01.md](../functional/nuxt-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
 > **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 
@@ -379,7 +379,7 @@ validation contribution
 status
 ```
 
-This preserves the ownership dimensions required by the scaffold-artefact clarification.
+The ownership dimensions are defined in [DD-2.10 §16](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry).
 
 <a id="dd-nuxt-012"></a>
 
@@ -1097,7 +1097,8 @@ The collaborations in §6 bind [Design](../appmanager-design-specification-v01.m
 
 ### DD-NUXT-089 — No generic Nuxt orchestration framework by naming similarity
 
-Repeated stage/request/result shapes across App, Git, Nuxt or later domains shall not justify a generic domain framework unless semantics are genuinely shared and not already owned by DD-1/DD-2.
+Nuxt stage/request/result shapes apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
+
 
 ---
 
@@ -1153,15 +1154,15 @@ Conformance testing shall demonstrate that source transformation, Git, documenta
 
 | Detailed Design contract(s) | Functional requirement(s) | Principal related DD authority |
 |---|---|---|
-| `DD-NUXT-001`–`004` | `FR-NUXT-001`–`012` | DD-1.1–1.5; DD-2.10; scaffold clarification |
+| `DD-NUXT-001`–`004` | `FR-NUXT-001`–`012` | DD-1.1–1.5; DD-2.10; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | `DD-NUXT-005`–`008` | `FR-NUXT-004`–`020` | DD-1.3; DD-2.10 |
 | `DD-NUXT-015`–`022` | `FR-NUXT-013`–`033` | DD-2.4; DD-2.10 |
 | `DD-NUXT-023`–`027` | `FR-NUXT-034`–`050` | DD-2.5; DD-2.10 |
-| `DD-NUXT-009`–`011`, `DD-NUXT-028`–`035` | `FR-NUXT-051`–`070` | DD-2.1; DD-2.5; DD-2.6; DD-2.7; DD-2.9; DD-2.10; DD-3.2; scaffold clarification |
+| `DD-NUXT-009`–`011`, `DD-NUXT-028`–`035` | `FR-NUXT-051`–`070` | DD-2.1; DD-2.5; DD-2.6; DD-2.7; DD-2.9; DD-2.10; DD-3.2; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | `DD-NUXT-012`, `DD-NUXT-036`–`039` | `FR-NUXT-071`–`082` | DD-1.3; DD-2.5; DD-2.10; DD-3.2 |
 | `DD-NUXT-040`–`041` | `FR-NUXT-083`–`088` | DD-2.5; DD-2.10; DD-3.2 |
 | `DD-NUXT-020`, `DD-NUXT-042`–`043` | `FR-NUXT-089`–`092` | DD-1.3; DD-2.10 |
-| `DD-NUXT-004`, `DD-NUXT-051`–`056` | `FR-NUXT-093`–`102` | DD-3.1; DD-2.6–2.10; scaffold clarification |
+| `DD-NUXT-004`, `DD-NUXT-051`–`056` | `FR-NUXT-093`–`102` | DD-3.1; DD-2.6–2.10; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | `DD-NUXT-057`–`070`, `DD-NUXT-075`–`079` | `FR-NUXT-103`–`109` | DD-1.2; DD-2.1; DD-2.5; DD-2.10 |
 | `DD-NUXT-071`–`074` | `FR-NUXT-110`–`113` | DD-1.1; DD-1.2 |
 | `DD-NUXT-080`–`084` | cross-cutting security requirements | DD-2.7; DD-2.10; DD-1.5 |
