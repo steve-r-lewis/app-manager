@@ -25,6 +25,8 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [Git Coordinated Commit Implementation Clarification — Retired](../archive/implementation/git-coordinated-commit-implementation-clarification-v01-retired.md) (its multi-repository `CommitGitInput`/`RepositoryCommitPlan` delta is now applied directly in §11, §12 and §15.1)
 
 ## 1. Purpose
 
@@ -276,11 +278,14 @@ Default branch/user identity inputs come from IS-3 operation-effective configura
 
 ## 11. Commit Input
 
+Commit repository cardinality is expressed through the same `GitRepositoryScopeRequest` model used by inspect/push/synchronise (§9, §17, §20), per [Git Functional Specification §8.1](../functional/git-functional-specification-v01.md#_8-1-coordinated-commit):
+
 ```ts
 export interface CommitGitInput {
-  readonly repository: ManagedRepositorySelector;
+  readonly scope: GitRepositoryScopeRequest;
   readonly staging: GitStagingIntent;
   readonly message: GitCommitMessageIntent;
+  readonly continuation?: GitContinuationPolicyId;
 }
 
 export type GitStagingIntent =
@@ -289,23 +294,36 @@ export type GitStagingIntent =
   | { readonly mode: 'all_eligible_changes' };
 ```
 
-`all_eligible_changes` means all changes within the explicitly resolved repository and policy-defined eligible change set. It is not a filesystem-wide `.` wildcard contract.
+`all_eligible_changes` means all changes within each explicitly resolved repository's own policy-defined eligible change set. It is never a filesystem-wide `.` wildcard, and it never spans repositories — each repository's eligible-change set is resolved independently.
 
-Version 1 commit remains single-repository.
+Commit accepts the same repository cardinality as inspect/push/synchronise: root, selected repository, selected repository set or all managed repositories. No `git.commit-all` or other bulk-command identity is introduced; scope is structured input on the one canonical `git.commit`.
 
 ---
 
 ## 12. Commit Evidence and Staging
 
-Before authorization/execution IS-15 requests fresh IS-6 change evidence containing stable change identities/status/index-worktree classification and repository revision/precondition evidence.
+IS-15 resolves a `CommitGitInput` into one immutable, independently-evaluated plan per repository in scope before any commit effect begins:
 
-The commit policy resolves requested staging to exact IS-6 stage requests.
+```ts
+export interface RepositoryCommitPlan {
+  readonly repository: ManagedRepositoryId;
+  readonly eligibility: RepositoryEligibilityDecision;
+  readonly staging: GitStagingIntent;
+  readonly approvedChanges: readonly RepositoryChangeId[];
+  readonly message: ResolvedCommitMessage;
+  readonly preconditions: readonly GitEvidenceReference[];
+}
+```
+
+For each repository's plan, IS-15 requests fresh IS-6 change evidence containing stable change identities/status/index-worktree classification and repository revision/precondition evidence.
+
+The commit policy resolves requested staging to exact IS-6 stage requests, independently per repository.
 
 Already-staged mode does not stage unstaged changes.
 
 Selected mode rejects missing/stale/out-of-scope change identities.
 
-All-eligible mode is expanded into the bounded eligible set before effect review/authorization where required.
+All-eligible mode is expanded into each repository's own bounded eligible set before effect review/authorization where required; it is never expanded across repositories.
 
 IS-15 never uses `createCommit(..., 'temp', ['.'])` or another commit primitive as a staging mechanism.
 
@@ -324,27 +342,40 @@ The accepted message is normalized/validated by Git policy before IS-6 commit ex
 
 An AI proposal and an accepted commit message remain separate records.
 
+Where scope resolves more than one repository, message resolution is independent per repository: an `ai_proposal_requested`/`accepted_proposal` intent applies separately to each repository's own approved change evidence, never one message reused verbatim across repositories.
+
 ---
 
 ## 14. Optional AI Commit-Message Assistance
 
 AI assistance uses IS-10 directly as a bounded specialist capability unless a user-facing AI-domain use case is itself the requested product intent.
 
-IS-15 constructs a purpose-limited context from approved IS-6 change evidence. It does not infer that repository scope authorizes disclosure.
+For each repository requiring a message proposal, IS-15 constructs a separate purpose-limited context from that repository's own approved IS-6 change evidence. It does not infer that repository scope authorizes disclosure, and one repository's context is never shared into another repository's proposal.
 
 Context follows IS-10 disclosure/sensitivity/budget policy and may include bounded staged change summaries/patch evidence only where approved.
 
 The AI request requires structured commit-message proposal output and provenance.
 
-AI unavailable/failure/rejected output returns a proposal diagnostic/decision requirement and leaves the manual explicit-message path available.
+AI unavailable/failure/rejected output returns a proposal diagnostic/decision requirement and leaves the manual explicit-message path available, independently per repository.
 
 AI never invokes stage/commit and never authorizes its own output.
+
+An authorised Git workflow may automatically accept a valid proposal when deterministic acceptance criteria were resolved before generation, consistent with the automatic-acceptance rule already established for AI-generated output (PR #174). Automatic acceptance never removes the following six stages or collapses them into one boolean:
+
+```text
+provider completion
+proposal validation
+Git-domain acceptance
+repository commit execution
+Git-domain postcondition acceptance
+final IS-1 application acceptance
+```
 
 ---
 
 ## 15. Commit Execution and Acceptance
 
-After staging/message/authorization are satisfied:
+Per repository, once that repository's staging/message/authorization are satisfied:
 
 1. validate repository/change preconditions;
 2. execute exact IS-6 stage requests if required;
@@ -353,11 +384,26 @@ After staging/message/authorization are satisfied:
 5. call IS-6 commit with accepted message and expected state;
 6. inspect resulting revision/status;
 7. establish whether a new expected commit exists;
-8. preserve all staging/commit effects and diagnostics.
+8. preserve all staging/commit effects and diagnostics before moving to the next repository.
 
 Commit creation is not retried blindly. Uncertain execution requires revision/status verification first.
 
 No-change does not fabricate commit success.
+
+### 15.1 Coordinated Commit
+
+For scope resolving more than one repository, IS-15 reuses the existing `coordinated-operation-runner` (§19, §22) rather than a separate bulk-commit subsystem. The runner executes each repository's `RepositoryCommitPlan` (§12) through the §15 sequence above under the same `GitContinuationPolicyId` (§19), deterministic managed-topology ordering, cancellation (§34) and per-repository `GitRepositoryResult` (§31) already used for coordinated push and synchronisation.
+
+On failure or cancellation partway through a coordinated commit, IS-15 preserves — never simulating universal transactionality by reverting commits already created in earlier repositories:
+
+- repositories committed successfully;
+- repositories skipped/already satisfied;
+- repositories failed or stale;
+- repositories not yet attempted;
+- staging effects that occurred before a later failure where material;
+- resulting revisions and recovery information.
+
+This evidence is supplied to IS-1 for canonical final outcome construction through the same `GitRecoveryPosition` (§35) used elsewhere in the domain.
 
 ---
 
@@ -898,7 +944,7 @@ Core tests cover at least:
 16. existing repository not reinitialized;
 17. initialization defaults from governed inputs;
 18. initialization postcondition reinspection;
-19. commit single repository;
+19. commit scope bounded to explicitly resolved repositories, never a project-wide wildcard;
 20. no committable change classification;
 21. already-staged mode does not stage unstaged changes;
 22. selected-change scope exact;
@@ -971,7 +1017,13 @@ Core tests cover at least:
 89. semantic events presentation-free;
 90. explicit IS-23 composition/no singleton;
 91. provider substitution leaves policy tests unchanged;
-92. repository diff evidence not treated as IS-7 source structure.
+92. repository diff evidence not treated as IS-7 source structure;
+93. `CommitGitInput.scope` accepts root/selected/selected-set/all-managed cardinality without introducing `git.commit-all`;
+94. `RepositoryCommitPlan` is resolved independently per repository before any commit effect begins;
+95. coordinated commit reuses `coordinated-operation-runner` rather than a separate bulk-commit subsystem;
+96. staging/message/AI-proposal resolution is independent per repository within one coordinated invocation;
+97. provider completion, proposal validation, Git-domain acceptance, repository commit execution, Git-domain postcondition acceptance and final IS-1 acceptance remain six distinct stages, never collapsed into one boolean;
+98. coordinated commit failure/cancellation preserves per-repository truth without reverting earlier successful commits.
 
 Integration tests use controlled IS-6 substitutes for domain-policy tests and dedicated repository fixtures for capability/domain integration. Remote-host destructive tests use provider fakes by default; live destructive-provider tests are excluded from ordinary suites and require separately controlled test infrastructure.
 
