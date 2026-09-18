@@ -1,3 +1,17 @@
+# Interaction Capabilities Contract Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-1 — Application Runtime and Invocation](../../implementation/is-1-application-runtime-and-invocation-implementation-specification-v01.md) §10 (canonical `InteractionCapabilities` contract); [IS-22 — Interaction Adapters](../../implementation/is-22-interaction-adapters-implementation-specification-v01.md) §4–5 (renamed `AdapterCapabilities` type and the IS-1 projection mapping).
+>
+> **Disposition:** The contract-name collision this clarification identified has been resolved directly in both primary Implementation Specifications: IS-1 retains `InteractionCapabilities` as the canonical five-field application-boundary contract with an explicit cross-reference to IS-22; IS-22's incompatible six-field declaration has been renamed to `AdapterCapabilities`, and the projection mapping (§4 of this document) has been folded into IS-22 §5. No information from this clarification remains solely recorded here.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # Interaction Capabilities Contract Clarification
 
 > **Status:** Active Implementation Specification clarification

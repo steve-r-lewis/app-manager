@@ -116,7 +116,7 @@ This is an implementation responsibility boundary. Domain-specific prompt defini
 ```ts
 export interface InteractionAdapter {
   readonly id: InteractionAdapterId;
-  readonly capabilities: InteractionCapabilities;
+  readonly capabilities: AdapterCapabilities;
   run(application: AppManagerApplication, signal: AbortSignal): Promise<AdapterTermination>;
 }
 ```
@@ -125,10 +125,10 @@ The adapter receives the already composed IS-1 application from IS-23. It does n
 
 ---
 
-## 5. Interaction Capabilities
+## 5. Adapter Capabilities
 
 ```ts
-export interface InteractionCapabilities {
+export interface AdapterCapabilities {
   readonly interactiveInput: boolean;
   readonly explicitConfirmation: boolean;
   readonly progressEvents: boolean;
@@ -139,6 +139,21 @@ export interface InteractionCapabilities {
 ```
 
 Version 1 TUI declares interactive input/confirmation/progress/cancellation/human diagnostics. Headless declares structured results and cancellation where the host signal permits it, but never interactive prompting.
+
+`AdapterCapabilities` is adapter-local presentation/host capability description. It is distinct from the IS-1 `InteractionCapabilities` request contract (IS-1 §10) and shall not share that name or be assumed structurally interchangeable with it.
+
+`invocation-request-builder.ts` is responsible for projecting `AdapterCapabilities` onto the IS-1 `InteractionCapabilities` contract before an invocation request is submitted:
+
+| Adapter-local capability | IS-1 request capability |
+|---|---|
+| `interactiveInput` | `canRequestAdditionalInput` |
+| `explicitConfirmation` | `canAcquireAuthorization` |
+| `progressEvents` | `canConsumeEvents` |
+| `cancellation` | `canRequestCancellation` |
+| `structuredResults` | `canConsumeStructuredOutcome` |
+| `humanDiagnostics` | no IS-1 capability field; presentation only |
+
+This is capability projection, not authority acquisition. `explicitConfirmation: true` means the adapter can acquire and return authorization evidence when requested; it does not mean the adapter may decide authorization sufficiency.
 
 Capability declarations describe what an adapter can do. They never grant application authority or weaken required authorization.
 

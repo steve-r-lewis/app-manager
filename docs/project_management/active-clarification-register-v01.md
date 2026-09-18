@@ -37,7 +37,6 @@ None remain active: 9 vehicles integrated and retired during NCR-2. See the [sin
 | Clarification | Scope / purpose |
 |---|---|
 | [`app-command-model-implementation-clarification-v01.md`](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | PBC-1 IS-14 App correction. |
-| [`interaction-capabilities-contract-clarification-v01.md`](../implementation/clarifications/interaction-capabilities-contract-clarification-v01.md) | IS-1/IS-22 interaction-capability distinction. |
 | [`implementation-specification-rationalisation-clarification-v01.md`](../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md) | DR-7 rationalised Level 4 reading. |
 | [`git-coordinated-commit-implementation-clarification-v01.md`](../implementation/clarifications/git-coordinated-commit-implementation-clarification-v01.md) | PBC-1 IS-15 scope-based coordinated commit plans, AI message acceptance and truthful partial completion. |
 | [`docs-coordinated-generation-implementation-clarification-v01.md`](../implementation/clarifications/docs-coordinated-generation-implementation-clarification-v01.md) | PBC-1 IS-17 coordinated artefact-plan implementation, deterministic/AI paths and per-artefact results. |
@@ -50,3 +49,7 @@ None remain active: 9 vehicles integrated and retired during NCR-2. See the [sin
 ## 8. Lifecycle Rule
 
 When a clarification is folded into all affected primary normative documents and no compatibility or interpretive purpose remains, its lifecycle may be changed deliberately through normal documentation governance. PBC-1 clarifications are temporary integration vehicles; NCR shall fold their semantics into proper canonical primary owners and retire them.
+
+## 9. Retired Implementation Clarifications
+
+- [`interaction-capabilities-contract-clarification-v01-retired.md`](../archive/implementation/interaction-capabilities-contract-clarification-v01-retired.md) — the IS-1/IS-22 `InteractionCapabilities` name collision it identified is resolved directly in both primary specifications; see the retired document's status notice for the disposition.
