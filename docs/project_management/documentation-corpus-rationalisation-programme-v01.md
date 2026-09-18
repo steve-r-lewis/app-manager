@@ -4,13 +4,15 @@
 >
 > **Version:** 01
 >
-> **Status:** Active
+> **Status:** Closed
 >
 > **Programme:** DR — Documentation Rationalisation
 >
 > **Normative product effect:** None. This plan controls editorial/reconciliation work; it does not create or amend product requirements, architecture, Detailed Design contracts, Implementation Specification contracts, or ADR decisions.
 >
 > **Frozen semantic source baseline:** `fe30f5ad883ce2abeca2e495dd4d7036eef09da6`
+>
+> **Closeout record:** [Documentation Rationalisation Programme Closeout](history/closeouts/documentation-rationalisation-programme-closeout-v01.md)
 
 ## 1. Purpose
 

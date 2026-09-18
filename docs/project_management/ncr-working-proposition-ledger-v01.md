@@ -4,6 +4,8 @@
 >
 > **Status:** Active NCR ledger; NCR-1 merged through PR #179; NCR-2 complete and merged through PR #180
 >
+> **Growth policy:** This ledger is closed for NCR-1 and NCR-2, whose dispositions are recorded above. It is not extended for NCR-3 onward; NCR-3/4/5 dispositions belong as direct edits to the primary specifications they affect, not as new ledger rows.
+>
 > **Normative product effect:** None. This ledger records ownership and reduction actions; the normative corpus remains authoritative.
 >
 > **Semantic comparison baseline:** `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`

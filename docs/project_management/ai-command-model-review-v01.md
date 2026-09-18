@@ -2,7 +2,7 @@
 
 > **Document type:** Project-management working evidence
 >
-> **Status:** Active for final PBC-1 AI correction
+> **Status:** Historical — PBC-1 complete
 >
 > **Normative product effect:** None. Normative effect is carried by the level-appropriate AI project-environment clarifications and later primary owners through NCR.
 
