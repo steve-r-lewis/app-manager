@@ -25,6 +25,8 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [App Command Model Implementation Clarification — Retired](../archive/implementation/app-command-model-implementation-clarification-v01-retired.md) (its corrected 8-command identity set, `app.generate` and the reset-and-prepare/declared-script-runner dispositions are now applied directly in §5, §17, §21, §24.1, §29 and §44)
 
 ## 1. Purpose
 
@@ -50,7 +52,9 @@ IS-14 implements:
 
 - lifecycle action identities and metadata;
 - use-case applicability and validation;
-- `initialise`, `post_install`, `develop`, `build`, `preview`, `clean`, `reset`, `reinitialise`, `create` and `run_declared_script`;
+- `create`, `prepare`, `develop`, `build`, `preview`, `generate`, `clean` and `reset` as the eight canonical use cases;
+- post-install execution and declared-script discovery/invocation as internal subordinate stages/collaborators, not separate canonical commands;
+- reset-and-prepare as an adapter-composed workflow over the canonical `reset` and `prepare` use cases, not a separate canonical command;
 - invocation-scoped lifecycle plans/stages/state;
 - App-specific stage sequencing and dependency policy;
 - App-specific clean/reset resource classification;
@@ -114,17 +118,16 @@ app/
         │   ├── effect-classifier.ts
         │   └── recovery-builder.ts
         ├── use-cases/
-        │   ├── initialise-app.ts
-        │   ├── run-post-install.ts
+        │   ├── create-app.ts
+        │   ├── prepare-app.ts
         │   ├── develop-app.ts
         │   ├── build-app.ts
         │   ├── preview-app.ts
+        │   ├── generate-app.ts
         │   ├── clean-app.ts
-        │   ├── reset-app.ts
-        │   ├── reinitialise-app.ts
-        │   ├── create-app.ts
-        │   └── run-declared-script.ts
+        │   └── reset-app.ts
         └── collaborators/
+            ├── declared-script-runner.ts
             ├── project-lifecycle-reader.ts
             ├── app-resource-planner.ts
             ├── settings-domain-port.ts
@@ -132,7 +135,9 @@ app/
             └── nuxt-domain-port.ts
 ```
 
-The `collaborators/` ports are App-owned dependency contracts for subordinate domain intent/results. They are not alternate implementations of those domains.
+The `collaborators/` ports are App-owned dependency contracts for subordinate domain intent/results. They are not alternate implementations of those domains. `declared-script-runner.ts` is the bounded internal mechanism named lifecycle use cases (Post-Install §21, Develop §22, Build §23, Preview §24) use to invoke a recognized project-declared package script; it is not itself a canonical command (§5, §44).
+
+Named use cases exist only for the eight canonical commands. Post-install (§21) is a subordinate stage reached from Prepare/other lifecycle actions, not a use case of its own; reset-and-prepare (§29) is an adapter-composed workflow over the `reset` and `prepare` use cases, not a ninth use case.
 
 No `AppService` singleton, generic cross-domain workflow base class or domain-global mutable lifecycle state is introduced.
 
@@ -162,23 +167,26 @@ The use case receives the Engine-established context; it does not accept `target
 Version 1 command/use-case IDs are:
 
 ```text
-app.initialise
-app.post-install
+app.create
+app.prepare
 app.develop
 app.build
 app.preview
+app.generate
 app.clean
 app.reset
-app.reinitialise
-app.create
-app.run-script
 ```
 
-Presentation aliases may map to these IDs but cannot create different semantics.
+Eight canonical identities. Presentation aliases may map to these IDs but cannot create different semantics. `app.initialise`, `app.post-install`, `app.reinitialise` and `app.run-script` are not registered as canonical Version 1 App commands:
 
-`app.run` from the current implementation migrates to `app.run-script`; named lifecycle scripts are preferably reached through their richer named use cases.
+- `app.initialise` is renamed `app.prepare` (§17), preserving the same existing-root readiness and no-scaffold-over-existing-target guarantees;
+- `app.post-install` becomes a subordinate stage reached from Prepare and other lifecycle actions (§21), not a standalone command;
+- `app.reinitialise` is not registered; an adapter composes the canonical `app.reset` then `app.prepare` intents as an application workflow instead (§29);
+- `app.run-script` is not registered; its bounded declared-script discovery/invocation mechanism is retained as the internal `declared-script-runner` collaborator (§3, §44) consumed by named lifecycle use cases, not exposed as its own command.
 
-`setupApp.ts` does not define a permanent `app.setup` semantic identity; its intended responsibilities are split across `app.initialise` and `app.create` according to target intent.
+`app.run` from the current implementation migrates into that internal collaborator; named lifecycle scripts are preferably reached through their richer named use cases (Develop/Build/Preview) rather than generic script invocation.
+
+`setupApp.ts` does not define a permanent `app.setup` semantic identity; its intended responsibilities are split across `app.prepare` and `app.create` according to target intent.
 
 ---
 
@@ -218,7 +226,7 @@ Applicability is evaluated from authoritative context and bounded project eviden
 
 `unavailable` is not `unknown_command`.
 
-An `already_satisfied` state is used only for meaningful idempotent semantics such as an already-clean approved target or already-satisfied initialisation stage.
+An `already_satisfied` state is used only for meaningful idempotent semantics such as an already-clean approved target or an already-satisfied preparation stage.
 
 ---
 
@@ -404,9 +412,9 @@ IS-14 never implements a process-global mutex that serializes unrelated projects
 
 ---
 
-## 17. Initialise Existing Application
+## 17. Prepare Existing Application
 
-`app.initialise` requires an Engine-resolved managed root application.
+`app.prepare` (renamed from the former `app.initialise`; §5) requires an Engine-resolved managed root application.
 
 Its planner derives required stages from project/profile/effective configuration:
 
@@ -468,18 +476,18 @@ Git stage success remains subordinate evidence for App initialisation acceptance
 
 ---
 
-## 21. Post-Install
+## 21. Post-Install (Subordinate Stage)
 
-`app.post-install` is available only when the recognized project declaration maps an applicable post-install lifecycle action.
+Post-install is not a canonical command (§5). It is a subordinate lifecycle stage available only when the recognized project declaration maps an applicable post-install action, reached from `app.prepare` and any other lifecycle action whose plan includes it.
 
-The use case:
+The stage, through the declared-script-runner collaborator (§44):
 
 1. validates current declaration revision;
 2. maps the declaration through the package-manager invocation adapter;
 3. delegates through IS-5;
 4. interprets normalized execution evidence;
 5. evaluates any declared App postcondition;
-6. returns App-domain stage evidence.
+6. returns App-domain stage evidence to its calling use case.
 
 No universal `postinstall` script name is assumed by the public/domain contract.
 
@@ -523,6 +531,12 @@ export type PreviewPrerequisitePolicy =
 The selected policy is part of the lifecycle plan before execution and is independent of interaction mode.
 
 Preview itself is a long-running IS-5-backed lifecycle stage with the same cancellation boundary as Develop.
+
+### 24.1 Generate
+
+`app.generate` (DD-3.1 §8.12) resolves the project-resolved root-application generation/prerender mechanism from recognized project evidence and runs it through the same applicability/stage/acceptance contracts as Develop/Build/Preview (§22–24). The provider command (for example a framework's own generate/prerender executable) is not the application identity; IS-14 resolves which supported mechanism applies from project evidence rather than hard-coding one provider.
+
+Generate's default plan contains one required generation-execution stage plus only the postconditions explicitly selected by project/profile/effective configuration, following the same "no silently added Quality gate" rule as Build (§23).
 
 ---
 
@@ -606,21 +620,18 @@ Partial deletions are retained as effect evidence; no rollback fiction is introd
 
 ---
 
-## 29. Reinitialise
+## 29. Reset-and-Prepare Composition
 
-`app.reinitialise` composes existing use-case semantics rather than copying their implementations:
+`app.reinitialise` is not a canonical command and IS-14 registers no such use case (§5). An interaction adapter presenting a convenience operation such as "Reset and prepare again" expresses it as an application workflow over the canonical `app.reset` and `app.prepare` intents:
 
 ```text
 Reset plan/execute/accept
- -> Initialise plan/execute/accept
- -> Build plan/execute/accept
+ -> Prepare plan/execute/accept
 ```
 
-The outer use case invokes the internal App use cases through an Engine-authorized nested-use-case path defined by IS-1 so canonical authority/context/cancellation/effect tracking are preserved.
+The adapter invokes these as two ordinary Engine-authorized invocations (or, where a composed-workflow mechanism exists at the Engine/adapter layer, through that mechanism) so canonical authority/context/cancellation/effect tracking are preserved through IS-1 for each. It never calls App implementation services directly and never manufactures `app.reinitialise` as an alternate command ID.
 
-Failure/cancellation blocks dependent stages.
-
-The result retains nested stage evidence and distinguishes failure before effects, after Reset, during Initialise and during Build.
+Failure/cancellation of Reset blocks the dependent Prepare step. Each invocation's own result retains its own stage evidence; there is no third, merged "reinitialise result" type.
 
 ---
 
@@ -847,29 +858,26 @@ IS-14 returns this interpretation to IS-1; only IS-1 publishes final canonical a
 
 ---
 
-## 44. Declared Script Execution
+## 44. Declared Script Runner (Internal Collaborator)
 
-`app.run-script`:
+`app.run-script` is not a canonical command (§5). The `declared-script-runner` collaborator (§3) is the bounded internal mechanism named lifecycle use cases — Post-Install (§21), Develop (§22), Build (§23), Preview (§24) — use to invoke a recognized project-declared package script:
 
 1. obtains the current `ProjectLifecycleDeclaration`;
-2. validates requested script identity against the current revision;
+2. validates the requested script identity against the current revision;
 3. refuses arbitrary script text/not-declared identity;
-4. identifies whether a richer named lifecycle route exists;
-5. evaluates known consequence policy where available;
-6. obtains authorization coverage where required;
-7. builds bounded package-manager invocation;
-8. executes through IS-5;
-9. returns structured selected-script + execution evidence.
+4. evaluates known consequence policy where available;
+5. obtains authorization coverage where required;
+6. builds bounded package-manager invocation;
+7. executes through IS-5;
+8. returns structured selected-script + execution evidence to the calling use case.
 
-Named lifecycle correspondence is diagnostic/recommendation information; generic execution does not silently inherit Build/Preview/Develop stages.
-
----
+The collaborator has no IS-1 use-case descriptor of its own and cannot be invoked directly by an adapter; a caller reaches it only through one of the named lifecycle use cases that consumes it.
 
 ## 45. No Arbitrary Shell Surface
 
-The App domain exposes no `command`, `shell`, `argsText`, `exec` or equivalent generic execution field.
+The App domain exposes no `command`, `shell`, `argsText`, `exec` or equivalent generic execution field, whether at the use-case boundary or on the internal declared-script-runner collaborator.
 
-Additional caller arguments are not appended to project scripts in Version 1 unless a later approved requirement defines a bounded declared-script argument contract. This avoids turning `app.run-script` into shell passthrough.
+Additional caller arguments are not appended to project scripts in Version 1 unless a later approved requirement defines a bounded declared-script argument contract. This avoids the collaborator becoming shell passthrough merely because it moved from a public command to an internal mechanism.
 
 IS-5's shell mode remains unavailable through this domain surface.
 
@@ -1053,7 +1061,7 @@ Observability is evidence, not an alternate result channel.
 
 ## 56. Composition and Registration
 
-IS-23 constructs the catalogues, readers/adapters, lifecycle planner/runner, subordinate domain ports and ten App use-case instances.
+IS-23 constructs the catalogues, readers/adapters, lifecycle planner/runner, the declared-script-runner collaborator, subordinate domain ports and eight App use-case instances.
 
 IS-1's immutable application command catalogue registers the canonical App use-case descriptors.
 
@@ -1067,7 +1075,7 @@ IS-22 maps CLI/TUI/Headless routes to canonical IDs; it does not instantiate dom
 
 Core unit/conformance tests cover at least:
 
-1. canonical ten App use-case IDs;
+1. canonical eight App use-case IDs; `app.initialise`/`app.post-install`/`app.reinitialise`/`app.run-script` are not separately registered;
 2. unknown versus unavailable distinction;
 3. managed root required for existing lifecycle;
 4. no targetRoot/cwd reconstruction;
@@ -1080,8 +1088,8 @@ Core unit/conformance tests cover at least:
 11. authorization before consequential effect;
 12. effect expansion invalidates authorization;
 13. conflict keys do not globally serialize unrelated projects;
-14. initialisation never scaffolds existing project;
-15. already-satisfied initialisation stage;
+14. preparation never scaffolds existing project;
+15. already-satisfied preparation stage;
 16. dependency readiness via bounded adapter/IS-5;
 17. environment creation delegated to Settings;
 18. no direct `.env` copy;
@@ -1103,10 +1111,10 @@ Core unit/conformance tests cover at least:
 34. explicit lock-removal policy;
 35. Reset complete effect plan before authorization;
 36. Reset partial deletion evidence;
-37. Reinitialise composes Reset/Initialise/Build;
-38. Reset failure blocks later stages;
-39. Initialise failure blocks Build where required;
-40. nested use cases preserve Engine authority;
+37. `app.reinitialise` is not registered as a canonical command;
+38. Reset failure blocks a dependent adapter-composed Prepare step;
+39. Reset and Prepare invoked back-to-back each return independent, non-merged stage evidence;
+40. generate declaration unavailable fails safely without inventing a provider;
 41. creation profile stable identity/version;
 42. minimal profile baseline only;
 43. complete profile not all-known-templates;
@@ -1136,7 +1144,7 @@ Core unit/conformance tests cover at least:
 67. direct package-manager executable/argv mapping;
 68. ambiguous package manager fails safe;
 69. script revision stale;
-70. named lifecycle correspondence does not inherit semantics generically;
+70. declared-script-runner has no independent use-case descriptor and is unreachable except through a named lifecycle use case;
 71. no arbitrary caller script arguments;
 72. process exit zero alone not App success;
 73. cancellation before effect prevents effect;
@@ -1152,7 +1160,8 @@ Core unit/conformance tests cover at least:
 83. semantic events have no presentation formatting;
 84. no prompts/colors in domain;
 85. Headless equivalent decisions;
-86. IS-23 explicit composition/no singleton.
+86. IS-23 explicit composition/no singleton;
+87. generate resolves its provider mechanism from project evidence rather than one hard-coded command.
 
 Integration tests additionally cover IS-1 context/outcome integration, IS-19 environment delegation, IS-15 Git port substitution, IS-13/16 Nuxt creation contribution, IS-9 rendering, IS-4/8 mutation boundaries and IS-5 long-running process/cancellation behaviour.
 
@@ -1162,9 +1171,9 @@ Integration tests additionally cover IS-1 context/outcome integration, IS-19 env
 
 | Current artefact/responsibility | Disposition | Version 1 treatment |
 |---|---|---|
-| `app/commands/app/runApp.ts` declared-script intent | **RETAIN / ADAPT / RELOCATE** | Preserve bounded declared-script product intent as `app.run-script` use case. |
-| `RunAppCommand` command object | **REPLACE** | IS-1 catalogue descriptor + IS-14 use case; no BaseCommand business-logic object. |
-| `app.run` ID | **ADAPT** | Canonical ID becomes `app.run-script`; adapter alias may preserve transitional UX if needed. |
+| `app/commands/app/runApp.ts` declared-script intent | **RETAIN / ADAPT / RELOCATE** | Preserve bounded declared-script product intent as the internal `declared-script-runner` collaborator (§3, §44), not a standalone use case. |
+| `RunAppCommand` command object | **REPLACE** | IS-1 catalogue descriptors + IS-14 use cases; no BaseCommand business-logic object; no `app.run-script` command is registered. |
+| `app.run` ID | **REMOVE IDENTITY / RETAIN MECHANISM** | Not a canonical Version 1 identity; its mechanism becomes the internal declared-script-runner consumed by named lifecycle use cases (§5). |
 | `isEnabled(targetRoot)` package check | **REPLACE** | IS-14 applicability consumes IS-2 managed root + recognized lifecycle declaration. |
 | direct `node:fs` package/lockfile inspection | **RELOCATE / REPLACE** | Bounded IS-4/IS-7 project lifecycle reader; no use-case-local filesystem authority. |
 | direct `JSON.parse(package.json)` | **RETAIN mechanic / RELOCATE** | Bounded project metadata reader may parse JSON data with revision/provenance validation. |
@@ -1175,8 +1184,8 @@ Integration tests additionally cover IS-1 context/outcome integration, IS-19 env
 | `${pm} run ${scriptName}` shell string | **REPLACE** | Explicit executable + argv adapter to IS-5 direct mode. |
 | `execSync(..., stdio:'inherit')` | **REPLACE / RELOCATE** | IS-5 async/cancellable process execution; adapter chooses bounded I/O mode. |
 | swallowed/caught execution error + `void` result | **REPLACE** | Structured App stage/result evidence integrated with IS-1 canonical outcomes. |
-| `app/commands/app/setupApp.ts` TODO | **SPLIT / REPLACE** | Responsibilities become explicit `app.initialise` and `app.create`; no ambiguous setup use case. |
-| missing named lifecycle commands | **ADD** | Implement post-install/develop/build/preview/clean/reset/reinitialise use cases. |
+| `app/commands/app/setupApp.ts` TODO | **SPLIT / REPLACE** | Responsibilities become explicit `app.prepare` and `app.create`; no ambiguous setup use case. |
+| missing named lifecycle commands | **ADD** | Implement `app.prepare`/`app.develop`/`app.build`/`app.preview`/`app.generate`/`app.clean`/`app.reset` use cases and the subordinate post-install stage; no `app.reinitialise` use case (§29 adapter composition instead). |
 | missing creation profile implementation | **ADD** | Immutable minimal/complete/custom profile catalogue and plan model. |
 | current template repository/project templates | **RETAIN useful data / ADAPT** | IS-9-owned resources selected by semantic creation artefact classes; no sourceFile/template-function authority. |
 | current Nuxt-oriented templates | **RETAIN useful data / RELOCATE semantics** | Nuxt semantic inputs owned by IS-13/16; IS-9 rendering. |
@@ -1195,14 +1204,14 @@ Integration tests additionally cover IS-1 context/outcome integration, IS-19 env
 3. implement normalized project lifecycle reader over IS-4/IS-7 evidence;
 4. implement package-manager direct invocation adapter to IS-5;
 5. implement lifecycle planner/runner/stage acceptance/recovery builder;
-6. migrate `runApp.ts` declared-script intent to `app.run-script` and remove prompt/fs/exec business logic;
-7. implement post-install/develop/build/preview over project lifecycle declarations;
+6. migrate `runApp.ts` declared-script intent to the internal `declared-script-runner` collaborator (no `app.run-script` command) and remove prompt/fs/exec business logic;
+7. implement Develop/Build/Preview/Generate over project lifecycle declarations, with Post-Install as a subordinate stage reached from Prepare and other applicable actions;
 8. implement regenerable resource catalogue/resolvers;
 9. implement Clean with bounded IS-4 resource deletion;
 10. implement Reset with explicit lock-state/effect/authorization policy;
-11. implement IS-19 Settings port and existing-app Initialise stages;
+11. implement IS-19 Settings port and existing-app Prepare stages;
 12. implement IS-15 Git-domain port for repository readiness/follow-ons;
-13. implement Reinitialise through nested Engine-authorized Reset/Initialise/Build composition;
+13. confirm reset-and-prepare composition is expressed as two adapter-level invocations over `app.reset`/`app.prepare` (§29), with no `app.reinitialise` use case in IS-14;
 14. implement immutable minimal/complete/custom root creation profiles;
 15. implement prospective target safety and creation-plan builder;
 16. connect IS-13/16, IS-12/17, IS-19 and IS-11/18 semantic contributors only where profile requirements demand them;
@@ -1210,7 +1219,7 @@ Integration tests additionally cover IS-1 context/outcome integration, IS-19 env
 18. route any approved existing-source creation transformation through IS-8;
 19. add optional Git/dependency-install follow-on stages and partial-effect semantics;
 20. replace/retire ambiguous `setupApp.ts` stub;
-21. register canonical descriptors/use cases through IS-23/IS-1;
+21. register the eight canonical descriptors/use cases through IS-23/IS-1;
 22. move all App interaction/presentation to IS-22;
 23. run cross-domain authority, stale-plan, cancellation and partial-effect conformance tests.
 
@@ -1221,16 +1230,17 @@ Integration tests additionally cover IS-1 context/outcome integration, IS-19 env
 | Implementation concern | Governing authority |
 |---|---|
 | use-case identities/applicability/contracts | DD-APP-001–005, 011–015; FR-APP-001–012 |
-| initialise | DD-APP-016–021; FR-APP-013–024; FCL-APPSET-001–007 |
-| post-install | DD-APP-022–023; FR-APP-025–028 |
+| prepare (formerly initialise) | DD-APP-016–021; FR-APP-013–024; FCL-APPSET-001–007 |
+| post-install (subordinate stage) | DD-APP-022–023; FR-APP-025–028 |
 | develop | DD-APP-024–025; FR-APP-029–033 |
 | build | DD-APP-026–028; FR-APP-034–038 |
 | preview | DD-APP-029–030; FR-APP-039–042 |
+| generate | DD-3.1 §8.12; FR-APP-116 |
 | clean | DD-APP-031–033; FR-APP-043–049 |
 | reset | DD-APP-034–037; FR-APP-050–058 |
-| reinitialise | DD-APP-038–041; FR-APP-059–065 |
+| reset-and-prepare composition (adapter workflow, not a use case) | DD-APP-038–041; FR-APP-059–065 |
 | root creation | DD-APP-006–007, 042–049; FR-APP-066–090 |
-| declared script | DD-APP-009, 050–054; FR-APP-091–098 |
+| declared-script-runner (internal collaborator) | DD-APP-009, 050–054; FR-APP-091–098 |
 | invocation-scoped state | DD-APP-055–057; FR-APP-110–115 |
 | effect/preservation/cross-domain policy | DD-APP-058–069; FR-APP-099–104 |
 | cancellation/recovery | DD-APP-010, 070–075; FR-APP-110–115 |
@@ -1281,4 +1291,4 @@ IS-22 adapter -> IS-1 canonical invocation
 
 The non-drift rule is:
 
-> **Version 1 App Domain owns root-application lifecycle intent, applicability, lifecycle-stage composition, App-specific safety/effect policy, root-creation profile orchestration and App-domain acceptance/recovery interpretation. It consumes Engine-established scope/configuration/authorization, delegates specialist semantics and mechanics to their owners, preserves completed partial effects, and never turns project scripts into arbitrary shell execution, Clean into Reset, Initialise into scaffold replacement, root creation into Nuxt-layer creation, discovery into mutation authority, provider completion into App success, or App-domain interpretation into a competing final application outcome.**
+> **Version 1 App Domain owns root-application lifecycle intent across its eight canonical commands (create, prepare, develop, build, preview, generate, clean, reset), applicability, lifecycle-stage composition, App-specific safety/effect policy, root-creation profile orchestration and App-domain acceptance/recovery interpretation. It consumes Engine-established scope/configuration/authorization, delegates specialist semantics and mechanics to their owners, preserves completed partial effects, and never turns project scripts into arbitrary shell execution, exposes the declared-script-runner as its own command, manufactures `app.reinitialise` as a command identity rather than an adapter-composed workflow, turns Clean into Reset, Prepare into scaffold replacement, root creation into Nuxt-layer creation, discovery into mutation authority, provider completion into App success, or App-domain interpretation into a competing final application outcome.**
