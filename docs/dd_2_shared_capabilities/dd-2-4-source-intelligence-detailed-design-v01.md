@@ -20,23 +20,7 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state distinctions and evidence model by which AppManager obtains read-only intelligence about source resources.
-
-The governing rule is:
-
-> **Source Intelligence observes and describes source; it does not decide or apply source mutation.**
-
-A second rule follows:
-
-> **Recognition produces evidence about source structure. Recognition does not grant application authority, managed scope, target eligibility or transformation approval.**
-
-A third rule is:
-
-> **Provider-native parser, scanner, compiler or language-service representations remain below the Source Intelligence boundary. Shared consumers receive AppManager-oriented structural facts.**
-
-Source Intelligence therefore forms the read-only analytical stage between bounded resource access and source-aware planning, transformation, documentation, quality, Nuxt and other application capabilities.
-
----
+Source Intelligence provides snapshot-bound, read-only source analysis between resource acquisition and the consumers that need structural facts. Its requests specify analytical purpose; its results retain locations, support, ambiguity and provenance so transformation, documentation and domain workflows can use exactly the evidence established. Repository context has the optional composition defined in §7.4.
 
 ## 2. Scope
 
@@ -1022,36 +1006,7 @@ Core Source Intelligence conformance tests should operate against immutable sour
 
 ## 38. Conformance Invariants
 
-A conforming DD-2.4 implementation shall preserve all of the following:
-
-1. Source Intelligence is read-only with respect to analyzed source.
-2. Recognition does not grant mutation authority.
-3. Recognition does not establish managed scope.
-4. Structural facts are bound to the analyzed source state where freshness matters.
-5. File extension is evidence, not universal semantic truth.
-6. Unsupported source is explicit.
-7. Unsupported fact class is distinguishable from unsupported source kind where material.
-8. Absence of a requested structure is distinguishable from analysis failure.
-9. Ambiguity is not silently resolved by incidental provider order.
-10. Partial reliable facts are not automatically discarded.
-11. Provider-native AST/CST/token/compiler objects remain below the shared boundary.
-12. Scanner tokenization is not the universal Source Intelligence contract.
-13. Structural location does not grant edit authority.
-14. Metadata recognition does not inject or repair metadata.
-15. Configuration structure does not define effective configuration precedence.
-16. Documentation presence does not imply documentation quality or acceptance.
-17. Composite source preserves embedded-region containment and coordinates.
-18. Ordinary analysis does not execute project source.
-19. Analysis does not silently broaden to arbitrary external resources/dependencies.
-20. Cached facts are revision-bound.
-21. Equivalent Headless/TUI intent receives equivalent analysis semantics.
-22. Provider success is evidence, not final application success.
-23. Source Intelligence remains distinct from Source Transformation.
-24. Source Intelligence remains distinct from Documentation, Nuxt, Quality and AI application semantics.
-25. Known implementation limitations/defects do not become normative architecture.
-26. The capability boundary does not require one class, package, parser, process or runtime topology.
-
----
+Request/snapshot/recognition contracts (§§6–9), structural and embedded facts (§§10–17), provider/ambiguity behavior (§§18–20), and cache/security/collaboration contracts supply the conformance obligations. The testability section exercises them without consequential project mutation.
 
 ## 39. Traceability Summary
 
@@ -1090,19 +1045,4 @@ Implementation planning shall reconcile the current scanner, strategy, code-serv
 
 ## 41. Final Design Position
 
-The permanent Version 1 position is:
-
-> **Source Intelligence owns read-only recognition and normalized structural facts about source. It does not own transformation intent, source mutation, managed scope or application acceptance.**
-
-This preserves the root architecture's staged source model:
-
-```text
-recognition
-    -> structural facts
-    -> transformation strategy/planning
-    -> bounded transformation
-    -> source-level validation
-    -> application acceptance
-```
-
-The next shared capability, DD-2.5 Source Transformation, may therefore rely on a stable analytical boundary without inheriting scanner-, parser-, regex-, AST- or implementation-specific authority.
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.

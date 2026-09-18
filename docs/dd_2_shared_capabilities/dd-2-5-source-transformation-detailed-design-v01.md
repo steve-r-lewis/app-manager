@@ -20,23 +20,7 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state distinctions, execution sequencing and evidence model by which AppManager plans, applies and validates bounded changes to existing source.
-
-The governing rule is:
-
-> **Source Transformation applies only an approved bounded transformation plan; it does not invent application intent, managed scope, authorization or final application acceptance.**
-
-A second governing rule is:
-
-> **Recognition, planning, approval, mutation, source-level validation and application-level acceptance are distinct stages and must remain distinguishable.**
-
-A third governing rule is:
-
-> **A technically applied edit is not automatically a valid transformation, and a source-valid transformation is not automatically an accepted AppManager outcome.**
-
-Source Transformation therefore owns the controlled bridge between read-only source intelligence and consequential resource mutation while preserving Application Engine authority.
-
----
+Source Transformation connects source-aware intent to bounded edit planning, application and validation. The plan, edit, precondition and preservation models make the intended source change reviewable; execution records actual effects before evaluating source validity. Application interpretation then uses [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 ## 2. Scope
 
@@ -1285,43 +1269,7 @@ Provider/Source Transformation tests shall establish planning, mutation and sour
 
 ## 44. Conformance Invariants
 
-A conforming DD-2.5 implementation shall preserve all of the following:
-
-1. Transformation intent originates from an authoritative owning use case.
-2. Recognition alone does not authorize mutation.
-3. Consequential source changes are represented by a bounded plan before execution.
-4. Plan construction does not itself mutate source.
-5. Plan targets cannot exceed upstream managed scope/authority.
-6. Planned edits preserve semantic traceability above provider-native patches.
-7. Approval, where required, binds to the material plan/intent/scope.
-8. Material plan change requires approval re-evaluation.
-9. Preview derives from the same plan intended for execution.
-10. Dry run does not intentionally persist mutation.
-11. Source freshness/preconditions are checked before consequential execution.
-12. Stale plans do not blindly overwrite newer source.
-13. Transformation mechanisms do not opportunistically broaden edits.
-14. Unrelated user-authored source is preserved wherever practical.
-15. Generation and mutation remain distinct.
-16. Whole-file regeneration is not the default mutation mechanism where a bounded edit is safe.
-17. Successful resource write is not source-level validation.
-18. Source-level validation checks the intended structural effect where required.
-19. Source-valid does not equal final application-accepted.
-20. Provider/tool success does not equal AppManager success.
-21. Multi-target atomicity is never implied without a real guarantee.
-22. Partial effects are preserved in evidence.
-23. Indeterminate state is distinct from unchanged state.
-24. Cancellation does not imply rollback.
-25. Recovery information is evidence, not universal rollback guarantee.
-26. Configuration precedence remains under Configuration Resolution.
-27. Ownership classification remains upstream.
-28. AI proposals follow the normal planning/approval/validation path.
-29. External process results are normalized before transformation interpretation.
-30. Repository state does not grant mutation authority.
-31. Provider-native AST/CST/text-edit/SDK objects remain below the shared boundary.
-32. Current implementation structure does not define permanent architecture.
-33. The capability boundary does not require one class, package, library, process or runtime topology.
-
----
+The plan/edit/precondition models (§§9–11), preservation and generation boundaries, preview/approval/freshness contracts, execution/validation states and recovery provisions form the review path. Provider replacement and testability obligations validate those local guarantees; the Functional bindings identify inherited obligations.
 
 ## 45. Traceability Summary
 
@@ -1374,22 +1322,4 @@ Implementation planning shall reconcile current `codeService`, strategy classes,
 
 ## 47. Final Design Position
 
-The permanent Version 1 position is:
-
-> **Source Transformation owns bounded transformation planning, approved source mutation, source-level validation and transformation evidence; application intent, scope, authorization and final acceptance remain above it.**
-
-The canonical staged model is:
-
-```text
-Source Intelligence recognition/facts
-    -> AppManager transformation intent
-    -> bounded transformation plan
-    -> policy/scope/approval
-    -> stale-source verification
-    -> bounded mutation
-    -> actual-effect recording
-    -> source-level validation
-    -> application-level acceptance
-```
-
-This ensures AppManager can evolve from current regex/string-oriented transformation mechanisms toward richer AST/CST/language-service providers where useful without changing the architectural authority model or sacrificing preservation, reviewability, stale-state safety and outcome truthfulness.
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.

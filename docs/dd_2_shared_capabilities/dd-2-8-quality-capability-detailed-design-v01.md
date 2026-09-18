@@ -18,21 +18,7 @@
 
 ## 1. Purpose
 
-This specification defines the shared Quality Capability boundary used to recognize, execute and normalize bounded quality checks and to evaluate explicitly supplied quality criteria without allowing test runners, linters, type checkers, coverage engines, validators, package scripts or CI systems to acquire AppManager application authority.
-
-The governing rules are:
-
-> **A quality provider produces technical execution evidence, findings and measurements; AppManager determines what that evidence means for the requested quality intent and any applicable quality gate.**
-
-> **Quality-check execution is non-source-mutating by default. Provider support for autofix or other mutation does not grant mutation authority.**
-
-> **A completed provider process is not equivalent to a passing quality check, and a passing quality check is not automatically equivalent to a passing quality gate.**
-
-> **Quality Capability does not own CI/CD merely because quality checks are commonly executed by CI.**
-
-The capability supplies stable internal semantics beneath Quality-domain use cases and other authorized workflows that consume quality evidence.
-
----
+Quality Capability recognizes and executes bounded checks, normalizes findings/measurements and evaluates supplied criteria. Its models distinguish technical execution, check status and gate evidence so a caller can interpret the requested quality intent. Requests apply the [non-mutating default](../functional/quality-functional-specification-v01.md#fr-qual-004).
 
 ## 2. Scope
 
@@ -86,13 +72,16 @@ Quality Capability shall not own:
 
 <a id="dd-qualcap-001"></a>
 
-**DD-QUALCAP-001 — Delegated execution remains subordinate**  
-Quality Capability shall execute only bounded quality work selected by an authoritative caller and shall not invent application intent, managed scope, authorization or unrelated workflow continuation.
+**DD-QUALCAP-001 — Delegated execution remains subordinate**
+
+Delegated Quality requests follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qualcap-002"></a>
 
-**DD-QUALCAP-002 — Provider evidence is not application authority**  
-Provider-native exit status, stdout, stderr, reports, exceptions and UI state shall remain technical evidence until normalized and interpreted under the requested quality semantics.
+**DD-QUALCAP-002 — Provider evidence is not application authority**
+
+Provider exit/output/report/UI evidence uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
 
 ---
 
@@ -130,13 +119,16 @@ Application Engine / owning Quality use case
 
 <a id="dd-qualcap-003"></a>
 
-**DD-QUALCAP-003 — Capability boundary is not the Quality domain**  
-The shared capability may be consumed by Quality-domain use cases or other authorized workflows without transferring ownership of those workflows.
+**DD-QUALCAP-003 — Capability boundary is not the Quality domain**
+
+Quality Capability consumption by other workflows follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qualcap-004"></a>
 
-**DD-QUALCAP-004 — No upward workflow authority**  
-A provider or Quality Capability implementation shall not trigger build, Git, deployment, source mutation or unrelated AppManager commands merely because a quality result suggests such an action.
+**DD-QUALCAP-004 — No upward workflow authority**
+
+Suggested build/Git/deploy/mutation follow-ons follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
 
 ---
 
@@ -196,8 +188,9 @@ Recognizing that a quality capability exists shall not execute the check or esta
 
 <a id="dd-qualcap-009"></a>
 
-**DD-QUALCAP-009 — Recognition does not establish scope**  
-A discoverable script, configuration file, executable or test directory does not make a target managed, selected or authorized.
+**DD-QUALCAP-009 — Recognition does not establish scope**
+
+Discovered quality scripts, tools and test directories follows [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
 <a id="dd-qualcap-010"></a>
 
@@ -217,8 +210,9 @@ Provider selection shall consume explicit check requirements and governed effect
 
 <a id="dd-qualcap-012"></a>
 
-**DD-QUALCAP-012 — Governed provider inputs**  
-Quality Capability shall consume DD-1.4 effective configuration and caller-supplied constraints rather than independently establishing precedence from package scripts, environment variables, provider defaults or registry order.
+**DD-QUALCAP-012 — Governed provider inputs**
+
+Quality provider policy consumes [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) and resolved caller constraints.
 
 <a id="dd-qualcap-013"></a>
 
@@ -260,8 +254,9 @@ Provider-specific working-directory, project or include-pattern mechanics shall 
 
 <a id="dd-qualcap-017"></a>
 
-**DD-QUALCAP-017 — Headless requests are deterministic**  
-A complete Headless quality request shall not require interactive provider, target or check selection.
+**DD-QUALCAP-017 — Headless requests are deterministic**
+
+Complete non-interactive requests use [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020); capability selection ambiguity is returned to the caller.
 
 <a id="dd-qualcap-018"></a>
 
@@ -281,18 +276,22 @@ Launch success, exit code, signal, timeout and captured output shall be interpre
 
 <a id="dd-qualcap-020"></a>
 
-**DD-QUALCAP-020 — Non-zero is not one universal meaning**  
-A non-zero provider completion may represent quality findings, failed tests, invalid invocation, infrastructure failure or another provider-defined state and shall be normalized accordingly.
+**DD-QUALCAP-020 — Non-zero is not one universal meaning**
+
+Provider non-zero completion, including findings versus infrastructure failure follows [DD-QUALCAP-019](#dd-qualcap-019).
 
 <a id="dd-qualcap-021"></a>
 
-**DD-QUALCAP-021 — Zero is not sufficient for gate success**  
-A provider's successful technical completion shall not bypass findings interpretation, coverage thresholds, required-check policy or gate evaluation.
+**DD-QUALCAP-021 — Zero is not sufficient for gate success**
+
+Provider completion before supplied criteria evaluation follows [DD-QUALCAP-050](#dd-qualcap-050).
 
 <a id="dd-qualcap-022"></a>
 
-**DD-QUALCAP-022 — Shell semantics remain explicit**  
-Quality provider invocation shall preserve DD-2.2 executable/argument/shell boundaries and shall not silently escalate to shell interpretation for convenience.
+**DD-QUALCAP-022 — Shell semantics remain explicit**
+
+Provider launch applies [DD-2.2 direct/shell boundaries](dd-2-2-process-execution-detailed-design-v01.md#_8-direct-execution-and-shell-boundary).
+
 
 ---
 
@@ -370,8 +369,10 @@ Multi-target and multi-check execution shall retain enough identity to attribute
 
 <a id="dd-qualcap-028"></a>
 
-**DD-QUALCAP-028 — Diagnostics are bounded**  
-Normalization shall avoid unnecessarily copying unbounded provider output, protected configuration or sensitive project content into application diagnostics.
+**DD-QUALCAP-028 — Diagnostics are bounded**
+
+Quality evidence copied to diagnostics uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
 
 ---
 
@@ -465,8 +466,9 @@ Coverage evidence shall identify the target/scope sufficiently to prevent partia
 
 <a id="dd-qualcap-040"></a>
 
-**DD-QUALCAP-040 — Lint is non-mutating by default**  
-Ordinary lint requests shall not enable provider autofix or write modes.
+**DD-QUALCAP-040 — Lint is non-mutating by default**
+
+Ordinary lint applies [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004).
 
 <a id="dd-qualcap-041"></a>
 
@@ -475,13 +477,16 @@ Where provider structure permits, lint rule identity, severity, resource/locatio
 
 <a id="dd-qualcap-042"></a>
 
-**DD-QUALCAP-042 — Warning interpretation remains policy**  
-Warnings remain findings; whether they fail a check or gate is determined by the applicable Quality semantics/policy rather than universal provider severity assumptions.
+**DD-QUALCAP-042 — Warning interpretation remains policy**
+
+Lint warning significance follows [DD-QUALCAP-026](#dd-qualcap-026).
 
 <a id="dd-qualcap-043"></a>
 
-**DD-QUALCAP-043 — Autofix is outside ordinary Quality execution**  
-A provider's ability to fix findings shall not be exposed as an implicit side effect. Any approved mutating workflow shall use explicit Source Transformation authority.
+**DD-QUALCAP-043 — Autofix is outside ordinary Quality execution**
+
+Autofix is a separate authorized source-change path under [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture); ordinary lint retains DD-QUALCAP-040.
+
 
 ---
 
@@ -499,8 +504,10 @@ Type errors shall remain distinguishable from inability to launch, configure or 
 
 <a id="dd-qualcap-046"></a>
 
-**DD-QUALCAP-046 — Type-check scope fidelity**  
-Provider project/configuration mechanics shall not silently broaden the requested managed target without the owning use case authorizing the broader semantics.
+**DD-QUALCAP-046 — Type-check scope fidelity**
+
+Type-provider project/include mechanics follows [DD-QUALCAP-016](#dd-qualcap-016).
+
 
 ---
 
@@ -513,13 +520,16 @@ Quality Capability may support read-only validation whose primary semantics are 
 
 <a id="dd-qualcap-048"></a>
 
-**DD-QUALCAP-048 — Domain validation retains ownership**  
-Nuxt, Docs, Source Transformation or other domain-specific validation does not become Quality-owned merely because it uses similar provider mechanics.
+**DD-QUALCAP-048 — Domain validation retains ownership**
+
+Similarly implemented Nuxt/Docs/transformation validation follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qualcap-049"></a>
 
-**DD-QUALCAP-049 — Post-transformation validation remains DD-2.5**  
-Source-level validation required to establish a transformation's validity remains part of Source Transformation even when the same tool can also be invoked as an independent Quality check.
+**DD-QUALCAP-049 — Post-transformation validation remains DD-2.5**
+
+Transformation validation uses [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048); using the same tool for an independent Quality check does not change that owner.
+
 
 ---
 
@@ -589,8 +599,10 @@ When fail-fast, cancellation or failure prevents later checks from running, they
 
 <a id="dd-qualcap-059"></a>
 
-**DD-QUALCAP-059 — Aggregation preserves components**  
-Composite results shall retain per-check and per-target evidence rather than replacing it with only one aggregate Boolean.
+**DD-QUALCAP-059 — Aggregation preserves components**
+
+Per-target/per-check identity in composite evidence follows [DD-QUALCAP-027](#dd-qualcap-027).
+
 
 ---
 
@@ -598,8 +610,9 @@ Composite results shall retain per-check and per-target evidence rather than rep
 
 <a id="dd-qualcap-060"></a>
 
-**DD-QUALCAP-060 — Targets remain individually attributable**  
-Checks spanning root/layers/other approved managed units shall retain per-target identity and status.
+**DD-QUALCAP-060 — Targets remain individually attributable**
+
+Root/layer/unit identity in multi-target evidence follows [DD-QUALCAP-027](#dd-qualcap-027).
 
 <a id="dd-qualcap-061"></a>
 
@@ -608,13 +621,16 @@ Overlapping target selections shall not accidentally execute the same logical ta
 
 <a id="dd-qualcap-062"></a>
 
-**DD-QUALCAP-062 — Unsupported target is not passing**  
-A managed target lacking a requested capability shall be represented as unsupported/unavailable according to the contract, not as passed.
+**DD-QUALCAP-062 — Unsupported target is not passing**
+
+Unsupported managed targets versus passing checks follows [DD-QUALCAP-024](#dd-qualcap-024).
 
 <a id="dd-qualcap-063"></a>
 
-**DD-QUALCAP-063 — Mixed targets produce mixed evidence**  
-A multi-target run with different target outcomes shall preserve the mixture for DD-1.2/Application Engine interpretation.
+**DD-QUALCAP-063 — Mixed targets produce mixed evidence**
+
+Mixed managed-target outcomes uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
 
 ---
 
@@ -627,18 +643,21 @@ Progress/events should identify check/target lifecycle where useful without maki
 
 <a id="dd-qualcap-065"></a>
 
-**DD-QUALCAP-065 — Cancellation propagates**  
-DD-1 cancellation shall stop future checks and propagate to active provider execution where supported.
+**DD-QUALCAP-065 — Cancellation propagates**
+
+Stop future checks and propagate supported active-provider cancellation under [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 <a id="dd-qualcap-066"></a>
 
-**DD-QUALCAP-066 — Completed checks remain completed**  
-Cancellation shall not erase quality evidence already established before cancellation.
+**DD-QUALCAP-066 — Completed checks remain completed**
+
+Previously established quality evidence after cancellation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 <a id="dd-qualcap-067"></a>
 
-**DD-QUALCAP-067 — Cancellation is not pass**  
-An incomplete required check caused by cancellation shall not become a passing check merely because no failure was observed.
+**DD-QUALCAP-067 — Cancellation is not pass**
+
+Cancelled required checks without observed failure follows [DD-QUALCAP-024](#dd-qualcap-024).
 
 <a id="dd-qualcap-068"></a>
 
@@ -653,8 +672,9 @@ Quality providers may generate coverage reports, test reports, snapshots, caches
 
 <a id="dd-qualcap-069"></a>
 
-**DD-QUALCAP-069 — Artefact effects are explicit**  
-Known generated artefacts that materially affect the managed project/worktree or downstream interpretation shall be represented as provider effects/evidence.
+**DD-QUALCAP-069 — Artefact effects are explicit**
+
+Known material report/cache artefacts uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
 
 <a id="dd-qualcap-070"></a>
 
@@ -668,8 +688,10 @@ A recognized quality report or cache shall remain semantically distinct from pro
 
 <a id="dd-qualcap-072"></a>
 
-**DD-QUALCAP-072 — Cleanup is truthful**  
-Quality Capability shall not claim generated artefacts were removed or rolled back unless cleanup actually occurred.
+**DD-QUALCAP-072 — Cleanup is truthful**
+
+Claims that generated artefacts were cleaned up uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -717,8 +739,9 @@ This design does not claim filesystem/repository snapshot isolation unless an im
 
 <a id="dd-qualcap-079"></a>
 
-**DD-QUALCAP-079 — CI is an adapter/orchestrator context**  
-Execution from CI does not alter the semantic Quality contract or transfer complete CI/CD ownership to Quality Capability.
+**DD-QUALCAP-079 — CI is an adapter/orchestrator context**
+
+CI callers apply [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence); this capability does not own complete CI/CD workflows.
 
 <a id="dd-qualcap-080"></a>
 
@@ -727,13 +750,16 @@ Git, deployment or other workflows may consume normalized Quality/gate evidence,
 
 <a id="dd-qualcap-081"></a>
 
-**DD-QUALCAP-081 — Quality does not push or deploy**  
-Quality Capability shall not perform repository push or deployment as an implied consequence of a passing gate.
+**DD-QUALCAP-081 — Quality does not push or deploy**
+
+Push/deployment follow-ons after a gate apply [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
 
 <a id="dd-qualcap-082"></a>
 
-**DD-QUALCAP-082 — Adapter equivalence**  
-TUI, Headless, CI, IDE and future adapters expressing equivalent Quality intent/policy shall consume equivalent capability semantics.
+**DD-QUALCAP-082 — Adapter equivalence**
+
+Equivalent Quality intent across TUI, Headless, CI and IDE callers follows [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
 
 ---
 
@@ -748,8 +774,10 @@ DD-2.7 output may provide explanation, triage or proposed remediation, but it sh
 
 <a id="dd-qualcap-084"></a>
 
-**DD-QUALCAP-084 — AI cannot silently mutate remediation**  
-AI-generated remediation remains proposal/evidence and must route through an authorized owning use case and DD-2.5 before source mutation.
+**DD-QUALCAP-084 — AI cannot silently mutate remediation**
+
+AI remediation proposals follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -771,8 +799,9 @@ A Quality provider may own technical mechanics including:
 
 <a id="dd-qualcap-085"></a>
 
-**DD-QUALCAP-085 — Provider normalization**  
-Provider-native process/results shall be translated into the shared Quality Capability contracts before application interpretation.
+**DD-QUALCAP-085 — Provider normalization**
+
+Quality-provider result translation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-qualcap-086"></a>
 
@@ -781,13 +810,16 @@ A provider unable to satisfy a requested category, scope, report or UI contract 
 
 <a id="dd-qualcap-087"></a>
 
-**DD-QUALCAP-087 — Provider replaceability**  
-Callers shall not require Vitest, ESLint, TypeScript, `vue-tsc`, a particular coverage engine or provider-native data types to consume normalized Quality evidence.
+**DD-QUALCAP-087 — Provider replaceability**
+
+Toolchain-native data in consumer contracts follows [DD-QUALCAP-015](#dd-qualcap-015).
 
 <a id="dd-qualcap-088"></a>
 
-**DD-QUALCAP-088 — No universal provider framework**  
-Common provider naming/patterns do not require a universal executable plugin framework, common base class or cross-runtime protocol in Version 1.
+**DD-QUALCAP-088 — No universal provider framework**
+
+Quality implementation topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); recurring providers do not require a universal plugin system, base class or cross-runtime protocol.
+
 
 ---
 
@@ -797,18 +829,22 @@ Quality Capability supplies normalized check/gate evidence to the owning use cas
 
 <a id="dd-qualcap-089"></a>
 
-**DD-QUALCAP-089 — Check pass is not automatically invocation success**  
-A passing bounded check contributes evidence; the owning use case determines final AppManager outcome when additional stages or criteria exist.
+**DD-QUALCAP-089 — Check pass is not automatically invocation success**
+
+Passing bounded checks in larger workflows follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 <a id="dd-qualcap-090"></a>
 
-**DD-QUALCAP-090 — Gate result is application-relevant evidence**  
-A Quality-domain gate may itself represent the primary requested Quality result, but higher-level workflows consuming that gate retain authority over their own continuation and final outcome.
+**DD-QUALCAP-090 — Gate result is application-relevant evidence**
+
+Gate results consumed by a larger workflow follows [DD-QUALCAP-080](#dd-qualcap-080).
 
 <a id="dd-qualcap-091"></a>
 
-**DD-QUALCAP-091 — Partial/mixed evidence is preserved**  
-Mixed target/check states shall be supplied to DD-1.2 rather than collapsed prematurely.
+**DD-QUALCAP-091 — Partial/mixed evidence is preserved**
+
+Mixed target/check states uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
 
 ---
 
@@ -841,8 +877,10 @@ These facts do not make the following permanent architecture:
 
 <a id="dd-qualcap-092"></a>
 
-**DD-QUALCAP-092 — Implementation converges on design**  
-Future Implementation Specifications shall adapt current quality scripts/providers/process mechanics to these contracts rather than promoting incidental implementation details into Detailed Design authority.
+**DD-QUALCAP-092 — Implementation converges on design**
+
+Adapt concrete quality scripts/providers under the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
@@ -864,13 +902,16 @@ The capability shall protect against at least:
 
 <a id="dd-qualcap-093"></a>
 
-**DD-QUALCAP-093 — Provider/report content is untrusted evidence**  
-Provider output and report content shall not acquire authority to redefine AppManager policy, scope, commands or configuration.
+**DD-QUALCAP-093 — Provider/report content is untrusted evidence**
+
+Policy/command/configuration assertions in provider reports follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-qualcap-094"></a>
 
-**DD-QUALCAP-094 — Target-derived arguments are bounded**  
-Paths, filters, test names and other target-derived provider inputs shall remain structured/bounded according to Process Execution and provider contracts rather than becoming unchecked shell fragments.
+**DD-QUALCAP-094 — Target-derived arguments are bounded**
+
+Target-derived paths, filters and test names use [DD-2.2 argument structure](dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014) and the provider request contract.
+
 
 ---
 
@@ -919,46 +960,7 @@ Integration tests for Vitest or other concrete providers may verify command/repo
 
 ## 32. Conformance Invariants
 
-A conforming DD-2.8 implementation shall preserve all of the following:
-
-1. Quality Capability is a shared technical capability beneath application authority.
-2. Quality provider execution does not transfer application authority.
-3. Provider/process completion is distinct from quality pass/fail.
-4. Quality check status is distinct from quality-gate status.
-5. Semantic check identity is independent of package-script/executable identity.
-6. Capability recognition does not execute checks.
-7. Recognition/discovery does not establish managed scope or authorization.
-8. Availability is check- and target-relative.
-9. No-tests is distinguishable from provider unavailable and tests passed where reliably knowable.
-10. Capabilities consume governed effective configuration.
-11. Provider ambiguity is not guessed where semantics differ materially.
-12. Provider-native process/report models remain below normalized contracts.
-13. Non-zero provider completion has provider/check-specific meaning.
-14. Zero provider completion does not bypass findings or gate evaluation.
-15. Quality results preserve per-check and per-target identity.
-16. Unavailable, incomplete, indeterminate and cancelled do not silently become pass.
-17. Coverage measurement and threshold satisfaction are distinct.
-18. Missing coverage metrics are not invented.
-19. Lint is non-mutating by default.
-20. Provider autofix does not grant source-mutation authority.
-21. Type findings are distinct from provider infrastructure failure.
-22. Domain-specific validation retains its owning-domain semantics.
-23. Source Transformation validation remains DD-2.5 when transformation validity is the primary concern.
-24. Gate criteria and thresholds are explicit/effective policy, not provider inventions.
-25. Required and advisory criteria remain distinct.
-26. Composite ordering and fail-fast/continue behavior are governed inputs.
-27. Composite results preserve component evidence.
-28. Cancellation does not erase completed checks or imply pass for incomplete work.
-29. Generated quality artefacts do not authorize unrelated mutation.
-30. Concurrency/interference is handled deliberately where material.
-31. Quality evidence is contextual to the state actually evaluated.
-32. CI invocation does not transfer CI/CD ownership to Quality.
-33. A passing gate does not itself authorize Git push or deployment.
-34. AI explanation does not replace provider findings or gate policy.
-35. Current Vitest/package-script/process implementation is evidence, not permanent architecture.
-36. No universal provider/plugin framework is created from implementation naming similarity.
-
----
+Review check identity/recognition (§§5–6), execution/results (§§7–11), test/UI/coverage/lint/type/validation semantics (§§12–17), supplied criteria/composition (§§18–20), and effect/freshness/provider obligations. The testability section verifies these distinctions with controlled evidence.
 
 ## 33. Traceability Summary
 
@@ -1028,31 +1030,4 @@ These belong to Implementation Specification, effective configuration, provider 
 
 ## 36. Final Design Position
 
-The permanent Version 1 position is:
-
-> **Quality Capability owns bounded quality-check recognition/execution, normalized findings and measurements, explicit criterion evaluation and quality-gate evidence; application scope, cross-domain workflow authority, source mutation and final higher-level acceptance remain outside the capability.**
-
-The canonical model is:
-
-```text
-owning Quality use case / approved scope / effective policy
-                    |
-                    v
-             Quality Capability
-                    |
-        recognize bounded check/provider
-        execute through provider boundary
-        normalize technical evidence
-        interpret check findings/measurements
-        evaluate explicit criteria/gate
-                    |
-                    v
-        normalized Quality evidence
-                    |
-                    v
-     Application Engine / owning workflow
-```
-
-The central non-drift rule is:
-
-> **A tool may report what happened during a quality check; it does not decide what AppManager is allowed to do next.**
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.

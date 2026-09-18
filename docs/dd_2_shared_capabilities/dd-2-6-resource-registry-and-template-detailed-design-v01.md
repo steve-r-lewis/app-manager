@@ -18,23 +18,7 @@
 
 ## 1. Purpose
 
-This specification defines how AppManager represents, discovers, validates, resolves and renders declarative resources and reusable templates without allowing registries or templates to acquire application authority.
-
-The governing rules are:
-
-> **A registry describes available resources; registration does not grant application authority, managed scope, mutation authority or execution authority.**
-
-> **A template renders bounded proposed content from validated inputs; rendering does not authorize creation, replacement or mutation of a target resource.**
-
-> **Template classes may share registry infrastructure without being forced into one interchangeable schema, lifecycle or domain meaning.**
-
-A fourth rule is equally important:
-
-> **Declarative extension is not executable plugin extension. Version 1 registries shall not become a general code-loading or arbitrary execution framework.**
-
-The capability therefore supplies reusable resource identity, metadata, validation, resolution and rendering beneath domain use cases. The owning use case remains responsible for why a template is used, which target is in scope, whether an effect is authorized, and whether the resulting application outcome is accepted.
-
----
+Resource Registry and Template supplies declarative item discovery, validation, exact resolution, parameter binding and rendering. Separate registry classes let callers reuse these mechanics while retaining each class's identity, compatibility and domain meaning. Rendered proposals feed the caller's creation or transformation workflow under [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
 
 ## 2. Scope
 
@@ -146,8 +130,9 @@ The capability is therefore upstream of resource effects.
 
 <a id="dd-reg-001"></a>
 
-**DD-REG-001 — Registration is descriptive**  
-Registration shall establish discoverability and metadata, not application authority.
+**DD-REG-001 — Registration is descriptive**
+
+Registry discovery/metadata versus application authority follows [Design](../appmanager-design-specification-v01.md#_6-9-registries).
 
 <a id="dd-reg-002"></a>
 
@@ -156,8 +141,10 @@ Rendering shall produce bounded output/evidence and shall not itself persist the
 
 <a id="dd-reg-003"></a>
 
-**DD-REG-003 — Generation/mutation boundary**  
-When rendered content is intended for a new target, the owning use case may delegate creation through Resource Access. When a target already exists and replacement or modification is intended, the operation shall enter the applicable Source Transformation or explicit replacement path rather than treating rendering as overwrite authority.
+**DD-REG-003 — Generation/mutation boundary**
+
+Rendered output destined for new or existing resources follows [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
 
 ---
 
@@ -241,8 +228,9 @@ Registry identity shall not be defined solely by a current filesystem path, modu
 
 <a id="dd-reg-009"></a>
 
-**DD-REG-009 — Registry source is provenance**  
-A registry source path/URI/provider identifies where registry data came from; it does not define application authority over targets produced from that registry.
+**DD-REG-009 — Registry source is provenance**
+
+Registry source locations and provider identity follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-reg-010"></a>
 
@@ -379,8 +367,9 @@ A malformed registry shall not silently expose unvalidated items as normal usabl
 
 <a id="dd-reg-023"></a>
 
-**DD-REG-023 — Validation diagnostics**  
-Registry validation failures shall be normalized and identify the registry/class/relevant location without requiring callers to inspect parser-native exceptions.
+**DD-REG-023 — Validation diagnostics**
+
+Registry parser failures, attributed to registry/class/location follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-reg-024"></a>
 
@@ -418,8 +407,10 @@ A well-formed item using a newer/unsupported schema or renderer shall be disting
 
 <a id="dd-reg-027"></a>
 
-**DD-REG-027 — Validation does not grant use**  
-A valid item remains subject to owning-use-case applicability, policy and authorization.
+**DD-REG-027 — Validation does not grant use**
+
+Application acceptance of a validated registry item follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
 
 ---
 
@@ -510,8 +501,9 @@ The binding responsibility does not determine global precedence among those sour
 
 <a id="dd-reg-036"></a>
 
-**DD-REG-036 — Effective configuration remains authoritative**  
-Where a template parameter depends on AppManager configuration, the capability shall consume the resolved effective value supplied through DD-1.4 rather than reading arbitrary environment/settings sources to invent competing precedence.
+**DD-REG-036 — Effective configuration remains authoritative**
+
+Configuration-dependent parameters consume [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result).
 
 <a id="dd-reg-037"></a>
 
@@ -520,8 +512,10 @@ Clock/time, generated identifiers or other derived values that affect output sha
 
 <a id="dd-reg-038"></a>
 
-**DD-REG-038 — Managed-project facts are context, not mutation authority**  
-Binding a project/layer/repository name into output does not authorize writing to that project/layer/repository.
+**DD-REG-038 — Managed-project facts are context, not mutation authority**
+
+Project/layer/repository parameters bound into output follows [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
 
 ---
 
@@ -546,8 +540,10 @@ Variants may declare independent compatibility constraints and parameter refinem
 
 <a id="dd-reg-042"></a>
 
-**DD-REG-042 — Variant does not redefine scope**  
-Selecting a `layer` or similar variant does not establish which managed layer is authorized as the target.
+**DD-REG-042 — Variant does not redefine scope**
+
+Layer-variant selection versus managed-target identity follows [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
 
 ---
 
@@ -580,13 +576,15 @@ A normalized render result shall be capable of representing:
 
 <a id="dd-reg-043"></a>
 
-**DD-REG-043 — Renderer is subordinate**  
-The renderer shall execute the selected template contract; it shall not invent a broader application workflow.
+**DD-REG-043 — Renderer is subordinate**
+
+Rendering the selected contract versus inventing a workflow follows [Design](../appmanager-design-specification-v01.md#_6-9-registries).
 
 <a id="dd-reg-044"></a>
 
-**DD-REG-044 — Render output is proposed content**  
-Rendered content is a generation result/proposal until the owning use case authorizes and applies a resource effect.
+**DD-REG-044 — Render output is proposed content**
+
+Rendered proposals before persistence uses [DD-REG-002](#dd-reg-002).
 
 <a id="dd-reg-045"></a>
 
@@ -613,8 +611,9 @@ Renderers shall not silently depend on current working directory, ambient proces
 
 <a id="dd-reg-047"></a>
 
-**DD-REG-047 — Controlled clock-derived content**  
-Templates that intentionally include current date/year/time may do so, but the value shall be supplied/recorded as a render input so preview, execution and tests can remain coherent.
+**DD-REG-047 — Controlled clock-derived content**
+
+Clock/date/year/time values used by templates uses [DD-REG-037](#dd-reg-037).
 
 <a id="dd-reg-048"></a>
 
@@ -644,8 +643,9 @@ A registry item shall not carry arbitrary executable code that AppManager loads 
 
 <a id="dd-reg-050"></a>
 
-**DD-REG-050 — Provider-native representations remain below boundary**  
-Template-engine ASTs, compiled template objects, function references, library exceptions and provider-specific objects shall not become the canonical shared result model.
+**DD-REG-050 — Provider-native representations remain below boundary**
+
+Renderer ASTs, functions and native result/error objects follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-reg-051"></a>
 
@@ -679,18 +679,22 @@ proposed new artefact content
 
 <a id="dd-reg-052"></a>
 
-**DD-REG-052 — Existing source is not a blank template target**  
-A renderer shall not overwrite existing user-authored content merely because it can generate a complete replacement.
+**DD-REG-052 — Existing source is not a blank template target**
+
+Generated replacements for authored resources follows [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
 
 <a id="dd-reg-053"></a>
 
-**DD-REG-053 — Template ownership is not target ownership**  
-AppManager owning a built-in template does not imply AppManager owns every target produced from it.
+**DD-REG-053 — Template ownership is not target ownership**
+
+Ownership of destinations produced from built-in templates follows [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
 <a id="dd-reg-054"></a>
 
-**DD-REG-054 — Generated-region scope**  
-If an owning use case establishes an AppManager-owned generated region within a larger file, later updates remain bounded by that ownership contract and DD-2.5; the template itself does not expand the region.
+**DD-REG-054 — Generated-region scope**
+
+Generated-region updates apply [FR-XFORM-047](../functional/source-transformation-functional-specification-v01.md#fr-xform-047) through Source Transformation.
+
 
 ---
 
@@ -705,8 +709,9 @@ A preview shall derive from the same template identity, variant, bound inputs an
 
 <a id="dd-reg-056"></a>
 
-**DD-REG-056 — Preview does not imply applicability**  
-Successful preview does not prove that the target is in scope, absent, writable or authorized for creation/replacement.
+**DD-REG-056 — Preview does not imply applicability**
+
+Render preview uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview) separately from the destination/safety checks of the owning use case.
 
 <a id="dd-reg-057"></a>
 
@@ -731,18 +736,22 @@ An added item shall be validated against its target registry class before being 
 
 <a id="dd-reg-060"></a>
 
-**DD-REG-060 — Exact deletion**  
-Deletion shall identify registry class, registry source where relevant and exact item identity/version; similarly named resources elsewhere shall remain unaffected.
+**DD-REG-060 — Exact deletion**
+
+Exact deletion across registry classes uses [DD-REG-013](#dd-reg-013).
 
 <a id="dd-reg-061"></a>
 
-**DD-REG-061 — Registry persistence uses shared resource semantics**  
-Persistent registry changes shall use DD-2.1 Resource Access and, where modifying structured existing source, the applicable DD-2.5 transformation/preservation semantics rather than ad hoc writes.
+**DD-REG-061 — Registry persistence uses shared resource semantics**
+
+Registry persistence delegates to [Resource Access](dd-2-1-resource-access-detailed-design-v01.md); structured existing-source changes follow [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture).
 
 <a id="dd-reg-062"></a>
 
-**DD-REG-062 — Settings does not acquire execution semantics**  
-Settings managing an AI/Nuxt/Docs template resource does not acquire the domain use-case semantics that later consume that resource.
+**DD-REG-062 — Settings does not acquire execution semantics**
+
+Settings management of templates consumed by other domains follows [Design](../appmanager-design-specification-v01.md#_6-9-registries).
+
 
 ---
 
@@ -768,8 +777,9 @@ An extension may register only into a registry class that explicitly permits ext
 
 <a id="dd-reg-064"></a>
 
-**DD-REG-064 — Extension cannot add arbitrary execution**  
-Declarative extension shall not introduce arbitrary executable hooks, shell commands, dynamically loaded project code or application-command dispatch.
+**DD-REG-064 — Extension cannot add arbitrary execution**
+
+Executable hooks, shell commands and project code in declarative extensions uses [DD-REG-049](#dd-reg-049).
 
 <a id="dd-reg-065"></a>
 
@@ -778,8 +788,10 @@ An extension shall not silently replace a built-in or higher-trust item with the
 
 <a id="dd-reg-066"></a>
 
-**DD-REG-066 — Extension does not broaden scope**  
-Registration of a template that mentions paths, commands, repositories or layers does not authorize those targets/effects.
+**DD-REG-066 — Extension does not broaden scope**
+
+Registered references to paths/commands/layers follows [Design](../appmanager-design-specification-v01.md#_6-9-registries).
+
 
 ---
 
@@ -864,8 +876,9 @@ A content reference shall identify an approved resource source and shall not per
 
 <a id="dd-reg-076"></a>
 
-**DD-REG-076 — Resource Access boundary**  
-Loading local registry/template content shall use DD-2.1 bounded resource access rather than granting registry loaders unrestricted filesystem authority.
+**DD-REG-076 — Resource Access boundary**
+
+Registry loaders use [DD-2.1 bounded reads](dd-2-1-resource-access-detailed-design-v01.md#dd-res-019) for local content.
 
 <a id="dd-reg-077"></a>
 
@@ -895,8 +908,10 @@ When a target resource requires serialization, format/encoding/newline/ordering 
 
 <a id="dd-reg-081"></a>
 
-**DD-REG-081 — Structured generation does not bypass transformation**  
-If structured output is intended to modify an existing structured resource, it shall enter DD-2.5 or an equivalent approved bounded mutation plan rather than replacing the resource by convenience.
+**DD-REG-081 — Structured generation does not bypass transformation**
+
+Structured output for existing-resource changes follows [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) through the approved transformation path.
+
 
 ---
 
@@ -924,8 +939,10 @@ Settings may manage declarative template resources and licence catalogue/resourc
 
 <a id="dd-reg-082"></a>
 
-**DD-REG-082 — Domain semantics remain above registry**  
-No registry item shall dispatch or define an AppManager domain workflow merely by being present in the registry.
+**DD-REG-082 — Domain semantics remain above registry**
+
+Registry presence versus domain-workflow dispatch follows [Design](../appmanager-design-specification-v01.md#_6-9-registries).
+
 
 ---
 
@@ -940,18 +957,22 @@ Licence catalogue resolution shall return an unambiguous supported licence ident
 
 <a id="dd-reg-084"></a>
 
-**DD-REG-084 — Licence text provenance**  
-Standard licence text shall retain authoritative/curated source provenance where required by provider policy.
+**DD-REG-084 — Licence text provenance**
+
+Standard licence text provenance uses [DD-REG-017](#dd-reg-017).
 
 <a id="dd-reg-085"></a>
 
-**DD-REG-085 — No legal recommendation semantics**  
-The registry may describe licence metadata but shall not claim that a licence is legally suitable for a project unless a separate approved product capability explicitly exists.
+**DD-REG-085 — No legal recommendation semantics**
+
+Claims about legal suitability of licence metadata uses [DD-REG-017](#dd-reg-017).
 
 <a id="dd-reg-086"></a>
 
-**DD-REG-086 — Licence creation remains a Settings/application effect**  
-Resolving/rendering licence text does not create the `LICENSE` resource or synchronize project metadata. Those are separately authorized effects owned by the Settings use case.
+**DD-REG-086 — Licence creation remains a Settings/application effect**
+
+Licence rendering uses [DD-REG-002](#dd-reg-002); LICENSE persistence and metadata coupling are [Settings-owned](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md).
+
 
 ---
 
@@ -966,13 +987,16 @@ Template text, descriptions, examples and variables shall be treated as data, no
 
 <a id="dd-reg-088"></a>
 
-**DD-REG-088 — AI prompt boundary**  
-If rendered/template content is supplied to AI, the AI capability shall apply its own context construction, trust labeling, minimization and sensitive-data controls.
+**DD-REG-088 — AI prompt boundary**
+
+Template content supplied to AI uses [DD-2.7 context/disclosure contracts](dd-2-7-ai-capability-detailed-design-v01.md).
 
 <a id="dd-reg-089"></a>
 
-**DD-REG-089 — AI cannot self-register authority**  
-AI-produced template/resource proposals shall not become registered or authoritative without the same validation and owning-use-case controls as non-AI additions.
+**DD-REG-089 — AI cannot self-register authority**
+
+AI-produced resource additions follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -992,13 +1016,16 @@ Where examples are required, they shall use clearly synthetic placeholders and s
 
 <a id="dd-reg-092"></a>
 
-**DD-REG-092 — Diagnostic minimization**  
-Registry/render diagnostics shall avoid reproducing full sensitive parameter values or unnecessary template content.
+**DD-REG-092 — Diagnostic minimization**
+
+Sensitive registry/render diagnostics uses [DD-REG-035](#dd-reg-035).
 
 <a id="dd-reg-093"></a>
 
-**DD-REG-093 — Provenance metadata excludes secrets**  
-Hashes, source identifiers and revision metadata may be recorded, but secret values shall not be included merely for reproducibility.
+**DD-REG-093 — Provenance metadata excludes secrets**
+
+Reproducibility metadata containing sensitive values uses [DD-REG-035](#dd-reg-035).
+
 
 ---
 
@@ -1031,8 +1058,9 @@ Normalized diagnostic categories should include, where relevant:
 
 <a id="dd-reg-094"></a>
 
-**DD-REG-094 — Provider errors are subordinate**  
-Parser/renderer/loader exceptions may be retained as bounded provider detail but shall not be the canonical diagnostic contract.
+**DD-REG-094 — Provider errors are subordinate**
+
+Loader/renderer/parser exception detail follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-reg-095"></a>
 
@@ -1041,8 +1069,10 @@ Diagnostics shall identify registry class and item identity where known.
 
 <a id="dd-reg-096"></a>
 
-**DD-REG-096 — No false application failure category**  
-A render failure may contribute to an application failure, but the capability shall not decide the owning use case's final outcome.
+**DD-REG-096 — No false application failure category**
+
+Render failures at application acceptance follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation).
+
 
 ---
 
@@ -1052,13 +1082,15 @@ Most built-in rendering should be fast, but loaders/renderers may eventually inv
 
 <a id="dd-reg-097"></a>
 
-**DD-REG-097 — Cancellation propagation**  
-Where meaningful, registry loading/rendering shall observe DD-1 cancellation linkage and stop further work as soon as safely practical.
+**DD-REG-097 — Cancellation propagation**
+
+Cancellable registry loading/rendering observes [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) at safe boundaries.
 
 <a id="dd-reg-098"></a>
 
-**DD-REG-098 — Cancellation does not imply target effects**  
-Because rendering is non-mutating, cancellation of rendering shall not be represented as target rollback. If an owning use case has already begun downstream resource effects, those effects are governed by the downstream capability/outcome contracts.
+**DD-REG-098 — Cancellation does not imply target effects**
+
+Rendering cancellation preserves the non-persistence boundary [DD-REG-002](#dd-reg-002); separately started target effects follow [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 <a id="dd-reg-099"></a>
 
@@ -1078,8 +1110,9 @@ Cached resolution/rendering shall be keyed by sufficient registry/template revis
 
 <a id="dd-reg-101"></a>
 
-**DD-REG-101 — Cache does not hide source change**  
-When freshness matters, a changed registry/template source shall invalidate or bypass stale cached results.
+**DD-REG-101 — Cache does not hide source change**
+
+Cache refresh after source revision changes uses [DD-REG-100](#dd-reg-100).
 
 <a id="dd-reg-102"></a>
 
@@ -1106,8 +1139,9 @@ A normalized registry/template capability result may contribute:
 
 <a id="dd-reg-103"></a>
 
-**DD-REG-103 — Capability evidence is not final outcome**  
-A successful render is technical/capability evidence. The Engine/owning use case decides whether the application intent was satisfied.
+**DD-REG-103 — Capability evidence is not final outcome**
+
+Application interpretation of a rendered result follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 <a id="dd-reg-104"></a>
 
@@ -1116,8 +1150,10 @@ Registry/template results shall preserve materially distinct states such as abse
 
 <a id="dd-reg-105"></a>
 
-**DD-REG-105 — Effects remain downstream**  
-Rendering evidence shall not claim a managed-project resource changed unless a downstream authorized capability actually performed and reported that effect.
+**DD-REG-105 — Effects remain downstream**
+
+Claims of downstream target mutation follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -1132,8 +1168,9 @@ Provider availability may distinguish:
 
 <a id="dd-reg-106"></a>
 
-**DD-REG-106 — Availability is not applicability**  
-An available renderer does not mean a template is valid for the current use case.
+**DD-REG-106 — Availability is not applicability**
+
+Renderer availability versus template applicability uses [DD-REG-021](#dd-reg-021).
 
 <a id="dd-reg-107"></a>
 
@@ -1142,8 +1179,10 @@ A registry may move from JSON to another storage representation, or a renderer f
 
 <a id="dd-reg-108"></a>
 
-**DD-REG-108 — No speculative transport abstraction**  
-ADR-0001 does not require a language-neutral RPC/protocol for registries/templates merely to preserve future runtime replaceability.
+**DD-REG-108 — No speculative transport abstraction**
+
+Registry/template topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); ADR-0001 does not require language-neutral RPC.
+
 
 ---
 
@@ -1186,8 +1225,9 @@ The following are **not** promoted automatically into permanent Detailed Design:
 
 <a id="dd-reg-109"></a>
 
-**DD-REG-109 — Implementation evidence cannot override registry-class boundaries**  
-The presence of one aggregate scaffolding repository shall not collapse licence, AI, Docs, Nuxt or other resource classes into one false universal schema.
+**DD-REG-109 — Implementation evidence cannot override registry-class boundaries**
+
+Shared aggregate scaffolding storage versus distinct registry-class schemas uses [DD-REG-005](#dd-reg-005).
 
 <a id="dd-reg-110"></a>
 
@@ -1211,8 +1251,9 @@ The capability shall protect against:
 
 <a id="dd-reg-111"></a>
 
-**DD-REG-111 — Registry data cannot command the Engine**  
-Declarative fields shall not dispatch application commands, invoke shell processes or bypass use-case policy.
+**DD-REG-111 — Registry data cannot command the Engine**
+
+Command or shell dispatch from declarative fields uses [DD-REG-049](#dd-reg-049).
 
 <a id="dd-reg-112"></a>
 
@@ -1221,8 +1262,10 @@ Loaders/renderers may enforce bounded size/depth/complexity limits and shall rep
 
 <a id="dd-reg-113"></a>
 
-**DD-REG-113 — Trust-sensitive overrides**  
-Lower-trust registry sources shall not silently override higher-trust built-in/curated resources unless an explicit registry-class policy permits it.
+**DD-REG-113 — Trust-sensitive overrides**
+
+Overrides from lower-trust sources uses [DD-REG-065](#dd-reg-065).
+
 
 ---
 
@@ -1288,40 +1331,7 @@ Use-case acceptance tests remain above this capability.
 
 ## 41. Conformance Invariants
 
-An implementation conforms only if all of the following remain true:
-
-1. registration does not grant application authority;
-2. rendering does not mutate managed-project targets;
-3. registry classes remain explicit;
-4. aggregate discovery does not imply one universal schema;
-5. registry/item identity is stable and not merely filename/path;
-6. duplicate/ambiguous identities are not guessed;
-7. provenance and compatibility are preserved;
-8. registry validation is side-effect free;
-9. item validation is class-specific;
-10. required template inputs are explicit;
-11. renderers do not invent private configuration precedence;
-12. variants do not establish managed target scope;
-13. render output is proposed/generated content, not authorization;
-14. suggested filenames/paths are not target authority;
-15. deterministic rendering avoids hidden ambient inputs;
-16. declarative extension is not arbitrary executable plugin extension;
-17. existing source is not treated as a blank generation target;
-18. template ownership does not imply target ownership;
-19. Settings registry management does not transfer domain execution semantics;
-20. external catalogue availability is evidence-based;
-21. licence resources preserve provenance and do not provide legal suitability decisions;
-22. AI/template content remains non-authoritative data;
-23. secret-bearing defaults are prohibited for reusable resources;
-24. provider-native objects remain below the shared boundary;
-25. render success is not final AppManager success;
-26. persistent registry changes use shared resource/transformation semantics;
-27. stale registry state is handled deliberately;
-28. caching remains derived state;
-29. no false rollback or target-effect claims arise from rendering;
-30. the boundary does not require one registry file, TypeScript type, renderer, package or runtime topology.
-
----
+Review registry classes/identity/provenance (§§6–9), discovery and validation (§§10–12), template parameters/variants/rendering (§§13–19), mutation/extension/evolution (§§20–25), and content/security/cache/concurrency contracts. The testability section covers deterministic rendering and class-specific guarantees.
 
 ## 42. Traceability Summary
 
@@ -1396,25 +1406,4 @@ No Implementation Specification may weaken the declarative/non-executable bounda
 
 ## 45. Final Design Position
 
-The permanent Version 1 position is:
-
-> **Resource Registry and Template owns declarative resource identity, discovery, validation, provenance, compatibility, parameter binding and non-mutating rendering; application intent, target scope, authorization, persistence and final acceptance remain above or downstream of it.**
-
-The canonical model is:
-
-```text
-registry source
-    -> registry validation
-    -> class-preserving item discovery
-    -> exact item/template resolution
-    -> compatibility validation
-    -> parameter binding
-    -> deterministic non-mutating render
-    -> rendered/proposed content
-    -> owning use-case policy/scope/authorization
-    -> create new resource OR transform/replace existing resource
-    -> downstream validation
-    -> application acceptance
-```
-
-This design permits AppManager to evolve its current TypeScript code-as-templates and `template-repository.json` implementation toward richer declarative registries without turning template data into executable plugins, collapsing distinct domain registries into a false universal schema, or allowing generation convenience to bypass source-mutation safety.
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.

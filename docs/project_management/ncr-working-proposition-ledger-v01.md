@@ -513,3 +513,235 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-XFORM-089` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 
 Checkpoint C interim: 179 reviewed requirement bodies reduced across DD-2.1 through DD-2.5, plus duplicate purpose/conformance summaries in the first three. All 1,915 definitions remain, now with stable direct anchors. New links checked, one synchronization anchor corrected, and `git diff --check` passes after EOF normalization. The rest of the primary corpus and final horizontal review remain outstanding; this is not checkpoint C completion.
+| `DD-REG-001` | [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
+| `DD-REG-003` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-REG-009` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-REG-027` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-REG-038` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-REG-042` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-REG-043` | [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
+| `DD-REG-052` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-REG-053` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-REG-062` | [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
+| `DD-REG-066` | [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
+| `DD-REG-082` | [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
+| `DD-REG-089` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-REG-103` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-REG-044` | [DD-REG-002](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-002) |
+| `DD-REG-047` | [DD-REG-037](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-037) |
+| `DD-REG-060` | [DD-REG-013](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-013) |
+| `DD-REG-064` | [DD-REG-049](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-049) |
+| `DD-REG-084` | [DD-REG-017](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-017) |
+| `DD-REG-085` | [DD-REG-017](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-017) |
+| `DD-REG-092` | [DD-REG-035](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-035) |
+| `DD-REG-093` | [DD-REG-035](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-035) |
+| `DD-REG-101` | [DD-REG-100](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-100) |
+| `DD-REG-106` | [DD-REG-021](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-021) |
+| `DD-REG-109` | [DD-REG-005](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-005) |
+| `DD-REG-111` | [DD-REG-049](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-049) |
+| `DD-REG-113` | [DD-REG-065](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-065) |
+| `DD-REG-023` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-REG-050` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-REG-094` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-REG-096` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
+| `DD-REG-105` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-REG-036` | [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) |
+| `DD-REG-054` | [FR-XFORM-047](../functional/source-transformation-functional-specification-v01.md#fr-xform-047) |
+| `DD-REG-056` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview) |
+| `DD-REG-061` | [Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md); [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture) |
+| `DD-REG-076` | [DD-2.1 bounded reads](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-019) |
+| `DD-REG-081` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-REG-086` | [DD-REG-002](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-002); [Settings-owned](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) |
+| `DD-REG-088` | [DD-2.7 context/disclosure contracts](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| `DD-REG-097` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-REG-098` | [DD-REG-002](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-002); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-REG-108` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-AICAP-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-AICAP-002` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-003` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-004` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-006` | [Design](../appmanager-design-specification-v01.md#_10-6-ai-domain) |
+| `DD-AICAP-017` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-019` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-020` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-AICAP-028` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-030` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-041` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-047` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-AICAP-073` | [Design](../appmanager-design-specification-v01.md#_10-6-ai-domain) |
+| `DD-AICAP-074` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-077` | [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture) |
+| `DD-AICAP-078` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-AICAP-080` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-AICAP-081` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-AICAP-089` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-090` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-048` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-AICAP-050` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract) |
+| `DD-AICAP-051` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-AICAP-052` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-AICAP-053` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-AICAP-056` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-AICAP-057` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-AICAP-061` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_22-retryability-and-repetition-evidence) |
+| `DD-AICAP-082` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-AICAP-011` | [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) |
+| `DD-AICAP-026` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-AICAP-038` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-AICAP-039` | [Registry declarative-item contract](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-049) |
+| `DD-AICAP-042` | [DD-REG-002](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-002) |
+| `DD-AICAP-065` | [the owning domain](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md#_21-cross-domain-consumption); [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-070` | [DD-AICAP-012](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md#dd-aicap-012); [DD-AICAP-014](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md#dd-aicap-014) |
+| `DD-AICAP-071` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-AICAP-075` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-AICAP-079` | [DD-AICAP-031](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md#dd-aicap-031) |
+| `DD-AICAP-086` | [DD-AICAP-016](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md#dd-aicap-016); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-AICAP-087` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-AICAP-088` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUALCAP-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUALCAP-003` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUALCAP-004` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-QUALCAP-009` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-QUALCAP-048` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUALCAP-082` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-QUALCAP-084` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-QUALCAP-089` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-QUALCAP-093` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-QUALCAP-002` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-QUALCAP-028` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-QUALCAP-063` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-QUALCAP-066` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-QUALCAP-069` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-QUALCAP-072` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-QUALCAP-085` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-QUALCAP-091` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-QUALCAP-020` | [DD-QUALCAP-019](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-019) |
+| `DD-QUALCAP-021` | [DD-QUALCAP-050](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-050) |
+| `DD-QUALCAP-042` | [DD-QUALCAP-026](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-026) |
+| `DD-QUALCAP-046` | [DD-QUALCAP-016](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-016) |
+| `DD-QUALCAP-059` | [DD-QUALCAP-027](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-027) |
+| `DD-QUALCAP-060` | [DD-QUALCAP-027](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-027) |
+| `DD-QUALCAP-062` | [DD-QUALCAP-024](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-024) |
+| `DD-QUALCAP-067` | [DD-QUALCAP-024](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-024) |
+| `DD-QUALCAP-081` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-QUALCAP-087` | [DD-QUALCAP-015](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-015) |
+| `DD-QUALCAP-090` | [DD-QUALCAP-080](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-080) |
+| `DD-QUALCAP-012` | [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) |
+| `DD-QUALCAP-017` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-QUALCAP-022` | [DD-2.2 direct/shell boundaries](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_8-direct-execution-and-shell-boundary) |
+| `DD-QUALCAP-043` | [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture) |
+| `DD-QUALCAP-049` | [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
+| `DD-QUALCAP-065` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-QUALCAP-079` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-QUALCAP-088` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUALCAP-092` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUALCAP-094` | [DD-2.2 argument structure](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014) |
+| `DD-DOCCAP-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCCAP-002` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-DOCCAP-003` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCCAP-004` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-DOCCAP-008` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-DOCCAP-015` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-DOCCAP-023` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-DOCCAP-034` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-DOCCAP-042` | [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture) |
+| `DD-DOCCAP-043` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-DOCCAP-046` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-DOCCAP-047` | [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture) |
+| `DD-DOCCAP-053` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-DOCCAP-057` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCCAP-060` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-DOCCAP-087` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-DOCCAP-088` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCCAP-093` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-DOCCAP-095` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-DOCCAP-097` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-DOCCAP-012` | [DD-DOCCAP-006](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-006) |
+| `DD-DOCCAP-025` | [DD-DOCCAP-007](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-007) |
+| `DD-DOCCAP-035` | [DD-DOCCAP-030](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-030) |
+| `DD-DOCCAP-040` | [DD-DOCCAP-011](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-011) |
+| `DD-DOCCAP-041` | [DD-DOCCAP-030](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-030) |
+| `DD-DOCCAP-050` | [DD-DOCCAP-021](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-021) |
+| `DD-DOCCAP-070` | [DD-DOCCAP-028](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-028) |
+| `DD-DOCCAP-071` | [DD-DOCCAP-029](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-029) |
+| `DD-DOCCAP-086` | [DD-2.7 context/disclosure contracts](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| `DD-DOCCAP-091` | [DD-DOCCAP-011](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-011) |
+| `DD-DOCCAP-073` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-DOCCAP-074` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-DOCCAP-078` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-DOCCAP-079` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-DOCCAP-085` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-DOCCAP-089` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-DOCCAP-094` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-DOCCAP-014` | [Source Intelligence normalized facts](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md#_10-structural-fact-model) |
+| `DD-DOCCAP-018` | [DD-2.10 Nuxt facts](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_6-nuxt-recognition-and-facts) |
+| `DD-DOCCAP-020` | [DD-2.3](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) |
+| `DD-DOCCAP-033` | [Registry declarative contract](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-049) |
+| `DD-DOCCAP-045` | [DD-2.5 plans](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md#_9-transformation-plan-contract) |
+| `DD-DOCCAP-051` | [DD-2.7 context, sensitivity and disclosure contracts](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| `DD-DOCCAP-056` | [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) |
+| `DD-DOCCAP-058` | [DD-2.2 process interpretation](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-043) |
+| `DD-DOCCAP-061` | [DD-2.2 direct/shell boundaries](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_8-direct-execution-and-shell-boundary) |
+| `DD-DOCCAP-066` | [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
+| `DD-DOCCAP-077` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-DOCCAP-083` | [DD-XFORM-029](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-029); [DD-XFORM-030](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-030) |
+| `DD-DOCCAP-092` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-DOCCAP-096` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-NUXTCAP-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXTCAP-002` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-NUXTCAP-003` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-NUXTCAP-004` | [Design](../appmanager-design-specification-v01.md#_10-7-nuxt-domain) |
+| `DD-NUXTCAP-006` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-NUXTCAP-010` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXTCAP-015` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-NUXTCAP-016` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXTCAP-024` | [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture) |
+| `DD-NUXTCAP-036` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-NUXTCAP-044` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-NUXTCAP-046` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-NUXTCAP-052` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-NUXTCAP-069` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXTCAP-073` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXTCAP-079` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-NUXTCAP-087` | [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation) |
+| `DD-NUXTCAP-093` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-NUXTCAP-096` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-NUXTCAP-042` | [FR-NUXT-060](../functional/nuxt-functional-specification-v01.md#fr-nuxt-060) |
+| `DD-NUXTCAP-057` | [FR-NUXT-072](../functional/nuxt-functional-specification-v01.md#fr-nuxt-072) |
+| `DD-NUXTCAP-058` | [FR-NUXT-073](../functional/nuxt-functional-specification-v01.md#fr-nuxt-073) |
+| `DD-NUXTCAP-059` | [FR-NUXT-074](../functional/nuxt-functional-specification-v01.md#fr-nuxt-074) |
+| `DD-NUXTCAP-060` | [FR-NUXT-078](../functional/nuxt-functional-specification-v01.md#fr-nuxt-078) |
+| `DD-NUXTCAP-061` | [FR-NUXT-079](../functional/nuxt-functional-specification-v01.md#fr-nuxt-079) |
+| `DD-NUXTCAP-064` | [FR-NUXT-081](../functional/nuxt-functional-specification-v01.md#fr-nuxt-081) |
+| `DD-NUXTCAP-066` | [FR-NUXT-084](../functional/nuxt-functional-specification-v01.md#fr-nuxt-084) |
+| `DD-NUXTCAP-065` | [FR-NUXT-085](../functional/nuxt-functional-specification-v01.md#fr-nuxt-085) |
+| `DD-NUXTCAP-038` | [DD-NUXTCAP-007](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-007) |
+| `DD-NUXTCAP-056` | [DD-NUXTCAP-039](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-039) |
+| `DD-NUXTCAP-062` | [DD-NUXTCAP-039](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-039) |
+| `DD-NUXTCAP-076` | [DD-NUXTCAP-075](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-075) |
+| `DD-NUXTCAP-077` | [DD-NUXTCAP-035](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-035) |
+| `DD-NUXTCAP-083` | [DD-NUXTCAP-011](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-011) |
+| `DD-NUXTCAP-084` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXTCAP-097` | [DD-NUXTCAP-050](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#dd-nuxtcap-050) |
+| `DD-NUXTCAP-019` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-NUXTCAP-048` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-NUXTCAP-049` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-NUXTCAP-090` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-NUXTCAP-092` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-NUXTCAP-025` | [FR-XFORM-013](../functional/source-transformation-functional-specification-v01.md#fr-xform-013); [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation) |
+| `DD-NUXTCAP-041` | [the artefact-delegation contract in §16](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry); [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-NUXTCAP-045` | [DD-REG-002](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-002) |
+| `DD-NUXTCAP-054` | [Git domain workflows](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md); [Repository primitives](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) |
+| `DD-NUXTCAP-067` | [Git](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md); [FR-NUXT-084](../functional/nuxt-functional-specification-v01.md#fr-nuxt-084) |
+| `DD-NUXTCAP-074` | [Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md); [§6](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_6-nuxt-recognition-and-facts) |
+| `DD-NUXTCAP-078` | [DD-2.8 check/gate contracts](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md) |
+| `DD-NUXTCAP-081` | [DD-PROC-014 structured arguments](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014) |
+| `DD-NUXTCAP-082` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| `DD-NUXTCAP-085` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-NUXTCAP-088` | [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020) |
+| `DD-NUXTCAP-089` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-NUXTCAP-094` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020); [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) |
+| `DD-NUXTCAP-099` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-QUALCAP-040` | [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) |
+
+Checkpoint C shared-capability interim: the first numbered-clause pass covers all ten DD-2 primaries, with 409 distinct duplicate bodies replaced so far. Duplicate purpose/final rule collections and conformance checklists have been removed from all ten, retaining architecture diagrams and local models/workflows. Same-shaped registry classes, source/domain facts, Quality criteria, and provider lifecycle contracts remain distinct. Definition multiset remains 1,915; new link/anchor checks and `git diff --check` pass. Additional unnumbered DD-2 prose, DD-1 and domain reduction plus final horizontal verification remain outstanding.

@@ -18,21 +18,7 @@
 
 ## 1. Purpose
 
-This specification defines the shared AI capability boundary used when AppManager delegates bounded generative or interpretive work to an AI provider or model.
-
-The governing rules are:
-
-> **AI capability execution does not transfer application authority.**
-
-> **AI output is proposal or evidence until the owning AppManager use case validates and accepts it.**
-
-> **Project content supplied to AI is untrusted data, not instruction authority over AppManager.**
-
-> **Provider availability, model selection and successful response generation do not themselves establish application success.**
-
-The capability exists so Git, Docs, Nuxt, Quality, Settings, AI-domain and future use cases can consume one coherent provider-independent AI boundary without duplicating provider transport, model selection, context-safety, response-normalization or provider-failure semantics.
-
----
+AI Capability gives Git, Docs, Nuxt, Quality, Settings and AI-domain workflows a shared boundary for bounded generative or interpretive tasks. Task-relative availability, provider/model resolution, context manifests, disclosure checks and output validation make provider results usable as normalized proposals. Proposal acceptance follows [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) in the consuming workflow.
 
 ## 2. Scope
 
@@ -92,13 +78,16 @@ An AI provider may generate content. AI Capability may establish that a provider
 
 <a id="dd-aicap-001"></a>
 
-**DD-AICAP-001 — Capability execution is subordinate**  
-AI Capability executes a bounded request supplied by an authoritative caller and returns normalized AI evidence. It shall not invent application intent, scope, authorization or acceptance criteria.
+**DD-AICAP-001 — Capability execution is subordinate**
+
+Bounded AI delegation follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-aicap-002"></a>
 
-**DD-AICAP-002 — Output is non-authoritative**  
-Normalized AI output remains proposal/evidence until the owning use case accepts it under its own requirements.
+**DD-AICAP-002 — Output is non-authoritative**
+
+Normalized AI proposal acceptance follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -141,13 +130,16 @@ The capability may collaborate with Resource Registry and Template, Resource Acc
 
 <a id="dd-aicap-003"></a>
 
-**DD-AICAP-003 — No upward dispatch**  
-An AI provider or AI Capability implementation shall not dispatch arbitrary AppManager commands merely because generated output contains an instruction or action request.
+**DD-AICAP-003 — No upward dispatch**
+
+Generated requests to dispatch AppManager commands follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-004"></a>
 
-**DD-AICAP-004 — No authority from provider capability**  
-A provider supporting tools, functions, code execution, file access, web access or agent-like behavior does not grant AppManager permission to expose or invoke those capabilities automatically.
+**DD-AICAP-004 — No authority from provider capability**
+
+Provider tool/function/code/file/web/agent features follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -192,8 +184,10 @@ A capability request shall identify the requested AI task sufficiently to preven
 
 <a id="dd-aicap-006"></a>
 
-**DD-AICAP-006 — Primary use-case identity remains upstream**  
-The capability request may carry owning-domain/use-case correlation, but AI Capability shall not reinterpret that correlation as ownership of the use case.
+**DD-AICAP-006 — Primary use-case identity remains upstream**
+
+Owning-domain correlation on a shared AI request follows [Design](../appmanager-design-specification-v01.md#_10-6-ai-domain).
+
 
 ---
 
@@ -256,8 +250,9 @@ Selection inputs may include:
 
 <a id="dd-aicap-011"></a>
 
-**DD-AICAP-011 — Governed selection inputs**  
-AI Capability shall consume provider/model policy from DD-1.4 effective configuration and explicit invocation/use-case constraints rather than independently reading competing configuration sources.
+**DD-AICAP-011 — Governed selection inputs**
+
+Provider/model policy consumes [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) and explicit invocation/use-case constraints.
 
 <a id="dd-aicap-012"></a>
 
@@ -306,8 +301,9 @@ Provider-specific message arrays, REST bodies, SDK request objects and role enum
 
 <a id="dd-aicap-017"></a>
 
-**DD-AICAP-017 — Request contract is non-executable application intent**  
-The AI request may ask a provider to generate or interpret content, but it shall not itself grant authority to mutate project state or invoke unrelated AppManager operations.
+**DD-AICAP-017 — Request contract is non-executable application intent**
+
+Mutation or operation authority claimed by an AI request follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-018"></a>
 
@@ -338,13 +334,15 @@ A request-level context manifest records which context items were selected and t
 
 <a id="dd-aicap-019"></a>
 
-**DD-AICAP-019 — Context is explicitly selected**  
-The existence of project content, Source Intelligence facts, repository diffs, settings or documentation does not automatically authorize inclusion in AI context.
+**DD-AICAP-019 — Context is explicitly selected**
+
+Available project/source/repository/settings/documentation material considered for context follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-020"></a>
 
-**DD-AICAP-020 — Managed scope is an upper bound**  
-Project content supplied as context shall not exceed the managed/context scope authorized by the owning use case.
+**DD-AICAP-020 — Managed scope is an upper bound**
+
+Project-context scope follows [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
 
 <a id="dd-aicap-021"></a>
 
@@ -388,8 +386,9 @@ If content is truncated, summarized or selectively omitted because of size limit
 
 <a id="dd-aicap-026"></a>
 
-**DD-AICAP-026 — No universal head/tail truncation contract**  
-A generic first/last-character truncation algorithm shall not become the permanent architecture merely because a current implementation uses it.
+**DD-AICAP-026 — No universal head/tail truncation contract**
+
+Context-reduction algorithms are selected under the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification), not inherited from current first/last-character truncation code.
 
 <a id="dd-aicap-027"></a>
 
@@ -404,8 +403,9 @@ Project resources may contain natural-language instructions directed at AI syste
 
 <a id="dd-aicap-028"></a>
 
-**DD-AICAP-028 — Untrusted project content remains data**  
-Project-supplied text shall not acquire authority to redefine AppManager policy, managed scope, provider selection, disclosure policy, authorization or requested use-case semantics.
+**DD-AICAP-028 — Untrusted project content remains data**
+
+Project-supplied text affecting policy, scope or intent follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-029"></a>
 
@@ -414,8 +414,9 @@ The request-construction boundary shall preserve a distinction between AppManage
 
 <a id="dd-aicap-030"></a>
 
-**DD-AICAP-030 — Prompt injection cannot grant application authority**  
-Even if a provider follows malicious or conflicting instructions embedded in project content, the resulting output remains non-authoritative and shall pass normal validation/acceptance before any consequential action.
+**DD-AICAP-030 — Prompt injection cannot grant application authority**
+
+Output influenced by conflicting or malicious project instructions follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-031"></a>
 
@@ -460,8 +461,10 @@ If required disclosure eligibility cannot be established, the capability shall o
 
 <a id="dd-aicap-038"></a>
 
-**DD-AICAP-038 — Diagnostics minimize sensitive content**  
-Prompt, context and provider-response diagnostics shall prefer identifiers, classifications, hashes/lengths or bounded excerpts where useful rather than full sensitive payloads.
+**DD-AICAP-038 — Diagnostics minimize sensitive content**
+
+Prompt/context/response diagnostics use [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) with safe identifiers, classifications, hashes/lengths or bounded excerpts.
+
 
 ---
 
@@ -481,8 +484,9 @@ owning use-case AI intent
 
 <a id="dd-aicap-039"></a>
 
-**DD-AICAP-039 — Templates are data**  
-AI prompt/request templates remain declarative input. Their presence does not grant application authority or executable plugin behavior.
+**DD-AICAP-039 — Templates are data**
+
+AI request templates follow the [Registry declarative-item contract](dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-049).
 
 <a id="dd-aicap-040"></a>
 
@@ -491,13 +495,16 @@ Required request-template parameters shall be bound and validated before provide
 
 <a id="dd-aicap-041"></a>
 
-**DD-AICAP-041 — Template content does not override policy**  
-A template cannot expand managed scope, authorize secret disclosure, select a prohibited provider or enable consequential actions contrary to governing policy.
+**DD-AICAP-041 — Template content does not override policy**
+
+Request templates proposing scope/disclosure/provider/action changes follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-042"></a>
 
-**DD-AICAP-042 — Render success is not provider success**  
-Successful template rendering establishes only that proposed request content was constructed; provider execution and application acceptance remain later stages.
+**DD-AICAP-042 — Render success is not provider success**
+
+Successful template rendering observes [DD-REG-002](dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-002); AI provider execution is a subsequent stage.
+
 
 ---
 
@@ -533,8 +540,10 @@ Malformed or schema-invalid output shall be represented distinctly from provider
 
 <a id="dd-aicap-047"></a>
 
-**DD-AICAP-047 — Semantic acceptance remains upstream**  
-Capability-level schema validity does not establish domain correctness, factual correctness or final application acceptance.
+**DD-AICAP-047 — Semantic acceptance remains upstream**
+
+Domain/factual acceptance of schema-valid AI output follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
 
 ---
 
@@ -560,8 +569,9 @@ A normalized AI result may include:
 
 <a id="dd-aicap-048"></a>
 
-**DD-AICAP-048 — Provider-native objects stay below the boundary**  
-SDK response objects, HTTP bodies and provider-specific exception objects shall not become the primary shared AppManager AI result.
+**DD-AICAP-048 — Provider-native objects stay below the boundary**
+
+AI SDK/HTTP/native result objects uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-aicap-049"></a>
 
@@ -570,13 +580,16 @@ Presence of non-empty provider content shall not alone establish a successful ca
 
 <a id="dd-aicap-050"></a>
 
-**DD-AICAP-050 — Provider metadata remains subordinate**  
-Provider/model/usage metadata may support provenance and diagnostics but shall not replace application-level outcome semantics.
+**DD-AICAP-050 — Provider metadata remains subordinate**
+
+Provider/model/usage metadata uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract).
 
 <a id="dd-aicap-051"></a>
 
-**DD-AICAP-051 — Raw provider content is bounded**  
-Full raw provider payloads shall not be propagated by default when doing so adds sensitive, unstable or provider-specific surface area without application value.
+**DD-AICAP-051 — Raw provider content is bounded**
+
+Full raw response payload propagation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
 
 ---
 
@@ -607,13 +620,15 @@ Categories may include:
 
 <a id="dd-aicap-052"></a>
 
-**DD-AICAP-052 — Failure category is capability evidence**  
-A normalized provider failure informs the owning use case but does not determine whether the application retries, falls back, preserves a baseline, returns partial success or fails.
+**DD-AICAP-052 — Failure category is capability evidence**
+
+Normalized provider failures before owning-use-case retry/fallback/continuation policy uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-aicap-053"></a>
 
-**DD-AICAP-053 — Provider messages are subordinate detail**  
-Provider error text may be retained in bounded/redacted form but shall not be the only machine-readable failure contract.
+**DD-AICAP-053 — Provider messages are subordinate detail**
+
+Redacted provider error text uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-aicap-054"></a>
 
@@ -633,13 +648,15 @@ A provider timeout shall be represented separately from caller-requested cancell
 
 <a id="dd-aicap-056"></a>
 
-**DD-AICAP-056 — Cancellation propagation**  
-Cancellation linked from DD-1 shall be propagated to active provider execution where supported.
+**DD-AICAP-056 — Cancellation propagation**
+
+Propagation of cancellation to supported AI providers uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 <a id="dd-aicap-057"></a>
 
-**DD-AICAP-057 — Cancellation is not rollback**  
-Cancellation does not imply that externally submitted provider requests, usage charges, logs or already completed local effects were reversed.
+**DD-AICAP-057 — Cancellation is not rollback**
+
+Submitted AI requests, usage charges, logs and local effects after cancellation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 <a id="dd-aicap-058"></a>
 
@@ -664,8 +681,9 @@ AI Capability shall not perform unbounded or policy-invented retries merely beca
 
 <a id="dd-aicap-061"></a>
 
-**DD-AICAP-061 — Retryability is evidence**  
-Normalization may classify a failure as potentially retryable/transient where safely known, but the owning use case/Application Engine decides whether another attempt is permitted.
+**DD-AICAP-061 — Retryability is evidence**
+
+AI transience/retryability evidence uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_22-retryability-and-repetition-evidence).
 
 <a id="dd-aicap-062"></a>
 
@@ -684,8 +702,10 @@ When a fallback provider/model is used, normalized evidence shall make the actua
 
 <a id="dd-aicap-065"></a>
 
-**DD-AICAP-065 — Baseline preservation remains use-case policy**  
-Whether failure of optional AI enrichment preserves a deterministic baseline as partial success belongs to the owning use case, not AI Capability.
+**DD-AICAP-065 — Baseline preservation remains use-case policy**
+
+Optional enrichment fallback is interpreted by [the owning domain](#_21-cross-domain-consumption) under [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -721,13 +741,15 @@ AI Capability shall be presentation-independent.
 
 <a id="dd-aicap-070"></a>
 
-**DD-AICAP-070 — No provider prompt in Headless execution**  
-The capability shall not require interactive provider/model selection. Ambiguity is reported to the caller.
+**DD-AICAP-070 — No provider prompt in Headless execution**
+
+Provider/model ambiguity uses [DD-AICAP-012](#dd-aicap-012) and non-prompting selection [DD-AICAP-014](#dd-aicap-014).
 
 <a id="dd-aicap-071"></a>
 
-**DD-AICAP-071 — Same request semantics across adapters**  
-TUI, Headless, GUI or IDE callers expressing equivalent AI task intent and policy shall reach equivalent capability semantics even when interactive adapters assist selection.
+**DD-AICAP-071 — Same request semantics across adapters**
+
+Equivalent caller tasks/policy apply [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) at the shared AI boundary.
 
 <a id="dd-aicap-072"></a>
 
@@ -752,18 +774,22 @@ AI domain use case -> AI Capability -----> instruction-document enrichment
 
 <a id="dd-aicap-073"></a>
 
-**DD-AICAP-073 — Owning domain remains authoritative**  
-Use of AI Capability by another domain shall not transfer that use case to the AI domain.
+**DD-AICAP-073 — Owning domain remains authoritative**
+
+Other domains consuming shared AI execution follows [Design](../appmanager-design-specification-v01.md#_10-6-ai-domain).
 
 <a id="dd-aicap-074"></a>
 
-**DD-AICAP-074 — Domain validation remains downstream**  
-Each owning domain shall apply its own semantic validation and acceptance to normalized AI output.
+**DD-AICAP-074 — Domain validation remains downstream**
+
+Owning-domain validation and acceptance of normalized output follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-075"></a>
 
-**DD-AICAP-075 — Capability does not infer application continuation**  
-AI Capability shall not decide whether a workflow continues after AI failure, warning or invalid output unless that decision is explicitly encoded as a bounded capability request contract rather than application policy.
+**DD-AICAP-075 — Capability does not infer application continuation**
+
+Continuation after AI warnings/failure/invalid output follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization); only an explicitly bounded delegated request may determine capability-local continuation.
+
 
 ---
 
@@ -778,18 +804,22 @@ The capability shall return generated proposals/evidence and shall not directly 
 
 <a id="dd-aicap-077"></a>
 
-**DD-AICAP-077 — Generated source routes through transformation**  
-AI-generated content intended to modify existing source shall enter DD-2.5 Source Transformation under an approved owning-use-case transformation intent.
+**DD-AICAP-077 — Generated source routes through transformation**
+
+Existing-source effects proposed by AI follows [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture).
 
 <a id="dd-aicap-078"></a>
 
-**DD-AICAP-078 — New resource creation remains downstream**  
-AI-generated content intended for a new resource shall be persisted only by an authorized owning use case through the appropriate Resource Access/generation path.
+**DD-AICAP-078 — New resource creation remains downstream**
+
+New-resource persistence proposed by AI follows [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
 
 <a id="dd-aicap-079"></a>
 
-**DD-AICAP-079 — Generated commands remain data**  
-Shell commands, Git commands, API actions or AppManager commands emitted by AI shall not be executed by AI Capability merely because they were generated.
+**DD-AICAP-079 — Generated commands remain data**
+
+Generated shell/Git/API/AppManager actions use the action-data boundary [DD-AICAP-031](#dd-aicap-031).
+
 
 ---
 
@@ -821,8 +851,10 @@ Provider/model policy, timeout, disclosure and other AppManager-level AI configu
 
 <a id="dd-aicap-080"></a>
 
-**DD-AICAP-080 — Shared-capability composition preserves authority**  
-Composition with Resource Access, Process Execution, Source Intelligence, Source Transformation or Resource Registry and Template shall not allow AI Capability to acquire those capabilities' separate authorities or application semantics.
+**DD-AICAP-080 — Shared-capability composition preserves authority**
+
+Composition with other shared capabilities follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
 
 ---
 
@@ -842,13 +874,15 @@ The Application Engine/owning use case may interpret that evidence as:
 
 <a id="dd-aicap-081"></a>
 
-**DD-AICAP-081 — Capability success is not application success**  
-A valid normalized AI response proves only that the bounded AI request succeeded at capability level.
+**DD-AICAP-081 — Capability success is not application success**
+
+Successful bounded AI execution follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 <a id="dd-aicap-082"></a>
 
-**DD-AICAP-082 — Partial effects remain upstream**  
-AI Capability shall report its own known provider effects/evidence but shall not invent application partial-success semantics for local resources or multi-stage workflows.
+**DD-AICAP-082 — Partial effects remain upstream**
+
+Known AI provider effects before workflow aggregation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
 
 <a id="dd-aicap-083"></a>
 
@@ -888,13 +922,16 @@ A provider unable to satisfy a requested capability/output contract shall report
 
 <a id="dd-aicap-086"></a>
 
-**DD-AICAP-086 — Provider replaceability**  
-Callers shall not depend on provider-native SDK/HTTP types in order to consume the shared AI capability.
+**DD-AICAP-086 — Provider replaceability**
+
+AI callers consume the provider-neutral request in [DD-AICAP-016](#dd-aicap-016) and normalized evidence under [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 <a id="dd-aicap-087"></a>
 
-**DD-AICAP-087 — No speculative cross-runtime protocol**  
-Provider replaceability does not require a separate process, RPC protocol, language-neutral wire schema or executable plugin framework in Version 1.
+**DD-AICAP-087 — No speculative cross-runtime protocol**
+
+AI provider topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); no separate process, RPC, neutral wire schema or executable plugin framework is required.
+
 
 ---
 
@@ -939,8 +976,10 @@ The following current details are not promoted automatically into permanent arch
 
 <a id="dd-aicap-088"></a>
 
-**DD-AICAP-088 — Implementation must converge on approved contracts**  
-Future Implementation Specifications shall adapt current AI service/provider mechanisms to this Detailed Design rather than weakening the design to preserve incidental service structure.
+**DD-AICAP-088 — Implementation must converge on approved contracts**
+
+Adapt current AI service/provider mechanisms under the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
@@ -962,13 +1001,15 @@ The capability shall protect against at least:
 
 <a id="dd-aicap-089"></a>
 
-**DD-AICAP-089 — Provider possession of data grants no authority**  
-Once context is submitted, the provider's ability to process or reproduce it does not grant authority over AppManager resources or future requests.
+**DD-AICAP-089 — Provider possession of data grants no authority**
+
+Provider processing or reproducing previously submitted context follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-090"></a>
 
-**DD-AICAP-090 — Provider response is untrusted input**  
-Generated output shall be treated as untrusted input until validated for the consuming contract.
+**DD-AICAP-090 — Provider response is untrusted input**
+
+Generated output before consuming-contract validation follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 <a id="dd-aicap-091"></a>
 
@@ -1029,46 +1070,7 @@ Live-provider integration tests may verify concrete API/auth/protocol behavior b
 
 ## 29. Conformance Invariants
 
-A conforming DD-2.7 implementation shall preserve all of the following:
-
-1. AI Capability is a shared capability, not the AI functional domain.
-2. AI execution does not transfer application authority.
-3. AI output is proposal/evidence until owning-use-case acceptance.
-4. Provider/model selection is governed by explicit constraints and effective configuration.
-5. Ambiguous provider/model selection is not guessed in Headless operation.
-6. Provider registry order is not application policy.
-7. Configuration presence is not equivalent to runtime availability.
-8. Availability is task/capability relative where material.
-9. External availability probes are not invisible when policy forbids contact/disclosure.
-10. Context inclusion is explicit and bounded.
-11. Managed scope is an upper bound for project context.
-12. Structural/source facts do not automatically authorize AI disclosure.
-13. Known secrets and protected environment values are excluded from ordinary context.
-14. External disclosure follows governing policy.
-15. Project content is untrusted data, not AppManager instruction authority.
-16. Prompt injection cannot grant mutation or workflow authority.
-17. Provider-generated tool/action requests are inert unless separately authorized by another design.
-18. Version 1 does not become a general autonomous-agent framework.
-19. Context truncation/reduction is represented when material and is not silently truth-distorting.
-20. Provider wire formats remain below the shared boundary.
-21. Provider JSON/structured mode is not AppManager schema validation.
-22. Structured output is validated before being exposed as valid structured evidence.
-23. Provider-native result/exception objects remain below the shared boundary.
-24. Provider success is not AppManager application success.
-25. Provider failure categories are normalized where reliably known.
-26. Retryability evidence does not authorize retries.
-27. Fallback requires explicit permitted policy and preserves disclosure constraints.
-28. Cancellation and timeout are distinguished where observable.
-29. Cancellation does not imply rollback of provider-side effects or usage.
-30. AI Capability does not directly mutate managed project resources.
-31. AI-generated source changes route through Source Transformation.
-32. New generated resources are persisted only by an authorized owning use case.
-33. Usage metadata is evidence, not spending authority.
-34. TUI/Headless/other adapters consume the same capability semantics.
-35. Current `LLMService`, registry format, provider protocol and TypeScript types do not define permanent architecture.
-36. The capability boundary does not require one class, package, provider, SDK, process, protocol or runtime topology.
-
----
+Review request/task availability, provider selection, context/provenance/minimization, trust/disclosure, output validation and normalized failure contracts. Timeout/cancellation, fallback and usage each retain their own evidence semantics. The deterministic provider tests in §28 exercise these boundaries independently of live providers.
 
 ## 30. Traceability Summary
 
@@ -1146,35 +1148,4 @@ These belong to Implementation Specification, later Detailed Design where a perm
 
 ## 33. Final Design Position
 
-The permanent Version 1 position is:
-
-> **AI Capability owns bounded provider-independent AI execution, context safety, provider/model capability resolution, request/response normalization and structured-output evidence; application intent, managed scope, consequential action authority and final acceptance remain above it.**
-
-The canonical model is:
-
-```text
-owning use-case intent / policy / scope
-        + governed effective configuration
-        + bounded context
-        + output contract
-                |
-                v
-          AI Capability
-                |
-        provider/model resolution
-        context/disclosure validation
-        request normalization
-        provider execution
-        response normalization
-        output-contract validation
-                |
-                v
-       normalized AI proposal/evidence
-                |
-                v
- owning use case / Application Engine acceptance
-```
-
-The central non-drift rule is:
-
-> **AI may generate, classify, summarize or propose; it may not acquire AppManager authority merely because it produced an answer.**
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.
