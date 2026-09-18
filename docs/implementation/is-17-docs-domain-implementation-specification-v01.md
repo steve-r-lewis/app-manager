@@ -21,6 +21,8 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [Docs Coordinated Generation Implementation Clarification — Retired](../archive/implementation/docs-coordinated-generation-implementation-clarification-v01-retired.md) (its coordinated artefact-plan/disposition/AI-acceptance delta is now applied directly in §11.1, §19, §26 and §38)
 
 ## 1. Purpose
 
@@ -277,6 +279,38 @@ IS-1 context
 
 Read-only documentation operations stop before persistence/tool execution unless those effects are part of the selected use case.
 
+### 11.1 Coordinated Multi-Target Artefact Plan
+
+Consequential multi-target documentation work is represented as a bounded immutable plan rather than an unstructured loop over paths. This structure operationalizes the flow above wherever an operation resolves more than one target.
+
+```ts
+export interface CoordinatedDocsPlan {
+  readonly invocationId: InvocationId;
+  readonly operation: DocsOperationId;
+  readonly targets: readonly DocumentationTargetIdentity[];
+  readonly artefacts: readonly DocsArtefactPlan[];
+  readonly continuation: DocsContinuationPolicy;
+}
+
+export interface DocsArtefactPlan {
+  readonly target: DocumentationTargetIdentity;
+  readonly output: DocumentationOutputTarget;
+  readonly profile: DocsProfileId;
+  readonly evidence: readonly EvidenceReference[];
+  readonly proposal: DocumentationProposalReference;
+  readonly disposition: DocsArtefactDisposition;
+  readonly preconditions: readonly DocsArtefactPrecondition[];
+  readonly acceptance: DocsArtefactAcceptancePolicy;
+  readonly enrichment: DocsEnrichmentPolicy;
+}
+```
+
+`DocsArtefactDisposition` is defined in §19; `DocsContinuationPolicy` in §34; `DocsEnrichmentPolicy` in §25. These names are IS-17-local implementation guidance, not a new cross-application generic planning abstraction.
+
+Coordinated documentation work proceeds: consume the normalized IS-1 invocation and IS-2 managed scope; resolve semantic Docs targets and profile; normalize duplicate logical targets (§6); acquire bounded fresh evidence (§10); construct documentation models/proposals through IS-12; resolve exact output targets and collision/ownership state and assign each artefact its disposition (§19); bind revision/stale-state preconditions for existing resources (§36); bind deterministic acceptance criteria and AI-enrichment/proposal-acceptance policy (§25–26); obtain IS-1 authorization for the resolved consequential plan as required; execute eligible artefact effects according to continuation/cancellation policy (§34); validate and accept each artefact independently; return per-target/per-artefact evidence (§38) to IS-1 for final canonical acceptance.
+
+The runner shall not infer arbitrary filesystem targets or broaden managed scope beyond what target/profile resolution already established.
+
 ---
 
 ## 12. Complete-Application Documentation
@@ -374,16 +408,22 @@ The domain never chooses one merely because a file happens to exist; collision p
 
 ## 19. Output Target and Collision Policy
 
-Before writes, IS-17 resolves exact output identity/location within approved scope and obtains bounded IS-4 existence/revision evidence.
+Before writes, IS-17 resolves exact output identity/location within approved scope and obtains bounded IS-4 existence/revision evidence, and assigns each artefact a disposition:
 
 ```ts
-export type DocsCollisionDecision =
-  | 'target_absent_generate'
-  | 'target_exists_update_required'
-  | 'target_owned_equivalent_already_satisfied'
-  | 'collision_refuse'
-  | 'indeterminate_refuse';
+export type DocsArtefactDisposition =
+  | { readonly kind: 'generate_new' }
+  | { readonly kind: 'update_managed_document'; readonly revision: ResourceRevision }
+  | { readonly kind: 'update_managed_region'; readonly revision: ResourceRevision; readonly region: DocumentationRegionIdentity }
+  | { readonly kind: 'already_satisfied' }
+  | { readonly kind: 'skip'; readonly reason: DocsDiagnostic }
+  | { readonly kind: 'refuse_collision'; readonly reason: DocsDiagnostic }
+  | { readonly kind: 'unsupported'; readonly reason: DocsDiagnostic }
+  | { readonly kind: 'blocked'; readonly reason: DocsDiagnostic }
+  | { readonly kind: 'indeterminate'; readonly reason: DocsDiagnostic };
 ```
+
+`generate_new`, `update_managed_document`/`update_managed_region`, `already_satisfied`, `refuse_collision` and `indeterminate` correspond directly to the target-absent, target-exists, already-satisfied, collision and indeterminate outcomes IS-17 has always distinguished; the whole-document/region split mirrors the `DocsUpdatePolicy` distinction already made in §21, and `skip`/`unsupported`/`blocked` make explicit three outcomes a multi-artefact plan (§11.1) must represent without collapsing them into a bare refusal. The implementation may refine names/types further but shall not collapse create, update, no-effect and refusal semantics.
 
 Version 1 has no generic overwrite/force Boolean.
 
@@ -471,7 +511,19 @@ Invalid/unavailable AI output yields omission/failure according to profile; opti
 
 ## 26. AI Acceptance
 
-IS-17 accepts AI enrichment only when:
+An artefact's acceptance policy distinguishes at least the following AI-proposal acceptance modes:
+
+```ts
+export type DocsAIProposalAcceptance =
+  | { readonly mode: 'forbid' }
+  | { readonly mode: 'review_required' }
+  | { readonly mode: 'automatic_if_valid'; readonly criteria: DocsProposalValidationCriteria }
+  | { readonly mode: 'required_and_reviewed' };
+```
+
+For `automatic_if_valid`, the validation criteria are resolved before provider execution and provider output cannot alter them; a proposal failing them is rejected/diagnosed under owning Docs policy rather than silently repaired, regenerated or accepted by the provider itself. No hidden provider fallback, retry, model substitution or changed target is authorised by proposal failure.
+
+Subject to the selected mode, IS-17 accepts AI enrichment only when:
 
 - requested/permitted by profile;
 - output contract is valid;
@@ -584,6 +636,8 @@ Initial Version 1 multi-target documentation executes in deterministic managed-t
 
 Completed artefacts/models remain completed if a later target fails.
 
+A dependency between two artefacts in the same coordinated plan (§11.1) may block the dependent artefact without blocking unrelated artefacts; dependency is an explicit plan relationship, not an inferred ordering effect.
+
 ---
 
 ## 35. Partial Effects
@@ -640,6 +694,22 @@ Recovery is informational. Version 1 does not persist resumable documentation wo
 ---
 
 ## 38. Docs Result Payload
+
+Each coordinated artefact (§11.1) resolves to a per-artefact result:
+
+```ts
+export interface DocsArtefactResult {
+  readonly target: DocumentationTargetIdentity;
+  readonly output: DocumentationOutputTarget;
+  readonly disposition: DocsArtefactDisposition;
+  readonly proposalProvenance: DocumentationProvenance;
+  readonly effect?: EffectReference;
+  readonly resultingRevision?: ResourceRevision;
+  readonly validation: DocsValidationEvidence;
+  readonly acceptance: DocsArtefactAcceptanceState;
+  readonly diagnostics: readonly DocsDiagnostic[];
+}
+```
 
 ```ts
 export interface DocsDomainPayload {
@@ -733,9 +803,9 @@ Generated documentation containing detected protected material fails validation/
 
 No IS-17 module imports prompts, terminal colours or IDE APIs.
 
-Interactive adapters may present eligible target/profile/output choices, but IS-22 supplies the resulting structured values.
+Interactive adapters may present eligible target/profile/output choices, but IS-22 supplies the resulting structured values. All IS-22 adapters project the same coordinated plan (§11.1) semantics rather than each constructing its own bulk Docs workflow; TUI/GUI may present aggregate review/progress while Headless supplies fully structured inputs.
 
-Headless missing/ambiguous target, profile, output or update policy returns structured decision requirements; it never chooses the first file/layer, default overwrite, arbitrary output path or implicit AI/tool provider.
+Headless missing/ambiguous target, profile, output or update policy returns structured decision requirements; it never chooses the first file/layer, default overwrite, arbitrary output path or implicit AI/tool provider. Headless returns one canonical application result containing per-target/per-artefact evidence (§38).
 
 ---
 
@@ -923,7 +993,11 @@ Core tests cover at least:
 93. Nuxt fact consumption does not transfer Nuxt authority;
 94. Quality evidence consumption does not transfer Quality authority;
 95. documentation build remains distinct from App build;
-96. IS-17 acceptance remains subordinate to IS-1 final acceptance.
+96. IS-17 acceptance remains subordinate to IS-1 final acceptance;
+97. multi-target consequential operations build an explicit `CoordinatedDocsPlan`, not an unstructured path loop;
+98. artefact disposition preserves all nine `DocsArtefactDisposition` variants distinctly, including `skip`/`unsupported`/`blocked` from `refuse_collision`;
+99. `DocsArtefactResult` is populated for every planned artefact and its `disposition` matches the plan's resolved value;
+100. `automatic_if_valid` AI-proposal acceptance resolves its criteria before provider execution and rejects rather than silently repairs a failing proposal.
 
 Integration tests use controlled IS-12/capability/domain substitutes for policy tests and dedicated documentation fixtures for source/layer/test/file, generation/update, collision, stale, authored-preservation, AI and VitePress lifecycle cases.
 

@@ -1,3 +1,17 @@
+# IS-17 Coordinated Documentation Generation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-17 — Docs Domain Implementation Specification](../../implementation/is-17-docs-domain-implementation-specification-v01.md) §11.1 (`CoordinatedDocsPlan`/`DocsArtefactPlan`), §19 (`DocsArtefactDisposition`), §26 (`DocsAIProposalAcceptance`), §34 (artefact dependency blocking) and §38 (`DocsArtefactResult`).
+>
+> **Disposition:** The coordinated artefact-plan structure, the nine-variant artefact disposition, the AI-proposal acceptance modes and the previously-referenced-but-undefined `DocsArtefactResult` type have all been applied directly to IS-17, with cross-references from the new material back to the pre-existing sections it operationalizes (target/profile resolution, output/collision policy, stale-state preconditions, continuation policy). No information from this clarification remains solely recorded here. The catalogue impact stated in this clarification's §12 (13 Docs commands, 96-command Version 1 total) was already true in IS-17 and required no change.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # IS-17 Coordinated Documentation Generation Clarification
 
 > **Status:** Active Implementation clarification
