@@ -151,8 +151,8 @@ The absence of a current GUI implementation is migration evidence, not authority
 
 Existing TUI/Headless migration dispositions remain valid except where they describe their pair as the complete Version 1 adapter set.
 
-## 11. NCR Handoff
+## 11. Integration
 
-NCR-3 shall fold this local implementation delta into IS-22 and IS-23 and use references rather than propagating the portability rule throughout IS-1 through IS-21. Individual IS documents should be changed only where they contain a conflicting concrete-coupling statement or require a genuine local implementation delta.
+A direct-edit work package shall fold this local implementation delta into IS-22 and IS-23 and use references rather than propagating the portability rule throughout IS-1 through IS-21. Individual IS documents should be changed only where they contain a conflicting concrete-coupling statement or require a genuine local implementation delta.
 
 Once the corrected implementation requirements are fully reachable from the primary IS documents, this clarification may be retired under normal clarification lifecycle rules.

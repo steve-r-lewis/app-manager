@@ -14,15 +14,15 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is in progress. NCR-1 — Design and Functional is complete and merged in PR #179 at `b041d440faf032b2954e5a8be2fbc7894988717f`. NCR-2 — Detailed Design is complete and merged in [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180) at `33024e4346cc14de94e1a02d4357f50e95b5d7de`.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR-1 — Design and Functional is complete and merged in PR #179 at `b041d440faf032b2954e5a8be2fbc7894988717f`. NCR-2 — Detailed Design is complete and merged in [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180) at `33024e4346cc14de94e1a02d4357f50e95b5d7de`. NCR-3/4/5 are superseded (§5, §10).
 
 PRs #170–#177 completed the bounded PBC-1 semantic corrections: Version 1 GUI/interaction/portability restoration; App command correction; Nuxt command correction; `utils` to `maintenance` reclassification; broader project-side AI development-environment restoration; coordinated multi-repository `git.commit`; coordinated multi-target/multi-artefact Docs generation/update; and coordinated multi-resource Maintenance validation/repair/source-version/cleanup semantics.
 
 PR #177 merged and live `master` was independently verified at `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`. That exact SHA is the **semantically complete pre-NCR baseline**.
 
-The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. NCR-2 has integrated and retired all seventeen DD vehicles; the primary-DD physical reduction and final verification are complete and merged via PR #180. Implementation vehicles remain active for NCR-3.
+The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. NCR-2 has integrated and retired all seventeen DD vehicles; the primary-DD physical reduction and final verification are complete and merged via PR #180. Implementation-level clarification vehicles remain active pending direct-edit integration (§10).
 
-**Current phase:** NCR-1 and NCR-2 are merged (PR #179, PR #180). NCR-3 — Implementation Specifications has not begun. The [single working proposition ledger](ncr-working-proposition-ledger-v01.md) records canonical ownership, preservation, physical reduction, clarification retirement and verification. Implementation remains paused until NCR-5 passes and live `master` is verified.
+**Current phase:** Documentation Compression and Modularisation, superseding NCR-3/4/5 (§5, §10). Implementation remains paused until that initiative's exit criteria pass and live `master` is verified.
 
 ## 3. Baseline Roles
 
@@ -43,7 +43,7 @@ The final cross-domain bulk-action sanity review found no additional correction 
 | NCR-1 merged / NCR-2 physical starting baseline | `b041d440faf032b2954e5a8be2fbc7894988717f` | Independently verified live `origin/master`; PR #179 merged and closed. |
 | **NCR-2 merged / NCR-3 starting baseline** | **`33024e4346cc14de94e1a02d4357f50e95b5d7de`** | **Independently verified live `origin/master`; PR #180 merged and closed.** |
 
-No current commit is designated the final lean implementation documentation baseline; that remains deferred until NCR-5 passes.
+No current commit is designated the final lean implementation documentation baseline; that remains deferred until the Documentation Compression and Modularisation initiative's exit criteria pass (§10).
 
 ## 4. PBC-1 — Complete
 
@@ -69,37 +69,29 @@ The Docs correction applies the same scope-versus-command principle to documenta
 
 The Maintenance correction applies structured cardinality to its four operations. Header validation may inspect a selected or complete eligible managed source-header set; repair and source-version maintenance use bounded per-resource transformation plans; cleanup deletes only positively classified disposable Maintenance artefacts. Discovery/globs/filesystem reachability never become mutation authority and the stronger-owner rule remains mandatory. No AI dependency was introduced.
 
-PBC-1 clarification documents are temporary integration vehicles. Their semantics are part of the `0d96d6e...` baseline and must be preserved while NCR folds them into canonical primary owners and retires the temporary clarification layer.
+PBC-1 clarification documents are temporary integration vehicles. Their semantics are part of the `0d96d6e...` baseline and must be preserved while direct-edit work packages fold them into canonical primary owners and retire the temporary clarification layer (§10).
 
 ## 5. NCR — Execution State
 
-NCR's objective remains: every independently meaningful normative proposition has exactly one complete canonical statement at its correct normative owner; other occurrences are references, necessary local bindings or genuine local deltas.
+NCR-1 (Design and Functional) and NCR-2 (Detailed Design) are complete and merged (PR #179, PR #180).
 
-The five-pass decomposition remains unchanged after re-evaluation against the complete semantic baseline:
-
-1. NCR-1 — Design and Functional: complete, PR #179 merged;
-2. NCR-2 — Detailed Design: complete and merged, PR #180;
-3. NCR-3 — Implementation Specifications;
-4. NCR-4 — Horizontal Reduction;
-5. NCR-5 — Final Cardinality and Semantic Verification.
-
-NCR-1/2/3 shall fold all PBC-1 clarification deltas into their primary normative owners at the corresponding hierarchy level and retire the temporary clarification vehicles when fully accounted. NCR-4 shall ensure no clarification survives as duplicate normative restatement. NCR-5 shall prove semantic preservation against `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`.
+NCR-3 (Implementation Specifications), NCR-4 (Horizontal Reduction) and NCR-5 (Final Cardinality and Semantic Verification) are **superseded** by the Documentation Compression and Modularisation initiative (§10). The objective they shared is unchanged — every independently meaningful normative proposition has exactly one complete canonical statement at its correct owner, and semantics are preserved against `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19` — but execution now proceeds as ordinary reviewed PRs against [Documentation Guide §16](../project-documentation-guide-v01.md#_16-avoiding-duplication), without a dedicated ledger or per-pass audit trail.
 
 ## 6. Anti-Circularity Rule
 
-There is no PBC-2, PBC closeout programme, NCR-0, NCR-6 or successor rationalisation programme. The semantic baseline is frozen for NCR.
+There is no PBC-2, PBC closeout programme, NCR-0, NCR-6, successor rationalisation programme, or second compression initiative alongside the one in §10. A defect found later is corrected directly in the affected document, not by opening a new programme.
 
-Recording/classifying a duplicate is not completion; NCR must physically remove duplicate normative restatement or reduce it to a valid reference/local binding/local delta. Reduction does not reopen settled architecture merely because integrated wording differs. An actual contradiction, semantic-loss defect or unresolved authoritative conflict is corrected within NCR under the existing hierarchy rather than spawning another programme.
+Recording/classifying a duplicate is not completion; reduction work must physically remove duplicate normative restatement or reduce it to a valid reference/local binding/local delta rather than merely recording that it should be. Reduction does not reopen settled architecture merely because integrated wording differs. An actual contradiction, semantic-loss defect or unresolved authoritative conflict is corrected directly under the existing hierarchy rather than spawning another programme.
 
 ## 7. Information Classes and Reading Rule
 
 `assurance/` retains completed audits/reviews/reconciliations; `history/` retains superseded management activity; `decisions/` remains the ADR location. Active root PM documents provide current navigation/control.
 
-For NCR: read this index and NCR control; read the normative hierarchy and active clarifications; verify live repository state before each branch.
+Before starting work, read this README's current state (§2, §10) and the specific document(s) the task touches. Reading the full normative hierarchy or clarification register first is not required.
 
 ## 8. Active and Reusable Root Documents
 
-- `normative-corpus-reduction-programme-v01.md` — NCR execution control;
+- `normative-corpus-reduction-programme-v01.md` — NCR-1/NCR-2 execution record; NCR-3/4/5 superseded (§5), core rules carried forward into the Documentation Guide;
 - `ncr-working-proposition-ledger-v01.md` — single NCR execution and verification ledger;
 - `normative-ownership-map-v01.md` — canonical Design/Functional ownership index;
 - `detailed-design-register-v01.md` — Version 1 DD lifecycle register;
@@ -113,8 +105,15 @@ For NCR: read this index and NCR control; read the normative hierarchy and activ
 
 The established normative hierarchy is unchanged. Project-management records do not become product authority. Similar naming or data shape does not establish semantic equivalence. Maintenance remains bounded and must not become a catch-all namespace. AI Domain ownership follows project-side AI-environment intent; AI Capability use does not transfer another domain's primary intent or authority. Coordinated Git commit remains Git-owned application intent over DD-1-managed scope. Coordinated Docs generation/update remains Docs-owned intent over DD-1-managed documentation scope. Coordinated Maintenance remains Maintenance-owned intent over DD-1-managed scope further narrowed by operation-specific eligibility and the stronger-owner gate. Shared capabilities remain subordinate specialists.
 
-## 10. Next Objective
+## 10. Current Work
 
-Begin NCR-3 — Implementation Specifications. The single ledger records NCR-2's completed integration, physical reduction, final horizontal review and completion gates against the now-merged PR #180. This state does not authorise NCR-4 or NCR-5 to begin ahead of NCR-3.
+**Documentation Compression and Modularisation** supersedes NCR-3/4/5 (§5). It targets the same objective — one canonical statement per proposition, semantics preserved, human comprehensibility co-equal with brevity — plus two additions NCR did not require: every Detailed Design/Implementation Specification pair usable as a self-contained module by a reader or coding agent who has only read the shared primer, and no dedicated ledger or audit trail beyond the ordinary PR record.
 
-The physical starting baseline for NCR-3 is the independently verified NCR-2 merge in §3 (`33024e4346cc14de94e1a02d4357f50e95b5d7de`). NCR-3, NCR-4 and NCR-5 remain future work; implementation remains paused until NCR-5 and verification of resulting live `master`.
+Four phases, each executed as ordinary reviewed PRs against the physical starting baseline in §3 (`33024e4346cc14de94e1a02d4357f50e95b5d7de`):
+
+1. **Governance cleanup** — retire the process that generated the bloat (this entry, the Documentation Guide's duplication/clarification rules) — in progress.
+2. **Module contract** — define what a self-contained DD/IS module may assume from the shared primer versus what it must state locally — not started.
+3. **Compression sweep** — apply the module contract corpus-wide — not started.
+4. **Continuous semantic verification** — a before/after check in each compression PR's own description; not a separate audit programme — applies from phase 3 onward.
+
+Implementation remains paused until phase 4 confirms no semantic loss against `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19` and live `master` is verified.

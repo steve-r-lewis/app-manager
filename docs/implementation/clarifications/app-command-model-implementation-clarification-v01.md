@@ -84,6 +84,6 @@ An interaction adapter may present a convenience operation such as “Reset and 
 
 IS-14 shall not implement Nuxt layer/composition/configuration/module/advanced-framework commands merely because their provider is `nuxt`/`npx`. Those operations belong to IS-16 and the Nuxt capability path when and if their canonical Nuxt identities are specified.
 
-## 7. NCR Integration
+## 7. Integration
 
-NCR-3 shall fold these implementation deltas into IS-14, remove obsolete command registration/contracts, preserve the bounded declared-script mechanism, and retire this clarification.
+A direct-edit work package shall fold these implementation deltas into IS-14, remove obsolete command registration/contracts, preserve the bounded declared-script mechanism, and retire this clarification.

@@ -6,7 +6,7 @@
 >
 > **Scope:** PBC-1 implementation correction for coordinated `git.commit`
 >
-> **Lifecycle:** Temporary integration vehicle; NCR-3 shall fold this delta into IS-15 and retire this clarification.
+> **Lifecycle:** Temporary integration vehicle; a direct-edit work package shall fold this delta into IS-15 and retire this clarification.
 
 ## 1. Purpose
 
@@ -106,6 +106,6 @@ The canonical command list remains unchanged at eight Git commands. The existing
 
 No `git.commit-all`, `git.bulk-commit` or provider-native bulk command shall be registered.
 
-## 8. NCR Integration
+## 8. Integration
 
-NCR-3 shall integrate these corrections into IS-15, specifically replacing the single-repository `CommitGitInput` restriction and the statement `Version 1 commit remains single-repository`, while reusing the existing scope, coordinated-runner, continuation and result architecture.
+A direct-edit work package shall integrate these corrections into IS-15, specifically replacing the single-repository `CommitGitInput` restriction and the statement `Version 1 commit remains single-repository`, while reusing the existing scope, coordinated-runner, continuation and result architecture.

@@ -4,13 +4,15 @@
 >
 > **Version:** 01
 >
-> **Status:** Active
+> **Status:** Superseded
 >
 > **Programme:** NCR — Normative Corpus Reduction
 >
 > **Normative product effect:** None. This document controls reduction work; normative authority remains with the established documentation hierarchy.
 >
 > **Semantically complete pre-NCR baseline:** `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`
+>
+> **Superseded:** NCR-3 (Implementation Specifications), NCR-4 (Horizontal Reduction) and NCR-5 (Final Cardinality and Semantic Verification) are superseded by the Documentation Compression and Modularisation initiative tracked in [project_management/README.md §10](README.md#_10-current-work). NCR-1 and NCR-2 remain complete and merged (§6 below; PR #179/#180). This document's substantive rules (§§1, 3–5, 7) continue to govern all further reduction work and will be migrated into the [Project Documentation Guide](../project-documentation-guide-v01.md) directly; it is retained for their provenance until that migration completes.
 
 ## 1. Objective
 

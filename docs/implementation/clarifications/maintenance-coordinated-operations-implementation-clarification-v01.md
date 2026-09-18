@@ -14,7 +14,7 @@
 
 This clarification defines the implementation contract required for coordinated multi-resource Maintenance while preserving the four canonical Maintenance identities and established capability boundaries.
 
-NCR-3 shall integrate this delta into the renamed canonical IS-21 owner and retire this clarification.
+A direct-edit work package shall integrate this delta into the canonical IS-21 owner and retire this clarification.
 
 ## 2. Scope Contract
 

@@ -6,7 +6,7 @@
 >
 > **Scope:** PBC-1 implementation refinement for coordinated multi-target/multi-artefact Docs workflows
 >
-> **Lifecycle:** Temporary integration vehicle; NCR-3 shall fold this delta into IS-17 and retire this clarification.
+> **Lifecycle:** Temporary integration vehicle; a direct-edit work package shall fold this delta into IS-17 and retire this clarification.
 
 ## 1. Purpose
 
