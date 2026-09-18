@@ -1,4 +1,4 @@
-# IS-21 — Utils Domain Implementation Specification
+# IS-21 — Maintenance Domain Implementation Specification
 
 > **Document type:** Level 4 Implementation Specification
 >
@@ -6,9 +6,9 @@
 >
 > **Implementation ID:** IS-21
 >
-> **Primary Detailed Design:** [DD-4.4 — Utils Domain](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md)
+> **Primary Detailed Design:** [DD-4.4 — Maintenance Domain](../dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md)
 >
-> **Primary Functional authority:** [Utils Functional Specification](../functional/utils-functional-specification-v01.md)
+> **Primary Functional authority:** [Maintenance Functional Specification](../functional/utils-functional-specification-v01.md)
 >
 > **Application Core:** [IS-1 — Application Runtime and Invocation](is-1-application-runtime-and-invocation-implementation-specification-v01.md), [IS-2 — Managed Project Resolution](is-2-managed-project-resolution-implementation-specification-v01.md), [IS-3 — Configuration Resolution](is-3-configuration-resolution-implementation-specification-v01.md)
 >
@@ -21,12 +21,14 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Filename compatibility:** The existing filename is retained for links; it does not establish a `utils` product domain. The canonical domain is `maintenance` (module path `app/domains/maintenance/`, operation identities `maintenance.*`).
 
 ## 1. Purpose
 
-IS-21 defines the concrete Node.js/TypeScript implementation of the AppManager Utils domain.
+IS-21 defines the concrete Node.js/TypeScript implementation of the AppManager Maintenance domain.
 
-Utils is intentionally the final semantic domain because it is the boundary most likely to become an architectural catch-all. Version 1 Utils owns only three genuine cross-cutting maintenance families with no stronger approved domain owner:
+Maintenance is intentionally the final semantic domain because it is the boundary most likely to become an architectural catch-all. Version 1 Maintenance owns only three genuine cross-cutting maintenance families with no stronger approved domain owner:
 
 - AppManager source-header inspection, validation and bounded repair;
 - source-file header-version maintenance for eligible changed source files;
@@ -34,9 +36,9 @@ Utils is intentionally the final semantic domain because it is the boundary most
 
 The governing rules are:
 
-> **A `utils` namespace, legacy command or convenient implementation location never establishes ownership. Every Utils use case must prove that no stronger approved domain owns its primary intent.**
+> **A `utils` namespace, legacy command or convenient implementation location never establishes ownership. Every Maintenance use case must prove that no stronger approved domain owns its primary intent.**
 
-> **Inspection does not authorize repair, repository change evidence does not transfer Git authority, cleanup discovery does not authorize deletion, and a technically successful source write does not establish Utils-domain acceptance.**
+> **Inspection does not authorize repair, repository change evidence does not transfer Git authority, cleanup discovery does not authorize deletion, and a technically successful source write does not establish Maintenance-domain acceptance.**
 
 > **IS-21 owns maintenance intent and postcondition interpretation; specialist capabilities remain bounded executors/evidence providers; IS-1 retains final application authority.**
 
@@ -48,9 +50,9 @@ The governing rules are:
 
 IS-21 implements:
 
-- semantic Utils operation identity and applicability;
+- semantic Maintenance operation identity and applicability;
 - stronger-owner proof/classification;
-- source-header convention interpretation for Utils maintenance;
+- source-header convention interpretation for Maintenance maintenance;
 - read-only header inspection and validation;
 - field-level bounded header repair;
 - narrow package-name validation/repair only as part of header/project maintenance;
@@ -89,22 +91,22 @@ IS-21 does not own:
 ```text
 app/
 └── domains/
-    └── utils/
+    └── maintenance/
         ├── contracts/
-        │   ├── utils-use-case.ts
-        │   ├── utils-target.ts
+        │   ├── maintenance-use-case.ts
+        │   ├── maintenance-target.ts
         │   ├── maintenance-scope.ts
         │   ├── header-model.ts
         │   ├── header-finding.ts
         │   ├── header-repair-intent.ts
         │   ├── source-version-intent.ts
         │   ├── cleanup-artefact.ts
-        │   ├── utils-effect.ts
-        │   ├── utils-result.ts
-        │   ├── utils-recovery.ts
-        │   └── utils-diagnostic.ts
+        │   ├── maintenance-effect.ts
+        │   ├── maintenance-result.ts
+        │   ├── maintenance-recovery.ts
+        │   └── maintenance-diagnostic.ts
         ├── catalogue/
-        │   └── utils-use-case-catalogue.ts
+        │   └── maintenance-use-case-catalogue.ts
         ├── ownership/
         │   └── stronger-owner-policy.ts
         ├── headers/
@@ -124,9 +126,9 @@ app/
         │   ├── cleanup-eligibility.ts
         │   └── cleanup-acceptance.ts
         ├── orchestration/
-        │   ├── utils-effect-runner.ts
+        │   ├── maintenance-effect-runner.ts
         │   ├── aggregate-result-builder.ts
-        │   └── utils-recovery-builder.ts
+        │   └── maintenance-recovery-builder.ts
         └── use-cases/
             ├── validate-headers.ts
             ├── repair-headers.ts
@@ -155,24 +157,24 @@ All use cases participate in IS-1 availability/validate/execute and return subor
 
 ## 5. Canonical Operation Identities
 
-Version 1 canonical Utils IDs are:
+Version 1 canonical Maintenance IDs are:
 
 ```text
-utils.headers.validate
-utils.headers.repair
-utils.source-version.maintain
-utils.cleanup
+maintenance.headers.validate
+maintenance.headers.repair
+maintenance.source-version.maintain
+maintenance.cleanup
 ```
 
-Header “check” is a validation-depth/mode of `utils.headers.validate`, not a separate authority. Package-name repair is a bounded repair concern within `utils.headers.repair`, not general metadata management.
+Header “check” is a validation-depth/mode of `maintenance.headers.validate`, not a separate authority. Package-name repair is a bounded repair concern within `maintenance.headers.repair`, not general metadata management.
 
-`utils.auto-doc` and `utils.add-contributor` are not canonical Utils operations.
+`utils.autoDoc` and `utils.addContributor` are not canonical Maintenance operations.
 
 ---
 
 ## 6. Stronger-Owner Gate
 
-Every registered Utils use case has an immutable ownership declaration:
+Every registered Maintenance use case has an immutable ownership declaration:
 
 ```ts
 export interface UtilsOwnershipDeclaration {
@@ -183,7 +185,7 @@ export interface UtilsOwnershipDeclaration {
 }
 ```
 
-`stronger-owner-policy.ts` rejects attempts to reinterpret known App, Git, Docs, Quality, Settings, AI or Nuxt intent as Utils behavior.
+`stronger-owner-policy.ts` rejects attempts to reinterpret known App, Git, Docs, Quality, Settings, AI or Nuxt intent as Maintenance behavior.
 
 The gate is design-time/catalogue policy plus runtime applicability protection; it is not a dynamic “guess the domain” router.
 
@@ -198,17 +200,17 @@ export type UtilsMaintenanceScope =
   | { readonly kind: 'managed_source_set'; readonly project: ManagedProjectIdentity };
 ```
 
-IS-2 resolves scope. Utils may narrow that scope using operation eligibility/exclusion policy but cannot broaden it.
+IS-2 resolves scope. Maintenance may narrow that scope using operation eligibility/exclusion policy but cannot broaden it.
 
-No Utils implementation treats `process.cwd()`, recursive filesystem discovery or repository membership as mutation authority.
+No Maintenance implementation treats `process.cwd()`, recursive filesystem discovery or repository membership as mutation authority.
 
 ---
 
 ## 8. Read versus Consequential Intent
 
-`utils.headers.validate` is read-only.
+`maintenance.headers.validate` is read-only.
 
-`utils.headers.repair`, `utils.source-version.maintain` and `utils.cleanup` are consequential and require applicable effect authorization/preview semantics through IS-1/IS-8/IS-4.
+`maintenance.headers.repair`, `maintenance.source-version.maintain` and `maintenance.cleanup` are consequential and require applicable effect authorization/preview semantics through IS-1/IS-8/IS-4.
 
 A validation finding never silently transitions into repair.
 
@@ -292,7 +294,7 @@ IS-1 invocation
  -> derive expected values with provenance
  -> evaluate header convention
  -> retain per-target findings
- -> aggregate Utils validation state
+ -> aggregate Maintenance validation state
  -> IS-1 final acceptance
 ```
 
@@ -401,7 +403,7 @@ An AI proposal cannot establish package identity when authoritative evidence is 
 
 ## 22. Source-File Versioning Boundary
 
-`utils.source-version.maintain` changes source-file header version/revision metadata only.
+`maintenance.source-version.maintain` changes source-file header version/revision metadata only.
 
 It does not change application/package/release version, create releases/tags, stage/commit/push, or own release policy.
 
@@ -413,7 +415,7 @@ IS-21 consumes normalized repository facts from IS-6 (and, when orchestration is
 
 Repository evidence may include target repository identity, changed path identity and bounded diff/change evidence.
 
-Utils never invokes provider-native Git status/diff directly and never turns “changed” into staging/commit authority.
+Maintenance never invokes provider-native Git status/diff directly and never turns “changed” into staging/commit authority.
 
 ---
 
@@ -487,7 +489,7 @@ current valid version + increment
  -> declared version update
  -> IS-8 transformation
  -> source/header validation
- -> Utils acceptance
+ -> Maintenance acceptance
 ```
 
 Malformed current version/revision history blocks blind increment.
@@ -504,7 +506,7 @@ No failure erases completed effects on other files.
 
 ## 31. Utility Cleanup Boundary
 
-`utils.cleanup` owns only recognized temporary/test/log artefact classes produced by AppManager-managed maintenance/testing workflows and explicitly assigned to Utils.
+`maintenance.cleanup` owns only recognized temporary/test/log artefact classes produced by AppManager-managed maintenance/testing workflows and explicitly assigned to Maintenance.
 
 It is not an alternate App clean/reset implementation and never deletes build output, dependencies, caches or lifecycle resources merely because they look temporary.
 
@@ -563,7 +565,7 @@ Aggregate success never implies that refused/failed required candidates were del
 
 IS-14 remains authoritative for application lifecycle clean/reset and semantic resource classes such as build/dependency/cache/dev artefacts.
 
-If a requested cleanup class is App-owned, Utils returns/delegates to the App canonical use case rather than duplicating its deletion rules.
+If a requested cleanup class is App-owned, Maintenance returns/delegates to the App canonical use case rather than duplicating its deletion rules.
 
 ---
 
@@ -571,7 +573,7 @@ If a requested cleanup class is App-owned, Utils returns/delegates to the App ca
 
 Legacy `utils/autoDoc.ts` may remain temporarily as an IS-22 compatibility alias, but it maps directly to the appropriate IS-17 canonical Docs operation.
 
-No Utils result semantics, Utils acceptance or Utils-specific source path is inserted around Docs behavior.
+No Maintenance result semantics, Maintenance acceptance or Maintenance-specific source path is inserted around Docs behavior.
 
 The alias should be deprecated and removable once callers migrate.
 
@@ -581,15 +583,15 @@ The alias should be deprecated and removable once callers migrate.
 
 Legacy `utils/addContributor.ts` may remain temporarily as an IS-22 compatibility alias to IS-19 contributor/settings semantics.
 
-Utils never owns contributor identity, metadata persistence or package/application metadata CRUD.
+Maintenance never owns contributor identity, metadata persistence or package/application metadata CRUD.
 
 ---
 
 ## 39. Quality Boundary
 
-Header validation produces Utils maintenance findings. It does not become IS-18 project-wide quality orchestration or an IS-11 quality gate merely because invalid headers can affect quality.
+Header validation produces Maintenance maintenance findings. It does not become IS-18 project-wide quality orchestration or an IS-11 quality gate merely because invalid headers can affect quality.
 
-A Quality use case may consume/expose Utils validation evidence through an explicit contract without transferring ownership in either direction.
+A Quality use case may consume/expose Maintenance validation evidence through an explicit contract without transferring ownership in either direction.
 
 ---
 
@@ -640,7 +642,7 @@ utils-cleanup:<project-id>:<resource-id>
 
 Independent targets may execute concurrently when ordering is semantically irrelevant. Same-resource mutation is coordinated through IS-1/IS-8/IS-4 conflict/revision semantics.
 
-No global Utils mutex is introduced.
+No global Maintenance mutex is introduced.
 
 ---
 
@@ -720,38 +722,38 @@ Recovery is informational; Version 1 provides no generic rollback transaction.
 Initial stable codes include:
 
 ```text
-UTIL_OPERATION_UNAVAILABLE
-UTIL_STRONGER_OWNER_REQUIRED
-UTIL_SCOPE_REQUIRED
-UTIL_SCOPE_NOT_MANAGED
-UTIL_NO_ELIGIBLE_TARGETS
-UTIL_SOURCE_UNSUPPORTED
-UTIL_HEADER_MISSING
-UTIL_HEADER_MALFORMED
-UTIL_HEADER_PROJECT_MISMATCH
-UTIL_HEADER_FILE_MISMATCH
-UTIL_HEADER_AUTHOR_MISSING
-UTIL_HEADER_VERSION_HISTORY_MISMATCH
-UTIL_EXPECTED_VALUE_AMBIGUOUS
-UTIL_HEADER_REPAIR_NOT_AUTHORIZED
-UTIL_HEADER_REPAIR_UNSUPPORTED
-UTIL_PACKAGE_NAME_MISMATCH
-UTIL_PACKAGE_REPAIR_AMBIGUOUS
-UTIL_SOURCE_VERSION_NOT_ELIGIBLE
-UTIL_SOURCE_VERSION_INVALID
-UTIL_INCREMENT_REQUIRED
-UTIL_AI_CLASSIFICATION_UNAVAILABLE
-UTIL_PATCH_FALLBACK_APPLIED
-UTIL_REVISION_NOTE_INVALID
-UTIL_CLEANUP_CLASS_UNSUPPORTED
-UTIL_CLEANUP_TARGET_AMBIGUOUS
-UTIL_CLEANUP_TARGET_NOT_ELIGIBLE
-UTIL_CLEANUP_NOT_AUTHORIZED
-UTIL_STALE_STATE
-UTIL_PARTIAL_EFFECT
-UTIL_EFFECT_INDETERMINATE
-UTIL_CANCELLED
-UTIL_RECOVERY_REVALIDATION_REQUIRED
+MAINT_OPERATION_UNAVAILABLE
+MAINT_STRONGER_OWNER_REQUIRED
+MAINT_SCOPE_REQUIRED
+MAINT_SCOPE_NOT_MANAGED
+MAINT_NO_ELIGIBLE_TARGETS
+MAINT_SOURCE_UNSUPPORTED
+MAINT_HEADER_MISSING
+MAINT_HEADER_MALFORMED
+MAINT_HEADER_PROJECT_MISMATCH
+MAINT_HEADER_FILE_MISMATCH
+MAINT_HEADER_AUTHOR_MISSING
+MAINT_HEADER_VERSION_HISTORY_MISMATCH
+MAINT_EXPECTED_VALUE_AMBIGUOUS
+MAINT_HEADER_REPAIR_NOT_AUTHORIZED
+MAINT_HEADER_REPAIR_UNSUPPORTED
+MAINT_PACKAGE_NAME_MISMATCH
+MAINT_PACKAGE_REPAIR_AMBIGUOUS
+MAINT_SOURCE_VERSION_NOT_ELIGIBLE
+MAINT_SOURCE_VERSION_INVALID
+MAINT_INCREMENT_REQUIRED
+MAINT_AI_CLASSIFICATION_UNAVAILABLE
+MAINT_PATCH_FALLBACK_APPLIED
+MAINT_REVISION_NOTE_INVALID
+MAINT_CLEANUP_CLASS_UNSUPPORTED
+MAINT_CLEANUP_TARGET_AMBIGUOUS
+MAINT_CLEANUP_TARGET_NOT_ELIGIBLE
+MAINT_CLEANUP_NOT_AUTHORIZED
+MAINT_STALE_STATE
+MAINT_PARTIAL_EFFECT
+MAINT_EFFECT_INDETERMINATE
+MAINT_CANCELLED
+MAINT_RECOVERY_REVALIDATION_REQUIRED
 ```
 
 Provider/parser/Git/filesystem-native errors remain protected subordinate evidence and are normalized before normal domain diagnostics.
@@ -770,7 +772,7 @@ No IS-21 module imports prompt libraries, terminal colours, spinners or IDE APIs
 
 ## 50. Security and Sensitivity
 
-Utils minimizes source content in diagnostics/events/AI context. Secrets and unrelated source are not included merely because a source file is inspected.
+Maintenance minimizes source content in diagnostics/events/AI context. Secrets and unrelated source are not included merely because a source file is inspected.
 
 AI context uses bounded change/header evidence and IS-10 disclosure policy.
 
@@ -783,19 +785,19 @@ Cleanup never follows arbitrary generated paths or untrusted text. IS-4 containm
 Semantic events may include:
 
 ```text
-utils.targets.resolved
-utils.header.inspected
-utils.header.finding
-utils.repair.plan.ready
-utils.repair.applied
-utils.version.classified
-utils.version.fallback.applied
-utils.version.applied
-utils.cleanup.candidates.resolved
-utils.cleanup.deleted
-utils.operation.partial
-utils.operation.unchanged
-utils.recovery.available
+maintenance.targets.resolved
+maintenance.header.inspected
+maintenance.header.finding
+maintenance.repair.plan.ready
+maintenance.repair.applied
+maintenance.version.classified
+maintenance.version.fallback.applied
+maintenance.version.applied
+maintenance.cleanup.candidates.resolved
+maintenance.cleanup.deleted
+maintenance.operation.partial
+maintenance.operation.unchanged
+maintenance.recovery.available
 ```
 
 Events contain safe semantic identity/state/evidence references rather than full source, secrets, raw provider prompts/responses or provider-native Git details.
@@ -806,15 +808,15 @@ Events contain safe semantic identity/state/evidence references rather than full
 
 IS-23 constructs:
 
-1. immutable Utils use-case descriptors/ownership declarations;
+1. immutable Maintenance use-case descriptors/ownership declarations;
 2. stronger-owner policy;
 3. header target resolver/expected-value/validator/repair planner/acceptance;
 4. changed-source resolver/increment classifier/revision-note/version planner/acceptance;
 5. cleanup class definitions/resolver/eligibility/acceptance;
 6. injected IS-4/IS-6/IS-7/IS-8/IS-10 collaborators;
 7. effect/aggregate/recovery components;
-8. four canonical Utils use cases;
-9. immutable Utils catalogue;
+8. four canonical Maintenance use cases;
+9. immutable Maintenance catalogue;
 10. IS-1 registrations.
 
 No singleton, service locator, import-time project scan, direct `process.cwd()`, direct `process.env`, direct Git CLI/simple-git, direct provider SDK, direct filesystem mutation or adapter prompt is used.
@@ -826,8 +828,8 @@ No singleton, service locator, import-time project scan, direct `process.cwd()`,
 Core tests cover at least:
 
 1. canonical four operation IDs;
-2. no canonical Utils auto-doc operation;
-3. no canonical Utils contributor operation;
+2. no canonical Maintenance auto-doc operation;
+3. no canonical Maintenance contributor operation;
 4. stronger-owner gate rejects App intent;
 5. stronger-owner gate rejects Docs intent;
 6. stronger-owner gate rejects Settings intent;
@@ -905,14 +907,14 @@ Core tests cover at least:
 78. fail-fast explicit only;
 79. completed file effects retained;
 80. cleanup classes immutable;
-81. cleanup class must be Utils-owned;
+81. cleanup class must be Maintenance-owned;
 82. glob alone insufficient cleanup authority;
 83. cleanup bounded to IS-2 scope;
 84. discovery does not authorize deletion;
 85. unknown cleanup file refused;
 86. ambiguous ownership refused;
 87. symlink/containment uncertainty refused/delegated IS-4;
-88. App clean resource delegated/rejected from Utils;
+88. App clean resource delegated/rejected from Maintenance;
 89. complete cleanup candidate set previewed;
 90. cleanup authorization required;
 91. exact IS-4 deletion;
@@ -922,7 +924,7 @@ Core tests cover at least:
 95. per-target cleanup attribution;
 96. autoDoc compatibility maps to Docs semantics;
 97. addContributor compatibility maps to Settings semantics;
-98. compatibility alias adds no Utils acceptance;
+98. compatibility alias adds no Maintenance acceptance;
 99. header findings do not become Quality gate authority;
 100. stale planning evidence invalidates consequential plan;
 101. no silent replan-and-apply;
@@ -931,7 +933,7 @@ Core tests cover at least:
 104. no false rollback;
 105. independent targets may run concurrently;
 106. same-resource mutation conflict coordinated;
-107. no global Utils mutex;
+107. no global Maintenance mutex;
 108. no blind retry;
 109. deliberate retry reacquires evidence;
 110. optional AI failure does not trigger hidden retry;
@@ -948,7 +950,7 @@ Core tests cover at least:
 121. no direct filesystem mutation;
 122. no service singleton;
 123. IS-23 explicit composition;
-124. source/repository/AI provider substitution preserves Utils policy;
+124. source/repository/AI provider substitution preserves Maintenance policy;
 125. final application acceptance remains IS-1-owned.
 
 Integration tests use controlled IS-4/IS-6/IS-7/IS-8/IS-10 substitutes and fixtures for valid/missing/malformed/inconsistent headers, excluded source, ambiguous expected values, package mismatch, changed-file sets, malformed versions, all increment classes, AI unavailable/invalid classification, Patch fallback, stale source, partial transformations, cleanup candidates, stronger-owner collisions, cancellation and Headless ambiguity.
@@ -961,18 +963,18 @@ The live `app/commands/utils/` directory currently contains `addContributor.ts`,
 
 | Current artefact/responsibility | Disposition | Version 1 treatment |
 |---|---|---|
-| `app/commands/utils/validateHeaders.ts` intent | **RETAIN / ADAPT** | Preserve header-validation product intent; relocate semantics to `utils.headers.validate`, presentation to IS-22. |
+| `app/commands/utils/validateHeaders.ts` intent | **RETAIN / ADAPT** | Preserve header-validation product intent; relocate semantics to `maintenance.headers.validate`, presentation to IS-22. |
 | `validateHeaders.ts` TODO implementation | **REPLACE** | Implement IS-21 read-only target/evidence/validation orchestration. |
-| `app/commands/utils/autoVersion.ts` intent | **RETAIN / ADAPT** | Preserve source-file header-version maintenance; relocate to `utils.source-version.maintain`. |
+| `app/commands/utils/autoVersion.ts` intent | **RETAIN / ADAPT** | Preserve source-file header-version maintenance; relocate to `maintenance.source-version.maintain`. |
 | `autoVersion.ts` TODO implementation | **REPLACE** | Implement changed-file eligibility, increment/revision policy and IS-8 transformation. |
-| `app/commands/utils/cleanLogs.ts` broad name | **SPLIT / ADAPT** | Retain only approved Utils temporary/test/log artefact cleanup classes; reject App clean/reset overlap and arbitrary log deletion. |
+| `app/commands/utils/cleanLogs.ts` broad name | **SPLIT / ADAPT** | Retain only approved Maintenance temporary/test/log artefact cleanup classes; reject App clean/reset overlap and arbitrary log deletion. |
 | `app/commands/utils/autoDoc.ts` | **RELOCATE / DEPRECATE** | Automatic documentation is IS-17-owned; optional temporary IS-22 compatibility alias only. |
 | `app/commands/utils/addContributor.ts` | **RELOCATE / DEPRECATE** | Contributor/general metadata management is IS-19-owned; optional temporary IS-22 compatibility alias only. |
 | command-path ownership assumptions | **REPLACE** | Canonical semantic catalogue/stronger-owner rule establishes authority. |
 | current source scanners/header parsers | **RETAIN / ADAPT below domain where conforming** | Useful recognition mechanics belong behind IS-7/provider seams; no scanner authority. |
-| current source strategies/editors | **RETAIN / ADAPT below domain where conforming** | Existing-source mutation belongs IS-8; no direct Utils text-edit strategy contract. |
-| current repository/diff mechanics | **RELOCATE / ADAPT through IS-6/15** | Utils consumes normalized changed-file evidence only. |
-| current AI/LLM mechanics | **RELOCATE / ADAPT through IS-10** | Optional classification/proposal only; no provider code in Utils. |
+| current source strategies/editors | **RETAIN / ADAPT below domain where conforming** | Existing-source mutation belongs IS-8; no direct Maintenance text-edit strategy contract. |
+| current repository/diff mechanics | **RELOCATE / ADAPT through IS-6/15** | Maintenance consumes normalized changed-file evidence only. |
+| current AI/LLM mechanics | **RELOCATE / ADAPT through IS-10** | Optional classification/proposal only; no provider code in Maintenance. |
 | direct filesystem deletion/write | **REPLACE** | IS-4 exact resource mechanics and IS-8 existing-source transformation. |
 | prompts/logging/terminal formatting | **RELOCATE** | IS-22/IS-1 observability/presentation. |
 | singleton/service-locator composition | **REPLACE** | IS-23 explicit dependency construction. |
@@ -983,7 +985,7 @@ No implementation stub is promoted into a normative design decision merely becau
 
 ## 55. Migration Sequence
 
-1. add Utils contracts and four canonical semantic IDs;
+1. add Maintenance contracts and four canonical semantic IDs;
 2. add immutable ownership declarations and stronger-owner policy;
 3. add managed scope/target model consuming IS-2;
 4. map header recognition evidence from IS-7 into IS-21 header model;
@@ -1000,14 +1002,14 @@ No implementation stub is promoted into a normative design decision merely becau
 15. implement bounded revision-note planning;
 16. implement coherent version/history IS-8 transformation;
 17. implement per-file continuation/partial-effect semantics;
-18. define immutable Utils cleanup classes/exclusions;
+18. define immutable Maintenance cleanup classes/exclusions;
 19. implement bounded cleanup candidate resolution/preview;
 20. implement exact authorized IS-4 deletion and cleanup acceptance;
 21. relocate/deprecate `autoDoc.ts` to IS-17 compatibility mapping;
 22. relocate/deprecate `addContributor.ts` to IS-19 compatibility mapping;
-23. adapt `cleanLogs.ts` to bounded `utils.cleanup` semantics rather than broad filename deletion;
+23. adapt `cleanLogs.ts` to bounded `maintenance.cleanup` semantics rather than broad filename deletion;
 24. replace TODO `validateHeaders.ts`/`autoVersion.ts` adapter bodies with IS-22-to-IS-1 invocation mapping;
-25. remove direct provider/scanner/strategy/filesystem authority from Utils paths;
+25. remove direct provider/scanner/strategy/filesystem authority from Maintenance paths;
 26. add cancellation/stale/concurrency/recovery behavior;
 27. add IS-23 composition and IS-1 registrations;
 28. run stronger-owner, header preservation, source-version, cleanup-boundary, partial-effect and Headless conformance suites.
@@ -1047,13 +1049,13 @@ IS-22 adapter / owning workflow
             +--> IS-3 effective maintenance policy
             |
             v
-        IS-21 Utils Domain
+        IS-21 Maintenance Domain
             |
             +--> stronger-owner gate
             +--> header maintenance policy
             +--> source-version policy
             +--> bounded cleanup policy
-            +--> Utils acceptance/recovery
+            +--> Maintenance acceptance/recovery
             |
             +--> IS-7 recognition evidence
             +--> IS-6 repository/change evidence
@@ -1075,4 +1077,4 @@ IS-22 adapter / owning workflow
 
 The non-drift rule is:
 
-> **Version 1 Utils owns only genuine otherwise-unowned cross-cutting maintenance intent: AppManager source-header inspection/validation/repair, source-file header-version maintenance, and narrowly classified temporary/test/log artefact cleanup. It never becomes a residual namespace for known App/Docs/Settings/Git/Quality/AI/Nuxt behavior, derives authority from command location, cwd, recursive discovery, repository membership or scanner recognition, turns validation into implicit repair, rewrites valid creation/revision history for convenience, invents expected metadata, auto-versions non-versioned source, confuses source-file versions with application releases, converts repository change evidence into Git authority, treats AI classification as authoritative, hides the Patch fallback, deletes by broad glob/name alone, duplicates App clean/reset, bypasses IS-8 for source mutation or IS-4 for deletion, erases partial effects, invents rollback, or publishes a competing final AppManager outcome.**
+> **Version 1 Maintenance owns only genuine otherwise-unowned cross-cutting maintenance intent: AppManager source-header inspection/validation/repair, source-file header-version maintenance, and narrowly classified temporary/test/log artefact cleanup. It never becomes a residual namespace for known App/Docs/Settings/Git/Quality/AI/Nuxt behavior, derives authority from command location, cwd, recursive discovery, repository membership or scanner recognition, turns validation into implicit repair, rewrites valid creation/revision history for convenience, invents expected metadata, auto-versions non-versioned source, confuses source-file versions with application releases, converts repository change evidence into Git authority, treats AI classification as authoritative, hides the Patch fallback, deletes by broad glob/name alone, duplicates App clean/reset, bypasses IS-8 for source mutation or IS-4 for deletion, erases partial effects, invents rollback, or publishes a competing final AppManager outcome.**

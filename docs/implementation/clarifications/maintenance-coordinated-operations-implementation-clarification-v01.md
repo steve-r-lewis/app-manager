@@ -4,9 +4,9 @@
 >
 > **Status:** Active — temporary PBC-1 integration vehicle
 >
-> **Primary implementation:** [IS-21 — Utils Domain](../is-21-utils-domain-implementation-specification-v01.md)
+> **Primary implementation:** [IS-21 — Maintenance Domain](../is-21-utils-domain-implementation-specification-v01.md)
 >
-> **Related clarification:** [Maintenance Domain Implementation Clarification](maintenance-domain-implementation-clarification-v01.md)
+> **Related clarification:** [Maintenance Domain Implementation Clarification — Retired](../../archive/implementation/maintenance-domain-implementation-clarification-v01-retired.md) (its `utils.*`→`maintenance.*` reclassification is now applied directly in IS-21)
 >
 > **DD binding:** DD-4.4 Coordinated Maintenance Operations Clarification
 

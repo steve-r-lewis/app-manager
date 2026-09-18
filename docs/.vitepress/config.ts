@@ -45,7 +45,7 @@ const dd4Items = [
 	{ text: 'DD-4.1 — Quality Domain', link: '/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01' },
 	{ text: 'DD-4.2 — Settings Domain', link: '/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01' },
 	{ text: 'DD-4.3 — AI Domain', link: '/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01' },
-	{ text: 'DD-4.4 — Utils Domain', link: '/dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01' }
+	{ text: 'DD-4.4 — Maintenance Domain', link: '/dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01' }
 ]
 
 export default defineConfig({

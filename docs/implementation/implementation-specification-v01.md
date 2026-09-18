@@ -60,7 +60,7 @@ The register does not imply one Implementation Specification per source file, se
 | `IS-18` | Quality Domain | DD-4.1 | Authored |
 | `IS-19` | Settings Domain | DD-4.2 | Authored |
 | `IS-20` | AI Domain | DD-4.3 | Authored |
-| `IS-21` | Utils Domain | DD-4.4 | Authored |
+| `IS-21` | Maintenance Domain | DD-4.4 | Authored |
 | `IS-22` | Interaction Adapters | DD-1.1 plus interaction-mode requirements carried through the DD set | Authored |
 | `IS-23` | Build and Runtime Assembly | ADR-0001 and the complete DD dependency model | Authored |
 
