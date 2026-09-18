@@ -23,6 +23,8 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [Nuxt Command Model Implementation Clarification — Retired](../archive/implementation/nuxt-command-model-implementation-clarification-v01-retired.md) (its 5 added identities and their IS-13 seam are now applied directly in §5 and §§32.1–32.5, with the IS-13 extension in [IS-13 §§21.1–21.5](is-13-nuxt-capability-implementation-specification-v01.md#_21-1-artefact-placement))
 
 ## 1. Purpose
 
@@ -118,6 +120,11 @@ app/
             ├── list-configuration.ts
             ├── add-configuration.ts
             ├── remove-configuration.ts
+            ├── add-artefact.ts
+            ├── add-module.ts
+            ├── upgrade.ts
+            ├── analyze.ts
+            ├── cleanup.ts
             ├── create-layer.ts
             ├── integrate-layer.ts
             └── detach-layer.ts
@@ -150,12 +157,17 @@ nuxt.inspect-configuration
 nuxt.list-configuration
 nuxt.add-configuration
 nuxt.remove-configuration
+nuxt.add
+nuxt.add-module
+nuxt.upgrade
+nuxt.analyze
+nuxt.cleanup
 nuxt.create-layer
 nuxt.integrate-layer
 nuxt.detach-layer
 ```
 
-These map directly to DD-3.3 operation identities. Transitional aliases may exist only in IS-22 and do not create separate semantics.
+Thirteen canonical identities, matching [DD-3.3's Functional catalogue binding](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#add). `add`, `add-module`, `upgrade`, `analyze` and `cleanup` (§32.1–32.5) use the same explicit root/layer selection model as the other ten identities; monorepo membership never authorizes implicit iteration over sibling targets. These map directly to DD-3.3 operation identities. Transitional aliases may exist only in IS-22 and do not create separate semantics.
 
 Historical `nuxt.extractDocs` belongs to Docs semantics, and `nuxt.manageEnv` belongs to Settings/environment-definition semantics; neither remains a Nuxt-domain use case merely because its legacy command path is under `nuxt`.
 
@@ -586,6 +598,73 @@ Already absent is `already_satisfied` where identity can be established safely.
 
 ---
 
+### 32.1 Scaffold an Artefact (`nuxt.add`) {#add}
+
+```ts
+export interface AddNuxtArtefactInput {
+  readonly target: NuxtExistingTargetSelector;
+  readonly artefactClass: NuxtScaffoldClassId;
+  readonly name: string;
+  readonly options?: Readonly<Record<string, unknown>>;
+}
+```
+
+`options` is an extensibility envelope scoped to the named `artefactClass` only (DD-3.3 §8.10); it never becomes arbitrary provider argument or shell input.
+
+Sequence: resolve one existing root/layer target (§6) → resolve a supported scaffold class → request IS-13 Nuxt-aware placement/technical plan evidence → apply collision/authorization policy → delegate authorized new-resource creation (IS-4) or existing-source transformation (IS-8) as required → request fresh IS-13 validation → accept only when the requested artefact postcondition is satisfied. This operation is limited to supported Nuxt artefacts, not arbitrary resource generation.
+
+### 32.2 Establish a Module (`nuxt.add-module`) {#add-module}
+
+```ts
+export interface AddNuxtModuleInput {
+  readonly target: NuxtExistingTargetSelector;
+  readonly module: NuxtModuleId;
+  readonly requestedVersion?: NuxtModuleVersionRequest;
+  readonly options?: NuxtModuleConfigurationIntent;
+}
+```
+
+Module addition is modeled as one domain operation, not a package-install step plus a separate configuration edit (DD-3.3 §8.11). IS-13 normalizes module state and semantic dependency/configuration requirements; package dependency execution uses the established process/package-provider path (IS-5); supported configuration mutation uses IS-8; final module state is freshly validated before domain acceptance. Already-satisfied/conflicting state remains explicit. No arbitrary package-install string is accepted as module intent.
+
+### 32.3 Upgrade a Target (`nuxt.upgrade`) {#upgrade}
+
+```ts
+export interface UpgradeNuxtInput {
+  readonly target: NuxtExistingTargetSelector;
+  readonly request: NuxtUpgradeRequest;
+}
+```
+
+`NuxtUpgradeRequest` identifies an explicit version/range or a documented policy identity (DD-3.3 §8.12). IS-16 binds it to one selected target, obtains technical current/available state through bounded IS-13 evidence, coordinates authorized dependency/provider work, and validates the resulting Nuxt target.
+
+No implementation default silently translates an absent request into `latest`, and scope policy cannot implicitly broaden the request to root plus sibling layers.
+
+### 32.4 Analyze a Target (`nuxt.analyze`) {#analyze}
+
+```ts
+export interface AnalyzeNuxtInput {
+  readonly target: NuxtExistingTargetSelector;
+  readonly profile?: NuxtAnalysisProfileId;
+}
+```
+
+IS-16 coordinates Nuxt analysis through the injected IS-13 technical seam (DD-3.3 §8.13); any executable tooling runs through IS-5 Process Execution, and IS-13/provider code normalizes the technical analysis evidence. IS-16 exposes a Nuxt-domain analysis payload/diagnostics only — the operation is observational/diagnostic relative to Quality policy and never manufactures a competing IS-18 Quality-gate result.
+
+### 32.5 Clean Supported Generated State (`nuxt.cleanup`) {#cleanup}
+
+```ts
+export interface CleanupNuxtInput {
+  readonly target: NuxtExistingTargetSelector;
+  readonly classes?: readonly NuxtGeneratedStateClass[];
+}
+```
+
+IS-13 identifies only supported Nuxt-generated/cache state classes and the technical facts needed for cleanup (DD-3.3 §8.14). IS-16 binds those facts to the selected authoritative target and approved cleanup classes; authorized deletion uses IS-4 Resource Access mechanics.
+
+The implementation rejects resources outside the supported Nuxt-generated-state classification rather than widening into App clean/reset semantics (§48).
+
+---
+
 ## 33. Lifecycle State
 
 ```ts
@@ -739,6 +818,16 @@ NUXT_LAYER_TARGET_INDETERMINATE
 NUXT_LAYER_REQUIRED_CONTRIBUTION_UNAVAILABLE
 NUXT_LAYER_BASELINE_INVALID
 NUXT_LAYER_PARTIAL
+NUXT_ARTEFACT_CLASS_UNSUPPORTED
+NUXT_MODULE_ALREADY_PRESENT
+NUXT_MODULE_CONFLICT
+NUXT_MODULE_UNAVAILABLE
+NUXT_UPGRADE_TARGET_REQUIRED
+NUXT_UPGRADE_VERSION_REQUIRED
+NUXT_UPGRADE_POSTCONDITION_FAILED
+NUXT_ANALYSIS_UNAVAILABLE
+NUXT_CLEANUP_CLASS_UNSUPPORTED
+NUXT_CLEANUP_TARGET_NOT_ELIGIBLE
 NUXT_INTEGRATION_ALREADY_PRESENT
 NUXT_INTEGRATION_CONFLICT
 NUXT_INTEGRATION_UNSUPPORTED
@@ -835,9 +924,10 @@ IS-23 constructs:
 3. IS-15 Git Domain nested-use-case seam;
 4. IS-19 Settings/licence seam when required;
 5. Nuxt policies/runners/acceptance/recovery builder;
-6. eight Nuxt use cases;
-7. immutable Nuxt descriptor catalogue;
-8. IS-1 registrations.
+6. IS-5 Process Execution seam for `nuxt.upgrade`/`nuxt.analyze` bounded tooling;
+7. thirteen Nuxt use cases;
+8. immutable Nuxt descriptor catalogue;
+9. IS-1 registrations.
 
 No import-time singleton or direct environment/config read exists in IS-16.
 
@@ -857,7 +947,7 @@ Documentation/Quality/Settings/AI application intent remains with IS-17/18/19/20
 
 Core tests cover at least:
 
-1. eight canonical IDs;
+1. thirteen canonical IDs;
 2. aliases do not create semantics;
 3. `extractDocs` not Nuxt-owned;
 4. `manageEnv` not Nuxt-owned;
@@ -950,7 +1040,16 @@ Core tests cover at least:
 91. explicit IS-23 composition/no singleton;
 92. provider substitution leaves domain-policy tests unchanged;
 93. IS-13 validation remains subordinate to IS-16 acceptance;
-94. IS-16 acceptance remains subordinate to IS-1 final acceptance.
+94. IS-16 acceptance remains subordinate to IS-1 final acceptance;
+95. `nuxt.add` limited to supported artefact classes, never arbitrary resource generation;
+96. `nuxt.add-module` treats module addition as one domain operation, not install-then-configure as separate intents;
+97. `nuxt.add-module` rejects an arbitrary package-install string as module intent;
+98. `nuxt.upgrade` never defaults an absent request to `latest`;
+99. `nuxt.upgrade` never implicitly broadens scope to root plus sibling layers;
+100. `nuxt.analyze` never produces a competing IS-18 Quality-gate result;
+101. `nuxt.analyze` tooling execution routes through IS-5;
+102. `nuxt.cleanup` rejects resources outside the supported Nuxt-generated-state classification;
+103. `nuxt.cleanup` deletion routes through IS-4 with IS-13-supplied eligibility facts only.
 
 Integration tests use controlled capability/domain substitutes for policy/orchestration tests and dedicated Nuxt fixtures for IS-13/IS-8 integration, including supported, unsupported, ambiguous, stale, root/layer, standalone/integrated and partial-effect states.
 
@@ -964,7 +1063,8 @@ Integration tests use controlled capability/domain substitutes for policy/orches
 | `createLayer.ts` direct command location as semantic owner | **REPLACE** | IS-22 adapter maps to IS-1 canonical `nuxt.create-layer`; domain semantics live under `app/domains/nuxt/`. |
 | `app/commands/nuxt/extractDocs.ts` | **RELOCATE / REMOVE from Nuxt domain** | Documentation extraction belongs to Docs application intent/IS-17; legacy path must not imply Nuxt ownership. |
 | `app/commands/nuxt/manageEnv.ts` | **RELOCATE / REMOVE from Nuxt domain** | Environment-definition CRUD belongs to Settings/IS-19; Nuxt may consume effective values only. |
-| current absence of Nuxt inspect/config/integrate/detach implementations | **ADD** | Implement eight canonical IS-16 use cases from normative Functional/DD contracts rather than inventing from legacy code. |
+| current absence of Nuxt inspect/config/integrate/detach implementations | **ADD** | Implement thirteen canonical IS-16 use cases from normative Functional/DD contracts rather than inventing from legacy code. |
+| current absence of `nuxt.add`/`add-module`/`upgrade`/`analyze`/`cleanup` implementations | **ADD** | Implement per §32.1–32.5 over a minimally extended IS-13 capability seam; no raw Nuxt/package-manager command becomes the semantic contract. |
 | current source scanner/strategy mechanisms | **RETAIN useful mechanisms below domain / RELOCATE** | IS-7/8/13 own technical semantics; IS-16 consumes normalized evidence/plans. |
 | current templates/template repository | **RETAIN useful resources / ADAPT below domain** | IS-9 owns identity/rendering; IS-13 profile planning and IS-16 profile orchestration consume them. |
 | current filesystem writes | **REPLACE as direct domain mechanics** | IS-4 authorized creation; IS-8 existing-source modification. |
@@ -978,7 +1078,7 @@ The sparse legacy Nuxt command surface is not treated as an architectural gap to
 
 ## 51. Migration Sequence
 
-1. add Nuxt-domain contracts and eight canonical descriptors;
+1. add Nuxt-domain contracts and thirteen canonical descriptors;
 2. add IS-2-backed target resolver and operation applicability evaluator;
 3. inject IS-13 Nuxt Capability and implement read-only `nuxt.inspect`;
 4. implement configuration inspection/list projections;
@@ -997,11 +1097,16 @@ The sparse legacy Nuxt command surface is not treated as an architectural gap to
 17. implement explicit `nuxt.detach-layer` without deletion semantics;
 18. add lifecycle-state/orthogonal repository relationship projection;
 19. add stale-state/cancellation/partial-effect/recovery semantics;
-20. move `extractDocs` out of Nuxt application ownership;
-21. move `manageEnv` out of Nuxt application ownership;
-22. route all interaction through IS-22 and canonical IS-1 registrations;
-23. remove obsolete direct command/provider/singleton paths as replacement implementations land;
-24. run authority, cross-owned artefact, Headless, stale-state, partial-effect and provider-substitution conformance suites.
+20. implement `nuxt.add` over the extended IS-13 artefact-placement seam and IS-4/IS-8 dispatch (§32.1);
+21. implement `nuxt.add-module` over the extended IS-13 module-change seam, IS-5 dependency execution and IS-8 configuration mutation (§32.2);
+22. implement `nuxt.upgrade` over the extended IS-13 upgrade-planning seam (§32.3);
+23. implement `nuxt.analyze` over the extended IS-13 analysis seam and IS-5 tooling (§32.4);
+24. implement `nuxt.cleanup` over the extended IS-13 generated-state seam and IS-4 deletion (§32.5);
+25. move `extractDocs` out of Nuxt application ownership;
+26. move `manageEnv` out of Nuxt application ownership;
+27. route all interaction through IS-22 and canonical IS-1 registrations;
+28. remove obsolete direct command/provider/singleton paths as replacement implementations land;
+29. run authority, cross-owned artefact, Headless, stale-state, partial-effect and provider-substitution conformance suites.
 
 ---
 
@@ -1014,6 +1119,7 @@ The sparse legacy Nuxt command surface is not treated as an architectural gap to
 | inspection/facts | FR-NUXT-013–020; DD-3.3 inspection design |
 | configuration inspect/list | FR-NUXT-021–033; DD-3.3 configuration design; IS-13 |
 | configuration add/remove | FR-NUXT-034–050; DD-3.3 configuration mutation design; IS-8/IS-13 |
+| add artefact / add module / upgrade / analyze / cleanup (§32.1–32.5) | PBC-FR-NUXT-003–022; DD-3.3 §§8.10–8.14; DD-2.10 §6.1; IS-5/8/13 |
 | layer creation/profile | FR-NUXT-051–070; DD-3.3 layer creation design; binding clarification |
 | scaffold ownership | Nuxt Layer Scaffold Artefact Ownership Clarification §§1–9; IS-9/12/19 |
 | integration | FR-NUXT-071–082; DD-3.3 integration design; IS-13/IS-15 |
@@ -1063,4 +1169,4 @@ IS-22 adapter -> IS-1 canonical invocation/authority
 
 The non-drift rule is:
 
-> **Version 1 Nuxt Domain owns Nuxt-specific application intent, target/applicability policy, profile selection, composed layer/configuration orchestration and Nuxt-domain acceptance. It never derives mutation authority from Nuxt discovery, turns IS-13 into a second application domain, writes source or resources through content producers, absorbs documentation/licence/Git semantics because they participate in a layer profile, equates Git relationships with Nuxt composition, silently overwrites creation targets, hides partial effects, or publishes a competing final AppManager outcome.**
+> **Version 1 Nuxt Domain owns Nuxt-specific application intent across its thirteen canonical commands, target/applicability policy, profile selection, composed layer/configuration/artefact/module/upgrade/analysis/cleanup orchestration and Nuxt-domain acceptance. It never derives mutation authority from Nuxt discovery, turns IS-13 into a second application domain, writes source or resources through content producers, absorbs documentation/licence/Git semantics because they participate in a layer profile, equates Git relationships with Nuxt composition, silently overwrites creation targets, defaults an upgrade request to `latest`, widens `nuxt.cleanup` into App clean/reset semantics, turns `nuxt.analyze` into a Quality-gate decision, hides partial effects, or publishes a competing final AppManager outcome.**

@@ -21,6 +21,8 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [Nuxt Command Model Implementation Clarification — Retired](../archive/implementation/nuxt-command-model-implementation-clarification-v01-retired.md) (its minimum IS-13 seam for the 5 added [IS-16](is-16-nuxt-domain-implementation-specification-v01.md) identities is now applied directly in §§21.1–21.5)
 
 ## 1. Purpose
 
@@ -60,6 +62,11 @@ IS-13 owns concrete implementation for:
 - layer technical eligibility;
 - layer creation profiles and Nuxt baseline requirements;
 - scaffold artefact-class requests and Nuxt-specific parameter contributions;
+- single-artefact placement evidence for an existing target (§21.1);
+- module state and semantic dependency/configuration requirements (§21.2);
+- upgrade version/policy resolution and resulting-target validity (§21.3);
+- bounded Nuxt-specific analysis evidence (§21.4);
+- supported Nuxt-generated/cache state classification (§21.5);
 - Nuxt baseline validation over subordinate artefact evidence;
 - integration/detachment semantic plans;
 - provider selection/normalization;
@@ -101,6 +108,11 @@ app/
         │   ├── nuxt-layer.ts
         │   ├── nuxt-layer-profile.ts
         │   ├── nuxt-scaffold.ts
+        │   ├── nuxt-artefact-placement.ts
+        │   ├── nuxt-module-change.ts
+        │   ├── nuxt-upgrade-plan.ts
+        │   ├── nuxt-analysis.ts
+        │   ├── nuxt-generated-state.ts
         │   ├── nuxt-relationship.ts
         │   ├── nuxt-validation.ts
         │   └── nuxt-failure.ts
@@ -115,6 +127,11 @@ app/
         │   ├── nuxt-layer-modeler.ts
         │   ├── nuxt-layer-profile-catalogue.ts
         │   ├── nuxt-scaffold-planner.ts
+        │   ├── nuxt-artefact-planner.ts
+        │   ├── nuxt-module-planner.ts
+        │   ├── nuxt-upgrade-planner.ts
+        │   ├── nuxt-analyzer.ts
+        │   ├── nuxt-generated-state-inspector.ts
         │   └── nuxt-relationship-planner.ts
         ├── validation/
         │   └── nuxt-validator.ts
@@ -141,6 +158,11 @@ export interface NuxtCapability {
   planConfigurationChange(request: NuxtConfigChangeRequest): Promise<NuxtConfigChangeResult>;
   inspectLayer(request: NuxtLayerInspectionRequest): Promise<NuxtLayerInspectionResult>;
   planScaffold(request: NuxtScaffoldRequest): Promise<NuxtScaffoldPlanResult>;
+  planArtefactPlacement(request: NuxtArtefactPlacementRequest): Promise<NuxtArtefactPlacementResult>;
+  planModuleChange(request: NuxtModuleChangeRequest): Promise<NuxtModuleChangeResult>;
+  planUpgrade(request: NuxtUpgradePlanRequest): Promise<NuxtUpgradePlanResult>;
+  analyze(request: NuxtAnalysisRequest): Promise<NuxtAnalysisResult>;
+  inspectGeneratedState(request: NuxtGeneratedStateRequest): Promise<NuxtGeneratedStateResult>;
   planRelationshipChange(request: NuxtRelationshipChangeRequest): Promise<NuxtRelationshipPlanResult>;
   validate(request: NuxtValidationRequest): Promise<NuxtValidationResult>;
 }
@@ -148,7 +170,7 @@ export interface NuxtCapability {
 
 Every method returns technical Nuxt evidence/proposals. None performs application-level authorization, filesystem mutation, Git operations or final outcome publication.
 
-`planScaffold()` returns a composed technical plan; it does not persist artefacts.
+`planScaffold()` returns a composed technical plan; it does not persist artefacts. The five methods added for `nuxt.add`/`add-module`/`upgrade`/`analyze`/`cleanup` (§§21.1–21.5) are the minimum normalized facts/plans/validation those operations require — they do not mirror the thirteen-command catalogue mechanically, and `validate()` remains the shared post-effect validation seam for artefact placement, module change and upgrade rather than each gaining its own validate variant.
 
 ---
 
@@ -494,6 +516,121 @@ AST/CST/compiler nodes, parser exceptions, Nuxt CLI output and package-tool stdo
 Normalized contracts contain semantic entries, ranges, revisions, facts and diagnostics only.
 
 Provider exceptions map to stable Nuxt failures; callers never parse exception strings to determine manageability.
+
+### 21.1 Artefact Placement {#artefact-placement}
+
+For `nuxt.add`, IS-13 supplies bounded placement/technical evidence for one supported scaffold artefact class within an existing target — distinct from `planScaffold()`, which requires a full layer profile:
+
+```ts
+export interface NuxtArtefactPlacementRequest {
+  readonly target: NuxtTargetReference;
+  readonly artefactClass: NuxtScaffoldArtefactClass;
+  readonly name: string;
+  readonly effectiveOptions: Readonly<Record<string, unknown>>;
+  readonly existingTargetEvidence: ResourceContainerEvidence;
+  readonly signal?: AbortSignal;
+}
+
+export interface NuxtArtefactPlacementResult {
+  readonly state: 'placeable' | 'already_present' | 'collision' | 'class_unsupported' | 'indeterminate';
+  readonly proposedTarget?: ResourceReference;
+  readonly plan?: NuxtScaffoldArtefactPlan;
+  readonly diagnostics: readonly NuxtDiagnostic[];
+}
+```
+
+`effectiveOptions` reaches IS-13 only as an already-bounded extensibility envelope for the named class (DD-2.10 §6.1); IS-13 does not accept it as arbitrary provider/shell input. The result reuses `NuxtScaffoldArtefactPlan` (§28) — a single-artefact placement is a one-item scaffold plan, not a new plan shape.
+
+### 21.2 Module Change {#module-change}
+
+For `nuxt.add-module`, IS-13 interprets module state and the semantic dependency/configuration requirements for the selected target:
+
+```ts
+export interface NuxtModuleChangeRequest {
+  readonly target: NuxtTargetReference;
+  readonly module: NuxtModuleId;
+  readonly requestedVersion?: NuxtModuleVersionRequest;
+  readonly options?: NuxtModuleConfigurationIntent;
+  readonly signal?: AbortSignal;
+}
+
+export interface NuxtModuleChangeResult {
+  readonly state: 'installable' | 'already_present' | 'conflict' | 'module_unavailable' | 'indeterminate';
+  readonly dependencyRequirement?: NuxtModuleDependencyRequirement;
+  readonly configurationChange?: NuxtConfigChangeRequest;
+  readonly diagnostics: readonly NuxtDiagnostic[];
+}
+```
+
+`configurationChange`, where present, reuses the existing `NuxtConfigChangeRequest` shape (§14) targeting the `modules` semantic class (§11) — module establishment does not invent a parallel configuration-mutation contract. `dependencyRequirement` is normalized evidence only; IS-16 delegates the actual package operation through the established IS-5 process/package-provider path, never through IS-13.
+
+### 21.3 Upgrade Planning {#upgrade-planning}
+
+For `nuxt.upgrade`, IS-13 supplies current/available version state and resulting-target validity:
+
+```ts
+export interface NuxtUpgradePlanRequest {
+  readonly target: NuxtTargetReference;
+  readonly request: NuxtUpgradeRequest;
+  readonly signal?: AbortSignal;
+}
+
+export interface NuxtUpgradePlanResult {
+  readonly state: 'upgradeable' | 'already_current' | 'version_unresolvable' | 'unsupported' | 'indeterminate';
+  readonly currentVersion?: NuxtVersionSupport;
+  readonly targetVersion?: NuxtVersionSupport;
+  readonly dependencyRequirement?: NuxtModuleDependencyRequirement;
+  readonly diagnostics: readonly NuxtDiagnostic[];
+}
+```
+
+`NuxtUpgradeRequest` must identify an explicit version/range or documented policy identity; IS-13 never substitutes `latest` for an absent request and never expands one target into root plus sibling layers (DD-3.3 §8.12). Post-upgrade validity uses the shared `validate()` method (§37) against the refreshed target, not a dedicated upgrade-validate variant.
+
+### 21.4 Analysis {#analysis}
+
+For `nuxt.analyze`, IS-13 normalizes bounded Nuxt-specific analysis evidence:
+
+```ts
+export interface NuxtAnalysisRequest {
+  readonly target: NuxtTargetReference;
+  readonly profile?: NuxtAnalysisProfileId;
+  readonly signal?: AbortSignal;
+}
+
+export interface NuxtAnalysisResult {
+  readonly state: 'completed' | 'unavailable' | 'unsupported' | 'indeterminate';
+  readonly findings: readonly NuxtAnalysisFinding[];
+  readonly diagnostics: readonly NuxtDiagnostic[];
+}
+```
+
+Any executable tooling this requires is invoked through IS-5 (§38), never a public process surface on IS-13. The result is normalized diagnostic evidence only — it carries no pass/fail Quality-gate verdict; that boundary belongs to IS-16/IS-18, not IS-13 (DD-3.3 §8.13).
+
+### 21.5 Generated-State Inspection {#generated-state}
+
+For `nuxt.cleanup`, IS-13 identifies only positively supported Nuxt-generated/cache state classes and the technical facts needed to classify them, without performing deletion:
+
+```ts
+export interface NuxtGeneratedStateRequest {
+  readonly target: NuxtTargetReference;
+  readonly classes?: readonly NuxtGeneratedStateClass[];
+  readonly signal?: AbortSignal;
+}
+
+export interface NuxtGeneratedStateResult {
+  readonly candidates: readonly NuxtGeneratedStateCandidate[];
+  readonly diagnostics: readonly NuxtDiagnostic[];
+}
+
+export interface NuxtGeneratedStateCandidate {
+  readonly class: NuxtGeneratedStateClass;
+  readonly resource: ResourceReference;
+  readonly regenerable: boolean;
+  readonly evidence: readonly NuxtFactProvenance[];
+}
+```
+
+A resource outside the supported classification is never returned as a candidate. Authorized deletion is IS-16/IS-4's responsibility; IS-13 supplies eligibility evidence only and never itself deletes.
 
 ---
 
@@ -926,6 +1063,14 @@ export type NuxtFailureCode =
   | 'profile_incompatible'
   | 'target_not_empty'
   | 'artefact_requirement_unavailable'
+  | 'artefact_class_unsupported'
+  | 'module_already_present'
+  | 'module_conflict'
+  | 'module_unavailable'
+  | 'upgrade_version_unresolvable'
+  | 'upgrade_unsupported'
+  | 'analysis_unavailable'
+  | 'generated_state_class_unsupported'
   | 'relationship_conflict'
   | 'relationship_ambiguous'
   | 'validation_failed'
@@ -963,6 +1108,14 @@ NUXT_LAYER_PROFILE_UNAVAILABLE
 NUXT_LAYER_PROFILE_INCOMPATIBLE
 NUXT_LAYER_TARGET_NOT_EMPTY
 NUXT_SCAFFOLD_REQUIREMENT_UNAVAILABLE
+NUXT_ARTEFACT_CLASS_UNSUPPORTED
+NUXT_MODULE_ALREADY_PRESENT
+NUXT_MODULE_CONFLICT
+NUXT_MODULE_UNAVAILABLE
+NUXT_UPGRADE_VERSION_UNRESOLVABLE
+NUXT_UPGRADE_UNSUPPORTED
+NUXT_ANALYSIS_UNAVAILABLE
+NUXT_GENERATED_STATE_CLASS_UNSUPPORTED
 NUXT_RELATIONSHIP_ALREADY_PRESENT
 NUXT_RELATIONSHIP_ALREADY_ABSENT
 NUXT_RELATIONSHIP_CONFLICT
@@ -1000,9 +1153,10 @@ IS-23 constructs:
 2. config-class catalogue;
 3. immutable layer-profile catalogue;
 4. recognizer/interpreter/planners/validator;
-5. injected IS-7/IS-9/other bounded collaborators where technically required;
-6. the `NuxtCapability` facade;
-7. IS-16/domain consumers.
+5. artefact-placement/module-change/upgrade-planning/analyzer/generated-state components (§§21.1–21.5);
+6. injected IS-5/IS-7/IS-9/other bounded collaborators where technically required;
+7. the `NuxtCapability` facade;
+8. IS-16/domain consumers.
 
 No import-time singleton, global provider registry or self-registration is permitted.
 
@@ -1079,7 +1233,18 @@ Core tests use fake source/resource/template/specialist/provider evidence and co
 65. no duplicate Documentation subsystem;
 66. no duplicate App lifecycle;
 67. sensitive diagnostics redacted;
-68. no singleton/provider self-registration.
+68. no singleton/provider self-registration;
+69. `planArtefactPlacement` reuses `NuxtScaffoldArtefactPlan` rather than a parallel plan shape;
+70. `effectiveOptions` reaches the provider only as a bounded envelope for the named artefact class, never arbitrary input;
+71. `planModuleChange` reuses `NuxtConfigChangeRequest` for its configuration-mutation facet;
+72. module dependency requirement is normalized evidence only, never a direct package-manager invocation from IS-13;
+73. `planUpgrade` never resolves an absent request to `latest`;
+74. `planUpgrade` never expands one target into root plus sibling layers;
+75. upgrade postcondition validation reuses the shared `validate()` method;
+76. `analyze` result carries no Quality pass/fail verdict;
+77. `analyze` tooling execution never bypasses IS-5;
+78. `inspectGeneratedState` never returns a candidate outside the supported classification;
+79. `inspectGeneratedState` performs no deletion itself.
 
 Concrete TypeScript-config provider tests use fixtures covering ordinary `defineNuxtConfig`, arrays, comments, multiline values, root/layer configs, supported `extends`/module/CSS structures, duplicates, computed/spread/dynamic unsupported cases and preservation around bounded IS-8 edits.
 
@@ -1128,9 +1293,15 @@ Concrete TypeScript-config provider tests use fixtures covering ordinary `define
 13. implement non-empty target/collision evidence handling without persistence;
 14. migrate useful current Nuxt template data/defaults through IS-9 review, moving policy values into IS-3/profile configuration;
 15. implement IS-16 layer creation/integration/detachment use cases over IS-13;
-16. retire/reclassify Nuxt TODO commands rather than filling them with direct service orchestration;
-17. remove any emerging direct filesystem/Git/LLM/process shortcuts from Nuxt code;
-18. add concrete provider/fixture tests and cross-capability partial-state tests.
+16. implement `planArtefactPlacement` reusing the scaffold-artefact-plan shape (§21.1);
+17. implement `planModuleChange` reusing the configuration-change-request shape for its configuration facet, with dependency requirement as normalized evidence only (§21.2);
+18. implement `planUpgrade` with explicit version/range/policy resolution and no implicit `latest`/sibling-layer expansion (§21.3);
+19. implement `analyze` over bounded IS-5 tooling with no Quality-gate verdict (§21.4);
+20. implement `inspectGeneratedState` as read-only classification with no deletion authority (§21.5);
+21. implement IS-16 `nuxt.add`/`add-module`/`upgrade`/`analyze`/`cleanup` use cases over the extended seam;
+22. retire/reclassify Nuxt TODO commands rather than filling them with direct service orchestration;
+23. remove any emerging direct filesystem/Git/LLM/process shortcuts from Nuxt code;
+24. add concrete provider/fixture tests and cross-capability partial-state tests.
 
 ---
 
@@ -1148,6 +1319,7 @@ Concrete TypeScript-config provider tests use fixtures covering ordinary `define
 | add | DD-NUXTCAP-026–029; FR-NUXT-034–043 |
 | remove/update | DD-NUXTCAP-030–033; FR-NUXT-044–050 |
 | Nuxt validation | DD-NUXTCAP-034–036; FR-NUXT-011, 041, 107; IS-8/11 boundary |
+| artefact placement / module change / upgrade / analysis / generated-state (§§21.1–21.5) | DD-2.10 §6.1; DD-3.3 §§8.10–8.14; PBC-FR-NUXT-003–022; IS-5/8 |
 | layer model | DD-NUXTCAP-037–039; FR-NUXT-051–092 |
 | layer profiles | DD-NUXTCAP-040–043; FR-NUXT-051–070 |
 | scaffold/template | DD-NUXTCAP-044–047; FR-NUXT-058–070; IS-9; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
@@ -1208,6 +1380,6 @@ IS-16 Nuxt-domain interpretation -> IS-1 final acceptance
 
 The non-drift rule is:
 
-> **Version 1 Nuxt Capability may establish provider-independent Nuxt technical facts, interpret explicitly supported configuration semantics, derive bounded transformation intents, model host-relative layer relationships, define Nuxt layer-profile/baseline requirements, coordinate technical scaffold contributions and validate Nuxt postconditions; it may not infer managed scope from filesystem presence, directly mutate configuration/resources, own Git relationships, absorb documentation/licence/quality/AI semantics, turn a profile into generic file-generation authority, conflate standalone validity with host integration, or decide that the Nuxt-domain/application use case succeeded.**
+> **Version 1 Nuxt Capability may establish provider-independent Nuxt technical facts, interpret explicitly supported configuration semantics, derive bounded transformation intents, model host-relative layer relationships, define Nuxt layer-profile/baseline requirements, coordinate technical scaffold contributions (including single-artefact placement, module state/dependency requirements, upgrade version resolution, analysis evidence and generated-state classification) and validate Nuxt postconditions; it may not infer managed scope from filesystem presence, directly mutate configuration/resources, own Git relationships, absorb documentation/licence/quality/AI semantics, turn a profile into generic file-generation authority, accept an unbounded options envelope as arbitrary provider input, resolve an absent upgrade request to `latest`, issue a Quality-gate verdict from analysis, delete generated state itself, conflate standalone validity with host integration, or decide that the Nuxt-domain/application use case succeeded.**
 
 This implementation completes the DD-2 shared-capability implementation family while preserving the separation between specialist Nuxt technical knowledge, cross-owned scaffold semantics, Nuxt-domain orchestration and DD-1 application authority.
