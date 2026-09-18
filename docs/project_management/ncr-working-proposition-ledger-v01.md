@@ -2,7 +2,7 @@
 
 > **Document type:** Project-management working ledger
 >
-> **Status:** Active NCR ledger; NCR-1 merged through PR #179; NCR-2 inventory complete, integration/reduction in progress
+> **Status:** Active NCR ledger; NCR-1 merged through PR #179; NCR-2 complete on PR #180 for independent review; PR unmerged
 >
 > **Normative product effect:** None. This ledger records ownership and reduction actions; the normative corpus remains authoritative.
 >
@@ -244,7 +244,7 @@ The following families cover recurrent occurrences across the inventory. A `LOCA
 
 ## 9. NCR-2 — Clarification Integration Accounting {#ncr2-clarification-integration}
 
-The following table records checkpoint A classification and destinations. At checkpoint B all seventeen vehicles have been integrated and retired as recorded in §9.1; the table retains the original occurrence decisions for traceability. Final corpus-wide reduction verification is still pending.
+The following table records checkpoint A classification and destinations. At checkpoint B all seventeen vehicles have been integrated and retired as recorded in §9.1; the table retains the original occurrence decisions for traceability. Final corpus-wide disposition is recorded in §11; this table preserves checkpoint A analysis.
 
 | Active vehicle | Unique delta / canonical primary destination | Other occurrences / intended disposition |
 |---|---|---|
@@ -1819,27 +1819,27 @@ Section decisions remove duplicate normative bodies while retaining contextual n
 | DD-4-2 §19 | Local explanatory binding; see primary |
 | DD-4-3 §19 | Local explanatory binding; see primary |
 | DD-4-4 §19 | Local explanatory binding; see primary |
-| DD-2-1 Â§4.1 | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
-| DD-2-1 Â§16.1 | [§15](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#_15-mutation-preconditions); [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024); [invocation retry contract](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) |
-| DD-2-1 Â§35.3 | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
-| DD-2-2 Â§4.1 | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
-| DD-2-2 Â§4.3 | [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
-| DD-2-2 Â§34.1 | [Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) |
-| DD-2-2 Â§34.2 | [Quality Capability](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md) |
-| DD-2-2 Â§34.3 | [Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md) |
-| DD-2-2 Â§34.4 | [Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) |
-| DD-2-2 Â§34.5 | [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| DD-2-1 §4.1 | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-2-1 §16.1 | [§15](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#_15-mutation-preconditions); [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024); [invocation retry contract](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) |
+| DD-2-1 §35.3 | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| DD-2-2 §4.1 | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-2-2 §4.3 | [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
+| DD-2-2 §34.1 | [Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) |
+| DD-2-2 §34.2 | [Quality Capability](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md) |
+| DD-2-2 §34.3 | [Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md) |
+| DD-2-2 §34.4 | [Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) |
+| DD-2-2 §34.5 | [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
 | DD-2-2 §26 introduction | [technical completion model](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_15-1-technical-completion-model); [events](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_21-output-and-progress-events); [local diagnostics](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_22-diagnostics); [DD-1.2 evidence normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
 | DD-2-2 §34 introduction | [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions) |
-| DD-2-3 Â§4.1 | [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md); [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
-| DD-2-3 Â§41.2 | [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) |
-| DD-2-3 Â§41.3 | [App](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md); [Nuxt](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) |
-| DD-2-4 Â§40.1 | [Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md); [Design §7.9](../appmanager-design-specification-v01.md#_7-9-inspection-and-mutation-separation) |
-| DD-2-4 Â§40.2 | [Documentation](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md); [Nuxt](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md); [Quality](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md); [AI](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
-| DD-2-5 Â§4.3 | [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
-| DD-2-5 Â§46.4 | [Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md); [Maintenance](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md); [AI proposals](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
-| DD-2-6 Â§28.4 | [AI domain resource workflows](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md#resource-family-lifecycle); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
-| DD-2-6 Â§43.1 | [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| DD-2-3 §4.1 | [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md); [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-2-3 §41.2 | [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) |
+| DD-2-3 §41.3 | [App](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md); [Nuxt](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) |
+| DD-2-4 §40.1 | [Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md); [Design §7.9](../appmanager-design-specification-v01.md#_7-9-inspection-and-mutation-separation) |
+| DD-2-4 §40.2 | [Documentation](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md); [Nuxt](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md); [Quality](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md); [AI](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| DD-2-5 §4.3 | [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
+| DD-2-5 §46.4 | [Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md); [Maintenance](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md); [AI proposals](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| DD-2-6 §28.4 | [AI domain resource workflows](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md#resource-family-lifecycle); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| DD-2-6 §43.1 | [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | DD-2-7 §23.2 introduction | [Resource Access bounded request](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#_9-bounded-resource-request-contract); [DD-ENG-035](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035) |
 | DD-2-7 §23.5 introduction | [Process Execution](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md) |
 | DD-2-7 §23.6 introduction | [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020); [DD-1.4](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md) |
@@ -1853,8 +1853,8 @@ Section decisions remove duplicate normative bodies while retaining contextual n
 | DD-2-9 §35.1 introduction | [Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) |
 | DD-2-9 §35.2 introduction | [Docs domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md); [Design §10.11](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) |
 | DD-2-10 §37.1 introduction | [Nuxt domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md); [§16](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
-| DD-1-2 Â§13 | [FR-INV-025](../functional/application-invocation-functional-specification-v01.md#fr-inv-025); [FR-INV-026](../functional/application-invocation-functional-specification-v01.md#fr-inv-026) |
-| DD-1-2 Â§9.5 | [DD-OUTCLAR-006](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006) |
+| DD-1-2 §13 | [FR-INV-025](../functional/application-invocation-functional-specification-v01.md#fr-inv-025); [FR-INV-026](../functional/application-invocation-functional-specification-v01.md#fr-inv-026) |
+| DD-1-2 §9.5 | [DD-OUTCLAR-006](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006) |
 
 ### 10.3 Final downstream navigation accounting
 
@@ -1873,3 +1873,47 @@ The final retirement sweep includes bare source labels as well as hyperlinks. Ni
 | [is-3-configuration-resolution-implementation-specification-v01.md](../implementation/is-3-configuration-resolution-implementation-specification-v01.md) | Metadata source links only. |
 
 IS-2’s request-input sentence names DD-1.4 bootstrap eligibility instead of the retired staged clarification; its allowed input and all surrounding semantics are unchanged. IS-1, IS-2, IS-13 and IS-23 traceability labels name integrated outcome, bootstrap and scaffold owners. The Level-4 index points IS-3 to DD-1.4/DD-1.5. Nuxt Functional has exactly two downstream-DD navigation repairs; every other Functional body and Design are unchanged.
+
+## 11. NCR-2 completion disposition
+
+NCR-2 is complete on `ai/ncr2-detailed-design` for independent review in [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180), against `master`. The PR remains unmerged. This disposition supersedes the in-progress gate statements in the chronological checkpoints above; those statements describe their respective checkpoints, not current state. NCR-3, NCR-4 and NCR-5 remain future work. Implementation remains paused until NCR-5 and verification of the resulting live master.
+
+### 11.1 Semantic and horizontal result
+
+The review covered all 23 primary DDs vertically and horizontally, all 17 active DD clarification vehicles from the starting baseline, every numbered definition, and the unnumbered model/workflow/invariant narrative. Sections 8–10 account for proposition families, occurrence classifications, canonical owners, clarification integration, 1,257 distinct numbered reduction decisions and 220 unnumbered section decisions. Remaining complete statements are canonical refinements; inherited occurrences are references, local bindings or local deltas. Duplicate normative restatements remaining in NCR-2 scope: **0**. Unresolved semantic-loss, authority-boundary and human-readability findings: **0**.
+
+This is a semantic review result, not an inference from similarity scores or requirement counts. Apparently similar records and workflows were deliberately compared: Resource Access effects versus Source Transformation plans; Repository primitives versus Git intent; Source Intelligence facts versus Nuxt structure and Documentation models; AI proposals versus AI resource graphs; Quality evaluation versus domain acceptance policy; registry identity versus domain resource semantics; App environment readiness versus Settings definitions; root versus layer lifecycle; and Git/Docs/Maintenance coordinated per-target effects. Their distinct specialisations and compositions remain intact. No universal fact, transaction, plugin, provider or orchestration abstraction was introduced.
+
+The final retained-clause pass preserves local request/state models, stage decisions, acceptance criteria, stale-state handling, failure/uncertainty, recovery and provider compatibility. It explicitly preserves capability/domain boundaries, DD-1 application authority, interaction projections, the stronger-owner Maintenance gate and truthful partial effects. The 23 documents retain their own purpose, model, workflow and sibling collaboration narrative; references do not replace that narrative with a list of identities. Canonical restorations made during review include Documentation unknown required meaning, Quality untrusted provider report content and Nuxt required/optional stage semantics.
+
+Final navigation refinements point Nuxt bootstrap directly to the full DD-1.5 lifecycle and Nuxt re-entry/replay directly to the Engine stale-state checkpoint and Source Transformation stale-plan requirement. Other multi-edge numbered references compose distinct contracts: Engine configuration consumes staged bootstrap invalidation; App Reset composes its explicit lock-state policy; Nuxt stage acceptance composes its operation plan. They are not alias-only authority chains. The numbered-clause reference graph has no cycles; reciprocal component collaboration links do not create circular normative authority.
+
+The immutable pre-NCR baseline and the NCR-1 starting baseline differ in the DD corpus only through five source/navigation changes. Their DD normative bodies and clarification semantics agree. Preservation therefore covers `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19` as well as the physically edited baseline `b041d440faf032b2954e5a8be2fbc7894988717f`. All 1,915 DD identities (including 15 moved clarification identities), all 1,301 Functional identities and the settled 96-command catalogue survive. Design is unchanged; Functional changes are precisely the two Nuxt downstream-DD navigation repairs. No downstream IS contract supplied DD authority.
+
+### 11.2 Physical metrics
+
+Counts use whitespace-delimited words, source lines and UTF-8 bytes. The active scope comprises the 23 primary DDs and formerly active 17 clarification vehicles. Archive lineage notices, indexes, guidance and the project ledger are excluded from these corpus metrics.
+
+| Active corpus | Before words | After words | Before lines | After lines | Before bytes | After bytes |
+|---|---:|---:|---:|---:|---:|---:|
+| 23 primary DDs | 132,679 | 112,919 | 22,747 | 25,598 | 1,092,260 | 1,125,464 |
+| 17 DD clarification vehicles | 12,908 | 0 | 1,837 | 0 | 104,915 | 0 |
+| Total active DD corpus | 145,587 | 112,919 | 24,584 | 25,598 | 1,197,175 | 1,125,464 |
+
+The active corpus decreases by **32,668 words (22.44%)** and **71,711 bytes (5.99%)**. Source lines increase by 1,014, reflecting stable explicit anchors and reference spacing; this is not presented as a line-count reduction. Seventeen short non-normative archive notices retain successor/history navigation. Prior normative text remains recoverable from immutable Git history.
+
+### 11.3 Verification and delivery gates
+
+| Gate | Result |
+|---|---|
+| Complete vertical/horizontal DD coverage | 23/23 primaries and 17/17 clarification vehicles accounted; final retained-clause and cross-owner comparison complete. |
+| Clarification semantic preservation and retirement | Continuing propositions integrated into correct primary owners before retirement; no active DD clarification remains; 17 non-normative lineage notices identify successors. |
+| Cardinality and semantic preservation | Zero remaining duplicate normative restatements in scope; zero unresolved semantic-loss findings; stable identities preserved as multisets, including all 15 migrated identities. |
+| Authority and comprehension | Zero unresolved boundary/readability findings; no Design/Functional redefinition, IS-as-authority inversion, new architecture or command identity. |
+| NCR-3 exclusion | No IS reduction; all 10 Implementation clarifications remain active. Nine touched Level-4 files pass the exact navigation-only whitelist in §10.3. |
+| Reference verification | New/edited relative links and anchors resolve; full active DD/IS link scan passes. Numbered-clause dependency cycle scan passes; semantic chain review completed separately. |
+| Mechanical checks | `git diff --check`; baseline/current DD and Functional definition counters; Design equality; exact IS body comparison after reversing whitelisted navigation replacements; retirement inventory; exact repeated normative-line scan. All pass. Similarity scanning supports, but does not prove, semantic review. |
+| Current-state records | This single ledger, the active clarification register and project-management README updated. No second report or ledger created. |
+| Repository delivery | Checkpoints A/B/C pushed on the same branch and PR. The commit containing this final disposition is checkpoint D; final delivery verifies clean working tree, matching pushed HEAD and PR ready for independent review, open and unmerged. Master is not modified. |
+
+Live remote verification confirms `origin/master` at `b041d440faf032b2954e5a8be2fbc7894988717f` and PR #179 closed/merged. The NCR-2 branch starts at that verified SHA. Application build/runtime tests are not applicable to this documentation-only change; verification targets semantic preservation, identities, scope and navigation. Delivery state is checked again after pushing the final commit. No NCR-wide completion or NCR-5 gate is claimed.

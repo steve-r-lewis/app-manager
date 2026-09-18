@@ -233,7 +233,7 @@ The Nuxt orchestration context in §7 is supplied under [Design](../appmanager-d
 
 ### DD-NUXT-002 — Bootstrap/project-aware sequencing remains DD-1-governed
 
-Bootstrap and creation consume the stage-appropriate context in [DD-1.5 bootstrap sequencing](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-006).
+Bootstrap and creation consume the stage-appropriate context in [DD-1.5 bootstrap sequencing](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle).
 
 
 ---
@@ -791,7 +791,7 @@ Terminated workflows project completed effects under [FR-INV-036](../functional/
 
 ### DD-NUXT-046 — Re-entry requires revalidation
 
-Re-entry revalidates the target/source/relationship evidence in [DD-NUXT-061](#dd-nuxt-061).
+Re-entry revalidates target/source/relationship evidence at the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024), applying [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020) before dependent mutation.
 
 
 ---
@@ -1010,7 +1010,7 @@ No-op interpretation applies [FR-NUXT-037](../functional/nuxt-functional-specifi
 
 ### DD-NUXT-076 — Stale plans cannot be blindly replayed
 
-Before replaying a plan, apply the source/relationship/target revalidation in [DD-NUXT-061](#dd-nuxt-061).
+Before replaying a plan, revalidate source/relationship/target evidence at the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024), applying [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020) before dependent mutation.
 
 <a id="dd-nuxt-077"></a>
 

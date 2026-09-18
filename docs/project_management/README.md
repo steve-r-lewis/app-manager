@@ -14,15 +14,15 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is in progress. NCR-1 — Design and Functional is complete and merged in PR #179 at `b041d440faf032b2954e5a8be2fbc7894988717f`. NCR-2 — Detailed Design is in progress on `ai/ncr2-detailed-design` in draft [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180).
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is in progress. NCR-1 — Design and Functional is complete and merged in PR #179 at `b041d440faf032b2954e5a8be2fbc7894988717f`. NCR-2 — Detailed Design is complete on `ai/ncr2-detailed-design` for independent review in [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180).
 
 PRs #170–#177 completed the bounded PBC-1 semantic corrections: Version 1 GUI/interaction/portability restoration; App command correction; Nuxt command correction; `utils` to `maintenance` reclassification; broader project-side AI development-environment restoration; coordinated multi-repository `git.commit`; coordinated multi-target/multi-artefact Docs generation/update; and coordinated multi-resource Maintenance validation/repair/source-version/cleanup semantics.
 
 PR #177 merged and live `master` was independently verified at `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`. That exact SHA is the **semantically complete pre-NCR baseline**.
 
-The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. NCR-2 has integrated and retired all seventeen DD vehicles; the primary-DD physical reduction and final verification remain in progress. Implementation vehicles remain active for NCR-3.
+The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. NCR-2 has integrated and retired all seventeen DD vehicles; the primary-DD physical reduction and final verification are complete on PR #180, pending independent review. Implementation vehicles remain active for NCR-3.
 
-**Current phase:** NCR-2 physical Detailed Design reduction and horizontal verification. PR #179 is merged; PR #180 remains draft and unmerged. The [single working proposition ledger](ncr-working-proposition-ledger-v01.md) records canonical ownership, preservation, physical reduction, clarification retirement and verification. Implementation remains paused until NCR-5 passes and live `master` is verified.
+**Current phase:** Independent review of completed NCR-2. PR #179 is merged; PR #180 is ready for review and remains unmerged. The [single working proposition ledger](ncr-working-proposition-ledger-v01.md) records canonical ownership, preservation, physical reduction, clarification retirement and verification. Implementation remains paused until NCR-5 passes and live `master` is verified.
 
 ## 3. Baseline Roles
 
@@ -77,7 +77,7 @@ NCR's objective remains: every independently meaningful normative proposition ha
 The five-pass decomposition remains unchanged after re-evaluation against the complete semantic baseline:
 
 1. NCR-1 — Design and Functional: complete, PR #179 merged;
-2. NCR-2 — Detailed Design: in progress, draft PR #180;
+2. NCR-2 — Detailed Design: complete for independent review, PR #180 unmerged;
 3. NCR-3 — Implementation Specifications;
 4. NCR-4 — Horizontal Reduction;
 5. NCR-5 — Final Cardinality and Semantic Verification.
@@ -114,6 +114,6 @@ The established normative hierarchy is unchanged. Project-management records do 
 
 ## 10. Next Objective
 
-Complete the remaining NCR-2 unnumbered occurrence reduction and final horizontal, semantic-preservation, link and readability checks on the existing branch and PR. The single ledger records completed checkpoints and outstanding gates; no zero-duplicate or completion claim has yet been verified.
+Independently review NCR-2 in PR #180. The single ledger records its completed integration, physical reduction, final horizontal review and completion gates. NCR-3 has not begun; this state does not authorise a new pass or merging PR #180.
 
 The physical starting baseline is the independently verified NCR-1 merge in §3. Local `master` remains untouched. NCR-3, NCR-4 and NCR-5 are future work; implementation remains paused until NCR-5 and verification of resulting live `master`. PR #180 must remain unmerged during this work package.

@@ -22,15 +22,15 @@ Detailed Design clarification integration is recorded below. Implementation clar
 
 ## 4. Detailed Design Clarifications — DD-1
 
-None remain active: 2 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification remain in progress.
+None remain active: 2 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification are complete on PR #180, pending independent review; the PR remains unmerged.
 
 ## 5. Detailed Design Clarifications — DD-2
 
-None remain active: 6 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification remain in progress.
+None remain active: 6 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification are complete on PR #180, pending independent review; the PR remains unmerged.
 
 ## 6. Detailed Design Clarifications — DD-3/DD-4
 
-None remain active: 9 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification remain in progress.
+None remain active: 9 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification are complete on PR #180, pending independent review; the PR remains unmerged.
 
 ## 7. Implementation Clarifications
 
