@@ -118,7 +118,7 @@ Individual commands do not receive primary IS identities by default; they are co
 
 ### 4.4 Interaction and assembly
 
-IS-22 separately specifies TUI and Headless adapters because both must translate into/out of the same IS-1 Application Invocation Contract without acquiring application authority.
+IS-22 separately specifies TUI, GUI and Headless adapters because all three must translate into/out of the same IS-1 Application Invocation Contract without acquiring application authority.
 
 IS-23 separately specifies package/workspace configuration, executable entry, TypeScript build, runtime composition, root scripts, dependency assembly, production assumptions and integration-level assembly tests. It connects approved responsibilities without absorbing them.
 
