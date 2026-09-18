@@ -331,13 +331,9 @@ Invocation, domain and capability refinements retain the parent category's meani
 
 ### 9.5 Diagnostic codes
 
-Stable machine-readable diagnostic codes should be defined where callers or tests require programmatic distinction.
+Stable machine-readable diagnostic codes should be defined where callers or tests require programmatic distinction. Codes represent AppManager meaning rather than third-party exception class names; provider-native codes may be attached as evidence but not substituted for the AppManager code.
 
-Codes must represent AppManager meaning rather than third-party exception class names.
-
-Provider-native codes may be attached as evidence but not substituted for the AppManager code.
-
-A capability-specific failure code, provider classification, or domain finding is not automatically a new canonical diagnostic category. It becomes application-facing diagnostic meaning only when mapped into this model by the relevant capability/use-case boundary.
+Mapping local capability/provider/domain classifications into diagnostic categories follows [DD-OUTCLAR-006](#dd-outclar-006).
 
 ## 10. Warnings
 
@@ -399,17 +395,13 @@ Failure-effect preservation follows [FR-INV-045](../functional/application-invoc
 
 ## 13. Proposed Effects and Preview
 
-Preview/dry-run data shall be structurally distinct from applied effects.
-
-The model shall support proposed effects containing:
+The preview model binds [FR-INV-025](../functional/application-invocation-functional-specification-v01.md#fr-inv-025) and [FR-INV-026](../functional/application-invocation-functional-specification-v01.md#fr-inv-026) with proposed-effect records containing:
 
 - intended resource/target;
 - proposed operation;
 - bounded before/after or change-plan information where available;
 - warnings or uncertainty;
 - required authorization state where applicable.
-
-A proposed effect must never be represented as an applied effect merely because planning succeeded.
 
 ## 14. Partial Completion
 
@@ -809,7 +801,7 @@ DD-1.5 defines where and how application-level interpretation and acceptance occ
 
 ## 32. Relationship to Shared Capabilities
 
-Every DD-2 shared capability shall define its technical evidence in a way that can be normalized into this canonical shared model.
+The capability map below locates inputs to the [evidence contract](#_8-execution-evidence-contract) and [normalization boundary](#_18-provider-result-normalization).
 
 In particular:
 
@@ -824,9 +816,7 @@ In particular:
 - Nuxt Capability reports Nuxt-specific specialist evidence;
 - Resource Registry/Template capability reports discovery/validation/rendering evidence.
 
-Capability-specific failure classes, finding kinds, provider states, or diagnostics are local technical/domain vocabularies until explicitly mapped to the canonical diagnostic model. They shall not be described as an alternative shared AppManager taxonomy.
-
-None of those capabilities defines the final AppManager application outcome for a domain use case.
+Local vocabularies use [DD-OUTCLAR-006](#dd-outclar-006); final interpretation follows [§19](#_19-application-level-interpretation).
 
 ## 33. Domain Design Rules
 

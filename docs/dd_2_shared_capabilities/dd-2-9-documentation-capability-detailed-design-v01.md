@@ -179,8 +179,10 @@ Reliably recognized structural facts, existing authored documentation, generated
 
 <a id="dd-doccap-007"></a>
 
-**DD-DOCCAP-007 — No hidden project crawl**  
-Documentation Capability shall not independently traverse arbitrary project resources to expand its input set outside the approved target/selection contract.
+**DD-DOCCAP-007 — No hidden project crawl**
+
+The capability input set binds [FR-DOCS-104](../functional/docs-functional-specification-v01.md#fr-docs-104) to the approved target/selection request.
+
 
 ---
 
@@ -263,8 +265,10 @@ Documentation-model fact/generated-prose provenance follows [DD-DOCCAP-006](#dd-
 
 <a id="dd-doccap-013"></a>
 
-**DD-DOCCAP-013 — Unknown is not invented**  
+**DD-DOCCAP-013 — Unknown is not invented**
+
 Where a required relationship or meaning cannot be established reliably, the model shall represent omission, ambiguity or unknown rather than fabricate a confirmed fact.
+
 
 ---
 
@@ -286,8 +290,9 @@ Discovered documentable declarations/regions follows [Design](../appmanager-desi
 
 <a id="dd-doccap-016"></a>
 
-**DD-DOCCAP-016 — Unsupported source remains explicit**  
-Unsupported or ambiguous source recognition shall result in bounded omission/diagnostic evidence rather than unsafe textual inference being promoted to structural fact.
+**DD-DOCCAP-016 — Unsupported source remains explicit**
+
+Unsupported/ambiguous source facts apply [FR-DOCS-045](../functional/docs-functional-specification-v01.md#fr-docs-045) at the model-construction boundary.
 
 <a id="dd-doccap-017"></a>
 
@@ -308,8 +313,9 @@ Nuxt documentation inputs consume [DD-2.10 Nuxt facts](dd-2-10-nuxt-capability-d
 
 <a id="dd-doccap-019"></a>
 
-**DD-DOCCAP-019 — Quality facts remain Quality-owned**  
-Documentation may describe recognized tests or consume supplied Quality evidence, but it shall not execute tests or establish quality-gate truth merely to document them.
+**DD-DOCCAP-019 — Quality facts remain Quality-owned**
+
+Recognized tests and supplied Quality evidence are consumed under [FR-DOCS-062](../functional/docs-functional-specification-v01.md#fr-docs-062).
 
 <a id="dd-doccap-020"></a>
 
@@ -330,8 +336,9 @@ Existing documentation may provide useful authored context but is not automatica
 
 <a id="dd-doccap-022"></a>
 
-**DD-DOCCAP-022 — Existing docs are contextual evidence**  
-Existing documentation may be inspected and reused according to policy while retaining provenance as authored documentation.
+**DD-DOCCAP-022 — Existing docs are contextual evidence**
+
+Existing-document inspection/reuse applies [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037); the model retains its authored-document provenance.
 
 <a id="dd-doccap-023"></a>
 
@@ -363,18 +370,22 @@ Overlapping documentation scopes shall not unintentionally duplicate the same lo
 
 <a id="dd-doccap-027"></a>
 
-**DD-DOCCAP-027 — Provenance survives aggregation**  
-Multi-file/multi-layer aggregation shall preserve sufficient provenance to attribute important facts, omissions and failures to their source targets.
+**DD-DOCCAP-027 — Provenance survives aggregation**
+
+Multi-file/layer aggregation binds [FR-DOCS-102](../functional/docs-functional-specification-v01.md#fr-docs-102) to source-target provenance in the model.
 
 <a id="dd-doccap-028"></a>
 
-**DD-DOCCAP-028 — Partial aggregation is explicit**  
-If some inputs are unsupported, unavailable or fail inspection, the aggregate result shall retain those omissions/failures rather than imply complete coverage.
+**DD-DOCCAP-028 — Partial aggregation is explicit**
+
+Aggregate omission/failure evidence applies [FR-DOCS-038](../functional/docs-functional-specification-v01.md#fr-docs-038) and [FR-DOCS-102](../functional/docs-functional-specification-v01.md#fr-docs-102).
 
 <a id="dd-doccap-029"></a>
 
-**DD-DOCCAP-029 — Empty optional categories are not failures**  
-A valid absence of optional layers/tests/other categories may produce an empty section or omission without becoming a capability failure.
+**DD-DOCCAP-029 — Empty optional categories are not failures**
+
+Validly empty optional categories apply [FR-DOCS-039](../functional/docs-functional-specification-v01.md#fr-docs-039), represented locally by an empty section or omission.
+
 
 ---
 
@@ -405,8 +416,10 @@ A renderer may suggest or report output metadata but shall not independently cho
 
 <a id="dd-doccap-032"></a>
 
-**DD-DOCCAP-032 — Generation and update remain distinct**  
-Producing a proposed new artefact is distinct from modifying an existing documentation artefact.
+**DD-DOCCAP-032 — Generation and update remain distinct**
+
+Proposed new artefacts and existing-document changes follow [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
 
 ---
 
@@ -461,8 +474,9 @@ A renderer may structure/present facts but shall not create unsupported project 
 
 <a id="dd-doccap-038"></a>
 
-**DD-DOCCAP-038 — Deterministic path is preferred where possible**  
-Given materially equivalent model, template and rendering configuration, deterministic renderers should produce semantically equivalent output.
+**DD-DOCCAP-038 — Deterministic path is preferred where possible**
+
+Deterministic renderers bind [FR-DOCS-080](../functional/docs-functional-specification-v01.md#fr-docs-080) to equivalent model, template and rendering-configuration inputs.
 
 <a id="dd-doccap-039"></a>
 
@@ -513,8 +527,10 @@ Substantial replacement of authored documentation follows [Design](../appmanager
 
 <a id="dd-doccap-044"></a>
 
-**DD-DOCCAP-044 — Output collision is evidence, not overwrite permission**  
-Discovery that a proposed output already exists shall return collision/precondition evidence rather than silently replacing the resource.
+**DD-DOCCAP-044 — Output collision is evidence, not overwrite permission**
+
+Output-existence checks return collision/precondition evidence for [FR-DOCS-076](../functional/docs-functional-specification-v01.md#fr-docs-076).
+
 
 ---
 
@@ -549,8 +565,9 @@ Documentation Capability may consume DD-2.7 AI Capability for bounded summarizat
 
 <a id="dd-doccap-048"></a>
 
-**DD-DOCCAP-048 — AI remains optional where deterministic baseline exists**  
-A deterministic documentation path shall not become unavailable merely because optional AI enrichment is unavailable.
+**DD-DOCCAP-048 — AI remains optional where deterministic baseline exists**
+
+The deterministic capability path applies [FR-DOCS-084](../functional/docs-functional-specification-v01.md#fr-docs-084) when optional AI is unavailable.
 
 <a id="dd-doccap-049"></a>
 
@@ -571,8 +588,9 @@ AI enrichment uses [DD-2.7 context, sensitivity and disclosure contracts](dd-2-7
 
 <a id="dd-doccap-052"></a>
 
-**DD-DOCCAP-052 — AI failure does not fabricate completeness**  
-If a required documentation meaning cannot be established after an AI/enrichment failure, the capability shall expose the limitation rather than fabricate content.
+**DD-DOCCAP-052 — AI failure does not fabricate completeness**
+
+Unresolved required meaning after enrichment failure applies [FR-DOCS-089](../functional/docs-functional-specification-v01.md#fr-docs-089).
 
 <a id="dd-doccap-053"></a>
 
@@ -604,8 +622,9 @@ A documentation tool may be available for one documentation target/project and u
 
 <a id="dd-doccap-055"></a>
 
-**DD-DOCCAP-055 — Tool recognition does not launch it**  
-Recognition of VitePress or another documentation tool shall not start development/preview/build processes.
+**DD-DOCCAP-055 — Tool recognition does not launch it**
+
+Tool recognition applies [FR-DOCS-118](../functional/docs-functional-specification-v01.md#fr-docs-118) to development, preview and build startup.
 
 <a id="dd-doccap-056"></a>
 
@@ -634,8 +653,9 @@ Tool launch/exit/output evidence uses [DD-2.2 process interpretation](dd-2-2-pro
 
 <a id="dd-doccap-059"></a>
 
-**DD-DOCCAP-059 — Development/preview launch is not generation success**  
-Successfully starting a long-running documentation server establishes provider execution state, not that documentation was generated, correct or accepted.
+**DD-DOCCAP-059 — Development/preview launch is not generation success**
+
+Documentation-server start evidence follows [FR-DOCS-097](../functional/docs-functional-specification-v01.md#fr-docs-097) and [Process readiness](dd-2-2-process-execution-detailed-design-v01.md#dd-proc-067) before documentation acceptance.
 
 <a id="dd-doccap-060"></a>
 
@@ -674,13 +694,16 @@ Development/preview operations shall not be forced into a completed-success mode
 
 <a id="dd-doccap-063"></a>
 
-**DD-DOCCAP-063 — Generated tooling artefacts are effects**  
-Known build/output artefacts shall be reported as provider effects without granting permission to modify unrelated resources.
+**DD-DOCCAP-063 — Generated tooling artefacts are effects**
+
+Known tooling outputs apply [FR-DOCS-099](../functional/docs-functional-specification-v01.md#fr-docs-099) at the delegated-effect boundary.
 
 <a id="dd-doccap-064"></a>
 
-**DD-DOCCAP-064 — Provider failure is normalized**  
-Tool launch, configuration, build, runtime and termination failures shall be represented as normalized capability evidence rather than exposed only as provider-native errors.
+**DD-DOCCAP-064 — Provider failure is normalized**
+
+Local launch, configuration, build, runtime and termination failure classes normalize evidence for [FR-DOCS-098](../functional/docs-functional-specification-v01.md#fr-docs-098).
+
 
 ---
 
@@ -690,8 +713,9 @@ Documentation validation may include bounded checks such as rendered-output vali
 
 <a id="dd-doccap-065"></a>
 
-**DD-DOCCAP-065 — Documentation validity is not universal Quality authority**  
-Documentation-oriented validation used to establish a Documentation Capability result shall not absorb independent Quality-domain checks merely because both produce findings.
+**DD-DOCCAP-065 — Documentation validity is not universal Quality authority**
+
+Documentation-oriented validation applies [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067) at the independent Quality boundary.
 
 <a id="dd-doccap-066"></a>
 
@@ -701,8 +725,9 @@ Injected source is validated under [FR-XFORM-048](../functional/source-transform
 
 <a id="dd-doccap-067"></a>
 
-**DD-DOCCAP-067 — Quality may consume documentation evidence independently**  
-DD-2.8 may later evaluate documentation-related quality criteria where Quality is the primary intent, but this does not transfer Docs generation semantics to Quality.
+**DD-DOCCAP-067 — Quality may consume documentation evidence independently**
+
+Independent documentation-related Quality assessment follows [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066) and [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067); generation ownership follows [FR-DOCS-100](../functional/docs-functional-specification-v01.md#fr-docs-100).
 
 <a id="dd-doccap-068"></a>
 
@@ -746,8 +771,10 @@ Legitimate empty optional categories follows [DD-DOCCAP-029](#dd-doccap-029).
 
 <a id="dd-doccap-072"></a>
 
-**DD-DOCCAP-072 — No raw-dump requirement**  
-Completeness does not require verbatim inclusion of every source file; it requires satisfaction of the approved documentation profile from authorized facts/content.
+**DD-DOCCAP-072 — No raw-dump requirement**
+
+Profile completeness applies [FR-DOCS-103](../functional/docs-functional-specification-v01.md#fr-docs-103) to authorized facts/content, without requiring verbatim inclusion of each source.
+
 
 ---
 
@@ -813,8 +840,9 @@ Facts/models derived from inspected resources shall retain sufficient revision/s
 
 <a id="dd-doccap-082"></a>
 
-**DD-DOCCAP-082 — No false freshness**  
-A documentation result shall not claim synchronization/freshness where required inputs failed to refresh or changed materially before acceptance.
+**DD-DOCCAP-082 — No false freshness**
+
+Freshness claims apply [FR-DOCS-081](../functional/docs-functional-specification-v01.md#fr-docs-081). The capability also surfaces material input change before acceptance through its revision/snapshot context.
 
 <a id="dd-doccap-083"></a>
 

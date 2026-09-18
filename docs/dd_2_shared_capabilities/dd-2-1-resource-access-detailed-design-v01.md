@@ -586,9 +586,7 @@ Resource Access may write supplied content to the explicitly identified target u
 
 ### DD-RES-036 — No implicit append/update policy
 
-Generic Resource Access shall not interpret “update” as append-if-missing, merge-object-keys, rewrite-whole-file or another content policy merely from file extension or historical implementation convention.
-
-Those semantics belong to the owning transformation/resource handler.
+Append-if-missing, key merging and whole-file rewrite are content-policy cases of [DD-RES-035](#dd-res-035), routed through the owning transformation/resource handler rather than inferred from an extension or historical convenience method.
 
 <a id="dd-res-037"></a>
 
@@ -1061,7 +1059,7 @@ Use the distinct recursive-deletion request in [DD-RES-043](#dd-res-043) and [DD
 
 ### DD-RES-088 — No provider-native authority
 
-Resource-provider APIs and defaults are subordinate under [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); permitted intrinsic defaults are described by DD-RES-065.
+Resource-provider APIs and defaults apply [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); intrinsic technical defaults use [DD-RES-065](#dd-res-065).
 
 <a id="dd-res-089"></a>
 

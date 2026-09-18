@@ -351,7 +351,7 @@ Where scope determines concern applicability, the Engine may stage configuration
 
 ### DD-CORE-BOOT-008 — Candidate acquisition across modes {#dd-core-boot-008}
 
-The staged lifecycle also applies to Headless, TUI, GUI, IDE and automation callers. Interaction can acquire a permitted candidate but cannot make it effective. If permitted non-interactive inputs cannot supply required bootstrap configuration or disambiguation, Headless execution fails deterministically under the invocation contract.
+Bootstrap candidate acquisition applies [Design §8.4](../appmanager-design-specification-v01.md#_8-4-separation-of-resolution-and-interaction) across the interaction modes. Missing bootstrap inputs or disambiguation in Headless follow [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) and the resolution stage’s eligibility contract.
 
 ### DD-CORE-BOOT-009 — Scope checkpoint {#dd-core-boot-009}
 

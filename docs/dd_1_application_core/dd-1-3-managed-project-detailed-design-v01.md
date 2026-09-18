@@ -594,7 +594,7 @@ The request must be resolved against:
 - safety policy;
 - ownership/targetability rules.
 
-Where scope depends on project/scope-aware configuration, DD-1.4 resolves that configuration after sufficient Managed Project Context exists and before the affected Managed Scope decision is finalized. This staged use of effective configuration does not transfer scope authority to Configuration Resolution.
+Configuration-dependent scope resolution uses the [Engine scope checkpoint](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009); the list above identifies the local scope decision inputs.
 
 <a id="dd-proj-015"></a>
 

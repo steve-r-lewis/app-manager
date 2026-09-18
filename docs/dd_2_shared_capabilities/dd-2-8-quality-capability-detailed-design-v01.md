@@ -337,13 +337,16 @@ The model shall not collapse provider execution status and interpreted quality s
 
 <a id="dd-qualcap-024"></a>
 
-**DD-QUALCAP-024 — No false pass from absence of failure**  
-Unavailable, incomplete, indeterminate, cancelled or not-executed work shall not be represented as passed merely because no failing finding was produced.
+**DD-QUALCAP-024 — No false pass from absence of failure**
+
+Non-pass check states bind [FR-QUAL-097](../functional/quality-functional-specification-v01.md#fr-qual-097), [FR-QUAL-098](../functional/quality-functional-specification-v01.md#fr-qual-098), [FR-QUAL-099](../functional/quality-functional-specification-v01.md#fr-qual-099) and [FR-QUAL-038](../functional/quality-functional-specification-v01.md#fr-qual-038) to the normalized result model.
 
 <a id="dd-qualcap-025"></a>
 
-**DD-QUALCAP-025 — Provider-native output is supplemental**  
-Raw or bounded provider output may be retained for diagnostics but shall not be required for callers to determine normalized Quality status.
+**DD-QUALCAP-025 — Provider-native output is supplemental**
+
+Bounded supplemental provider output uses [FR-QUAL-102](../functional/quality-functional-specification-v01.md#fr-qual-102); machine interpretation uses [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021).
+
 
 ---
 
@@ -397,23 +400,28 @@ A normalized test result may include:
 
 <a id="dd-qualcap-029"></a>
 
-**DD-QUALCAP-029 — Assertion failure is not infrastructure failure**  
-A provider successfully running tests that fail assertions shall produce failed-test evidence distinct from failure to launch or complete the provider.
+**DD-QUALCAP-029 — Assertion failure is not infrastructure failure**
+
+Assertion-failure evidence applies [FR-QUAL-036](../functional/quality-functional-specification-v01.md#fr-qual-036) and [FR-QUAL-037](../functional/quality-functional-specification-v01.md#fr-qual-037) at the test-provider normalizer.
 
 <a id="dd-qualcap-030"></a>
 
-**DD-QUALCAP-030 — No-tests state is explicit**  
-A reliable no-tests result shall not be normalized as tests-passed unless explicit policy defines that interpretation at a higher layer.
+**DD-QUALCAP-030 — No-tests state is explicit**
+
+Reliable no-tests evidence applies [FR-QUAL-035](../functional/quality-functional-specification-v01.md#fr-qual-035). Any higher-level policy interpreting that evidence as acceptable remains explicit.
 
 <a id="dd-qualcap-031"></a>
 
-**DD-QUALCAP-031 — Incomplete tests cannot pass completely**  
-Cancelled, timed-out or otherwise incomplete test execution shall preserve incompleteness regardless of tests that passed before interruption.
+**DD-QUALCAP-031 — Incomplete tests cannot pass completely**
+
+Interrupted test normalization applies [FR-QUAL-038](../functional/quality-functional-specification-v01.md#fr-qual-038) even when earlier tests passed.
 
 <a id="dd-qualcap-032"></a>
 
-**DD-QUALCAP-032 — Category fidelity**  
-Unit, end-to-end and all-tests requests shall retain requested category identity through provider normalization.
+**DD-QUALCAP-032 — Category fidelity**
+
+Provider normalization carries the requested category identity from [FR-QUAL-032](../functional/quality-functional-specification-v01.md#fr-qual-032) and [FR-QUAL-040](../functional/quality-functional-specification-v01.md#fr-qual-040).
+
 
 ---
 
@@ -423,8 +431,9 @@ Test UI is a provider capability, not a test outcome.
 
 <a id="dd-qualcap-033"></a>
 
-**DD-QUALCAP-033 — UI launch is execution evidence**  
-Successfully starting a test UI proves only that the UI capability launched; it does not establish any test or gate result.
+**DD-QUALCAP-033 — UI launch is execution evidence**
+
+Test UI launch evidence applies [FR-QUAL-043](../functional/quality-functional-specification-v01.md#fr-qual-043) before gate interpretation.
 
 <a id="dd-qualcap-034"></a>
 
@@ -433,8 +442,10 @@ A provider may support non-interactive testing without supporting an interactive
 
 <a id="dd-qualcap-035"></a>
 
-**DD-QUALCAP-035 — Long-running UI state is represented**  
-Where a test UI remains active, its running/stopped/cancelled state shall be represented without inventing a completed quality result.
+**DD-QUALCAP-035 — Long-running UI state is represented**
+
+An active UI exposes running/stopped/cancelled state under [FR-QUAL-044](../functional/quality-functional-specification-v01.md#fr-qual-044) and [FR-QUAL-043](../functional/quality-functional-specification-v01.md#fr-qual-043).
+
 
 ---
 
@@ -446,8 +457,9 @@ A normalized measurement may represent statement, branch, function, line or othe
 
 <a id="dd-qualcap-036"></a>
 
-**DD-QUALCAP-036 — Measurement success is not threshold success**  
-Successful coverage collection establishes measurement evidence, not satisfaction of a configured threshold.
+**DD-QUALCAP-036 — Measurement success is not threshold success**
+
+Coverage collection supplies measurements for [FR-QUAL-050](../functional/quality-functional-specification-v01.md#fr-qual-050) rather than a threshold decision.
 
 <a id="dd-qualcap-037"></a>
 
@@ -461,8 +473,10 @@ A metric absent from provider evidence shall not be invented as zero, 100%, or a
 
 <a id="dd-qualcap-039"></a>
 
-**DD-QUALCAP-039 — Coverage scope is retained**  
-Coverage evidence shall identify the target/scope sufficiently to prevent partial coverage being represented as complete-project coverage.
+**DD-QUALCAP-039 — Coverage scope is retained**
+
+Coverage evidence identifies its evaluated target/scope to implement [FR-QUAL-053](../functional/quality-functional-specification-v01.md#fr-qual-053).
+
 
 ---
 
@@ -498,13 +512,15 @@ Autofix is a separate authorized source-change path under [Design](../appmanager
 
 <a id="dd-qualcap-044"></a>
 
-**DD-QUALCAP-044 — Type diagnostics are findings**  
-Provider-reported type errors/diagnostics shall be normalized as quality findings when the provider successfully evaluates the requested scope.
+**DD-QUALCAP-044 — Type diagnostics are findings**
+
+Completed type-check diagnostics apply [FR-QUAL-063](../functional/quality-functional-specification-v01.md#fr-qual-063) through the normalized finding model.
 
 <a id="dd-qualcap-045"></a>
 
-**DD-QUALCAP-045 — Type findings differ from provider failure**  
-Type errors shall remain distinguishable from inability to launch, configure or complete the type-check provider.
+**DD-QUALCAP-045 — Type findings differ from provider failure**
+
+Type-provider infrastructure versus type-error evidence applies [FR-QUAL-064](../functional/quality-functional-specification-v01.md#fr-qual-064).
 
 <a id="dd-qualcap-046"></a>
 
@@ -519,8 +535,9 @@ Type-provider project/include mechanics follows [DD-QUALCAP-016](#dd-qualcap-016
 
 <a id="dd-qualcap-047"></a>
 
-**DD-QUALCAP-047 — Generic validation is residual, not absorbing**  
-Quality Capability may support read-only validation whose primary semantics are genuinely quality-oriented and not owned more specifically by another domain.
+**DD-QUALCAP-047 — Generic validation is residual, not absorbing**
+
+Additional Quality validation binds [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066) and [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067) to the supported check classes.
 
 <a id="dd-qualcap-048"></a>
 
@@ -552,23 +569,27 @@ A gate criterion should identify:
 
 <a id="dd-qualcap-050"></a>
 
-**DD-QUALCAP-050 — Gate criteria are explicit inputs**  
-Quality Capability shall evaluate supplied/effective criteria and shall not invent mandatory checks or thresholds merely because a provider supports them.
+**DD-QUALCAP-050 — Gate criteria are explicit inputs**
+
+Supplied/effective gate evaluation follows [FR-QUAL-072](../functional/quality-functional-specification-v01.md#fr-qual-072) and [FR-QUAL-051](../functional/quality-functional-specification-v01.md#fr-qual-051).
 
 <a id="dd-qualcap-051"></a>
 
-**DD-QUALCAP-051 — Required and advisory remain distinct**  
-Advisory failure/unavailability shall remain distinguishable from required-criterion failure.
+**DD-QUALCAP-051 — Required and advisory remain distinct**
+
+Advisory failure/unavailability follows [FR-QUAL-079](../functional/quality-functional-specification-v01.md#fr-qual-079).
 
 <a id="dd-qualcap-052"></a>
 
-**DD-QUALCAP-052 — Required unavailable cannot pass**  
-A required criterion whose necessary check is unavailable, incomplete or indeterminate shall not yield a complete gate pass unless an explicit governing policy defines a different acceptable state.
+**DD-QUALCAP-052 — Required unavailable cannot pass**
+
+Required-criterion interpretation follows [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075), [FR-QUAL-077](../functional/quality-functional-specification-v01.md#fr-qual-077) and [FR-QUAL-078](../functional/quality-functional-specification-v01.md#fr-qual-078). An explicit governing policy can define a different acceptable state; provider availability alone cannot define that exception.
 
 <a id="dd-qualcap-053"></a>
 
-**DD-QUALCAP-053 — Gate provenance is retained**  
-A gate result shall preserve the criteria evaluated and evidence sufficient to explain the pass/fail/indeterminate decision without parsing provider output.
+**DD-QUALCAP-053 — Gate provenance is retained**
+
+Criterion identity and normalized decision evidence implement [FR-QUAL-080](../functional/quality-functional-specification-v01.md#fr-qual-080).
 
 <a id="dd-qualcap-054"></a>
 
@@ -583,18 +604,21 @@ A composite quality run coordinates multiple bounded checks but does not become 
 
 <a id="dd-qualcap-055"></a>
 
-**DD-QUALCAP-055 — Composite plan is explicit**  
-The selected checks, targets and policy shall be supplied by the owning Quality use case/effective policy rather than inferred from every executable quality-like script found in the project.
+**DD-QUALCAP-055 — Composite plan is explicit**
+
+The supplied composite check/target plan binds [FR-QUAL-082](../functional/quality-functional-specification-v01.md#fr-qual-082).
 
 <a id="dd-qualcap-056"></a>
 
-**DD-QUALCAP-056 — Ordering is governed**  
-Where order matters, the plan shall carry deterministic ordering rather than rely on incidental provider discovery order.
+**DD-QUALCAP-056 — Ordering is governed**
+
+The plan records the significant execution order required by [FR-QUAL-083](../functional/quality-functional-specification-v01.md#fr-qual-083).
 
 <a id="dd-qualcap-057"></a>
 
-**DD-QUALCAP-057 — Fail-fast is policy**  
-Stopping after a failed required check versus continuing to gather evidence shall be an explicit plan/policy property.
+**DD-QUALCAP-057 — Fail-fast is policy**
+
+The plan records fail-fast/continuation policy under [FR-QUAL-084](../functional/quality-functional-specification-v01.md#fr-qual-084).
 
 <a id="dd-qualcap-058"></a>
 
@@ -665,8 +689,10 @@ Cancelled required checks without observed failure follows [DD-QUALCAP-024](#dd-
 
 <a id="dd-qualcap-068"></a>
 
-**DD-QUALCAP-068 — Timeout is governed**  
-Timeouts shall derive from effective configuration/request/provider constraints rather than hidden constants that redefine the permanent Quality semantics.
+**DD-QUALCAP-068 — Timeout is governed**
+
+Quality timeout parameters apply [FR-QUAL-106](../functional/quality-functional-specification-v01.md#fr-qual-106), with documented provider constraints retained as technical inputs.
+
 
 ---
 
@@ -710,8 +736,9 @@ Where concurrent quality requests can interfere materially, the capability shall
 
 <a id="dd-qualcap-074"></a>
 
-**DD-QUALCAP-074 — Result attribution survives concurrency**  
-Provider output, reports and generated artefacts shall be attributable to the correct quality request where concurrent execution is permitted.
+**DD-QUALCAP-074 — Result attribution survives concurrency**
+
+Concurrent request attribution applies [FR-QUAL-109](../functional/quality-functional-specification-v01.md#fr-qual-109) to provider output, reports and generated artefacts.
 
 <a id="dd-qualcap-075"></a>
 
@@ -749,8 +776,9 @@ CI callers apply [Design](../appmanager-design-specification-v01.md#_4-6-present
 
 <a id="dd-qualcap-080"></a>
 
-**DD-QUALCAP-080 — Quality evidence may gate other workflows**  
-Git, deployment or other workflows may consume normalized Quality/gate evidence, but the owning workflow decides whether and how that evidence authorizes continuation.
+**DD-QUALCAP-080 — Quality evidence may gate other workflows**
+
+Git, deployment and other enclosing workflows consume Quality evidence through [FR-QUAL-091](../functional/quality-functional-specification-v01.md#fr-qual-091) and [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 <a id="dd-qualcap-081"></a>
 

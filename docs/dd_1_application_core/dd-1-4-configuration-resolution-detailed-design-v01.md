@@ -121,9 +121,7 @@ context-independent configuration candidates
       domain / capability semantics
 ```
 
-This is a semantic dependency view, not a requirement for two resolver implementations, two services, two passes for every operation, or one fixed call sequence. Operations that do not require bootstrap/project staging may resolve directly with the context they require.
-
-Configuration Resolution is a permanent responsibility boundary. It does not imply a separate process, package, executable, service, or transport.
+The diagram projects the [Engine staged lifecycle](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) through the configuration boundary. [Bounded resolution](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-007) governs staging; [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) governs topology independence.
 
 ## 5. Responsibility Model
 
@@ -562,7 +560,7 @@ An operation-effective configuration snapshot should be:
 - associated with the invocation/use case;
 - associated with the relevant managed project once project context is required;
 - associated with the relevant managed scope where that scope is already established and required by the constituent concerns;
-- capable of preceding final managed-scope acceptance where DD-1.3 scope/exclusion semantics consume configuration values that can be resolved from sufficient managed-project context;
+- staged relative to managed-scope acceptance under [DD-CORE-BOOT-009](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009);
 - composed only of governed effective values and explicit optional absences;
 - capable of exposing safe provenance;
 - stable for the phase of execution that depends on it.
@@ -931,7 +929,7 @@ For example, a value such as `force=true` or a target branch name cannot automat
 
 The [resolution context contract in §8](#_8-resolution-context) defines configuration's stage-specific inputs; [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) coordinates the stages. Configuration consumes the project model rather than rediscovering it. Project-side interpretation and conflict reporting follow [DD-1.3 §29](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution).
 
-A scope-sensitive concern may resolve differently for the root application, one or several layers, one or several repositories, or selected resources. Its snapshot preserves the relevant scope association. If a concern instead supplies a value needed to decide scope, it is resolved from sufficient project context and supplied at the Engine's scope checkpoint.
+A scope-sensitive concern may resolve differently for the root application, one or several layers, one or several repositories, or selected resources. Its snapshot preserves the relevant scope association. Values needed to decide scope follow [DD-CORE-BOOT-009](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009).
 
 Resolution diagnostics should distinguish missing bootstrap values, invalid candidates, inapplicable sources, bootstrap/project evidence conflict, unresolved project identity, premature project-dependent resolution, later configuration/context conflict, unresolved scope-dependent values, required re-resolution and unsafe or unsupported cycles. These are local conditions mapped through [DD-1.2 §9](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model); safe provenance is retained without exposing sensitive configuration values.
 

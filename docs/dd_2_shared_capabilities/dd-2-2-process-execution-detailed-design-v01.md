@@ -183,7 +183,7 @@ Exact field names and language-level types belong to Implementation Specificatio
 
 ### DD-PROC-002 — No command-string authority
 
-An arbitrary command string shall not be treated as sufficient application authority merely because Process Execution can pass it to a shell or process API.
+Command strings are request data under [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
 
 <a id="dd-proc-003"></a>
 
@@ -223,9 +223,7 @@ Process Execution shall not perform broad project scanning to guess which tool t
 
 ### DD-PROC-007 — Executability is not application eligibility
 
-The fact that a binary, script or command can be located and launched does not make it an approved AppManager operation.
-
-For example, package-script eligibility, Git operation policy and quality-tool selection remain with their owning semantics.
+Located binaries/scripts use [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); package-script eligibility, Git policy and Quality-tool selection bind their respective owning use cases.
 
 <a id="dd-proc-008"></a>
 
@@ -269,7 +267,7 @@ Shell-mediated execution shall occur only when the caller has supplied or author
 
 ### DD-PROC-012 — Shell syntax remains provider-bounded
 
-Shell operators, interpolation, pipelines, redirection, command substitution and platform-specific quoting are provider/shell semantics. Higher application contracts shall not depend on their incidental representation where an AppManager-oriented contract can express the intended operation directly.
+Shell operators, interpolation, pipelines, redirection, command substitution and quoting apply [Design provider encapsulation](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) at the invocation-form seam.
 
 <a id="dd-proc-013"></a>
 
@@ -363,7 +361,7 @@ Construct the process environment from [DD-1.4 effective values](../dd_1_applica
 
 ### DD-PROC-024 — Environment inheritance is not authority
 
-Inherited host environment values are technical inputs, not automatically authoritative AppManager configuration.
+Inherited environment values enter as technical inputs under the [Design configuration model](../appmanager-design-specification-v01.md#_8-1-configuration-model).
 
 <a id="dd-proc-025"></a>
 
@@ -442,9 +440,7 @@ Where the provider exposes distinct stdout and stderr channels and the distincti
 
 ### DD-PROC-032 — Output is evidence, not status
 
-Text written to stdout or stderr shall not independently establish success or failure.
-
-A tool may emit warnings on stderr and succeed, or emit error-looking text and still exit normally; interpretation belongs to the owning capability/use case where tool-specific semantics require it.
+Stdout/stderr contribute evidence under [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance). For example, stderr can contain warnings from a successful tool, and error-looking text can accompany a normal exit; the consuming tool contract interprets those combinations.
 
 <a id="dd-proc-033"></a>
 
@@ -644,7 +640,8 @@ The normalized result shall identify timeout participation separately from ordin
 
 ### DD-PROC-054 — Provider timeout limitations
 
-If a provider timeout mechanism cannot guarantee termination of descendants or external effects, the capability shall not claim such a guarantee.
+Timeout-related descendant and external-effect claims use [DD-PROC-062](#dd-proc-062) and [DD-PROC-061](#dd-proc-061).
+
 
 ---
 
@@ -840,7 +837,7 @@ Process diagnostics apply [DD-1.2 redaction](../dd_1_application_core/dd-1-2-exe
 
 ### DD-PROC-074 — No implicit application retry
 
-Process Execution shall not silently repeat a consequential process invocation merely because launch or execution failed.
+Repeating a consequential process invocation after launch/execution failure applies [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049).
 
 <a id="dd-proc-075"></a>
 
@@ -875,7 +872,7 @@ Mutable execution state, cancellation handles, output streams and correlation da
 
 ### DD-PROC-079 — No universal serialization
 
-Process Execution shall not impose one global serialization rule on all external processes. Application-level conflicts remain coordinated by DD-1.5.
+Process scheduling uses the [application conflict-coordination boundary](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#_27-3-no-global-serialization-requirement), with local runtime limits under [DD-PROC-080](#dd-proc-080).
 
 <a id="dd-proc-080"></a>
 
@@ -991,7 +988,8 @@ An AI capability may invoke a local CLI/tool through Process Execution. Provider
 
 ### DD-PROC-091 — Tool reuse does not merge capability ownership
 
-Two capabilities using the same executable/process mechanism shall not be merged into one semantic authority merely because their technical execution path is shared.
+Shared executables bind the [Design capability boundary](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) across their distinct consumers.
+
 
 ---
 
@@ -1039,7 +1037,8 @@ A replacement provider shall preserve the requested invocation form, working con
 
 ### DD-PROC-097 — Provider-native extensions are bounded
 
-Provider-specific features may be exposed only as bounded capability detail where they do not force general application semantics to depend on the provider representation.
+Bounded provider-specific feature detail follows [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
 
 ---
 

@@ -256,8 +256,9 @@ Provider/model policy consumes [DD-1.4 effective values](../dd_1_application_cor
 
 <a id="dd-aicap-012"></a>
 
-**DD-AICAP-012 — No arbitrary provider guessing**  
-Where more than one eligible provider/model remains and the governing policy cannot choose deterministically, the capability shall report ambiguity rather than select by incidental registration order.
+**DD-AICAP-012 — No arbitrary provider guessing**
+
+Selection applies [FR-AI-081](../functional/ai-functional-specification-v01.md#fr-ai-081). If multiple eligible candidates remain without a deterministic policy choice, return provider/model ambiguity.
 
 <a id="dd-aicap-013"></a>
 
@@ -372,8 +373,9 @@ Selection may use:
 
 <a id="dd-aicap-023"></a>
 
-**DD-AICAP-023 — Minimum necessary context**  
-AI Capability shall submit only context required or explicitly permitted for the bounded task.
+**DD-AICAP-023 — Minimum necessary context**
+
+Task-required and explicitly permitted context selections apply [FR-AI-088](../functional/ai-functional-specification-v01.md#fr-ai-088) within the bounded request.
 
 <a id="dd-aicap-024"></a>
 
@@ -421,8 +423,9 @@ Output influenced by conflicting or malicious project instructions follows [Desi
 
 <a id="dd-aicap-031"></a>
 
-**DD-AICAP-031 — Generated tool/action requests are inert by default**  
-Tool calls, function calls, shell commands, file operations, URLs or other action requests emitted by a provider shall be treated as generated data unless a separately designed and authorized AppManager capability explicitly interprets them.
+**DD-AICAP-031 — Generated tool/action requests are inert by default**
+
+Provider-emitted tool/function calls, shell commands, file operations, URLs and other action requests apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) at the generated-data boundary.
 
 <a id="dd-aicap-032"></a>
 
@@ -442,8 +445,9 @@ Where context or configuration has an established sensitivity classification, AI
 
 <a id="dd-aicap-034"></a>
 
-**DD-AICAP-034 — Known credentials are excluded**  
-Known authentication secrets, tokens, passwords and protected environment values shall be excluded from ordinary AI context.
+**DD-AICAP-034 — Known credentials are excluded**
+
+Ordinary AI context applies [FR-AI-089](../functional/ai-functional-specification-v01.md#fr-ai-089) to known authentication secrets, tokens, passwords and protected environment values.
 
 <a id="dd-aicap-035"></a>
 
@@ -677,8 +681,9 @@ Retries and fallback can change external cost, latency, disclosure and output se
 
 <a id="dd-aicap-060"></a>
 
-**DD-AICAP-060 — No hidden retry loop**  
-AI Capability shall not perform unbounded or policy-invented retries merely because a failure appears transient.
+**DD-AICAP-060 — No hidden retry loop**
+
+Capability/provider retries apply [FR-AI-084](../functional/ai-functional-specification-v01.md#fr-ai-084), including failures that appear transient.
 
 <a id="dd-aicap-061"></a>
 
@@ -688,8 +693,9 @@ AI transience/retryability evidence uses [DD-1.2](../dd_1_application_core/dd-1-
 
 <a id="dd-aicap-062"></a>
 
-**DD-AICAP-062 — Fallback requires authorization**  
-Switching provider/model after failure shall occur only under caller-supplied or effective fallback policy that permits the candidate.
+**DD-AICAP-062 — Fallback requires authorization**
+
+Provider/model substitution after failure applies [FR-AI-085](../functional/ai-functional-specification-v01.md#fr-ai-085).
 
 <a id="dd-aicap-063"></a>
 
@@ -731,8 +737,10 @@ Usage evidence does not authorize spending or define budget policy. Cost/usage c
 
 <a id="dd-aicap-069"></a>
 
-**DD-AICAP-069 — Provenance supports acceptance**  
-Provider/model/request provenance may be retained sufficiently for callers to understand which AI capability produced a proposal without making provider-native response data part of the application contract.
+**DD-AICAP-069 — Provenance supports acceptance**
+
+Request provenance may correlate the proposal with the actual provider/model evidence in [DD-AICAP-015](#dd-aicap-015).
+
 
 ---
 
@@ -913,8 +921,9 @@ It does not own AppManager configuration precedence, managed scope, context disc
 
 <a id="dd-aicap-084"></a>
 
-**DD-AICAP-084 — Provider normalization**  
-Every provider shall translate its native request/response/failure mechanics into the shared AI Capability contracts.
+**DD-AICAP-084 — Provider normalization**
+
+Provider adapters translate requests, responses and failures through the local shared contracts under [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 <a id="dd-aicap-085"></a>
 

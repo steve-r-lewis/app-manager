@@ -195,8 +195,9 @@ Transformation-request intent applies [Design](../appmanager-design-specificatio
 
 <a id="dd-xform-004"></a>
 
-**DD-XFORM-004 — Request scope is bounded**  
-The request shall identify source targets and effect constraints sufficiently to prevent an implementation from treating an entire project as implicitly mutable.
+**DD-XFORM-004 — Request scope is bounded**
+
+Source targets and effect constraints in the request bind [FR-XFORM-013](../functional/source-transformation-functional-specification-v01.md#fr-xform-013) and [FR-PROJ-044](../functional/managed-project-functional-specification-v01.md#fr-proj-044).
 
 <a id="dd-xform-005"></a>
 
@@ -279,8 +280,9 @@ A plan should carry a stable plan identity/correlation value where required for 
 
 <a id="dd-xform-011"></a>
 
-**DD-XFORM-011 — Approved plan identity**  
-Execution shall be traceable to the plan that was approved. Material modification after approval requires revalidation and, where required by policy, renewed approval.
+**DD-XFORM-011 — Approved plan identity**
+
+Execution shall be traceable to the approved plan. Material post-approval changes apply [FR-XFORM-031](../functional/source-transformation-functional-specification-v01.md#fr-xform-031).
 
 ### 9.3 Logical plan contents
 
@@ -337,8 +339,9 @@ A planned edit may describe:
 
 <a id="dd-xform-014"></a>
 
-**DD-XFORM-014 — Semantic edit above provider patch**  
-Provider-native patches, text edits, AST mutations or CST edits may implement a planned edit but shall not become the only shared representation when AppManager requires semantic traceability.
+**DD-XFORM-014 — Semantic edit above provider patch**
+
+Provider patches, text edits and AST/CST edits apply [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); the shared planned-edit model retains the semantic traceability required by the use case.
 
 <a id="dd-xform-015"></a>
 
@@ -422,8 +425,10 @@ Edits within a generated region follows [FR-XFORM-047](../functional/source-tran
 
 <a id="dd-xform-022"></a>
 
-**DD-XFORM-022 — Create-if-absent is explicit**  
-A transformation request that may create a missing resource shall distinguish creation from modification so Resource Access and outcome reporting can preserve the actual effect.
+**DD-XFORM-022 — Create-if-absent is explicit**
+
+A transformation that may create a missing resource binds the [Resource Access create/replace distinction](dd-2-1-resource-access-detailed-design-v01.md#dd-res-005) to its plan and effect reporting.
+
 
 ---
 
@@ -498,15 +503,9 @@ Immediately before applying a consequential plan, Source Transformation shall es
 
 <a id="dd-xform-030"></a>
 
-**DD-XFORM-030 — No stale overwrite**  
-If the source materially changed since planning, the plan shall not blindly overwrite newer content.
+**DD-XFORM-030 — No stale overwrite**
 
-Permitted outcomes include:
-
-- fail as stale;
-- request replanning;
-- re-run Source Intelligence and deterministically rebuild the plan under upstream policy;
-- apply a provider-supported conditional edit only if all required preconditions still hold.
+Changed-source handling applies [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020). Local responses include stale failure, requesting replanning, rerunning Source Intelligence to rebuild deterministically under upstream policy, or a provider-supported conditional edit whose required preconditions still hold.
 
 <a id="dd-xform-031"></a>
 

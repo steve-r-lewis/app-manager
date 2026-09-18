@@ -198,10 +198,10 @@ An aggregate listing may combine item summaries from multiple registry classes f
 
 <a id="dd-reg-007"></a>
 
-**DD-REG-007 — No arbitrary generic registry requirement**  
-Version 1 shall not create a fourth or universal arbitrary custom-template registry merely to make all template-like resources appear uniform.
+**DD-REG-007 — No arbitrary generic registry requirement**
 
-This directly preserves `FR-SET-093`–`FR-SET-099`.
+Version 1 template-registry cardinality follows [FR-SET-099](../functional/settings-functional-specification-v01.md#fr-set-099); the registry-class model here supports the approved classes.
+
 
 ---
 

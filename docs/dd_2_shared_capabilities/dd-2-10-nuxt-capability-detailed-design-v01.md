@@ -151,8 +151,9 @@ A Nuxt target may represent:
 
 <a id="dd-nuxtcap-005"></a>
 
-**DD-NUXTCAP-005 — Root and layer identities remain distinct**  
-The capability shall not collapse the managed root application and managed layers into one undifferentiated Nuxt project identity.
+**DD-NUXTCAP-005 — Root and layer identities remain distinct**
+
+Nuxt target identity binds [Design §9.3](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers) to the local target model.
 
 <a id="dd-nuxtcap-006"></a>
 
@@ -162,13 +163,16 @@ Nuxt-looking files/directories as identity evidence follows [Design](../appmanag
 
 <a id="dd-nuxtcap-007"></a>
 
-**DD-NUXTCAP-007 — Host-relative relationships**  
-Layer integration state shall be interpretable relative to a resolved host/root identity because one layer may be integrated into one root and not another.
+**DD-NUXTCAP-007 — Host-relative relationships**
+
+Host-relative integration evidence applies [FR-NUXT-092](../functional/nuxt-functional-specification-v01.md#fr-nuxt-092).
 
 <a id="dd-nuxtcap-008"></a>
 
-**DD-NUXTCAP-008 — Repository identity remains separate**  
-Nuxt identity and Nuxt integration shall not be inferred solely from repository topology, submodule presence or remote metadata.
+**DD-NUXTCAP-008 — Repository identity remains separate**
+
+Repository topology, submodule presence or remote metadata alone shall not establish Nuxt identity. Nuxt composition interpretation applies [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017).
+
 
 ---
 
@@ -201,8 +205,9 @@ Nuxt recognition before resource/source/repository/process effects follows [Desi
 
 <a id="dd-nuxtcap-011"></a>
 
-**DD-NUXTCAP-011 — Unsupported structure fails safely**  
-A recognized-but-unsupported or ambiguous Nuxt structure shall produce explicit unsupported/ambiguous evidence rather than guessed semantics.
+**DD-NUXTCAP-011 — Unsupported structure fails safely**
+
+Recognition support/ambiguity evidence applies [FR-NUXT-019](../functional/nuxt-functional-specification-v01.md#fr-nuxt-019).
 
 <a id="dd-nuxtcap-012"></a>
 
@@ -236,8 +241,9 @@ A configuration inspection or mutation request shall resolve the Nuxt target and
 
 <a id="dd-nuxtcap-014"></a>
 
-**DD-NUXTCAP-014 — Root and layer config are independent**  
-Root configuration and a layer's own configuration remain separately addressable where both exist.
+**DD-NUXTCAP-014 — Root and layer config are independent**
+
+Root/layer configuration addressing applies [FR-NUXT-022](../functional/nuxt-functional-specification-v01.md#fr-nuxt-022) and [FR-NUXT-023](../functional/nuxt-functional-specification-v01.md#fr-nuxt-023).
 
 <a id="dd-nuxtcap-015"></a>
 
@@ -272,13 +278,15 @@ Nuxt parser/AST/CST representations follows [Design](../appmanager-design-specif
 
 <a id="dd-nuxtcap-017"></a>
 
-**DD-NUXTCAP-017 — Manageability is explicit**  
-The capability shall distinguish configuration it can safely manage from configuration it can only observe.
+**DD-NUXTCAP-017 — Manageability is explicit**
+
+The semantic entry model binds [FR-NUXT-032](../functional/nuxt-functional-specification-v01.md#fr-nuxt-032) to manageable versus observe-only support.
 
 <a id="dd-nuxtcap-018"></a>
 
-**DD-NUXTCAP-018 — Unsupported content remains preserved evidence**  
-Unsupported configuration shall not be discarded merely because the capability cannot manage it; where safe it should remain represented as opaque/unsupported context sufficient to protect preservation during transformation.
+**DD-NUXTCAP-018 — Unsupported content remains preserved evidence**
+
+Opaque/unsupported context applies [FR-NUXT-026](../functional/nuxt-functional-specification-v01.md#fr-nuxt-026) and [FR-NUXT-042](../functional/nuxt-functional-specification-v01.md#fr-nuxt-042) to preservation during supported transformation.
 
 <a id="dd-nuxtcap-019"></a>
 
@@ -298,13 +306,16 @@ Listing supported configuration entries shall not produce source changes or prov
 
 <a id="dd-nuxtcap-021"></a>
 
-**DD-NUXTCAP-021 — Entry identity supports follow-on intent**  
-Listed manageable entries shall expose enough identity/context for a subsequent explicit add/remove/update request to target the intended semantic entry without parsing presentation text.
+**DD-NUXTCAP-021 — Entry identity supports follow-on intent**
+
+Listed entry identity/context implements [FR-NUXT-030](../functional/nuxt-functional-specification-v01.md#fr-nuxt-030) with [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021).
 
 <a id="dd-nuxtcap-022"></a>
 
-**DD-NUXTCAP-022 — Equivalent values in distinct contexts stay distinct**  
-The same textual value appearing in materially different Nuxt contexts shall not be collapsed into one entry when location/context affects semantics.
+**DD-NUXTCAP-022 — Equivalent values in distinct contexts stay distinct**
+
+Context-sensitive entry normalization applies [FR-NUXT-031](../functional/nuxt-functional-specification-v01.md#fr-nuxt-031).
+
 
 ---
 
@@ -344,18 +355,21 @@ The semantic change applies [FR-XFORM-013](../functional/source-transformation-f
 
 <a id="dd-nuxtcap-026"></a>
 
-**DD-NUXTCAP-026 — Supported-class gate**  
-Only configuration classes with defined recognition, transformation and validation semantics may be added through the managed Nuxt contract.
+**DD-NUXTCAP-026 — Supported-class gate**
+
+Managed addition eligibility applies [FR-NUXT-035](../functional/nuxt-functional-specification-v01.md#fr-nuxt-035).
 
 <a id="dd-nuxtcap-027"></a>
 
-**DD-NUXTCAP-027 — Equivalent existing entry**  
-If an equivalent supported entry already exists, the capability shall report already-satisfied evidence rather than request duplicate insertion.
+**DD-NUXTCAP-027 — Equivalent existing entry**
+
+Equivalent-entry recognition returns already-satisfied evidence under [FR-NUXT-037](../functional/nuxt-functional-specification-v01.md#fr-nuxt-037).
 
 <a id="dd-nuxtcap-028"></a>
 
-**DD-NUXTCAP-028 — Conflict is not duplicate**  
-A conflicting existing entry shall remain distinguishable from an equivalent entry and shall require an explicit supported update/migration path or rejection.
+**DD-NUXTCAP-028 — Conflict is not duplicate**
+
+Conflicting-entry evidence follows [FR-NUXT-038](../functional/nuxt-functional-specification-v01.md#fr-nuxt-038) rather than the equivalent-entry disposition.
 
 <a id="dd-nuxtcap-029"></a>
 
@@ -368,18 +382,21 @@ The Nuxt-specific postcondition shall describe the intended semantic entry after
 
 <a id="dd-nuxtcap-030"></a>
 
-**DD-NUXTCAP-030 — Exact removal target**  
-Removal shall resolve one supported semantic entry or explicitly bounded set before transformation.
+**DD-NUXTCAP-030 — Exact removal target**
+
+Removal resolves one supported entry or an explicitly bounded set under [FR-NUXT-045](../functional/nuxt-functional-specification-v01.md#fr-nuxt-045).
 
 <a id="dd-nuxtcap-031"></a>
 
-**DD-NUXTCAP-031 — Already absent is distinct**  
-A supported requested entry already absent may be represented as already-satisfied/no-op evidence rather than transformation failure.
+**DD-NUXTCAP-031 — Already absent is distinct**
+
+Absent-entry evidence applies [FR-NUXT-046](../functional/nuxt-functional-specification-v01.md#fr-nuxt-046).
 
 <a id="dd-nuxtcap-032"></a>
 
-**DD-NUXTCAP-032 — Removal consequence evidence**  
-Known Nuxt-specific consequences of removing an entry or relationship shall be surfaced to the owning use case before authorization where material.
+**DD-NUXTCAP-032 — Removal consequence evidence**
+
+Known removal consequences are surfaced before authorization under [FR-NUXT-048](../functional/nuxt-functional-specification-v01.md#fr-nuxt-048).
 
 <a id="dd-nuxtcap-033"></a>
 
@@ -403,8 +420,9 @@ Validation may establish, where supported:
 
 <a id="dd-nuxtcap-034"></a>
 
-**DD-NUXTCAP-034 — Source-valid is insufficient**  
-Successful Source Transformation validation does not by itself establish Nuxt semantic validity.
+**DD-NUXTCAP-034 — Source-valid is insufficient**
+
+Nuxt semantic validity after source validation applies [FR-NUXT-041](../functional/nuxt-functional-specification-v01.md#fr-nuxt-041) and [FR-NUXT-011](../functional/nuxt-functional-specification-v01.md#fr-nuxt-011).
 
 <a id="dd-nuxtcap-035"></a>
 
@@ -438,8 +456,9 @@ Layer evidence may include:
 
 <a id="dd-nuxtcap-037"></a>
 
-**DD-NUXTCAP-037 — Standalone is valid state**  
-A supported layer may be valid while unintegrated into a particular host.
+**DD-NUXTCAP-037 — Standalone is valid state**
+
+Unintegrated layer validity applies [FR-NUXT-091](../functional/nuxt-functional-specification-v01.md#fr-nuxt-091).
 
 <a id="dd-nuxtcap-038"></a>
 
@@ -449,8 +468,10 @@ Host-relative integration representation follows [DD-NUXTCAP-007](#dd-nuxtcap-00
 
 <a id="dd-nuxtcap-039"></a>
 
-**DD-NUXTCAP-039 — Repository-linked is separate state**  
-Repository linkage may coexist with integrated/unintegrated Nuxt states and shall not be used as a synonym for Nuxt composition.
+**DD-NUXTCAP-039 — Repository-linked is separate state**
+
+Repository linkage and Nuxt composition states bind [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017).
+
 
 ---
 
@@ -474,8 +495,9 @@ For each class, the profile may specify that the artefact is required/optional f
 
 <a id="dd-nuxtcap-040"></a>
 
-**DD-NUXTCAP-040 — Profile identity is semantic**  
-Profiles shall be identified by documented capability intent rather than incidental template ordering or implementation filenames.
+**DD-NUXTCAP-040 — Profile identity is semantic**
+
+Profile identity applies [FR-NUXT-057](../functional/nuxt-functional-specification-v01.md#fr-nuxt-057) to the declared baseline capability set.
 
 <a id="dd-nuxtcap-041"></a>
 
@@ -491,8 +513,10 @@ Resolved author/licence/naming/repository inputs for creation applies [FR-NUXT-0
 
 <a id="dd-nuxtcap-043"></a>
 
-**DD-NUXTCAP-043 — No fabricated secrets**  
-Required secret-bearing values shall be represented as absent, references or explicit placeholders according to policy; Nuxt Capability shall not invent real credentials.
+**DD-NUXTCAP-043 — No fabricated secrets**
+
+Required secret-bearing values use absent values, references or explicit placeholders under policy, applying [FR-NUXT-061](../functional/nuxt-functional-specification-v01.md#fr-nuxt-061).
+
 
 ---
 
@@ -544,8 +568,10 @@ Existing scaffold-artefact collision/update follows [Design](../appmanager-desig
 
 <a id="dd-nuxtcap-047"></a>
 
-**DD-NUXTCAP-047 — No generic generator or semantic authority**  
-The fact that template infrastructure can render arbitrary resources, or that Nuxt layer creation can request several artefact classes, shall not cause Nuxt Capability to own arbitrary project-file generation or the independent semantics of those artefact classes.
+**DD-NUXTCAP-047 — No generic generator or semantic authority**
+
+Scaffold resource participation applies [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) and [FR-NUXT-096](../functional/nuxt-functional-specification-v01.md#fr-nuxt-096) through [§16](#_16-layer-scaffolding-and-resource-registry).
+
 
 ---
 
@@ -591,8 +617,9 @@ AI may assist descriptive/generated content but cannot define the layer baseline
 
 <a id="dd-nuxtcap-051"></a>
 
-**DD-NUXTCAP-051 — AI is optional where deterministic baseline exists**  
-A valid supported layer profile shall not require AI merely for descriptive enrichment if the deterministic baseline can be produced without it.
+**DD-NUXTCAP-051 — AI is optional where deterministic baseline exists**
+
+The supported deterministic layer baseline applies [FR-NUXT-062](../functional/nuxt-functional-specification-v01.md#fr-nuxt-062).
 
 <a id="dd-nuxtcap-052"></a>
 
@@ -619,8 +646,9 @@ Repository follow-ons consume [Git domain workflows](../dd_3_high_coupling_domai
 
 <a id="dd-nuxtcap-055"></a>
 
-**DD-NUXTCAP-055 — Repository result remains separate evidence**  
-Nuxt results shall preserve repository follow-on status separately from Nuxt scaffold/integration state where both are relevant.
+**DD-NUXTCAP-055 — Repository result remains separate evidence**
+
+Repository follow-on status binds [FR-NUXT-068](../functional/nuxt-functional-specification-v01.md#fr-nuxt-068) to the separate scaffold/integration state.
 
 <a id="dd-nuxtcap-056"></a>
 
@@ -760,13 +788,15 @@ Nuxt-generated state observations support the bounded cleanup evidence in §6.1;
 
 <a id="dd-nuxtcap-071"></a>
 
-**DD-NUXTCAP-071 — Nuxt-specific semantic purpose required**  
-Nuxt Capability may request generation of resources only where the resource class participates in a defined Nuxt use case/profile. Participation establishes Nuxt orchestration/baseline purpose, not necessarily permanent artefact semantics.
+**DD-NUXTCAP-071 — Nuxt-specific semantic purpose required**
+
+Resource-class participation follows [FR-NUXT-094](../functional/nuxt-functional-specification-v01.md#fr-nuxt-094) and [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) in the defined Nuxt use case/profile.
 
 <a id="dd-nuxtcap-072"></a>
 
-**DD-NUXTCAP-072 — Deployment/provider files are not Nuxt by default**  
-A hosting/deployment provider artefact does not become Nuxt-owned merely because it is used by a Nuxt application.
+**DD-NUXTCAP-072 — Deployment/provider files are not Nuxt by default**
+
+Hosting/deployment artefact classification applies [FR-NUXT-095](../functional/nuxt-functional-specification-v01.md#fr-nuxt-095).
 
 <a id="dd-nuxtcap-073"></a>
 
@@ -787,8 +817,9 @@ Technical rendering/creation ability versus artefact ownership follows [Design](
 
 <a id="dd-nuxtcap-075"></a>
 
-**DD-NUXTCAP-075 — Documentation semantics remain Docs-owned**  
-When the primary intent is generate/extract/update documentation, the Docs domain/capability owns documentation intent and semantics even when Nuxt facts are central inputs. When README/introduction documentation is a subordinate required artefact of a Nuxt layer profile, Nuxt retains profile-completeness/orchestration authority while delegating documentation-specific modeling/generation semantics to DD-2.9 where those semantics are required.
+**DD-NUXTCAP-075 — Documentation semantics remain Docs-owned**
+
+Primary documentation intent follows [FR-DOCS-100](../functional/docs-functional-specification-v01.md#fr-docs-100). Subordinate profile documentation binds [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) through the [scaffold collaboration contract](#_16-layer-scaffolding-and-resource-registry).
 
 <a id="dd-nuxtcap-076"></a>
 
@@ -901,8 +932,9 @@ The local exposure points below locate the target, provider, output, mutation an
 
 <a id="dd-nuxtcap-086"></a>
 
-**DD-NUXTCAP-086 — Non-empty target safety**  
-Layer creation shall refuse or require an explicitly defined safe mode when the creation target contains existing content that could be overwritten or conflated with a new layer baseline.
+**DD-NUXTCAP-086 — Non-empty target safety**
+
+Non-empty layer-creation target handling applies [FR-NUXT-054](../functional/nuxt-functional-specification-v01.md#fr-nuxt-054).
 
 <a id="dd-nuxtcap-087"></a>
 

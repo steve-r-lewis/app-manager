@@ -334,10 +334,9 @@ A fact should be capable of carrying, where useful:
 
 <a id="dd-sint-015"></a>
 
-**DD-SINT-015 — Provider-model isolation**  
-AST nodes, CST nodes, compiler symbols, scanner tokens, parser cursors, regex match objects and language-service SDK objects shall not become the general Source Intelligence contract.
+**DD-SINT-015 — Provider-model isolation**
 
-A provider-specific representation may remain available behind the capability boundary for a tightly coupled provider operation, but shared consumers shall depend on normalized facts.
+AST/CST nodes, compiler symbols, scanner tokens, parser cursors, regex matches and language-service SDK objects follow [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers). The normalized fact model is the shared consumer seam; tightly coupled provider operations use that section’s bounded internal exception.
 
 ### 10.3 Fact granularity
 
@@ -647,8 +646,9 @@ Parser/compiler exceptions and object graphs follows [DD-1.2](../dd_1_applicatio
 
 <a id="dd-sint-040"></a>
 
-**DD-SINT-040 — Equivalent-source determinism**  
-Given materially equivalent source content, analysis request, effective configuration and provider capability, Source Intelligence should produce materially equivalent normalized facts independent of TUI, Headless or host adapter.
+**DD-SINT-040 — Equivalent-source determinism**
+
+Given materially equivalent source content, analysis request, effective configuration and provider capability, Source Intelligence should produce materially equivalent normalized facts. Adapter independence follows [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 <a id="dd-sint-041"></a>
 
@@ -738,8 +738,10 @@ Nuxt declarations, layer-like structure and metadata markers applies [Design](..
 
 <a id="dd-sint-052"></a>
 
-**DD-SINT-052 — Scope constrains analysis where required**  
-When the owning use case supplies a bounded source scope, Source Intelligence shall not silently broaden analysis to unrelated project resources.
+**DD-SINT-052 — Scope constrains analysis where required**
+
+Analysis scope supplied with the source request applies [FR-PROJ-044](../functional/managed-project-functional-specification-v01.md#fr-proj-044) to the resources inspected.
+
 
 ---
 

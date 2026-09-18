@@ -458,7 +458,7 @@ For individual artefacts or bounded plan portions, resolve AI acceptance criteri
 
 **DD-DOCS-034 — Reliable facts dominate contradictory generated claims**
 
-Structural-fact preservation applies [FR-DOCS-087](../functional/docs-functional-specification-v01.md#fr-docs-087). The same acceptance check shall reject contradictions of higher-authority domain facts unless explicitly handled as a conflict.
+Structural-fact preservation applies [FR-DOCS-087](../functional/docs-functional-specification-v01.md#fr-docs-087); contradictions of domain-authoritative facts use the [Documentation Capability conflict contract](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-021) at acceptance.
 
 ### 8.9 Documentation tooling
 
@@ -882,7 +882,7 @@ Input/output recognition applies [Design](../appmanager-design-specification-v01
 
 ### DD-DOCS-CI-004 — Documentation truth remains provenance-sensitive
 
-Documentation provenance applies [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037), [FR-DOCS-079](../functional/docs-functional-specification-v01.md#fr-docs-079) and [DD-DOCS-034](#dd-docs-034) to accepted facts and proposed prose.
+Documentation provenance binds [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037), [FR-DOCS-079](../functional/docs-functional-specification-v01.md#fr-docs-079) and [FR-DOCS-087](../functional/docs-functional-specification-v01.md#fr-docs-087); domain-fact conflicts use [DD-DOCCAP-021](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-021).
 
 <a id="dd-docs-ci-005"></a>
 
