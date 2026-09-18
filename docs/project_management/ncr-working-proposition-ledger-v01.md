@@ -2,7 +2,7 @@
 
 > **Document type:** Project-management working ledger
 >
-> **Status:** Active NCR ledger; NCR-1 merged through PR #179; NCR-2 complete on PR #180 for independent review; PR unmerged
+> **Status:** Active NCR ledger; NCR-1 merged through PR #179; NCR-2 complete and merged through PR #180
 >
 > **Normative product effect:** None. This ledger records ownership and reduction actions; the normative corpus remains authoritative.
 >
@@ -1876,7 +1876,7 @@ IS-2’s request-input sentence names DD-1.4 bootstrap eligibility instead of th
 
 ## 11. NCR-2 completion disposition
 
-NCR-2 is complete on `ai/ncr2-detailed-design` for independent review in [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180), against `master`. The PR remains unmerged. This disposition supersedes the in-progress gate statements in the chronological checkpoints above; those statements describe their respective checkpoints, not current state. NCR-3, NCR-4 and NCR-5 remain future work. Implementation remains paused until NCR-5 and verification of the resulting live master.
+NCR-2 is complete and merged via [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180) at `33024e4346cc14de94e1a02d4357f50e95b5d7de`. This disposition supersedes the in-progress gate statements in the chronological checkpoints above; those statements describe their respective checkpoints, not current state. NCR-3, NCR-4 and NCR-5 remain future work. Implementation remains paused until NCR-5 and verification of the resulting live master.
 
 ### 11.1 Semantic and horizontal result
 
