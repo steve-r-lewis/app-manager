@@ -10,7 +10,7 @@
 >
 > **Related Detailed Designs:** [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md)
 >
-> **Active clarifications:** [Application Outcome and Diagnostic Ownership](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md), [Application Core Bootstrap Resolution](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Primary DD contracts:** [Application Outcome and Diagnostic Ownership](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract), [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
 > **Primary Functional authority:** [Application Invocation Functional Specification](../functional/application-invocation-functional-specification-v01.md)
 >
@@ -955,8 +955,8 @@ A temporary compatibility adapter may wrap a legacy `BaseCommand` as a registere
 | DD-1.5 evidence interpretation | use-case/Engine acceptance required; no provider-success or no-exception shortcut |
 | DD-1.5 concurrency/stale state | isolated active invocation state, revalidation hooks, no universal global serialization |
 | DD-1.5 nested use cases | explicit child invocation/outcome relationship with parent composition authority and no circular authority |
-| outcome/diagnostic clarification | DD-1.2 implemented once; DD-1.1 projection and local codes explicitly map to canonical semantics |
-| bootstrap clarification | staged dependency order, provenance/revalidation and no uncontrolled project/config/scope recursion |
+| [DD-1.2 outcome](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) and [diagnostic model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) | DD-1.2 implemented once; DD-1.1 projection and local codes explicitly map to canonical semantics |
+| [DD-1.5 staged lifecycle](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) | staged dependency order, provenance/revalidation and no uncontrolled project/config/scope recursion |
 | ADR-0001 / IS-23 | in-process Node.js/TypeScript contracts, explicit composition, process globals outside application semantics |
 
 IS-1 also conforms to the Application Invocation Functional Specification by providing one command surface and invocation path across adapters, deterministic Headless-compatible semantics, explicit authorization, structured machine-consumable outcomes, cancellation/progress contracts and application-level interpretation of delegated results.

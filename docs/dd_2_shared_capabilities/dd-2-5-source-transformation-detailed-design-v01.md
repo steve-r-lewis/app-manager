@@ -8,35 +8,19 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for bounded source-transformation planning, execution, source-level validation and transformation evidence beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md)
 >
 > **Primary Functional authority:** [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md)
 >
-> **Related domain Functional authorities:** App, Docs, Nuxt, Quality, AI, Settings and Utils where those domains request source changes or validate source-level consequences.
+> **Related domain Functional authorities:** App, Docs, Nuxt, Quality, AI, Settings and Maintenance where those domains request source changes or validate source-level consequences.
 
 ---
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state distinctions, execution sequencing and evidence model by which AppManager plans, applies and validates bounded changes to existing source.
-
-The governing rule is:
-
-> **Source Transformation applies only an approved bounded transformation plan; it does not invent application intent, managed scope, authorization or final application acceptance.**
-
-A second governing rule is:
-
-> **Recognition, planning, approval, mutation, source-level validation and application-level acceptance are distinct stages and must remain distinguishable.**
-
-A third governing rule is:
-
-> **A technically applied edit is not automatically a valid transformation, and a source-valid transformation is not automatically an accepted AppManager outcome.**
-
-Source Transformation therefore owns the controlled bridge between read-only source intelligence and consequential resource mutation while preserving Application Engine authority.
-
----
+Source Transformation connects source-aware intent to bounded edit planning, application and validation. The plan, edit, precondition and preservation models make the intended source change reviewable; execution records actual effects before evaluating source validity. Application interpretation then uses [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 ## 2. Scope
 
@@ -143,23 +127,25 @@ Application Engine / owning use case
 
 Source Intelligence owns read-only recognition and structural facts. Source Transformation consumes those facts and may request fresh recognition before or after mutation.
 
-**DD-XFORM-001 — Recognition is not planning authority**  
-A recognized declaration, block, metadata region or configuration path does not become a transformation target until the owning use case and Source Transformation plan bind it to explicit intent and scope.
+<a id="dd-xform-001"></a>
+
+**DD-XFORM-001 — Recognition is not planning authority**
+
+Recognized targets bound to intent/scope applies [Design](../appmanager-design-specification-v01.md#_7-5-strategies-and-transformation-plans).
 
 ### 4.2 Relationship to Resource Access
 
 Resource Access owns bounded resource mechanics such as snapshots, preconditioned replacement and atomic write guarantees where supported.
 
-**DD-XFORM-002 — Transformation semantics remain above write mechanics**  
-Resource Access may apply an approved write, but it shall not decide what source edit is semantically correct.
+<a id="dd-xform-002"></a>
+
+**DD-XFORM-002 — Transformation semantics remain above write mechanics**
+
+Resource writes versus semantic source changes applies [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture).
 
 ### 4.3 Relationship to Application Engine
 
-The Engine/use-case authority determines why the transformation is required, which targets are in scope, whether the plan is approved and whether the validated result satisfies application intent.
-
-Source Transformation determines how an approved bounded source change is planned, applied and source-validated.
-
----
+The [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035) supplies intent and constraints for the transformation plan. The local planning, execution and source-validation contracts feed [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation).
 
 ## 5. Responsibility Model
 
@@ -201,14 +187,24 @@ A bounded transformation request shall be capable of carrying, where relevant:
 - cancellation context;
 - correlation/invocation identity.
 
-**DD-XFORM-003 — Intent originates upstream**  
-The transformation request shall express an AppManager-owned intent; a transformation provider shall not independently invent the application reason for changing source.
+<a id="dd-xform-003"></a>
 
-**DD-XFORM-004 — Request scope is bounded**  
-The request shall identify source targets and effect constraints sufficiently to prevent an implementation from treating an entire project as implicitly mutable.
+**DD-XFORM-003 — Intent originates upstream**
 
-**DD-XFORM-005 — No authority by content proposal**  
-Supplying replacement content, a patch, an AI proposal or a provider-native edit object does not by itself authorize application of that content.
+Transformation-request intent applies [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
+<a id="dd-xform-004"></a>
+
+**DD-XFORM-004 — Request scope is bounded**
+
+Source targets and effect constraints in the request bind [FR-XFORM-013](../functional/source-transformation-functional-specification-v01.md#fr-xform-013) and [FR-PROJ-044](../functional/managed-project-functional-specification-v01.md#fr-proj-044).
+
+<a id="dd-xform-005"></a>
+
+**DD-XFORM-005 — No authority by content proposal**
+
+Supplied content, patches and AI edits applies [Design](../appmanager-design-specification-v01.md#_7-5-strategies-and-transformation-plans).
+
 
 ---
 
@@ -225,11 +221,17 @@ Examples may include:
 - update a generated region;
 - remove a specifically authorized structural element.
 
+<a id="dd-xform-006"></a>
+
 **DD-XFORM-006 — Intent and mechanism are distinct**  
 Intent shall not be expressed solely as “run this regex”, “write this whole file”, “apply this AST mutation” or another provider-native mechanism where AppManager needs stronger semantic meaning.
 
-**DD-XFORM-007 — Intent does not broaden itself**  
-Discovery of related declarations/files/regions shall not silently expand the transformation intent beyond the owning use case.
+<a id="dd-xform-007"></a>
+
+**DD-XFORM-007 — Intent does not broaden itself**
+
+Related-source discovery applies [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042) to transformation scope.
+
 
 ---
 
@@ -247,11 +249,17 @@ Strategy selection may consider:
 - required validation semantics;
 - composite-source constraints.
 
+<a id="dd-xform-008"></a>
+
 **DD-XFORM-008 — Strategy capability is intent-specific**  
 A provider capable of one transformation kind for a source format shall not be assumed capable of all transformations for that format.
 
+<a id="dd-xform-009"></a>
+
 **DD-XFORM-009 — Provider order is not hidden policy**  
 Incidental registry order shall not silently decide between materially different transformation strategies where their preservation or semantic guarantees differ.
+
+<a id="dd-xform-010"></a>
 
 **DD-XFORM-010 — Weak fallback is explicit**  
 Falling back from a structure-aware strategy to a weaker textual heuristic shall only occur when the requested guarantees remain satisfied or when the weaker certainty is explicitly surfaced for upstream policy.
@@ -270,8 +278,11 @@ A plan shall be immutable or treated as immutable once approved.
 
 A plan should carry a stable plan identity/correlation value where required for approval, preview and execution linkage.
 
-**DD-XFORM-011 — Approved plan identity**  
-Execution shall be traceable to the plan that was approved. Material modification after approval requires revalidation and, where required by policy, renewed approval.
+<a id="dd-xform-011"></a>
+
+**DD-XFORM-011 — Approved plan identity**
+
+Execution shall be traceable to the approved plan. Material post-approval changes apply [FR-XFORM-031](../functional/source-transformation-functional-specification-v01.md#fr-xform-031).
 
 ### 9.3 Logical plan contents
 
@@ -294,11 +305,18 @@ A conforming plan shall be capable of representing, where relevant:
 - diagnostics/uncertainties;
 - provider capability assumptions.
 
-**DD-XFORM-012 — Plan is not mutation**  
-Constructing a plan shall not intentionally alter source.
+<a id="dd-xform-012"></a>
 
-**DD-XFORM-013 — Plan cannot exceed upstream scope**  
-A plan shall not include source targets or structural effects outside the authority supplied by the owning use case and managed scope.
+**DD-XFORM-012 — Plan is not mutation**
+
+Non-mutating plan construction follows [FR-XFORM-017](../functional/source-transformation-functional-specification-v01.md#fr-xform-017).
+
+<a id="dd-xform-013"></a>
+
+**DD-XFORM-013 — Plan cannot exceed upstream scope**
+
+Each plan target applies [FR-PROJ-044](../functional/managed-project-functional-specification-v01.md#fr-proj-044) within supplied effect bounds.
+
 
 ---
 
@@ -319,8 +337,13 @@ A planned edit may describe:
 - sequencing dependencies;
 - expected resulting fact/postcondition.
 
-**DD-XFORM-014 — Semantic edit above provider patch**  
-Provider-native patches, text edits, AST mutations or CST edits may implement a planned edit but shall not become the only shared representation when AppManager requires semantic traceability.
+<a id="dd-xform-014"></a>
+
+**DD-XFORM-014 — Semantic edit above provider patch**
+
+Provider patches, text edits and AST/CST edits apply [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); the shared planned-edit model retains the semantic traceability required by the use case.
+
+<a id="dd-xform-015"></a>
 
 **DD-XFORM-015 — Edit target must be reconcilable**  
 Each consequential edit shall identify its target sufficiently to detect when the source no longer matches the assumptions under which the edit was planned.
@@ -339,11 +362,17 @@ Transformation preconditions may include:
 - managed ownership classification unchanged;
 - relevant provider capability still available.
 
+<a id="dd-xform-016"></a>
+
 **DD-XFORM-016 — Preconditions are explicit evidence**  
 Where correctness depends on a source assumption, that assumption shall be represented as a plan precondition or equivalent stale-state guard rather than remain an invisible provider assumption.
 
-**DD-XFORM-017 — Preconditions do not replace application policy**  
-Technical preconditions establish plan applicability, not application authorization.
+<a id="dd-xform-017"></a>
+
+**DD-XFORM-017 — Preconditions do not replace application policy**
+
+Technical preconditions versus application approval applies [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
 
 ---
 
@@ -363,11 +392,18 @@ They may include:
 - preserve encoding/line-ending characteristics where required;
 - preserve repository-unrelated data.
 
-**DD-XFORM-018 — Preservation is part of correctness**  
-When the owning use case requires bounded mutation, unnecessary rewriting of unrelated content is a transformation defect even if the intended value appears in the final source.
+<a id="dd-xform-018"></a>
 
-**DD-XFORM-019 — Whole-file rewrite requires justification**  
-A provider may rewrite a whole file only when that behavior is compatible with the approved intent and preservation guarantees; it is not the default merely because regeneration is easier.
+**DD-XFORM-018 — Preservation is part of correctness**
+
+Unrelated cleanup or rewriting during a bounded change follows [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014).
+
+<a id="dd-xform-019"></a>
+
+**DD-XFORM-019 — Whole-file rewrite requires justification**
+
+Whole-file rewriting under explicit preservation guarantees applies [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation).
+
 
 ---
 
@@ -375,14 +411,24 @@ A provider may rewrite a whole file only when that behavior is compatible with t
 
 Generation and mutation are distinct paths.
 
-**DD-XFORM-020 — Existing resource changes use mutation semantics**  
-A capability that can generate a complete artefact shall not overwrite an existing user-authored source resource unless an owning use case explicitly authorizes replacement under transformation semantics.
+<a id="dd-xform-020"></a>
 
-**DD-XFORM-021 — Generated region remains bounded**  
-Where AppManager owns a generated region within a larger file, transformation authority shall remain bounded to that region unless broader replacement is explicitly authorized.
+**DD-XFORM-020 — Existing resource changes use mutation semantics**
 
-**DD-XFORM-022 — Create-if-absent is explicit**  
-A transformation request that may create a missing resource shall distinguish creation from modification so Resource Access and outcome reporting can preserve the actual effect.
+Existing authored targets encountered by generation applies [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
+<a id="dd-xform-021"></a>
+
+**DD-XFORM-021 — Generated region remains bounded**
+
+Edits within a generated region follows [FR-XFORM-047](../functional/source-transformation-functional-specification-v01.md#fr-xform-047).
+
+<a id="dd-xform-022"></a>
+
+**DD-XFORM-022 — Create-if-absent is explicit**
+
+A transformation that may create a missing resource binds the [Resource Access create/replace distinction](dd-2-1-resource-access-detailed-design-v01.md#dd-res-005) to its plan and effect reporting.
+
 
 ---
 
@@ -400,14 +446,24 @@ A preview may include:
 - warnings/uncertainties;
 - validation expectations.
 
-**DD-XFORM-023 — Preview derives from the execution plan**  
-Preview shall be generated from the same bounded plan intended for execution rather than from an independent code path that can diverge semantically.
+<a id="dd-xform-023"></a>
 
-**DD-XFORM-024 — Dry run does not persist**  
-Dry-run behavior shall not intentionally persist source changes.
+**DD-XFORM-023 — Preview derives from the execution plan**
 
-**DD-XFORM-025 — Preview uncertainty is explicit**  
-Where exact effects cannot be predicted reliably before execution, the preview shall distinguish uncertain/provisional information from guaranteed effects.
+Preview derived from the execution plan follows [FR-XFORM-027](../functional/source-transformation-functional-specification-v01.md#fr-xform-027).
+
+<a id="dd-xform-024"></a>
+
+**DD-XFORM-024 — Dry run does not persist**
+
+Dry-run persistence follows [FR-XFORM-028](../functional/source-transformation-functional-specification-v01.md#fr-xform-028).
+
+<a id="dd-xform-025"></a>
+
+**DD-XFORM-025 — Preview uncertainty is explicit**
+
+Uncertain preview effects follows [FR-XFORM-029](../functional/source-transformation-functional-specification-v01.md#fr-xform-029).
+
 
 ---
 
@@ -415,14 +471,24 @@ Where exact effects cannot be predicted reliably before execution, the preview s
 
 Application authorization/confirmation is owned above Source Transformation, but execution must consume its result correctly.
 
-**DD-XFORM-026 — Approval binds to material plan identity**  
-Where approval is required, Source Transformation shall execute only a plan materially equivalent to the plan/intent/scope that was approved.
+<a id="dd-xform-026"></a>
 
-**DD-XFORM-027 — Material plan change invalidates approval**  
-If target, effect, scope, destructive character or other material plan properties change, approval shall be considered stale until re-evaluated by the owning authority.
+**DD-XFORM-026 — Approval binds to material plan identity**
 
-**DD-XFORM-028 — Headless approval remains upstream**  
-Source Transformation shall not introduce interactive prompts to obtain missing application approval in Headless operation.
+Approval bound to the executed plan follows [FR-XFORM-031](../functional/source-transformation-functional-specification-v01.md#fr-xform-031).
+
+<a id="dd-xform-027"></a>
+
+**DD-XFORM-027 — Material plan change invalidates approval**
+
+Material changes after approval follows [FR-XFORM-031](../functional/source-transformation-functional-specification-v01.md#fr-xform-031).
+
+<a id="dd-xform-028"></a>
+
+**DD-XFORM-028 — Headless approval remains upstream**
+
+Missing Headless approval follows [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) through Invocation.
+
 
 ---
 
@@ -430,18 +496,18 @@ Source Transformation shall not introduce interactive prompts to obtain missing 
 
 Stale-source protection is mandatory where a plan depends on previously observed content.
 
+<a id="dd-xform-029"></a>
+
 **DD-XFORM-029 — Freshness before consequential mutation**  
 Immediately before applying a consequential plan, Source Transformation shall establish that material source assumptions remain valid using revision/digest/precondition checks appropriate to the resource/provider.
 
-**DD-XFORM-030 — No stale overwrite**  
-If the source materially changed since planning, the plan shall not blindly overwrite newer content.
+<a id="dd-xform-030"></a>
 
-Permitted outcomes include:
+**DD-XFORM-030 — No stale overwrite**
 
-- fail as stale;
-- request replanning;
-- re-run Source Intelligence and deterministically rebuild the plan under upstream policy;
-- apply a provider-supported conditional edit only if all required preconditions still hold.
+Changed-source handling applies [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020). Local responses include stale failure, requesting replanning, rerunning Source Intelligence to rebuild deterministically under upstream policy, or a provider-supported conditional edit whose required preconditions still hold.
+
+<a id="dd-xform-031"></a>
 
 **DD-XFORM-031 — Replanning is not silent scope expansion**  
 Replanning may update locators/ranges but shall not silently broaden intent, targets or approved effects.
@@ -466,14 +532,24 @@ plan accepted for execution
     -> application-level interpretation
 ```
 
-**DD-XFORM-032 — No execution before plan applicability**  
-Execution shall not begin consequential mutation while required source preconditions remain unresolved.
+<a id="dd-xform-032"></a>
 
-**DD-XFORM-033 — Mechanism subordinate to plan**  
-Execution shall not opportunistically add cleanup, refactoring, formatting or unrelated changes beyond the approved plan.
+**DD-XFORM-032 — No execution before plan applicability**
 
-**DD-XFORM-034 — Actual effects recorded**  
-Transformation evidence shall describe known effects that actually occurred rather than assuming every planned edit completed.
+Unresolved source preconditions before mutation applies [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="dd-xform-033"></a>
+
+**DD-XFORM-033 — Mechanism subordinate to plan**
+
+Opportunistic edits beyond the approved plan follows [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014).
+
+<a id="dd-xform-034"></a>
+
+**DD-XFORM-034 — Actual effects recorded**
+
+Actual edit evidence follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -490,11 +566,18 @@ For a single source resource, execution should distinguish:
 - cancelled during mutation;
 - resulting state indeterminate.
 
-**DD-XFORM-035 — No-op is first-class**  
-If the requested semantic state is already satisfied and no mutation is required, Source Transformation may return a no-op/already-satisfied technical result rather than fabricate a write.
+<a id="dd-xform-035"></a>
 
-**DD-XFORM-036 — Write success is not transformation completion**  
-Successful resource replacement does not prove source-level validation or intended structural postconditions.
+**DD-XFORM-035 — No-op is first-class**
+
+Already-satisfied targets without a write follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_15-no-op-already-satisfied-skipped-and-not-attempted-states).
+
+<a id="dd-xform-036"></a>
+
+**DD-XFORM-036 — Write success is not transformation completion**
+
+Resource replacement versus source validity follows [FR-XFORM-050](../functional/source-transformation-functional-specification-v01.md#fr-xform-050).
+
 
 ---
 
@@ -512,11 +595,19 @@ Possible execution models include:
 - ordered best-effort with explicit continuation;
 - independently applicable targets with partial success permitted.
 
-**DD-XFORM-037 — No invented transactionality**  
-Source Transformation shall not describe a multi-resource operation as atomic unless the underlying execution path actually provides the required guarantee.
+<a id="dd-xform-037"></a>
 
-**DD-XFORM-038 — Per-target evidence**  
-Multi-target execution shall preserve target-level states/effects sufficiently to represent partial completion and recovery needs.
+**DD-XFORM-037 — No invented transactionality**
+
+Multi-source atomicity claims use [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) and the guarantee boundary in DD-XFORM-040.
+
+<a id="dd-xform-038"></a>
+
+**DD-XFORM-038 — Per-target evidence**
+
+Multi-target plan results follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-xform-039"></a>
 
 **DD-XFORM-039 — Continuation policy is not provider whim**  
 Whether execution proceeds after one target fails shall be supplied by the owning plan/use-case policy, not inferred from provider convenience.
@@ -534,11 +625,18 @@ Atomicity may exist at different levels:
 
 These must not be conflated.
 
+<a id="dd-xform-040"></a>
+
 **DD-XFORM-040 — Atomicity scope is explicit**  
 Any atomicity guarantee shall identify the boundary to which it applies.
 
-**DD-XFORM-041 — Staging is not commitment**  
-Preparing temporary/staged transformed content does not itself mean consequential source mutation has been committed.
+<a id="dd-xform-041"></a>
+
+**DD-XFORM-041 — Staging is not commitment**
+
+Staged transformed content before mutation follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview).
+
+<a id="dd-xform-042"></a>
 
 **DD-XFORM-042 — Provider staging remains subordinate**  
 Temporary-file, transaction or buffer mechanisms are implementation details unless their guarantees materially affect the shared contract.
@@ -558,11 +656,18 @@ Source Transformation shall distinguish:
 - validation failed after effect;
 - state unknown/indeterminate.
 
-**DD-XFORM-043 — Partial truth is preserved**  
-When some effects complete and others do not, the capability shall preserve known completed effects rather than collapse the operation into undifferentiated failure.
+<a id="dd-xform-043"></a>
 
-**DD-XFORM-044 — Indeterminate is not unchanged**  
-If the capability cannot prove whether an edit took effect, it shall not report the source as unchanged.
+**DD-XFORM-043 — Partial truth is preserved**
+
+Mixed completed/failed edits follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-xform-044"></a>
+
+**DD-XFORM-044 — Indeterminate is not unchanged**
+
+Indeterminate edit completion follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -570,14 +675,25 @@ If the capability cannot prove whether an edit took effect, it shall not report 
 
 Source Transformation consumes DD-1 cancellation semantics.
 
-**DD-XFORM-045 — Cancellation before mutation**  
-If cancellation is observed before consequential mutation begins, planned mutation shall not intentionally be initiated.
+<a id="dd-xform-045"></a>
 
-**DD-XFORM-046 — Cancellation during execution**  
-If cancellation is observed after effects begin, Source Transformation shall stop initiating additional effects as safely as practical under the plan's atomicity/continuation model and report resulting state truthfully.
+**DD-XFORM-045 — Cancellation before mutation**
 
-**DD-XFORM-047 — Cancellation does not imply rollback**  
-Completed source effects remain completed unless an explicit rollback mechanism successfully reverses them.
+Cancellation before source mutation follows [FR-XFORM-075](../functional/source-transformation-functional-specification-v01.md#fr-xform-075).
+
+<a id="dd-xform-046"></a>
+
+**DD-XFORM-046 — Cancellation during execution**
+
+After mutation begins, apply [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) at safe boundaries under the plan atomicity/continuation policy.
+
+<a id="dd-xform-047"></a>
+
+**DD-XFORM-047 — Cancellation does not imply rollback**
+
+Completed source effects after cancellation follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-xform-048"></a>
 
 **DD-XFORM-048 — Validation after cancellation where needed**  
 If cancellation leaves source potentially modified, the capability may perform bounded cleanup/inspection necessary to determine resulting state, provided this does not broaden application intent.
@@ -598,17 +714,29 @@ Validation may include:
 - verifying forbidden/unrelated structural changes are absent where practical;
 - provider-specific structural checks normalized to AppManager evidence.
 
-**DD-XFORM-049 — Validation is mandatory where required by plan/use case**  
-Consequential transformation shall not be described as source-valid until all required validation obligations complete successfully.
+<a id="dd-xform-049"></a>
 
-**DD-XFORM-050 — Validation checks intended effect**  
-Parseability alone is insufficient where the plan promised a specific structural outcome.
+**DD-XFORM-049 — Validation is mandatory where required by plan/use case**
+
+Required post-mutation validation follows [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048).
+
+<a id="dd-xform-050"></a>
+
+**DD-XFORM-050 — Validation checks intended effect**
+
+Structural postcondition validation beyond parseability follows [FR-XFORM-051](../functional/source-transformation-functional-specification-v01.md#fr-xform-051).
+
+<a id="dd-xform-051"></a>
 
 **DD-XFORM-051 — Validation provider may differ from mutation provider**  
 The mechanism used to edit source need not be the same mechanism used to validate it.
 
-**DD-XFORM-052 — Validation does not decide application success**  
-A source-valid result remains evidence for the Application Engine/owning use case.
+<a id="dd-xform-052"></a>
+
+**DD-XFORM-052 — Validation does not decide application success**
+
+Source-valid evidence applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
 
 ---
 
@@ -637,6 +765,8 @@ States should distinguish at least:
 - validation cancelled;
 - validation indeterminate.
 
+<a id="dd-xform-053"></a>
+
 **DD-XFORM-053 — Validation failure is not generic execution failure**  
 The outcome model shall preserve the distinction between edit-mechanism failure and post-edit validation failure.
 
@@ -655,11 +785,18 @@ That decision may consider:
 - whether partial completion is acceptable;
 - whether downstream workflow postconditions hold.
 
-**DD-XFORM-054 — Source-valid can still be application-rejected**  
-The capability contract shall permit a technically valid transformed source to be rejected by the application layer without falsifying the technical evidence.
+<a id="dd-xform-054"></a>
 
-**DD-XFORM-055 — Provider success cannot bypass acceptance**  
-No parser, patch engine, formatter, compiler, Resource Access provider or AI provider may independently declare final AppManager transformation success.
+**DD-XFORM-054 — Source-valid can still be application-rejected**
+
+Application rejection of technically valid source applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+<a id="dd-xform-055"></a>
+
+**DD-XFORM-055 — Provider success cannot bypass acceptance**
+
+Parser/editor/compiler/resource/AI results at final acceptance applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
 
 ---
 
@@ -686,11 +823,18 @@ Transformation diagnostics should distinguish, where relevant:
 - preservation violation;
 - recovery required.
 
-**DD-XFORM-056 — Target-specific diagnostics**  
-Diagnostics shall identify the affected target/region sufficiently for remediation without unnecessarily disclosing unrelated source.
+<a id="dd-xform-056"></a>
 
-**DD-XFORM-057 — Provider detail remains subordinate**  
-Raw parser exceptions, AST nodes, stack traces, text-edit SDK objects and provider-native failure shapes shall be bounded/normalized before crossing the capability boundary.
+**DD-XFORM-056 — Target-specific diagnostics**
+
+Target/region identity in diagnostics follows [FR-XFORM-072](../functional/source-transformation-functional-specification-v01.md#fr-xform-072).
+
+<a id="dd-xform-057"></a>
+
+**DD-XFORM-057 — Provider detail remains subordinate**
+
+Transformation-provider object/error shapes follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
 
 ---
 
@@ -711,8 +855,12 @@ Recovery evidence may include:
 - whether manual review is required;
 - recommended safe next action where determinable.
 
-**DD-XFORM-058 — Recovery is evidence, not guarantee**  
-The presence of prior snapshots or repository history shall not be described as an automatic rollback guarantee unless the operation explicitly provides and verifies that guarantee.
+<a id="dd-xform-058"></a>
+
+**DD-XFORM-058 — Recovery is evidence, not guarantee**
+
+Rollback claims based on snapshots/history follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -720,11 +868,17 @@ The presence of prior snapshots or repository history shall not be described as 
 
 Rollback may be implemented for particular transformation classes but is not universal Version 1 semantics.
 
+<a id="dd-xform-059"></a>
+
 **DD-XFORM-059 — Rollback must be explicit**  
 If a transformation advertises rollback, the plan/execution contract shall define its scope and failure semantics.
 
-**DD-XFORM-060 — Compensation differs from rollback**  
-A later compensating edit is a new consequential effect and shall not be conflated with proof that the original transformation never occurred.
+<a id="dd-xform-060"></a>
+
+**DD-XFORM-060 — Compensation differs from rollback**
+
+Compensating edits recorded as later effects follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -732,11 +886,18 @@ A later compensating edit is a new consequential effect and shall not be conflat
 
 Transformation concurrency may occur across invocations or targets.
 
-**DD-XFORM-061 — No blind overwrite under concurrent change**  
-Source revision/precondition checks shall prevent a stale plan from blindly replacing material concurrent edits.
+<a id="dd-xform-061"></a>
+
+**DD-XFORM-061 — No blind overwrite under concurrent change**
+
+Concurrent changes invalidating a source plan follows [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068).
+
+<a id="dd-xform-062"></a>
 
 **DD-XFORM-062 — Conflict policy remains upstream where semantic**  
 Technical detection of conflict belongs in the capability; whether to retry, replan, serialize, skip or fail remains application/use-case policy unless explicitly delegated.
+
+<a id="dd-xform-063"></a>
 
 **DD-XFORM-063 — Independent targets need not be globally serialized**  
 The capability may allow safe technical concurrency when plan dependencies and resource-conflict rules permit it.
@@ -756,11 +917,17 @@ Acceptable mechanisms may include:
 - language-service edits;
 - bounded regex/text manipulation where guarantees are adequate.
 
+<a id="dd-xform-064"></a>
+
 **DD-XFORM-064 — No universal AST requirement**  
 The architecture does not require AST/CST tooling when a simpler bounded mechanism can meet the required guarantees.
 
-**DD-XFORM-065 — No unbounded global replace as default**  
-Global textual replacement shall not be the default for structure-dependent edits where it can affect unrelated source.
+<a id="dd-xform-065"></a>
+
+**DD-XFORM-065 — No unbounded global replace as default**
+
+Global replacement for structure-dependent edits follows [FR-XFORM-036](../functional/source-transformation-functional-specification-v01.md#fr-xform-036).
+
 
 ---
 
@@ -768,11 +935,17 @@ Global textual replacement shall not be the default for structure-dependent edit
 
 Composite files such as Vue SFCs may require region-aware transformation.
 
+<a id="dd-xform-066"></a>
+
 **DD-XFORM-066 — Embedded-region edits preserve container coordinates**  
 A transformation strategy operating on an embedded region shall map planned/applied effects back to the containing resource consistently.
 
+<a id="dd-xform-067"></a>
+
 **DD-XFORM-067 — Non-target regions preserved**  
 Editing one embedded region shall not silently rewrite unrelated embedded regions unless explicitly included in the plan.
+
+<a id="dd-xform-068"></a>
 
 **DD-XFORM-068 — Composite validation may be layered**  
 Validation may check both the changed embedded region and containing resource where either can invalidate the transformation.
@@ -783,8 +956,13 @@ Validation may check both the changed embedded region and containing resource wh
 
 Formatting may be consequential because it can create large unrelated diffs.
 
-**DD-XFORM-069 — Formatting policy is explicit where material**  
-A transformation provider shall not silently reformat an entire resource merely because its serializer does so, unless such behavior is compatible with the plan and preservation requirements.
+<a id="dd-xform-069"></a>
+
+**DD-XFORM-069 — Formatting policy is explicit where material**
+
+Serializer-wide formatting under plan preservation applies [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation).
+
+<a id="dd-xform-070"></a>
 
 **DD-XFORM-070 — Local formatting is permissible**  
 Formatting directly necessary to express the bounded change may be included when represented as part of the planned effect or provider guarantee.
@@ -795,8 +973,13 @@ Formatting directly necessary to express the bounded change may be included when
 
 The owning use case/Managed Project supplies ownership classifications such as AppManager-owned, generated, user-authored, external or unknown.
 
-**DD-XFORM-071 — Capability consumes ownership, does not invent it**  
-Source Transformation may enforce supplied ownership constraints but shall not classify an entire resource as AppManager-owned merely because it can modify it.
+<a id="dd-xform-071"></a>
+
+**DD-XFORM-071 — Capability consumes ownership, does not invent it**
+
+Whole-resource ownership assumptions follows [FR-XFORM-042](../functional/source-transformation-functional-specification-v01.md#fr-xform-042).
+
+<a id="dd-xform-072"></a>
 
 **DD-XFORM-072 — Unknown ownership is conservative**  
 Where ownership materially affects preservation/safety and cannot be established, the capability shall fail, require stronger upstream evidence or use a transformation strategy that does not rely on broader ownership.
@@ -814,8 +997,12 @@ Source Transformation may consume effective configuration for:
 - generated-region markers;
 - provider-specific options approved by configuration policy.
 
-**DD-XFORM-073 — No private configuration precedence**  
-Transformation providers shall not establish competing configuration semantics by independently rereading arbitrary settings/environment sources.
+<a id="dd-xform-073"></a>
+
+**DD-XFORM-073 — No private configuration precedence**
+
+Transformation policy consumes [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result).
+
 
 ---
 
@@ -823,17 +1010,28 @@ Transformation providers shall not establish competing configuration semantics b
 
 AI may propose source changes, but Source Transformation treats AI output as untrusted proposal/evidence.
 
+<a id="dd-xform-074"></a>
+
 **DD-XFORM-074 — AI proposal enters normal planning**  
 AI-proposed source changes shall be reconciled with recognized source structure and converted into a bounded transformation plan before mutation.
 
-**DD-XFORM-075 — AI cannot broaden targets**  
-An AI response that proposes edits outside authorized targets/scope shall not expand the plan automatically.
+<a id="dd-xform-075"></a>
+
+**DD-XFORM-075 — AI cannot broaden targets**
+
+Out-of-scope AI proposals during planning applies [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="dd-xform-076"></a>
 
 **DD-XFORM-076 — AI-native patch is not authority**  
 Provider-specific diff/patch/tool-call formats must be validated and normalized before they can become executable planned edits.
 
-**DD-XFORM-077 — AI uncertainty remains visible**  
-If an AI proposal cannot be deterministically reconciled with current source, planning shall fail or remain ambiguous rather than guess.
+<a id="dd-xform-077"></a>
+
+**DD-XFORM-077 — AI uncertainty remains visible**
+
+AI proposals not safely reconcilable with source follows [FR-XFORM-062](../functional/source-transformation-functional-specification-v01.md#fr-xform-062).
+
 
 ---
 
@@ -841,8 +1039,13 @@ If an AI proposal cannot be deterministically reconciled with current source, pl
 
 Some transformations or validations may delegate to external tools through DD-2.2 Process Execution.
 
-**DD-XFORM-078 — Process completion is subordinate evidence**  
-An external formatter/compiler/transformer exiting successfully does not establish source-level or application-level success by itself.
+<a id="dd-xform-078"></a>
+
+**DD-XFORM-078 — Process completion is subordinate evidence**
+
+Tool completion uses [FR-XFORM-050](../functional/source-transformation-functional-specification-v01.md#fr-xform-050) for source validity and [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) for application acceptance.
+
+<a id="dd-xform-079"></a>
 
 **DD-XFORM-079 — Tool output is normalized**  
 Provider-specific stdout/stderr/exit codes shall be interpreted within the transformation/validation provider before becoming source-transformation evidence.
@@ -853,11 +1056,18 @@ Provider-specific stdout/stderr/exit codes shall be interpreted within the trans
 
 Repository state may provide recovery, stale-state or contextual evidence, but repository mechanics do not replace source transformation semantics.
 
-**DD-XFORM-080 — Repository cleanliness is not transformation approval**  
-A clean worktree does not grant authority to mutate source.
+<a id="dd-xform-080"></a>
 
-**DD-XFORM-081 — Repository restoration is not implicit rollback**  
-The existence of repository history shall not cause failed transformations to advertise rollback unless an owning workflow explicitly defines and executes restoration.
+**DD-XFORM-080 — Repository cleanliness is not transformation approval**
+
+Clean-worktree evidence applies [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="dd-xform-081"></a>
+
+**DD-XFORM-081 — Repository restoration is not implicit rollback**
+
+Repository-history restoration guarantees follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -865,11 +1075,17 @@ The existence of repository history shall not cause failed transformations to ad
 
 Source Transformation relies on DD-2.1 for bounded resource effects.
 
+<a id="dd-xform-082"></a>
+
 **DD-XFORM-082 — Resource preconditions are leveraged where available**  
 Conditional replace/write semantics, snapshot identity, atomic resource replacement and stale-state checks should be used where they strengthen transformation guarantees.
 
-**DD-XFORM-083 — Path accessibility is not mutation authority**  
-Resource Access confirming a path is writable shall not override managed scope or plan authorization.
+<a id="dd-xform-083"></a>
+
+**DD-XFORM-083 — Path accessibility is not mutation authority**
+
+Writable-path evidence applies [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
 
 ---
 
@@ -892,8 +1108,13 @@ A normalized result should be capable of representing:
 - partial/indeterminate state;
 - recovery evidence.
 
-**DD-XFORM-084 — Transformation state is multidimensional**  
-Planning success, mutation completion, validation success and application acceptance shall remain distinguishable.
+<a id="dd-xform-084"></a>
+
+**DD-XFORM-084 — Transformation state is multidimensional**
+
+Plan, effect, validation and acceptance states follows [FR-XFORM-073](../functional/source-transformation-functional-specification-v01.md#fr-xform-073).
+
+<a id="dd-xform-085"></a>
 
 **DD-XFORM-085 — No Boolean collapse**  
 A single success flag shall not erase partial, no-op, stale, invalid, cancelled, indeterminate or validation-failed distinctions.
@@ -913,8 +1134,12 @@ Capability discovery should be able to report support by:
 - validation availability;
 - provider availability.
 
-**DD-XFORM-086 — Support is transformation-specific**  
-General support for a source kind does not imply support for every edit type.
+<a id="dd-xform-086"></a>
+
+**DD-XFORM-086 — Support is transformation-specific**
+
+Edit-type availability uses the format-relative contract [DD-XFORM-008](#dd-xform-008).
+
 
 ---
 
@@ -922,15 +1147,23 @@ General support for a source kind does not imply support for every edit type.
 
 Version 1 may use Node.js/TypeScript, regex strategies, JSONC edits, source-range replacement or other existing mechanisms.
 
+<a id="dd-xform-087"></a>
+
 **DD-XFORM-087 — Provider-neutral semantics**  
 Replacement providers shall preserve the transformation plan, preservation, stale-state, validation and evidence semantics promised by this design or explicitly report unsupported capability.
 
-**DD-XFORM-088 — No speculative cross-runtime protocol**  
-Provider replaceability does not require a worker process, RPC layer or language-neutral plugin protocol in Version 1 without a concrete need.
+<a id="dd-xform-088"></a>
+
+**DD-XFORM-088 — No speculative cross-runtime protocol**
+
+Transformation topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); no worker, RPC or language-neutral plugin protocol is mandated.
+
 
 ---
 
 ## 42. Current Implementation Reconciliation
+
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
 
 Current source and historical technical specifications are implementation evidence only.
 
@@ -985,8 +1218,12 @@ That is useful implementation evidence but does not yet embody the full DD-2.5 c
 - recovery evidence;
 - DD-1.2 normalized outcomes.
 
-**DD-XFORM-089 — Implementation must converge on the design**  
-Future Implementation Specifications shall adapt current mechanisms to this Detailed Design rather than weakening the Detailed Design to match current service behavior.
+<a id="dd-xform-089"></a>
+
+**DD-XFORM-089 — Implementation must converge on the design**
+
+Current mechanisms are adapted under the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification), preserving the approved plan contracts.
+
 
 ---
 
@@ -1018,6 +1255,8 @@ Source Transformation shall permit deterministic tests for at least:
 - sensitive diagnostics;
 - provider replacement.
 
+<a id="dd-xform-090"></a>
+
 **DD-XFORM-090 — Tests separate provider correctness from application acceptance**  
 Provider/Source Transformation tests shall establish planning, mutation and source-validation behavior without requiring the capability itself to decide final application success.
 
@@ -1025,43 +1264,7 @@ Provider/Source Transformation tests shall establish planning, mutation and sour
 
 ## 44. Conformance Invariants
 
-A conforming DD-2.5 implementation shall preserve all of the following:
-
-1. Transformation intent originates from an authoritative owning use case.
-2. Recognition alone does not authorize mutation.
-3. Consequential source changes are represented by a bounded plan before execution.
-4. Plan construction does not itself mutate source.
-5. Plan targets cannot exceed upstream managed scope/authority.
-6. Planned edits preserve semantic traceability above provider-native patches.
-7. Approval, where required, binds to the material plan/intent/scope.
-8. Material plan change requires approval re-evaluation.
-9. Preview derives from the same plan intended for execution.
-10. Dry run does not intentionally persist mutation.
-11. Source freshness/preconditions are checked before consequential execution.
-12. Stale plans do not blindly overwrite newer source.
-13. Transformation mechanisms do not opportunistically broaden edits.
-14. Unrelated user-authored source is preserved wherever practical.
-15. Generation and mutation remain distinct.
-16. Whole-file regeneration is not the default mutation mechanism where a bounded edit is safe.
-17. Successful resource write is not source-level validation.
-18. Source-level validation checks the intended structural effect where required.
-19. Source-valid does not equal final application-accepted.
-20. Provider/tool success does not equal AppManager success.
-21. Multi-target atomicity is never implied without a real guarantee.
-22. Partial effects are preserved in evidence.
-23. Indeterminate state is distinct from unchanged state.
-24. Cancellation does not imply rollback.
-25. Recovery information is evidence, not universal rollback guarantee.
-26. Configuration precedence remains under Configuration Resolution.
-27. Ownership classification remains upstream.
-28. AI proposals follow the normal planning/approval/validation path.
-29. External process results are normalized before transformation interpretation.
-30. Repository state does not grant mutation authority.
-31. Provider-native AST/CST/text-edit/SDK objects remain below the shared boundary.
-32. Current implementation structure does not define permanent architecture.
-33. The capability boundary does not require one class, package, library, process or runtime topology.
-
----
+The plan/edit/precondition models (§§9–11), preservation and generation boundaries, preview/approval/freshness contracts, execution/validation states and recovery provisions form the review path. Provider replacement and testability obligations validate those local guarantees; the Functional bindings identify inherited obligations.
 
 ## 45. Traceability Summary
 
@@ -1088,11 +1291,11 @@ A conforming DD-2.5 implementation shall preserve all of the following:
 
 ---
 
-## 46. Downstream Detailed Design Dependencies
+## 46. Contract Consumers and Implementation Dependencies {#_46-downstream-detailed-design-dependencies}
 
 ### 46.1 DD-2.6 Resource Registry and Template
 
-The next shared capability may generate new artefacts or templates. It must preserve the DD-2.5 distinction between generation and mutation when a target already exists.
+Resource Registry and Template may generate new artefacts or templates. It must preserve the DD-2.5 distinction between generation and mutation when a target already exists.
 
 ### 46.2 Documentation Capability
 
@@ -1102,9 +1305,9 @@ Documentation generation or injection may consume DD-2.4 facts and DD-2.5 transf
 
 Nuxt configuration/source updates may use DD-2.5 but Nuxt retains Nuxt-domain semantics and postconditions.
 
-### 46.4 Settings / Utils / AI
+### 46.4 Settings / Maintenance / AI
 
-Settings and Utils may request bounded source changes; AI may propose edits. None acquires transformation execution authority merely by producing desired content.
+[Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) and [Maintenance](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) supply bounded source-change intent; [AI proposals](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) can supply desired content. Their transformation requests enter the same plan/approval lifecycle here.
 
 ### 46.5 Implementation Specification
 
@@ -1114,22 +1317,4 @@ Implementation planning shall reconcile current `codeService`, strategy classes,
 
 ## 47. Final Design Position
 
-The permanent Version 1 position is:
-
-> **Source Transformation owns bounded transformation planning, approved source mutation, source-level validation and transformation evidence; application intent, scope, authorization and final acceptance remain above it.**
-
-The canonical staged model is:
-
-```text
-Source Intelligence recognition/facts
-    -> AppManager transformation intent
-    -> bounded transformation plan
-    -> policy/scope/approval
-    -> stale-source verification
-    -> bounded mutation
-    -> actual-effect recording
-    -> source-level validation
-    -> application-level acceptance
-```
-
-This ensures AppManager can evolve from current regex/string-oriented transformation mechanisms toward richer AST/CST/language-service providers where useful without changing the architectural authority model or sacrificing preservation, reviewability, stale-state safety and outcome truthfulness.
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.

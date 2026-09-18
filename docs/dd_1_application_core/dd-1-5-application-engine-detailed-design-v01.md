@@ -8,31 +8,15 @@
 >
 > **Detailed Design authority:** This document defines the permanent internal responsibility and authority model by which AppManager dispatches and coordinates application use cases while preserving one coherent source of application semantics.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), Version 1 Functional Specifications, [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), Version 1 Functional Specifications, [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Related Detailed Designs:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 
 ## 1. Purpose
 
-This specification defines the Application Engine as AppManager's permanent application-authority boundary.
-
-The Engine accepts normalized semantic invocation, establishes the execution context required by the owning use case, coordinates domain orchestration and specialist capabilities, applies application policy and safety constraints, interprets delegated execution evidence, and publishes the final AppManager outcome.
-
-The central rule is:
-
-> **Delegated execution does not mean delegated application authority.**
-
-A command handler, domain orchestrator, scanner, resolver, strategy, provider, process runner, repository implementation, AI provider, filesystem mechanism, or presentation adapter may perform a bounded responsibility. None acquires authority to redefine AppManager command semantics merely because it performs that responsibility.
-
-A second rule follows:
-
-> **The Application Engine is an authority and responsibility boundary, not a requirement for one class, package, process, executable, deployment unit, or runtime.**
-
-This design therefore establishes permanent internal seams without prescribing the Version 1 TypeScript module topology.
-
----
+The Application Engine connects invocation, project resolution, effective configuration and domain execution under [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority). This design describes its registration, execution context, dependency checkpoints and acceptance flow. Its internal seams support bounded delegation under [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); their concrete runtime arrangement belongs to implementation design.
 
 ## 2. Scope
 
@@ -129,37 +113,38 @@ AppManager Execution Outcome
 interaction-specific projection
 ```
 
-Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md). The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
+Where managed-project resolution depends upon configuration, the staged dependency semantics are governed by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle). The diagram describes responsibility and authority direction, not mandatory call-stack or process topology.
 
 ### 4.1 Authority direction
 
-Authority flows inward from semantic invocation to the Engine and downward through explicitly delegated responsibilities. Evidence flows back upward for interpretation.
-
-A lower-level component may reject an impossible or unsafe technical request within its own contract, but it does not thereby own the application-level meaning of the use case.
+The diagram follows [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority): invocation supplies intent, delegation supplies bounded work and returned evidence supports acceptance. Technical rejection by a delegate follows [DD-ENG-048](#dd-eng-048).
 
 ### 4.2 No presentation authority
 
-TUI, Headless, GUI, IDE, CI and automation adapters may acquire input, provide context hints, carry authorization evidence, display progress and project outcomes. They shall not maintain independent command semantics.
+Adapters connect to this flow through [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md), applying [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence) to input acquisition and outcome projection.
 
 ### 4.3 No provider authority
 
-A provider's success, failure, warning, default, discovered resource, exit code or response does not independently determine AppManager success or policy.
-
----
+Provider evidence enters application acceptance through [Design §11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) and the [DD-1.2 normalization boundary](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
 
 ## 5. Responsibility Decomposition
 
 The Application Engine is decomposed into logical responsibilities. These are not requirements for one implementation object per responsibility.
 
+<a id="dd-eng-001"></a>
+
 ### DD-ENG-001 — Command/use-case catalogue integration
 
 The Engine shall consume the canonical command catalogue defined by the Application Invocation Detailed Design and associate each executable command identity with exactly one owning application use-case definition.
 
-Registration shall not permit two independent semantic owners for the same canonical command identity.
+
+<a id="dd-eng-002"></a>
 
 ### DD-ENG-002 — Dispatcher
 
-The dispatcher shall route a validated, recognized invocation to its owning use case without deriving semantics from presentation labels, adapter routes, menu positions, provider operations or implementation filenames.
+Dispatch consumes [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_10-invocation-normalization) and [FR-INV-003](../functional/application-invocation-functional-specification-v01.md#fr-inv-003) to select the owner registered under [DD-ENG-001](#dd-eng-001).
+
+<a id="dd-eng-003"></a>
 
 ### DD-ENG-003 — Execution-context coordinator
 
@@ -178,9 +163,13 @@ The Engine shall establish an invocation-scoped execution context containing the
 - capability access constrained to the use case;
 - execution/effect evidence accumulated during the workflow.
 
+<a id="dd-eng-004"></a>
+
 ### DD-ENG-004 — Policy and safety evaluator
 
 Application policy and safety constraints shall be evaluated at defined semantic checkpoints before consequential effects and re-evaluated when a material change invalidates prior assumptions.
+
+<a id="dd-eng-005"></a>
 
 ### DD-ENG-005 — Use-case orchestrator responsibility
 
@@ -188,61 +177,89 @@ Each application use case shall own its permanent workflow semantics: prerequisi
 
 The responsibility may be implemented by one or more collaborators but remains subordinate to the Application Engine authority model.
 
+<a id="dd-eng-006"></a>
+
 ### DD-ENG-006 — Capability broker responsibility
 
-The Engine shall provide or coordinate access to approved specialist capabilities through AppManager-oriented contracts. Capability acquisition shall not expose arbitrary provider operations as application commands.
+Capability access binds [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to approved specialist contracts. Command exposure follows [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_9-4-no-executable-provider-discovery-leakage).
+
+<a id="dd-eng-007"></a>
 
 ### DD-ENG-007 — Result interpreter
 
-The Engine/use-case authority shall interpret normalized execution evidence against invocation intent, managed scope, configuration, policy, safety constraints and domain acceptance criteria before determining the final application status.
+The result interpreter applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) to the normalized evidence model in [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract).
+
+<a id="dd-eng-008"></a>
 
 ### DD-ENG-008 — Outcome publisher
 
-The Engine shall produce the canonical final outcome through the shared DD-1.2 outcome contract. Presentation adapters may project that outcome but shall not recalculate it.
+Publication uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) and [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002).
+
+<a id="dd-eng-009"></a>
 
 ### DD-ENG-009 — Cancellation coordinator
 
-The Engine shall propagate cancellation intent to active orchestration/capabilities and determine the application-level terminal meaning from observed completion and known effects.
+Engine cancellation consumes [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_20-cancellation-contract) and [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) through the workflow checkpoints in §15.
+
+<a id="dd-eng-010"></a>
 
 ### DD-ENG-010 — Application concurrency coordinator
 
-Where concurrent or stale operations can change application semantics, the Engine shall coordinate application-level conflict detection/revalidation without assuming one universal locking mechanism.
+Application conflict coordination follows [FR-INV-051](../functional/application-invocation-functional-specification-v01.md#fr-inv-051) through the evidence and isolation contracts in §17; no universal lock is required.
+
 
 ---
 
 ## 6. Command and Use-Case Ownership
 
+<a id="dd-eng-011"></a>
+
 ### DD-ENG-011 — Canonical command identity
 
-Dispatch shall use the canonical command identity from DD-1.1. Presentation aliases, shortcuts and host-specific actions must normalize before Engine dispatch.
+Dispatch receives the canonical identity through [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_10-invocation-normalization).
+
+<a id="dd-eng-012"></a>
 
 ### DD-ENG-012 — Single semantic owner
 
-Every executable canonical command shall have one identifiable semantic owner. The owner defines what constitutes valid execution, required context, required policy, acceptable results and final application success.
+Semantic ownership is registered under [DD-ENG-001](#dd-eng-001); the owner supplies the workflow/acceptance responsibilities in [DD-ENG-005](#dd-eng-005).
+
+<a id="dd-eng-013"></a>
 
 ### DD-ENG-013 — Domain grouping is not execution authority
 
-The approved domains (`app`, `docs`, `git`, `ai`, `nuxt`, `quality`, `utils`, `settings`) organize product behaviour. A domain name does not imply an autonomous engine, service boundary, process or provider.
+The eight domain groupings bind [Design](../appmanager-design-specification-v01.md#_10-1-functional-domain-model). Their grouping does not require an autonomous engine, service, process or provider topology.
+
+<a id="dd-eng-014"></a>
 
 ### DD-ENG-014 — Commands are not provider methods
 
-Provider operations shall not become AppManager commands solely because a provider exposes them. A command exists only when approved application behaviour defines the corresponding use case.
+Provider operation exposure follows [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_9-4-no-executable-provider-discovery-leakage).
+
+<a id="dd-eng-015"></a>
 
 ### DD-ENG-015 — Compatibility aliases
 
 Legacy or compatibility command surfaces may map to a canonical use case, but shall remain thin and shall not preserve an independent workflow implementation.
 
+<a id="dd-eng-016"></a>
+
 ### DD-ENG-016 — Unknown and unavailable remain distinct
 
-The Engine shall preserve the DD-1.1 distinction between an unknown command and a recognized command that is unavailable in the resolved context.
+Lookup/availability interpretation follows [FR-INV-006](../functional/application-invocation-functional-specification-v01.md#fr-inv-006) and [FR-INV-015](../functional/application-invocation-functional-specification-v01.md#fr-inv-015) through [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_8-5-unknown-versus-unavailable).
+
 
 ---
 
 ## 7. Execution Context
 
+<a id="dd-eng-017"></a>
+
 ### DD-ENG-017 — Invocation-scoped context
 
-Each significant invocation shall receive its own execution context. Mutable invocation state shall not leak into unrelated invocations.
+The execution context applies [FR-INV-050](../functional/application-invocation-functional-specification-v01.md#fr-inv-050) and [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_27-1-invocation-independence).
+
+<a id="dd-eng-018"></a>
 
 ### DD-ENG-018 — Explicit versus resolved information
 
@@ -258,25 +275,37 @@ presented confirmation != accepted authorization state
 preview request != applied effects
 ```
 
+<a id="dd-eng-019"></a>
+
 ### DD-ENG-019 — Managed-project dependency
 
-When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md) may contribute before managed-project identity exists.
+Project prerequisites use [DD-1.3 required context](dd-1-3-managed-project-detailed-design-v01.md#_11-operation-specific-context-completeness); configuration contributions enter through [DD-1.4](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context).
+
+<a id="dd-eng-020"></a>
 
 ### DD-ENG-020 — Managed-scope dependency
 
-Consequential operations shall operate against an operation-specific managed scope. Discovery or recognition alone shall not be substituted for targetability or mutation authority. Where scope resolution depends upon project- or scope-aware configuration, the required operation-effective configuration shall be resolved before finalizing that scope.
+Consequential target selection uses [DD-1.3 scope](dd-1-3-managed-project-detailed-design-v01.md#_18-managed-scope-resolution) and [targetability](dd-1-3-managed-project-detailed-design-v01.md#_20-targetability-evaluation). Configuration-dependent scope finalization follows [DD-CORE-BOOT-009](#dd-core-boot-009).
+
+<a id="dd-eng-021"></a>
 
 ### DD-ENG-021 — Configuration dependency
 
-When configuration is required, the Engine shall consume governed effective configuration from DD-1.4 rather than permitting the use case or provider to independently select raw configuration sources. The Engine shall distinguish bootstrap-effective configuration used during project resolution from the later operation-effective configuration snapshot; a bootstrap value is not automatically the complete operation snapshot.
+Engine configuration consumption applies [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020), using [DD-1.4](dd-1-4-configuration-resolution-detailed-design-v01.md#dd-core-boot-005) for stage-complete snapshots.
+
+<a id="dd-eng-022"></a>
 
 ### DD-ENG-022 — Configuration snapshot stability
 
-A use case shall normally execute against an immutable effective-configuration snapshot established for the relevant execution phase. Dynamic re-resolution requires explicit workflow semantics. A material difference between bootstrap assumptions and the later operation-effective snapshot shall trigger revalidation of dependent project, scope, policy, safety or authorization decisions.
+Execution uses [DD-1.4](dd-1-4-configuration-resolution-detailed-design-v01.md#_16-effective-configuration-snapshot) and its [dynamic re-resolution contract](dd-1-4-configuration-resolution-detailed-design-v01.md#_27-4-dynamic-re-resolution). Changed bootstrap assumptions are handled by [DD-CORE-BOOT-006](#dd-core-boot-006).
+
+<a id="dd-eng-023"></a>
 
 ### DD-ENG-023 — Context completeness
 
-The Engine shall resolve only the context required to make the current use case semantically safe and deterministic. It shall not require exhaustive project discovery when the operation does not need it.
+Context demand follows [FR-PROJ-014](../functional/managed-project-functional-specification-v01.md#fr-proj-014) through DD-1.3.
+
+<a id="dd-eng-024"></a>
 
 ### DD-ENG-024 — Context revalidation
 
@@ -311,25 +340,54 @@ invocation accepted
 
 For operations that do not require project-aware configuration, irrelevant stages may be omitted or collapsed. Availability and validation may also occur at more than one semantic checkpoint as additional context becomes authoritative. This is a semantic dependency lifecycle, not a required synchronous call sequence or a requirement for one physical configuration-resolution pass.
 
+### DD-CORE-BOOT-006 — Re-evaluate changed assumptions {#dd-core-boot-006}
+
+Later configuration/project resolution applies [DD-ENG-024](#dd-eng-024) and [DD-ENG-027](#dd-eng-027) to dependent decisions, including material provider-selection changes. Preserve bootstrap provenance so the changed assumption can be identified. No consequential execution begins while a material bootstrap/project conflict remains unresolved.
+
+### DD-CORE-BOOT-007 — Bounded resolution {#dd-core-boot-007}
+
+Where scope determines concern applicability, the Engine may stage configuration and scope refinement explicitly. It shall not permit unrestricted recursive resolution. The owning use case chooses an explicit response to later conflicting context: retain a non-conflicting selection, perform bounded safe re-resolution at a checkpoint, obtain disambiguation or fail with structured diagnostics. A bounded re-resolution policy may permit one retry; this example does not impose a universal pass count.
+
+### DD-CORE-BOOT-008 — Candidate acquisition across modes {#dd-core-boot-008}
+
+Bootstrap candidate acquisition applies [Design §8.4](../appmanager-design-specification-v01.md#_8-4-separation-of-resolution-and-interaction) across the interaction modes. Missing bootstrap inputs or disambiguation in Headless follow [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) and the resolution stage’s eligibility contract.
+
+### DD-CORE-BOOT-009 — Scope checkpoint {#dd-core-boot-009}
+
+Finalize managed scope only after the operation-effective values required by its scope/exclusion decision are available. Scope is not a universal predecessor of project-aware configuration. DD-1.3 makes the scope decision and DD-1.4 constructs the values it consumes; the Engine coordinates their dependency checkpoints.
+
+The lifecycle specifies semantic dependencies, not a class graph, process topology or number of resolver instances. Irrelevant configuration stages can be omitted. Bootstrap eligibility belongs to [DD-1.4 §8](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context), and project conflict reporting to [DD-1.3 §29](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution).
+
+<a id="dd-eng-025"></a>
+
 ### DD-ENG-025 — Effects require prerequisite satisfaction
 
-No consequential stage may begin while a required prerequisite on which that effect depends remains unresolved, invalid, ambiguous or unauthorized.
+Each consequential stage applies [FR-INV-011](../functional/application-invocation-functional-specification-v01.md#fr-inv-011) to its dependent prerequisites.
+
+<a id="dd-eng-026"></a>
 
 ### DD-ENG-026 — Stage-specific validation
 
-Validation may occur at multiple stages. Early structural validation does not replace later context-, scope-, plan- or effect-sensitive validation.
+Stage-sensitive validation consumes [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_12-shared-validation-coordination).
+
+<a id="dd-eng-027"></a>
 
 ### DD-ENG-027 — Material plan change
 
 If execution planning materially changes target, scope, destructive character, required capability or consequential effects, affected policy and authorization decisions shall be re-evaluated before execution.
 
+<a id="dd-eng-028"></a>
+
 ### DD-ENG-028 — Evidence accumulation
 
-The orchestration context shall preserve material normalized evidence and effects required to determine final status and recovery information.
+The execution context accumulates [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract), [effects](dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) and [child results](dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) for acceptance/recovery interpretation.
+
+<a id="dd-eng-029"></a>
 
 ### DD-ENG-029 — No success by reaching end of handler
 
-Completing an implementation path without an exception is insufficient to establish application success. The use case must satisfy its acceptance criteria.
+Handler completion is interpreted under [FR-INV-034](../functional/application-invocation-functional-specification-v01.md#fr-inv-034); the absence of an exception is technical evidence.
+
 
 ---
 
@@ -337,30 +395,25 @@ Completing an implementation path without an exception is insufficient to establ
 
 Later domain Detailed Designs shall define domain-specific use-case orchestration beneath this Engine contract.
 
+<a id="dd-eng-030"></a>
+
 ### DD-ENG-030 — Domain orchestration responsibility
 
-A domain orchestrator may coordinate multiple shared capabilities and domain policies for an approved use case.
+Domain orchestration follows [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows). An App lifecycle composition, for example, can consume project/configuration, process, Quality and Git contracts through their owning collaborators.
 
-For example, a future App lifecycle operation may coordinate project resolution, configuration, process execution, quality checks and Git capability without transferring ownership of those specialist semantics into the App domain.
+<a id="dd-eng-031"></a>
 
 ### DD-ENG-031 — Shared semantics not duplicated
 
-Domain designs shall consume DD-1 invocation, outcome, project and configuration contracts rather than defining domain-local equivalents.
+Domain-local inputs/results compose the shared [invocation](dd-1-1-application-invocation-detailed-design-v01.md), [outcome](dd-1-2-execution-outcomes-detailed-design-v01.md), [project](dd-1-3-managed-project-detailed-design-v01.md) and [configuration](dd-1-4-configuration-resolution-detailed-design-v01.md) contracts under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
+<a id="dd-eng-032"></a>
 
 ### DD-ENG-032 — Cross-domain composition
 
-A use case may coordinate behaviour associated with another domain when composition is necessary, but the subordinate domain/capability semantics remain owned by their designated responsibility boundary.
+Cross-domain composition follows [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows). For example, App creation coordinates root-application intent with Nuxt provisioning and requested Git initialization; each contribution retains its owning contract.
 
-Example:
-
-```text
-app.create
-   -> root application lifecycle semantics owned by App use case
-   -> Nuxt-specific provisioning delegated to Nuxt capability/use case where needed
-   -> repository initialization delegated to Git/repository capability where requested
-```
-
-The App use case owns the composed application outcome, not the internal semantics of Git or Nuxt.
+<a id="dd-eng-033"></a>
 
 ### DD-ENG-033 — No circular authority
 
@@ -370,29 +423,43 @@ A subordinate capability or nested use case shall not call upward into presentat
 
 ## 10. Capability Delegation
 
+<a id="dd-eng-034"></a>
+
 ### DD-ENG-034 — AppManager-oriented capability contracts
 
-Capabilities shall expose bounded technical responsibilities meaningful to AppManager rather than leaking arbitrary provider APIs into the Engine.
+Engine-facing capability interfaces follow [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-eng-035"></a>
 
 ### DD-ENG-035 — Delegation request
 
 A delegation request shall carry only the context, target, configuration and policy-derived constraints needed by the capability.
 
+<a id="dd-eng-036"></a>
+
 ### DD-ENG-036 — Least semantic authority
 
-A capability shall receive the least application authority necessary to perform its bounded task. It shall not infer broader target or mutation scope from accessible resources.
+Bounded delegation applies [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) to the request in [DD-ENG-035](#dd-eng-035).
+
+<a id="dd-eng-037"></a>
 
 ### DD-ENG-037 — Capability evidence
 
-Capabilities shall return normalized technical evidence, structured findings, proposed plans, applied effects or bounded result payloads suitable for DD-1.2 interpretation.
+Capability results supply [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract) through their local finding/plan/effect/payload models.
+
+<a id="dd-eng-038"></a>
 
 ### DD-ENG-038 — Provider normalization
 
-Provider-specific exceptions, exit codes, SDK objects and raw responses shall be normalized at the capability boundary before they participate in final application interpretation.
+Provider-native exceptions, exits, SDK objects and responses use [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
+<a id="dd-eng-039"></a>
 
 ### DD-ENG-039 — Provider fallback
 
 Provider fallback is permitted only where the owning capability/use case semantics allow it and the fallback does not silently change application intent, scope, safety or acceptance criteria.
+
+<a id="dd-eng-040"></a>
 
 ### DD-ENG-040 — Capability unavailability
 
@@ -404,44 +471,37 @@ Capability unavailability shall be represented explicitly and interpreted by the
 
 This section fixes their position in the architecture without prematurely prescribing concrete implementations.
 
+<a id="dd-eng-041"></a>
+
 ### DD-ENG-041 — Scanners and recognizers
 
-Scanners, recognizers, parsers and structural analyzers are evidence-producing responsibilities. They may identify structure, facts, candidates or findings but do not acquire mutation or application-policy authority.
+Scanners/recognizers bind [Design](../appmanager-design-specification-v01.md#_7-4-scanners) and [Design](../appmanager-design-specification-v01.md#_7-9-inspection-and-mutation-separation) to evidence production.
 
-> **Recognition is not mutation authority.**
+<a id="dd-eng-042"></a>
 
 ### DD-ENG-042 — Resolvers
 
-Resolvers determine a governed answer within a bounded semantic concern, such as managed-project identity, managed scope, configuration value, provider selection or strategy selection.
+Project/configuration/provider/strategy resolvers apply [Design](../appmanager-design-specification-v01.md#_6-7-resolvers) through their bounded owning contracts.
 
-Resolving a value does not grant authority over the use case consuming it.
+<a id="dd-eng-043"></a>
 
 ### DD-ENG-043 — Strategies
 
-A strategy may select or propose a technical approach for realizing already-approved intent. A strategy shall not independently decide that the application intent is authorized, in scope or acceptable.
+Strategy participation follows [Design](../appmanager-design-specification-v01.md#_7-5-strategies-and-transformation-plans). The source flow is refined by [DD-2.5](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md), from recognized facts through plan, authorization, source validation and application acceptance.
 
-The expected source-transformation relationship is:
-
-```text
-recognition / inspection
-    -> structural facts
-    -> strategy selection
-    -> bounded transformation plan
-    -> Engine/use-case policy and authorization
-    -> transformation execution
-    -> source-level validation
-    -> application-level acceptance
-```
+<a id="dd-eng-044"></a>
 
 ### DD-ENG-044 — Responders and normalizers
 
-A provider-response normalizer may convert provider-native output into AppManager-oriented evidence. A presentation responder/projector may render canonical outcomes. Neither shall redefine the final outcome.
+Provider normalization uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization); caller projection uses [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002). Use the precise responsibility name in normative DD text instead of the generic term `Responder` where one is available.
 
-The generic term `Responder` should be avoided in normative Detailed Design where a more precise responsibility name is available.
+<a id="dd-eng-045"></a>
 
 ### DD-ENG-045 — Orchestrators
 
-Orchestrators own sequencing within the bounded use case or domain responsibility assigned to them. They coordinate scanners, resolvers, strategies and capabilities but remain subject to the Engine authority model.
+Orchestrators fulfill the assigned sequencing responsibility in [DD-ENG-005](#dd-eng-005) under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
+<a id="dd-eng-046"></a>
 
 ### DD-ENG-046 — No universal pattern framework
 
@@ -451,181 +511,265 @@ The existence of these responsibility patterns does not mandate generic Scanner,
 
 ## 12. Policy and Safety
 
+<a id="dd-eng-047"></a>
+
 ### DD-ENG-047 — Policy evaluation belongs above mechanism
 
-Application policy shall be evaluated before delegating a consequential operation when the decision depends on application intent, managed scope, safety or authorization.
+The policy checkpoint in [DD-ENG-004](#dd-eng-004) precedes consequential delegation when application intent, scope, safety or authorization determines eligibility.
+
+<a id="dd-eng-048"></a>
 
 ### DD-ENG-048 — Capability-local safety
 
 A capability may enforce stricter technical invariants within its own contract, such as rejecting malformed targets or unsafe technical operations. Such rejection supplements rather than replaces application policy.
 
+<a id="dd-eng-049"></a>
+
 ### DD-ENG-049 — Non-destructive constraints
 
-Where a use case is specified as non-destructive or bounded, delegated capabilities shall receive constraints sufficient to prevent them from broadening the operation beyond the approved semantics.
+Bounded/non-destructive use cases bind [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) to the constraints supplied in [DD-ENG-035](#dd-eng-035).
+
+<a id="dd-eng-050"></a>
 
 ### DD-ENG-050 — Authorization evidence
 
-Interaction adapters may acquire authorization/confirmation evidence. The Engine/use case determines whether the evidence satisfies the required application authorization.
+Authorization acquisition and sufficiency use [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_14-confirmation-and-authorization-evidence).
+
+<a id="dd-eng-051"></a>
 
 ### DD-ENG-051 — No inferred authorization
 
 Headless mode, automation, provider configuration, environment variables, filesystem permissions or successful authentication shall not be treated as implicit authorization for an application operation unless the owning semantics explicitly define them as valid evidence.
 
+<a id="dd-eng-052"></a>
+
 ### DD-ENG-052 — Authorization invalidation
 
-Authorization shall be reconsidered if the material target, scope, destructive character or plan changes after evidence was accepted.
+Changed authorization assumptions use [DD-ENG-027](#dd-eng-027) and [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_14-3-binding-and-stale-authorization).
+
 
 ---
 
 ## 13. Preview and Planning
 
+<a id="dd-eng-053"></a>
+
 ### DD-ENG-053 — Preview is a use-case semantic
 
-DD-1.1 carries preview intent; the owning use case defines what meaningful preview means.
+Preview intent and owning-use-case interpretation consume [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_15-preview-and-dry-run-intent).
+
+<a id="dd-eng-054"></a>
 
 ### DD-ENG-054 — Proposed versus applied effects
 
-Preview/planning output shall use DD-1.2 proposed-effect semantics and shall never be represented as applied state.
+Planning results use [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview).
+
+<a id="dd-eng-055"></a>
 
 ### DD-ENG-055 — Planning does not authorize execution
 
-A successfully generated plan does not itself grant authorization to apply it.
+Plan availability is evaluated through [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_14-confirmation-and-authorization-evidence) before application; the proposal model is [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview).
+
+<a id="dd-eng-056"></a>
 
 ### DD-ENG-056 — Plan validation
 
-A plan that depends on source intelligence, repository state, configuration or external state shall be validated/revalidated sufficiently close to application to prevent stale assumptions from silently broadening effects.
+Source, repository, configuration and external-state plans apply [DD-ENG-024](#dd-eng-024) sufficiently close to application to detect stale assumptions affecting the planned effects.
+
 
 ---
 
 ## 14. Application Acceptance and Outcomes
 
+<a id="dd-eng-057"></a>
+
 ### DD-ENG-057 — Technical completion is evidence
 
-Technical completion reported by a capability is evidence, not final AppManager success.
+Capability completion follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+<a id="dd-eng-058"></a>
 
 ### DD-ENG-058 — Application acceptance
 
-The owning use case shall evaluate whether the requested application intent was satisfied under applicable policy, scope and acceptance criteria.
+Acceptance follows [FR-INV-034](../functional/application-invocation-functional-specification-v01.md#fr-inv-034) for the owning use case.
+
+<a id="dd-eng-059"></a>
 
 ### DD-ENG-059 — Final outcome ownership
 
-The Engine shall publish one canonical final outcome for the invocation using DD-1.2. Domain payloads may extend the outcome by composition but shall not redefine shared terminal status semantics.
+Final publication uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) and [payload composition](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-2-result-payload).
+
+<a id="dd-eng-060"></a>
 
 ### DD-ENG-060 — Partial success
 
-Partial success shall be selected only where the use case's semantics permit meaningful partial satisfaction and DD-1.2 evidence identifies the completed and incomplete portions.
+Partial acceptance follows [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036) using [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-eng-061"></a>
 
 ### DD-ENG-061 — No-op and already satisfied
 
-A no-op or already-satisfied result may contribute to application success where the use case defines the requested state as already achieved. It shall remain distinguishable in subordinate result/effect information where meaningful.
+No-op/already-satisfied interpretation uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_15-no-op-already-satisfied-skipped-and-not-attempted-states).
+
+<a id="dd-eng-062"></a>
 
 ### DD-ENG-062 — Failure preserves effects
 
-Failure shall not discard known consequential effects that occurred before rejection or failure.
+Failure effects follow [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
+
+<a id="dd-eng-063"></a>
 
 ### DD-ENG-063 — Presentation projection
 
-Exit codes, terminal formatting, GUI notifications, IDE messages and automation projections shall derive from the canonical outcome through adapter-specific projection rules. They shall not become alternate outcome authorities.
+Caller exit-code/UI/automation projections consume [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002).
+
 
 ---
 
 ## 15. Cancellation
 
+<a id="dd-eng-064"></a>
+
 ### DD-ENG-064 — Cooperative cancellation
 
-Cancellation is cooperative unless a capability explicitly guarantees stronger semantics.
+Cancellation cooperation follows [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-2-cooperative-cancellation).
+
+<a id="dd-eng-065"></a>
 
 ### DD-ENG-065 — Propagation
 
-The Engine shall propagate cancellation intent to active orchestration and delegated capabilities that support cancellation.
+Cancellation propagates through [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_20-2-cooperative-design) and the phases in [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-eng-066"></a>
 
 ### DD-ENG-066 — Cancellation request is not terminal state
 
-A cancellation request shall not be published as a cancelled outcome until the workflow has established the resulting known state sufficiently to terminate.
+A requested cancellation follows [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-2-cooperative-cancellation) until the workflow can establish the resulting state sufficiently for terminal publication.
+
+<a id="dd-eng-067"></a>
 
 ### DD-ENG-067 — Cancellation does not imply rollback
 
-The Engine shall preserve effects completed before cancellation and shall not claim rollback unless the use case/capability explicitly guarantees and verifies it.
+Prior effects and rollback evidence follow [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) and [verified rollback reporting](dd-1-2-execution-outcomes-detailed-design-v01.md#_12-4-no-false-rollback).
+
+<a id="dd-eng-068"></a>
 
 ### DD-ENG-068 — Late cancellation
 
-If cancellation arrives after the consequential work has irreversibly completed and application acceptance is established, the final outcome shall represent actual completion rather than fabricate cancellation.
+Completion races follow [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_20-4-late-cancellation).
+
 
 ---
 
 ## 16. Retry, Resume, Fallback and Compensation
 
+<a id="dd-eng-069"></a>
+
 ### DD-ENG-069 — No generic application retry
 
-The Engine shall not apply a universal retry policy to arbitrary use cases.
+Use-case retry policy follows [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048); there is no universal application retry policy.
+
+<a id="dd-eng-070"></a>
 
 ### DD-ENG-070 — Provider-local retry
 
-A capability may perform provider-local retry only when its contract establishes that retry does not alter application semantics and can be performed safely within the delegated task.
+Bounded provider-local retry follows [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) and the capability contract’s safety constraints.
+
+<a id="dd-eng-071"></a>
 
 ### DD-ENG-071 — Use-case retry authority
 
-Retry or resume of a use case is an application decision and may require fresh project resolution, configuration, state validation, scope resolution and authorization.
+Use-case retry/resume applies [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) with the revalidation rule in [DD-ENG-024](#dd-eng-024).
+
+<a id="dd-eng-072"></a>
 
 ### DD-ENG-072 — Retryability evidence
 
-DD-1.2 retryability/transience evidence may inform an Engine decision but shall not itself authorize retry.
+Retryability evidence is supplied by [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_22-retryability-and-repetition-evidence) under [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049).
+
+<a id="dd-eng-073"></a>
 
 ### DD-ENG-073 — Compensation
 
-Compensation is a separate use-case/capability action. It shall not be inferred from failure and shall be represented explicitly in effects/outcomes.
+Compensation uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_12-4-no-false-rollback) as a separately recorded action/stage.
+
+<a id="dd-eng-074"></a>
 
 ### DD-ENG-074 — Fallback semantics
 
-Fallback to alternate strategies/providers/capabilities must preserve the approved application intent or trigger renewed policy/authorization where the material execution plan changes.
+Fallback follows [DD-ENG-039](#dd-eng-039); material plan changes apply [DD-ENG-027](#dd-eng-027).
+
 
 ---
 
 ## 17. Concurrency, Staleness and Isolation
 
+<a id="dd-eng-075"></a>
+
 ### DD-ENG-075 — Invocation isolation
 
-Execution state, configuration snapshots, cancellation and accumulated evidence shall be invocation-scoped unless a shared resource contract explicitly defines otherwise.
+Execution state, snapshots, cancellation and evidence bind [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_27-1-invocation-independence). A shared resource contract may explicitly define shared state without sharing invocation intent.
+
+<a id="dd-eng-076"></a>
 
 ### DD-ENG-076 — Shared resource conflicts
 
 Where multiple invocations can affect the same project resource, repository, configuration concern or generated artifact, the owning use case/capability shall expose sufficient conflict evidence for safe application coordination.
 
+<a id="dd-eng-077"></a>
+
 ### DD-ENG-077 — Stale project context
 
-The Engine shall not assume that a previously resolved managed-project context remains valid indefinitely across consequential stages.
+Project-context use consumes [DD-1.3 freshness](dd-1-3-managed-project-detailed-design-v01.md#_25-context-freshness-and-stale-state-boundaries).
+
+<a id="dd-eng-078"></a>
 
 ### DD-ENG-078 — Stale configuration
 
-An established operation snapshot remains semantically stable, but a workflow that explicitly re-resolves configuration shall treat changed provenance/value as a new decision input.
+Configuration refresh consumes [DD-1.4](dd-1-4-configuration-resolution-detailed-design-v01.md#_27-4-dynamic-re-resolution); changed values/provenance are new inputs to [DD-CORE-BOOT-006](#dd-core-boot-006).
+
+<a id="dd-eng-079"></a>
 
 ### DD-ENG-079 — No global serialization requirement
 
-This design does not require all AppManager operations to execute serially. Concurrency restrictions shall be scoped to actual semantic/resource conflicts.
+Concurrency consumes [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_27-3-no-global-serialization-requirement) with restrictions scoped to actual semantic/resource conflicts.
+
+<a id="dd-eng-080"></a>
 
 ### DD-ENG-080 — Deterministic conflict outcome
 
-Unresolvable application-level conflicts shall fail or defer deterministically rather than permit race-dependent policy or scope decisions.
+Conflict interpretation applies [FR-INV-051](../functional/application-invocation-functional-specification-v01.md#fr-inv-051). Unresolvable conflicts fail or defer deterministically, rather than selecting policy/scope by race.
+
 
 ---
 
 ## 18. Nested and Composite Use Cases
 
+<a id="dd-eng-081"></a>
+
 ### DD-ENG-081 — Composition without authority collapse
 
-A parent use case may invoke a subordinate approved use case or capability while retaining authority for the parent application's composite intent.
+Parent composition follows [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) through the nested contracts below.
+
+<a id="dd-eng-082"></a>
 
 ### DD-ENG-082 — Parent/child correlation
 
-Nested execution shall preserve parent/child correlation so diagnostics, effects and outcomes can be attributed without flattening all work into one opaque result.
+Parent/child attribution uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_25-4-nested-use-cases).
+
+<a id="dd-eng-083"></a>
 
 ### DD-ENG-083 — Sub-use-case outcome interpretation
 
-A child outcome is evidence to the parent. The parent shall interpret it according to the composite use case rather than blindly copying its status.
+Child outcomes enter the parent’s [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_20-outcome-aggregation) with composite acceptance policy.
+
+<a id="dd-eng-084"></a>
 
 ### DD-ENG-084 — No recursive public invocation requirement
 
 Internal composition does not require a domain orchestrator to re-enter AppManager through a public/transport invocation surface. It may use the appropriate internal use-case/capability contract.
+
+<a id="dd-eng-085"></a>
 
 ### DD-ENG-085 — Independent authorization remains possible
 
@@ -635,21 +779,30 @@ A nested operation with materially different authorization requirements may requ
 
 ## 19. Headless and Interaction-Mode Equivalence
 
+<a id="dd-eng-086"></a>
+
 ### DD-ENG-086 — Shared Engine semantics
 
-TUI, Headless, GUI, IDE, CI, automation and future supported adapters shall converge on the same Engine/use-case semantics after normalization.
+Normalized adapter intent follows [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="dd-eng-087"></a>
 
 ### DD-ENG-087 — Headless determinism
 
-Headless execution shall not depend on hidden prompt order, presentation state or interactive-only defaults.
+Headless behavior applies [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020); presentation state does not supply ungoverned defaults.
+
+<a id="dd-eng-088"></a>
 
 ### DD-ENG-088 — Interaction capability declaration
 
-Adapters may declare whether they can obtain interactive input, authorization or present progress. The Engine shall use those capabilities only as acquisition/projection mechanisms, not as semantic authority.
+Caller acquisition/projection capabilities consume [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_11-interaction-capability-contract).
+
+<a id="dd-eng-089"></a>
 
 ### DD-ENG-089 — Interaction-required outcome
 
-If a use case genuinely requires information or authorization unavailable in the current interaction mode and no permitted non-interactive source exists, the operation shall fail/reject deterministically rather than block unexpectedly.
+Unavailable required acquisition follows [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) and [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022).
+
 
 ---
 
@@ -678,97 +831,100 @@ DD-1.2 normalized evidence/outcomes
 
 The representation is conceptual. DD-1.3 and DD-1.4 collaborate through the staged bootstrap contract rather than forming unrestricted circular authority; DD-1 contracts may mutually reference shared types/responsibilities without requiring cyclic implementation modules.
 
+<a id="dd-eng-090"></a>
+
 ### DD-ENG-090 — No upward presentation dependency
 
-Application/domain/capability logic shall not depend on TUI/GUI/IDE presentation implementations.
+Presentation dependency direction follows [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="dd-eng-091"></a>
 
 ### DD-ENG-091 — No provider-to-domain inversion
 
-Provider implementations shall conform to capability contracts; domains shall not be shaped around provider SDK object models.
+Provider/domain interfaces follow [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-eng-092"></a>
 
 ### DD-ENG-092 — No raw resource authority
 
-Filesystem, repository, process, environment, AI and framework access mechanisms shall not bypass managed scope, configuration or application policy merely because they can technically perform an action.
+Technical resource access follows [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) and [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
+<a id="dd-eng-093"></a>
 
 ### DD-ENG-093 — Contract-oriented replaceability
 
-Responsibility seams shall be sufficiently explicit that a capability implementation, interaction adapter or future primary runtime can be replaced without redefining AppManager command semantics.
+The responsibility seams bind [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and [§6.10](../appmanager-design-specification-v01.md#_6-10-modular-typescript-and-future-host-portability) to capability, adapter and future primary-runtime replacement. This supports ADR-0001 without requiring speculative language-neutral serialization for in-process Version 1 contracts.
 
-This supports ADR-0001 without requiring speculative language-neutral serialization for in-process Version 1 contracts.
 
 ---
 
 ## 21. Extensibility
 
+<a id="dd-eng-094"></a>
+
 ### DD-ENG-094 — New command/use case
 
 A new command must define a canonical identity, owning domain/use case, context prerequisites, availability conditions, scope semantics, configuration concerns, authorization/policy requirements, capability dependencies and acceptance/outcome rules.
 
+<a id="dd-eng-095"></a>
+
 ### DD-ENG-095 — New capability implementation
 
-A new capability provider may be substituted behind an approved capability boundary when it preserves the AppManager-oriented contract and does not redefine application semantics.
+Provider substitution follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-eng-096"></a>
 
 ### DD-ENG-096 — Declarative resources
 
-Templates, licences, profiles and other declarative resources may extend supported behavior through their owning registry/resource contracts without becoming arbitrary executable plugins.
+Templates/licences/profiles follow [Design](../appmanager-design-specification-v01.md#_13-2-extension-classes) through their registry/resource contracts.
+
+<a id="dd-eng-097"></a>
 
 ### DD-ENG-097 — No executable plugin framework implied
 
 This design does not establish a general arbitrary executable plugin framework. Such a framework would require deliberate trust, permissions, lifecycle, compatibility, isolation, security and failure design and may require an ADR.
 
+<a id="dd-eng-098"></a>
+
 ### DD-ENG-098 — New application surface
 
-A new interaction/integration surface shall implement the shared invocation and outcome contracts rather than duplicate domain workflows.
+New application surfaces consume [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_37-2-new-interaction-adapters) and [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002).
+
 
 ---
 
 ## 22. Failure and Internal Invariants
 
+<a id="dd-eng-099"></a>
+
 ### DD-ENG-099 — Expected rejection is structured
 
-Unknown/unavailable commands, invalid invocation, unresolved project/configuration, authorization failure, scope conflict and expected capability failures shall use structured diagnostics/outcomes rather than depend solely on thrown implementation exceptions.
+Expected rejections use [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) and [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_35-error-and-fault-boundary).
+
+<a id="dd-eng-100"></a>
 
 ### DD-ENG-100 — Internal invariant failure
 
 Violation of an Engine invariant shall fail safely, preserve known effects/evidence where possible and produce an internal diagnostic without exposing sensitive implementation detail.
 
+<a id="dd-eng-101"></a>
+
 ### DD-ENG-101 — No silent semantic fallback
 
-The Engine shall not silently reinterpret an invocation as another command, broaden scope, weaken safety, invent configuration or substitute an unauthorized provider merely to complete execution.
+Fallback decisions remain subject to [FR-INV-006](../functional/application-invocation-functional-specification-v01.md#fr-inv-006), [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042), [FR-CONFIG-029](../functional/configuration-functional-specification-v01.md#fr-config-029) and [DD-ENG-039](#dd-eng-039). Completion pressure supplies no safety exception.
+
+<a id="dd-eng-102"></a>
 
 ### DD-ENG-102 — Sensitive minimization
 
-Execution context, diagnostics, events and outcomes shall carry the minimum sensitive information required. Capability/provider secrets shall not be propagated merely for convenience.
+Sensitive execution context and publication bind [Design](../appmanager-design-specification-v01.md#_8-7-sensitive-configuration) to [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
 
 ---
 
 ## 23. Application Engine Conformance Invariants
 
-Every implementation conforming to this Detailed Design shall preserve all of the following:
-
-1. the Application Engine remains the application-authority boundary;
-2. command identity is canonical and presentation-independent;
-3. every executable command has one semantic owner;
-4. interaction adapters do not implement independent workflows;
-5. domain orchestrators remain subordinate to shared Engine semantics;
-6. scanners and recognizers produce evidence, not mutation authority;
-7. resolvers answer bounded concerns, not unrelated application policy;
-8. strategies propose technical realization, not application authorization;
-9. capabilities execute bounded responsibilities and return normalized evidence;
-10. provider success is not automatically application success;
-11. managed-project discovery does not grant targetability or mutation authority;
-12. configuration is staged where project identity and project/scope-aware configuration depend on one another: bootstrap-effective configuration may inform DD-1.3 resolution, while the operation-effective snapshot follows sufficient managed-project context and precedes any scope/policy decisions that depend on it;
-13. effective configuration is consumed through DD-1.4 rather than ad hoc source reads;
-14. authorization is explicit and re-evaluated after material plan/scope/configuration change;
-15. preview/proposed effects remain distinct from applied effects;
-16. cancellation does not imply rollback;
-17. retryability evidence does not grant retry authority;
-18. known effects survive failure, partial success and cancellation reporting;
-19. final status is determined through application acceptance;
-20. interaction modes converge on equivalent semantics;
-21. the Engine boundary does not require one monolithic class/process/package/runtime.
-
----
+The Engine's conformance review uses the registration and context contracts in §§5–7, staged lifecycle in §8, delegation and policy contracts in §§9–12, and outcome, cancellation and concurrency contracts in §§13–17. The upstream authority is [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); the list of review areas introduces no second set of invariants.
 
 ## 24. Relationship to the DD-2 Capability Designs
 
@@ -796,7 +952,7 @@ Defines strategy selection, transformation plans, bounded transformations and so
 
 ### 24.6 AI Capability
 
-Defines provider-neutral AI request/response/evidence contracts. AI provider output remains evidence unless AI itself is the primary approved use case.
+[AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) supplies provider-neutral request/response evidence. Both primary AI use cases and AI-assisted workflows apply [Design §10.6](../appmanager-design-specification-v01.md#_10-6-ai-domain) and [§11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow): the owning workflow interprets and accepts proposals.
 
 ### 24.7 Documentation, Quality and Nuxt Capabilities
 
@@ -810,30 +966,7 @@ Defines declarative resource selection/resolution and generation support without
 
 ## 25. Relationship to Domain Detailed Designs
 
-DD-3 and DD-4 domain specifications shall answer how each approved domain use case composes the Application Core and shared capabilities.
-
-They shall define:
-
-- domain use-case orchestration;
-- domain-specific validation/policy;
-- domain-specific acceptance criteria;
-- capability dependencies;
-- domain result payloads;
-- domain-specific partial-success rules;
-- domain-specific recovery/continuation semantics.
-
-They shall not redefine:
-
-- canonical invocation;
-- shared outcome/diagnostic semantics;
-- managed-project authority;
-- configuration precedence;
-- generic process/resource/provider mechanics;
-- another domain's specialist semantics.
-
-The `utils` domain shall be designed last so that genuinely cross-cutting maintenance behavior is retained without becoming a residual bypass around stronger owners.
-
----
+DD-3 and DD-4 describe the domain compositions invoked by [DD-ENG-005](#dd-eng-005). Their domain payloads and acceptance/recovery decisions fit the shared [execution context](#dd-eng-003) and [command extension contract](#dd-eng-094). The [Maintenance stronger-owner gate](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md#dd-util-066) is one such domain-specific decision, applied before maintenance planning.
 
 ## 26. Traceability
 
@@ -847,15 +980,7 @@ Primary Functional relationships include:
 - `FR-XFORM-*` — separation of recognition, strategy/planning, transformation, validation and application acceptance;
 - all domain `FR-*` families — use-case ownership, domain orchestration and application-level acceptance.
 
-It also implements Detailed Design guardrails from `functional-specification-conformance-audit-v01.md`:
-
-- DDG-001 — no cross-cutting semantic reimplementation per domain;
-- DDG-002 — preserve Application Engine authority;
-- DDG-003 — separate orchestration from specialist execution;
-- DDG-004 — consume shared normalized result contracts;
-- DDG-005 — AI remains a capability unless AI is the primary use case;
-- DDG-006 — compatibility surfaces remain thin;
-- DDG-007 — preserve future runtime replaceability.
+The earlier `functional-specification-conformance-audit-v01.md` is historical review evidence, not a source of product authority. The governing contracts are the Design and Functional sources above.
 
 ADR-0001 permits Version 1 implementation in Node.js/TypeScript but does not make TypeScript module topology part of this architectural authority boundary.
 
@@ -863,22 +988,7 @@ ADR-0001 permits Version 1 implementation in Node.js/TypeScript but does not mak
 
 ## 27. Downstream Detailed Design Requirements
 
-All later Detailed Designs shall state explicitly:
-
-1. which Engine/use-case authority invokes the responsibility;
-2. what bounded request/context it receives;
-3. what authority it does and does not possess;
-4. what normalized evidence/result it returns;
-5. how cancellation is propagated/observed where relevant;
-6. how scope and configuration constraints are preserved;
-7. how sensitive information is minimized;
-8. how provider-specific mechanics are prevented from escaping the capability boundary;
-9. what stale/concurrent conditions require revalidation;
-10. how the Engine can interpret completion without relying on provider-native success semantics.
-
-A later design that cannot answer these questions is not yet sufficiently separated from application authority.
-
----
+A consuming Detailed Design can be read against the [execution context](#dd-eng-003), [use-case workflow](#dd-eng-005), [bounded delegation](#dd-eng-035), [stale-state checkpoint](#dd-eng-024) and [extension contract](#dd-eng-094). These references identify the integration questions for its request, evidence, cancellation, scope, sensitivity and acceptance design. The [documentation reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions) govern the relationship between sibling designs.
 
 ## 28. Implementation-Specification Boundary
 
@@ -903,19 +1013,4 @@ Those choices must implement this Detailed Design rather than retroactively rede
 
 ## 29. Conformance Criteria
 
-The Application Core Detailed Design family is conformant only if an implementation can demonstrate that:
-
-- semantic invocation reaches one shared application-authority model;
-- project, scope and configuration are resolved through their governed contracts, including the staged bootstrap contract where project resolution and configuration applicability depend on one another;
-- domain use cases coordinate capabilities without allowing capabilities to acquire application policy;
-- scanners/resolvers/strategies/providers have bounded, explicit roles;
-- consequential execution is preceded by required scope/policy/authorization decisions;
-- provider/capability results are normalized before application interpretation;
-- final outcomes reflect application acceptance and known effects;
-- cancellation, partial completion, retry and fallback remain explicit rather than implicit mechanism behavior;
-- TUI, Headless and future adapters can use the same use-case semantics;
-- no architectural rule requires the Application Engine to be one monolithic TypeScript object or one permanent runtime topology.
-
-The closing rule is:
-
-> **The Application Engine owns what AppManager means and whether its intent was satisfied; specialist components own only the bounded work deliberately delegated to them.**
+Conformance is assessed against the contracts indexed in [§23](#_23-application-engine-conformance-invariants), including the project/configuration dependency lifecycle and the owning use case's acceptance criteria. [§28](#_28-implementation-specification-boundary) identifies the concrete choices left to Implementation Specifications.

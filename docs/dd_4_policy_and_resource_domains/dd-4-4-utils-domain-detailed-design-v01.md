@@ -1,4 +1,4 @@
-# DD-4.4 — AppManager Utils Domain Detailed Design
+# DD-4.4 — AppManager Maintenance Domain Detailed Design
 
 > **Detailed Design ID:** DD-4.4
 >
@@ -6,9 +6,9 @@
 >
 > **Status:** Version 1 Detailed Design Specification
 >
-> **Detailed Design authority:** This document defines the permanent Utils-domain orchestration, maintenance-policy, state, decision and result contracts for bounded cross-cutting project maintenance through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted clarifications, ADRs, DD-1, DD-2 or stronger owning-domain Detailed Designs.
+> **Detailed Design authority:** This document defines the permanent Maintenance-domain orchestration, maintenance-policy, state, decision and result contracts for bounded cross-cutting project maintenance through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs within their scope, or consumed DD-1/DD-2 and stronger owning-domain contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Utils Functional Specification](../functional/utils-functional-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Maintenance Functional Specification](../functional/utils-functional-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md), [DD-2.3 — Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.7 — AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md), [DD-3.1 — App Domain](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md), [DD-3.2 — Git Domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md), [DD-3.4 — Docs Domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md), [DD-4.1 — Quality Domain](dd-4-1-quality-domain-detailed-design-v01.md), [DD-4.2 — Settings Domain](dd-4-2-settings-domain-detailed-design-v01.md), [DD-4.3 — AI Domain](dd-4-3-ai-domain-detailed-design-v01.md)
 
@@ -16,31 +16,19 @@
 
 ## 1. Purpose
 
-This specification defines the permanent domain-level composition by which AppManager performs genuine cross-cutting maintenance operations that have no stronger approved domain owner.
+This specification refines [Maintenance Functional contracts](../functional/utils-functional-specification-v01.md) for bounded cross-cutting maintenance. Its header inspection, repair, source-file version and cleanup plans begin at the [stronger-owner gate](#dd-util-066). Documentation and contributor compatibility paths lead to their owning domains. The per-resource plan and lifecycle retain the information needed to report coordinated effects truthfully.
 
-The governing rules are:
-
-> **Utils owns only bounded maintenance intent that is genuinely cross-cutting and otherwise unowned; it is not a residual namespace for behavior whose stronger owner is already known.**
-
-> **Utils interprets source, repository, AI and resource evidence for Utils-owned maintenance intent; delegated specialist execution does not transfer Utils application authority to those capabilities.**
-
-> **Inspection does not authorize repair, discovery does not authorize deletion, and a technically successful source write does not establish Utils-domain acceptance.**
-
-> **The Application Engine retains final application authority.**
-
-Version 1 Utils therefore owns source-header inspection/validation/repair, source-file header-version maintenance, and narrowly bounded temporary/test/log artefact cleanup. Documentation generation and contributor management remain delegated compatibility surfaces, not independent Utils authorities.
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
 ### 2.1 In Scope
 
-This design owns permanent Utils-domain contracts for:
+This design owns permanent Maintenance-domain contracts for:
 
-- Utils operation identity and applicability;
-- proof that a proposed Utils operation has no stronger domain owner;
-- source-header convention interpretation for Utils maintenance purposes;
+- Maintenance operation identity and applicability;
+- proof that a proposed Maintenance operation has no stronger domain owner;
+- source-header convention interpretation for Maintenance maintenance purposes;
 - header inspection and validation policy;
 - header-repair intent and acceptance;
 - narrow package-metadata validation/repair only when part of header/project-maintenance validation;
@@ -53,7 +41,7 @@ This design owns permanent Utils-domain contracts for:
 - no-op, partial, stale-state and cancellation semantics;
 - deterministic Headless behavior;
 - compatibility delegation to stronger owning domains;
-- Utils-specific result payloads beneath DD-1.2 outcomes.
+- Maintenance-specific result payloads beneath DD-1.2 outcomes.
 
 ### 2.2 Out of Scope
 
@@ -77,7 +65,7 @@ This design does not own or redefine:
 
 ## 3. Governing Requirements and Authorities
 
-The Utils Functional Specification defines `FR-UTIL-001`–`FR-UTIL-108`. This Detailed Design binds those requirements as follows:
+The Maintenance Functional Specification defines `FR-UTIL-001`–`FR-UTIL-108`. This Detailed Design binds those requirements as follows:
 
 | Functional area | Requirements | Detailed Design focus |
 |---|---|---|
@@ -92,45 +80,55 @@ The Utils Functional Specification defines `FR-UTIL-001`–`FR-UTIL-108`. This D
 | Cross-domain coordination | `FR-UTIL-095`–`100` | Docs, Settings, Git, AI and Quality boundaries |
 | Results and safety | `FR-UTIL-101`–`108` | findings/failures, stale state, scope and machine-consumable outcomes |
 
-The decomposition plan deliberately places Utils last because its design must prove that residual behavior is not bypassing a stronger owner.
+The decomposition plan deliberately places Maintenance last because its design must prove that residual behavior is not bypassing a stronger owner.
 
-**DD-UTIL-001 — Stronger-owner rule**  
-A behavior shall be Utils-owned only when its primary maintenance intent is defined by the Utils Functional Specification and no stronger approved domain owns that intent.
+<a id="dd-util-001"></a>
 
-**DD-UTIL-002 — Compatibility surfaces do not transfer ownership**  
-A Utils-labelled compatibility or convenience entry point delegating to Docs, Settings or another domain shall preserve that domain's canonical use-case semantics and shall not create a second Utils authority.
+**DD-UTIL-001 — Stronger-owner rule**
 
-**DD-UTIL-003 — Shared capability evidence remains subordinate**  
-Source recognition, repository facts, AI proposals, resource effects and transformation evidence shall remain subordinate until the Utils use case interprets them against its approved maintenance intent and the Application Engine accepts the final outcome.
+Maintenance placement follows [Design](../appmanager-design-specification-v01.md#_10-9-maintenance-domain) through the pre-planning gate in [DD-UTIL-066](#dd-util-066).
+
+<a id="dd-util-002"></a>
+
+**DD-UTIL-002 — Compatibility surfaces do not transfer ownership**
+
+Compatibility/convenience routing applies [FR-UTIL-005](../functional/utils-functional-specification-v01.md#fr-util-005).
+
+<a id="dd-util-003"></a>
+
+**DD-UTIL-003 — Shared capability evidence remains subordinate**
+
+Maintenance evidence interpretation follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) against the approved maintenance intent.
+
 
 ---
 
 ## 4. Domain Responsibility and Authority Boundary
 
-Utils owns:
+Maintenance owns:
 
-- semantic identity of approved Utils maintenance operations;
-- Utils-specific target eligibility within DD-1.3 managed scope;
+- semantic identity of approved Maintenance maintenance operations;
+- Maintenance-specific target eligibility within DD-1.3 managed scope;
 - source-header maintenance policy above shared source capabilities;
 - expected-value derivation rules that are specific to the supported header convention;
-- classification of header findings for Utils use cases;
+- classification of header findings for Maintenance use cases;
 - field-level repair intent and preservation requirements;
 - source-file version increment policy and fallback decisions;
 - cleanup artefact class eligibility and operation-specific deletion policy;
-- interpretation of delegated evidence against Utils postconditions;
-- Utils-level no-op, partial and stale/conflict decisions.
+- interpretation of delegated evidence against Maintenance postconditions;
+- Maintenance-level no-op, partial and stale/conflict decisions.
 
 Authority retained elsewhere includes:
 
-| Authority | Owner | Utils relationship |
+| Authority | Owner | Maintenance relationship |
 |---|---|---|
 | invocation normalization | DD-1.1 | consume |
 | canonical outcomes/effects/cancellation | DD-1.2 | contribute domain evidence |
 | managed project and managed scope | DD-1.3 | consume; never rediscover authority |
 | effective configuration/provenance | DD-1.4 | consume |
-| final application coordination/acceptance | DD-1.5 | retained above Utils |
+| final application coordination/acceptance | DD-1.5 | retained above Maintenance |
 | bounded resource mechanics | DD-2.1 | delegate |
-| repository facts/primitives | DD-2.3 / DD-3.2 | consume facts only for Utils-owned intent |
+| repository facts/primitives | DD-2.3 / DD-3.2 | consume facts only for Maintenance-owned intent |
 | source recognition/structural facts | DD-2.4 | consume |
 | bounded source transformation | DD-2.5 | delegate mutation/validation mechanics |
 | AI execution | DD-2.7 | consume optional proposal evidence |
@@ -140,41 +138,61 @@ Authority retained elsewhere includes:
 | Settings metadata management | DD-4.2 | delegate/consume resolved values |
 | AI-domain resources | DD-4.3 | no ownership transfer |
 
-**DD-UTIL-004 — Namespace is not authority**  
-The presence of a `utils` command, legacy service, scanner, strategy or compatibility alias shall not establish semantic ownership.
+<a id="dd-util-004"></a>
 
-**DD-UTIL-005 — Maintenance evidence does not expand intent**  
-Discovery of additional defects, changed files or cleanup artefacts shall not expand the selected operation beyond its approved scope.
+**DD-UTIL-004 — Namespace is not authority**
+
+Legacy `utils` names, services, scanners and strategies are evaluated under [Design](../appmanager-design-specification-v01.md#_10-9-maintenance-domain).
+
+<a id="dd-util-005"></a>
+
+**DD-UTIL-005 — Maintenance evidence does not expand intent**
+
+Newly discovered defects/files/artefacts remain subject to [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042).
+
 
 ---
 
 ## 5. Consumed DD-1 Application Core Contracts
 
-| DD-1 contract | Utils use |
+| DD-1 contract | Maintenance use |
 |---|---|
 | DD-1.1 Application Invocation | receives operation identity, explicit target/scope, mode, preview/repair intent, authorization and cancellation linkage |
-| DD-1.2 Execution Outcomes | represents Utils findings, warnings, effects, no-op, partial, failure and cancellation beneath canonical outcomes |
+| DD-1.2 Execution Outcomes | represents Maintenance findings, warnings, effects, no-op, partial, failure and cancellation beneath canonical outcomes |
 | DD-1.3 Managed Project | supplies authoritative project identity, topology, targetability and upper-bound managed scope |
 | DD-1.4 Configuration Resolution | supplies effective header, validation, cleanup, AI-assistance and maintenance policy where configurable |
 | DD-1.5 Application Engine | coordinates use-case execution and retains final acceptance |
 
-**DD-UTIL-006 — Managed scope is authoritative**  
-Utils shall consume DD-1.3 managed scope and shall not infer mutation or deletion authority from current working directory, recursive discovery or repository membership alone.
+<a id="dd-util-006"></a>
 
-**DD-UTIL-007 — Effective policy is consumed**  
-Configurable maintenance behavior shall consume DD-1.4 effective configuration rather than independently applying competing environment, file or default precedence.
+**DD-UTIL-006 — Managed scope is authoritative**
 
-**DD-UTIL-008 — Canonical outcomes remain DD-1.2-owned**  
-Utils-specific results shall refine the requested maintenance operation and affected targets without introducing a competing generic outcome envelope.
+Maintenance context/targets bind [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) and [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) to DD-1.3.
 
-**DD-UTIL-009 — Final acceptance remains DD-1.5-owned**  
-Utils may determine domain-level postcondition satisfaction; the Application Engine retains final application acceptance and publication.
+<a id="dd-util-007"></a>
+
+**DD-UTIL-007 — Effective policy is consumed**
+
+Maintenance policy consumes [DD-1.4 resolution results](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result).
+
+<a id="dd-util-008"></a>
+
+**DD-UTIL-008 — Canonical outcomes remain DD-1.2-owned**
+
+Maintenance operation/target evidence composes [DD-1.2 outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
+
+<a id="dd-util-009"></a>
+
+**DD-UTIL-009 — Final acceptance remains DD-1.5-owned**
+
+Maintenance postcondition interpretation returns to [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) for final acceptance/publication.
+
 
 ---
 
 ## 6. Consumed DD-2 Shared Capabilities
 
-| DD-2 capability | Utils use |
+| DD-2 capability | Maintenance use |
 |---|---|
 | DD-2.1 Resource Access | bounded snapshots, reads and authorized resource deletion/write mechanics where appropriate |
 | DD-2.3 Repository Capability | changed-file, diff and repository identity evidence for source-file maintenance |
@@ -182,46 +200,62 @@ Utils may determine domain-level postcondition satisfaction; the Application Eng
 | DD-2.5 Source Transformation | bounded repair/version transformation planning, preview, stale checks, execution and source validation |
 | DD-2.7 AI Capability | optional increment/revision-note or narrow metadata proposal evidence |
 
-DD-2.8 Quality Capability may consume or coexist with Utils validation evidence, but Utils header validation does not become a generic Quality check/gate authority merely because both produce findings.
+DD-2.8 Quality Capability may consume or coexist with Maintenance validation evidence, but Maintenance header validation does not become a generic Quality check/gate authority merely because both produce findings.
 
-**DD-UTIL-010 — Recognition stays read-only**  
-Source Intelligence facts shall not be treated as repair authorization or transformation intent.
+<a id="dd-util-010"></a>
 
-**DD-UTIL-011 — Transformation mechanics stay delegated**  
-Utils shall supply maintenance intent, target scope, expected postconditions and preservation constraints to DD-2.5 rather than reimplement source-edit mechanics.
+**DD-UTIL-010 — Recognition stays read-only**
 
-**DD-UTIL-012 — Repository facts do not transfer Git authority**  
-Changed-file and diff evidence may inform Utils eligibility/classification but shall not authorize staging, commit, push, synchronization, remote management or other Git-domain effects.
+DD-2.4 facts are consumed under [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
-**DD-UTIL-013 — AI proposals are non-authoritative**  
-AI classification, metadata or revision-note output shall remain proposal evidence subject to Utils policy and validation.
+<a id="dd-util-011"></a>
 
-**DD-UTIL-014 — Capability composition preserves separate ownership**  
-Combining Resource Access, Repository, Source Intelligence, Source Transformation and AI capabilities shall not create a generic Utils capability framework or transfer their permanent semantic ownership into Utils.
+**DD-UTIL-011 — Transformation mechanics stay delegated**
+
+Maintenance intent/postconditions/preservation constraints bind [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033) to DD-2.5.
+
+<a id="dd-util-012"></a>
+
+**DD-UTIL-012 — Repository facts do not transfer Git authority**
+
+Repository change/diff evidence follows [FR-UTIL-069](../functional/utils-functional-specification-v01.md#fr-util-069) and [FR-UTIL-097](../functional/utils-functional-specification-v01.md#fr-util-097).
+
+<a id="dd-util-013"></a>
+
+**DD-UTIL-013 — AI proposals are non-authoritative**
+
+AI classification/metadata/revision-note proposals follow [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="dd-util-014"></a>
+
+**DD-UTIL-014 — Capability composition preserves separate ownership**
+
+The §6 collaborations apply [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); their shared mechanics do not establish a Maintenance framework.
+
 
 ---
 
 ## 7. Domain Contract Model
 
-A Utils operation is conceptually defined by:
+A Maintenance operation is conceptually defined by:
 
 ```text
-Utils maintenance intent
+Maintenance maintenance intent
     + authoritative managed scope
     + effective maintenance policy
     + current target evidence
     + explicit mutation/deletion authorization where required
-        -> Utils decision/orchestration
+        -> Maintenance decision/orchestration
         -> bounded delegated capability work
-        -> Utils postcondition interpretation
+        -> Maintenance postcondition interpretation
         -> DD-1 application acceptance
 ```
 
 This is a semantic responsibility model, not a required implementation pipeline.
 
-A Utils operation record shall distinguish at least:
+A Maintenance operation record shall distinguish at least:
 
-- operation family: header inspect/validate, header repair, narrow package repair, source-file version maintenance, utility cleanup, compatibility delegation;
+- canonical operation identity from the [four-command Maintenance catalogue](../functional/utils-functional-specification-v01.md); narrow package repair is subordinate approved maintenance behavior and compatibility routes are not additional Maintenance commands;
 - selected target/scope;
 - read-only versus consequential intent;
 - effective policy relevant to the operation;
@@ -230,24 +264,48 @@ A Utils operation record shall distinguish at least:
 - proposed effects where consequential;
 - authorization/preview state where applicable;
 - per-target delegated evidence;
-- Utils-domain postcondition state.
+- Maintenance-domain postcondition state.
+
+<a id="dd-util-015"></a>
 
 **DD-UTIL-015 — Operation identity precedes mechanics**  
-The maintenance operation shall be identified semantically before choosing scanners, parsers, transformation strategies, deletion primitives or AI providers.
+The maintenance operation shall be identified semantically before choosing scanners, parsers, transformation strategies or deletion primitives. Existing optional AI proposal paths remain optional; coordinated operation introduces no AI dependency.
 
-**DD-UTIL-016 — Findings are not execution failures**  
-A successfully executed validation that discovers invalid source shall distinguish those findings from inability to perform the validation.
+<a id="dd-util-016"></a>
+
+**DD-UTIL-016 — Findings are not execution failures**
+
+Validation findings apply [FR-UTIL-102](../functional/utils-functional-specification-v01.md#fr-util-102).
+
+<a id="dd-util-017"></a>
 
 **DD-UTIL-017 — Expected values require provenance**  
 Project identity, file identity, author identity, package name, current version and other expected values shall be derived from authoritative project/configuration/domain evidence rather than invented by a scanner or transformation provider.
 
-**DD-UTIL-018 — Per-target state remains attributable**  
-Multi-target operations shall retain target identity, observed state, decision, effect and postcondition evidence sufficiently to report partial completion truthfully.
+<a id="dd-util-018"></a>
 
-**DD-UTIL-019 — No-op is first-class**  
-Already-valid headers, unchanged repairs, no eligible changed files and empty cleanup sets shall be representable as intentional no-op/unchanged outcomes rather than synthetic mutation success.
+**DD-UTIL-018 — Per-target state remains attributable**
+
+Per-resource results bind [PBC-FR-MAINT-COORD-005](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-005) and [PBC-FR-MAINT-COORD-024](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-024), retaining observed state, decision and postcondition evidence alongside the attributed effects.
+
+<a id="dd-util-019"></a>
+
+**DD-UTIL-019 — No-op is first-class**
+
+No-op interpretation binds [FR-UTIL-055](../functional/utils-functional-specification-v01.md#fr-util-055), [FR-UTIL-037](../functional/utils-functional-specification-v01.md#fr-util-037) and [FR-UTIL-087](../functional/utils-functional-specification-v01.md#fr-util-087) to the local result model, including unchanged repair and no eligible changed files.
+
 
 ---
+
+### 7.1 Coordinated scope and classification {#coordinated-scope}
+
+Apply the stronger-owner gate in DD-UTIL-066 before accepting or planning Maintenance work. Supported cardinality is one resource, an explicit set, a semantic managed unit or the complete eligible managed scope. The target set is the intersection of DD-1 scope, Maintenance resource-class eligibility and operation applicability. Traversal/source discovery supplies evidence within that set.
+
+Before mutation, classify requested resources as consequentially eligible, already satisfied/no effect, ineligible/stronger-owned, unsupported, ambiguous, protected, outside scope or stale/unresolved as applicable. Generative inference cannot turn ambiguous evidence into authority.
+
+### 7.2 Coordinated resource plan {#coordinated-plan}
+
+For each consequential resource, retain its stable managed identity, Maintenance class, recognized current/defect/disposable state, operation-specific proposed effect, revision preconditions, preservation/protection requirements, validation/acceptance criteria and relevant dependencies/continuation policy. Freeze the plan for the consequential stage or invalidate/re-resolve an item when authority/safety-relevant facts become stale.
 
 ## 8. Use-Case Orchestration
 
@@ -263,32 +321,56 @@ resolve invocation and managed scope
     -> evaluate header convention rules
     -> classify per-file findings
     -> aggregate required validation state
-    -> return Utils validation evidence
+    -> return Maintenance validation evidence
 ```
 
-**DD-UTIL-020 — Inspection is non-mutating**  
-Header check/validation shall terminate without source mutation, even when deterministic repairs are obvious.
+<a id="dd-util-020"></a>
 
-**DD-UTIL-021 — Eligibility is operation-relative**  
-Only supported managed source files within the selected scope and effective inclusion/exclusion policy shall be inspected as required targets.
+**DD-UTIL-020 — Inspection is non-mutating**
 
-**DD-UTIL-022 — Exclusions remain effective**  
-Generated output, dependencies, caches, repository internals and other excluded resources shall not become Utils mutation candidates merely because Source Intelligence can recognize them.
+Header checking/validation follows [FR-UTIL-014](../functional/utils-functional-specification-v01.md#fr-util-014) even when a repair is obvious.
 
-**DD-UTIL-023 — Header states remain distinct**  
-Missing, malformed, valid-but-inconsistent, valid, unsupported and failed-inspection states shall remain distinguishable where supported by evidence.
+<a id="dd-util-021"></a>
 
-**DD-UTIL-024 — Creation metadata is preservation-sensitive**  
-Validation may identify missing or inconsistent creation metadata, but ordinary repair shall preserve existing original creation date/time unless explicit approved policy authorizes establishing missing creation metadata.
+**DD-UTIL-021 — Eligibility is operation-relative**
 
-**DD-UTIL-025 — Revision history is not disposable metadata**  
-Valid existing revision-history evidence shall be preserved and interpreted according to the source-header convention rather than regenerated wholesale for convenience.
+Required inspection targets follow [FR-UTIL-025](../functional/utils-functional-specification-v01.md#fr-util-025).
 
-**DD-UTIL-026 — Aggregate success requires required targets to satisfy policy**  
-An aggregate validation shall not report a passing Utils-domain state while required inspected targets retain unresolved validation failures.
+<a id="dd-util-022"></a>
 
-**DD-UTIL-027 — Empty eligibility is distinct from validated content**  
-A valid scope with no eligible source files shall remain distinguishable from successful validation of one or more files.
+**DD-UTIL-022 — Exclusions remain effective**
+
+Recognized source candidates retain the exclusions in [FR-PROJ-047](../functional/managed-project-functional-specification-v01.md#fr-proj-047).
+
+<a id="dd-util-023"></a>
+
+**DD-UTIL-023 — Header states remain distinct**
+
+Header state interpretation follows [FR-UTIL-035](../functional/utils-functional-specification-v01.md#fr-util-035).
+
+<a id="dd-util-024"></a>
+
+**DD-UTIL-024 — Creation metadata is preservation-sensitive**
+
+Creation metadata follows [FR-UTIL-030](../functional/utils-functional-specification-v01.md#fr-util-030).
+
+<a id="dd-util-025"></a>
+
+**DD-UTIL-025 — Revision history is not disposable metadata**
+
+Revision-history preservation follows [FR-UTIL-031](../functional/utils-functional-specification-v01.md#fr-util-031).
+
+<a id="dd-util-026"></a>
+
+**DD-UTIL-026 — Aggregate success requires required targets to satisfy policy**
+
+Aggregate validation follows [FR-UTIL-036](../functional/utils-functional-specification-v01.md#fr-util-036).
+
+<a id="dd-util-027"></a>
+
+**DD-UTIL-027 — Empty eligibility is distinct from validated content**
+
+Empty eligibility follows [FR-UTIL-037](../functional/utils-functional-specification-v01.md#fr-util-037).
 
 ### 8.2 Header Repair
 
@@ -307,52 +389,88 @@ fresh inspection/validation
     -> re-evaluate header-maintenance postconditions
 ```
 
-**DD-UTIL-028 — Repair follows current facts**  
-Repair shall be based on current inspection evidence and shall not perform unconditional header replacement.
+<a id="dd-util-028"></a>
 
-**DD-UTIL-029 — Field-level repair is preferred**  
-Where a defect is field-bounded, Utils shall request only the change required to satisfy that field's approved maintenance rule and preserve unrelated valid content.
+**DD-UTIL-028 — Repair follows current facts**
 
-**DD-UTIL-030 — Missing fields are not synthesized by implication**  
-Detecting an absent semantic field shall not authorize adding it unless the applicable repair policy explicitly permits establishment of that field.
+Current-defect repair follows [FR-UTIL-045](../functional/utils-functional-specification-v01.md#fr-util-045) and [FR-UTIL-046](../functional/utils-functional-specification-v01.md#fr-util-046). Each coordinated DD-2.5 plan binds [PBC-FR-MAINT-COORD-008](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-008), [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068) and [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) to its own revision, preservation and post-validation evidence; one stale/failed resource does not authorize broader rewriting.
 
-**DD-UTIL-031 — Author identity is never fabricated**  
-Where author maintenance requires a resolved identity and none is authoritative, the operation shall report the limitation rather than invent an author.
+<a id="dd-util-029"></a>
 
-**DD-UTIL-032 — Version repair follows the convention's authority relation**  
-Where revision history is authoritative for declared source-file version, Utils may synchronize the declared version to the highest applicable recognized history version but shall not invent history events to justify a value.
+**DD-UTIL-029 — Field-level repair is preferred**
 
-**DD-UTIL-033 — Unchanged files are not rewritten**  
-A repair plan shall contain no write effect for a target whose current state already satisfies the requested maintenance intent.
+Field-bounded repair follows [FR-UTIL-047](../functional/utils-functional-specification-v01.md#fr-util-047).
 
-**DD-UTIL-034 — Source-valid is not Utils-accepted**  
-DD-2.5 source-level validation is required evidence for changed source, but Utils shall additionally establish that the requested header-maintenance postcondition is satisfied.
+<a id="dd-util-030"></a>
+
+**DD-UTIL-030 — Missing fields are not synthesized by implication**
+
+Absent-field establishment follows [FR-UTIL-049](../functional/utils-functional-specification-v01.md#fr-util-049).
+
+<a id="dd-util-031"></a>
+
+**DD-UTIL-031 — Author identity is never fabricated**
+
+Author repair follows [FR-UTIL-052](../functional/utils-functional-specification-v01.md#fr-util-052).
+
+<a id="dd-util-032"></a>
+
+**DD-UTIL-032 — Version repair follows the convention's authority relation**
+
+Declared source-version repair follows [FR-UTIL-053](../functional/utils-functional-specification-v01.md#fr-util-053) and [FR-UTIL-054](../functional/utils-functional-specification-v01.md#fr-util-054).
+
+<a id="dd-util-033"></a>
+
+**DD-UTIL-033 — Unchanged files are not rewritten**
+
+Satisfied repair targets follow [FR-UTIL-055](../functional/utils-functional-specification-v01.md#fr-util-055).
+
+<a id="dd-util-034"></a>
+
+**DD-UTIL-034 — Source-valid is not Maintenance-accepted**
+
+Changed source supplies [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) evidence, then satisfies the Maintenance postcondition in [FR-UTIL-057](../functional/utils-functional-specification-v01.md#fr-util-057).
 
 ### 8.3 Narrow Package-Metadata Repair
 
-Package metadata repair is permitted only as a bounded part of the approved Utils validation/maintenance use case.
+Package metadata repair is permitted only as a bounded part of the approved Maintenance validation/maintenance use case.
 
-**DD-UTIL-035 — Narrow exception does not transfer Settings ownership**  
-Utils may diagnose and, under explicit repair intent, correct a deterministically derivable package naming mismatch only within the approved maintenance use case; general package/application metadata CRUD remains Settings-owned.
+<a id="dd-util-035"></a>
 
-**DD-UTIL-036 — Deterministic derivation is preferred**  
-Where the expected package name follows unambiguously from authoritative managed-project facts and approved convention, Utils may propose that value without AI.
+**DD-UTIL-035 — Narrow exception does not transfer Settings ownership**
 
-**DD-UTIL-037 — Manual values remain validated**  
-An interactively supplied replacement shall be validated against applicable package/maintenance constraints before transformation.
+The narrow package-name repair path applies [FR-UTIL-042](../functional/utils-functional-specification-v01.md#fr-util-042) and [FR-UTIL-065](../functional/utils-functional-specification-v01.md#fr-util-065).
 
-**DD-UTIL-038 — AI suggestion cannot resolve authority ambiguity**  
-AI may suggest a package name or description where retained, but shall not convert an ambiguous expected identity into authoritative project truth.
+<a id="dd-util-036"></a>
 
-**DD-UTIL-039 — AI unavailability preserves deterministic/manual paths**  
-Failure or absence of optional AI assistance shall not invalidate an otherwise valid deterministic or manually supplied repair path.
+**DD-UTIL-036 — Deterministic derivation is preferred**
+
+Deterministic package repair follows [FR-UTIL-060](../functional/utils-functional-specification-v01.md#fr-util-060).
+
+<a id="dd-util-037"></a>
+
+**DD-UTIL-037 — Manual values remain validated**
+
+Manual package replacement follows [FR-UTIL-061](../functional/utils-functional-specification-v01.md#fr-util-061) before transformation.
+
+<a id="dd-util-038"></a>
+
+**DD-UTIL-038 — AI suggestion cannot resolve authority ambiguity**
+
+AI package proposals apply [FR-UTIL-062](../functional/utils-functional-specification-v01.md#fr-util-062), [FR-UTIL-044](../functional/utils-functional-specification-v01.md#fr-util-044) and [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="dd-util-039"></a>
+
+**DD-UTIL-039 — AI unavailability preserves deterministic/manual paths**
+
+Optional AI availability follows [FR-UTIL-063](../functional/utils-functional-specification-v01.md#fr-util-063).
 
 ### 8.4 Automatic Source-File Version Maintenance
 
 The semantic flow is:
 
 ```text
-resolve Utils version-maintenance intent
+resolve Maintenance version-maintenance intent
     -> obtain authoritative changed-file set / bounded diff evidence
     -> intersect with managed scope and eligible header-bearing source
     -> validate current source-file version/history state
@@ -362,38 +480,68 @@ resolve Utils version-maintenance intent
     -> construct coherent version + revision-history transformation
     -> preview/authorize where required
     -> transform and validate each file
-    -> aggregate per-file Utils acceptance
+    -> aggregate per-file Maintenance acceptance
 ```
 
-**DD-UTIL-040 — Changed-file set is explicit evidence**  
-Auto-versioning shall operate on an established changed eligible set and shall not infer that every discovered source file requires a version increment.
+<a id="dd-util-040"></a>
 
-**DD-UTIL-041 — Source-file version is not application version**  
-The source-header version maintained here shall remain semantically distinct from Settings-managed application/package version metadata and any future release workflow.
+**DD-UTIL-040 — Changed-file set is explicit evidence**
 
-**DD-UTIL-042 — Eligible version metadata is required**  
-Auto-versioning shall not silently introduce the source-file version convention into a file that lacks the required recognized version metadata.
+The changed eligible set follows [FR-UTIL-068](../functional/utils-functional-specification-v01.md#fr-util-068). Coordinated plans bind [PBC-FR-MAINT-COORD-008](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-008) to each resource's recognized current version/history and proposed transition; one resource's version state is not another's evidence.
 
-**DD-UTIL-043 — Increment classes remain semantic**  
-Major, Minor and Patch are semantic increment classes; the design does not prescribe one parsing library, storage syntax or increment function.
+<a id="dd-util-041"></a>
 
-**DD-UTIL-044 — AI classification is optional evidence**  
-An AI-proposed increment or revision note shall be validated as bounded proposal evidence and shall not itself authorize source mutation.
+**DD-UTIL-041 — Source-file version is not application version**
 
-**DD-UTIL-045 — Safe fallback is policy-governed**  
-When usable AI classification is absent, Patch may be selected only where the effective Utils policy permits that safe fallback and no stronger explicit decision is required.
+Source-file version identity follows [FR-UTIL-067](../functional/utils-functional-specification-v01.md#fr-util-067).
 
-**DD-UTIL-046 — Invalid current versions fail safely**  
-Malformed or unsupported current version/history state shall prevent blind increment of the affected file.
+<a id="dd-util-042"></a>
 
-**DD-UTIL-047 — Version and history remain coherent**  
-Where the convention requires both declared version and revision-history update, an accepted transformation shall satisfy both as one Utils postcondition even if the underlying edit plan contains multiple bounded edits.
+**DD-UTIL-042 — Eligible version metadata is required**
 
-**DD-UTIL-048 — Revision notes are change-relative**  
-A generated or supplied revision note shall relate to the actual bounded source-file change and shall not claim unrelated project activity.
+Missing required version metadata follows [FR-UTIL-070](../functional/utils-functional-specification-v01.md#fr-util-070).
 
-**DD-UTIL-049 — Per-file isolation is explicit**  
-One file's classification or transformation failure shall not automatically cancel unrelated eligible files unless the effective operation policy explicitly selects fail-fast behavior.
+<a id="dd-util-043"></a>
+
+**DD-UTIL-043 — Increment classes remain semantic**
+
+Increment classes follow [FR-UTIL-072](../functional/utils-functional-specification-v01.md#fr-util-072). Parsing library, storage syntax and increment implementation remain below this semantic contract.
+
+<a id="dd-util-044"></a>
+
+**DD-UTIL-044 — AI classification is optional evidence**
+
+Increment/revision-note proposals apply [FR-UTIL-073](../functional/utils-functional-specification-v01.md#fr-util-073) and [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="dd-util-045"></a>
+
+**DD-UTIL-045 — Safe fallback is policy-governed**
+
+Patch fallback follows [FR-UTIL-075](../functional/utils-functional-specification-v01.md#fr-util-075).
+
+<a id="dd-util-046"></a>
+
+**DD-UTIL-046 — Invalid current versions fail safely**
+
+Invalid current version follows [FR-UTIL-076](../functional/utils-functional-specification-v01.md#fr-util-076). Unsupported/malformed history required by the convention shall likewise prevent blind increment.
+
+<a id="dd-util-047"></a>
+
+**DD-UTIL-047 — Version and history remain coherent**
+
+Version/history acceptance follows [FR-UTIL-077](../functional/utils-functional-specification-v01.md#fr-util-077) as one Maintenance postcondition even when DD-2.5 uses multiple bounded edits.
+
+<a id="dd-util-048"></a>
+
+**DD-UTIL-048 — Revision notes are change-relative**
+
+Revision-note scope follows [FR-UTIL-078](../functional/utils-functional-specification-v01.md#fr-util-078).
+
+<a id="dd-util-049"></a>
+
+**DD-UTIL-049 — Per-file isolation is explicit**
+
+Per-file continuation follows [FR-UTIL-079](../functional/utils-functional-specification-v01.md#fr-util-079).
 
 ### 8.5 Temporary/Test/Log Artefact Cleanup
 
@@ -408,52 +556,89 @@ resolve cleanup intent and managed scope
     -> obtain consequential authorization
     -> delete bounded eligible targets
     -> record per-target effect evidence
-    -> aggregate Utils cleanup acceptance
+    -> aggregate Maintenance cleanup acceptance
 ```
 
-**DD-UTIL-050 — Cleanup is narrower than App clean/reset**  
-Utils cleanup shall target only recognized maintenance/test/log artefact classes defined for this use case and shall not absorb App-owned build, cache, dependency clean or reset semantics.
+<a id="dd-util-050"></a>
 
-**DD-UTIL-051 — Cleanup discovery is read-only**  
-Candidate discovery shall not itself delete, truncate or modify resources.
+**DD-UTIL-050 — Cleanup is narrower than App clean/reset**
 
-**DD-UTIL-052 — Cleanup policy is bounded**  
-Configurable locations, names or patterns may refine eligible classes but shall not create unrestricted recursive-delete authority or escape DD-1.3 managed scope.
+Cleanup eligibility follows [FR-UTIL-082](../functional/utils-functional-specification-v01.md#fr-util-082) and [FR-UTIL-083](../functional/utils-functional-specification-v01.md#fr-util-083).
 
-**DD-UTIL-053 — Empty cleanup is no-op**  
-No eligible artefacts shall produce an already-clean/no-op interpretation without requiring destructive confirmation.
+<a id="dd-util-051"></a>
 
-**DD-UTIL-054 — Preview precedes authorization where required**  
-The operation shall expose candidate identities or sufficiently precise classes/counts before consequential deletion according to invocation policy.
+**DD-UTIL-051 — Cleanup discovery is read-only**
 
-**DD-UTIL-055 — Deletion authorization is explicit**  
-Interactive deletion requires applicable confirmation; Headless deletion requires explicit non-interactive authorization before effects begin.
+Discovery follows [FR-UTIL-086](../functional/utils-functional-specification-v01.md#fr-util-086). Candidate classification binds [PBC-FR-MAINT-COORD-021](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-021) and [FR-UTIL-083](../functional/utils-functional-specification-v01.md#fr-util-083) to the planned set; stabilization follows [PBC-FR-MAINT-COORD-023](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-023). New candidates may join only through explicit policy.
 
-**DD-UTIL-056 — Arbitrary paths are not cleanup policy**  
-Caller-supplied unrestricted paths shall not transform the bounded cleanup operation into a generic delete command.
+<a id="dd-util-052"></a>
 
-**DD-UTIL-057 — Race-safe absence is not false failure**  
-An eligible target that disappears between observation and deletion may be interpreted as already absent/no-op where other error evidence does not contradict that interpretation.
+**DD-UTIL-052 — Cleanup policy is bounded**
 
-**DD-UTIL-058 — Cleanup effects remain per-target**  
-Multi-target cleanup shall retain removed, already-absent, skipped, failed and indeterminate states where applicable rather than collapsing them into a single Boolean.
+Configurable cleanup policy follows [FR-UTIL-084](../functional/utils-functional-specification-v01.md#fr-util-084) and [FR-UTIL-094](../functional/utils-functional-specification-v01.md#fr-util-094).
+
+<a id="dd-util-053"></a>
+
+**DD-UTIL-053 — Empty cleanup is no-op**
+
+Empty cleanup follows [FR-UTIL-087](../functional/utils-functional-specification-v01.md#fr-util-087).
+
+<a id="dd-util-054"></a>
+
+**DD-UTIL-054 — Preview precedes authorization where required**
+
+Deletion preview follows [FR-UTIL-088](../functional/utils-functional-specification-v01.md#fr-util-088).
+
+<a id="dd-util-055"></a>
+
+**DD-UTIL-055 — Deletion authorization is explicit**
+
+Cleanup deletion follows [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023) and [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022).
+
+<a id="dd-util-056"></a>
+
+**DD-UTIL-056 — Arbitrary paths are not cleanup policy**
+
+Cleanup selectors follow [PBC-FR-MAINT-003](../functional/utils-functional-specification-v01.md#pbc-fr-maint-003).
+
+<a id="dd-util-057"></a>
+
+**DD-UTIL-057 — Race-safe absence is not false failure**
+
+Race-safe absence follows [FR-UTIL-092](../functional/utils-functional-specification-v01.md#fr-util-092).
+
+<a id="dd-util-058"></a>
+
+**DD-UTIL-058 — Cleanup effects remain per-target**
+
+Cleanup result states apply [FR-UTIL-091](../functional/utils-functional-specification-v01.md#fr-util-091); uncertainty follows [DD-UTIL-085](#dd-util-085).
 
 ### 8.6 Compatibility Delegation
 
-**DD-UTIL-059 — Auto-documentation delegates to Docs**  
-A retained `utils.autoDoc`-style surface shall invoke the Docs-owned use case and return/project its semantics; Utils shall not independently interpret documentation success.
+<a id="dd-util-059"></a>
 
-**DD-UTIL-060 — Contributor management delegates to Settings**  
-A retained `utils.addContributor`-style surface shall invoke Settings-owned contributor semantics rather than maintaining a separate Utils contributor contract.
+**DD-UTIL-059 — Auto-documentation delegates to Docs**
 
-**DD-UTIL-061 — Delegation is transparent in authority terms**  
-Compatibility routing may preserve user-facing discoverability, but application semantics, validation and acceptance remain with the stronger owning domain.
+A retained `utils.autoDoc` alias routes directly to [FR-DOCS-100](../functional/docs-functional-specification-v01.md#fr-docs-100) under [FR-UTIL-005](../functional/utils-functional-specification-v01.md#fr-util-005).
+
+<a id="dd-util-060"></a>
+
+**DD-UTIL-060 — Contributor management delegates to Settings**
+
+A retained `utils.addContributor` alias routes directly to [FR-SET-072](../functional/settings-functional-specification-v01.md#fr-set-072) under [FR-UTIL-005](../functional/utils-functional-specification-v01.md#fr-util-005).
+
+<a id="dd-util-061"></a>
+
+**DD-UTIL-061 — Delegation is transparent in authority terms**
+
+Compatibility discoverability follows [FR-UTIL-005](../functional/utils-functional-specification-v01.md#fr-util-005).
+
 
 ---
 
 ## 9. Domain State and State Transitions
 
-Utils does not require one persistent global state machine. Each operation has transient domain state sufficient to preserve the distinctions required for safe maintenance.
+Maintenance does not require one persistent global state machine. Each operation has transient domain state sufficient to preserve the distinctions required for safe maintenance.
 
 A consequential maintenance target may progress conceptually through:
 
@@ -471,42 +656,73 @@ scope-resolved
 
 A read-only validation target terminates after observation/classification and aggregate interpretation.
 
+<a id="dd-util-062"></a>
+
 **DD-UTIL-062 — State progression does not manufacture authority**  
 Observation or classification shall not imply proposal, authorization or execution state.
+
+<a id="dd-util-063"></a>
 
 **DD-UTIL-063 — Revision evidence binds consequential decisions**  
 Where repair/version plans depend on observed source state, the plan shall retain sufficient revision/precondition evidence for DD-2.5 stale-state checks.
 
-**DD-UTIL-064 — Cleanup observation and deletion remain distinct**  
-A discovered cleanup candidate shall remain merely eligible evidence until deletion authorization and bounded resource execution occur.
+<a id="dd-util-064"></a>
 
-**DD-UTIL-065 — Completed effects survive later failure**  
-Per-target state shall preserve completed writes/deletions when a later target fails, is cancelled or becomes indeterminate.
+**DD-UTIL-064 — Cleanup observation and deletion remain distinct**
+
+Observed candidates follow [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) until the cleanup authorization and resource-execution stages.
+
+<a id="dd-util-065"></a>
+
+**DD-UTIL-065 — Completed effects survive later failure**
+
+Per-target completed effects follow [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
+
 
 ---
 
 ## 10. Domain Policy and Decision Rules
 
+<a id="dd-util-066"></a>
+
 **DD-UTIL-066 — Stronger ownership wins**  
-If an operation can be expressed as an already-approved Docs, Settings, Git, App, Quality, AI, Nuxt or other domain use case without losing its primary intent, Utils shall delegate or decline ownership rather than duplicate it.
+Apply the [Design Maintenance boundary](../appmanager-design-specification-v01.md#_10-9-maintenance-domain) before accepting an operation or constructing its plan. App clean/reset/prepare, Nuxt cleanup/upgrade, Git, Docs, Quality, Settings and AI intents remain with those owners. A bounded header/source-version/disposable-resource operation is not a route to generic editing, deletion or process execution.
+
+<a id="dd-util-067"></a>
 
 **DD-UTIL-067 — Physical resemblance is insufficient eligibility**  
-A file that looks like source, a directory that looks temporary or metadata that resembles a known field shall not become an eligible Utils target without applicable scope/classification policy.
+A file that looks like source, a directory that looks temporary or metadata that resembles a known field shall not become an eligible Maintenance target without applicable scope/classification policy.
 
-**DD-UTIL-068 — Unsupported and ambiguous remain explicit**  
-Unsupported source or ambiguous expected values shall be reported rather than rewritten under guessed semantics.
+<a id="dd-util-068"></a>
 
-**DD-UTIL-069 — Validation policy is distinct from Quality gating**  
-Utils may determine whether its own maintenance postconditions pass, but it shall not infer project-wide quality-gate success from header validation.
+**DD-UTIL-068 — Unsupported and ambiguous remain explicit**
 
-**DD-UTIL-070 — Settings identity scopes remain distinct**  
-Where Utils consumes resolved operator/author identity, it shall preserve the distinction between AppManager operator identity and managed-project author/contributor metadata.
+Unsupported source follows [FR-XFORM-008](../functional/source-transformation-functional-specification-v01.md#fr-xform-008) and [FR-XFORM-009](../functional/source-transformation-functional-specification-v01.md#fr-xform-009). Ambiguous expected values remain unresolved rather than guessed under [DD-UTIL-017](#dd-util-017).
 
-**DD-UTIL-071 — Warnings require explicit interpretation**  
-A warning shall not silently become pass/fail policy unless the specific Utils use case or effective configuration defines that interpretation.
+<a id="dd-util-069"></a>
 
-**DD-UTIL-072 — No hidden retry policy**  
-A delegated source, resource, repository or AI failure shall not authorize unbounded retries, fallback or broader mutation absent explicit effective policy.
+**DD-UTIL-069 — Validation policy is distinct from Quality gating**
+
+Maintenance postcondition validation follows [FR-UTIL-099](../functional/utils-functional-specification-v01.md#fr-util-099).
+
+<a id="dd-util-070"></a>
+
+**DD-UTIL-070 — Settings identity scopes remain distinct**
+
+Resolved identity consumption follows [FR-SET-023](../functional/settings-functional-specification-v01.md#fr-set-023). Contributor metadata retains its separate collection identity.
+
+<a id="dd-util-071"></a>
+
+**DD-UTIL-071 — Warnings require explicit interpretation**
+
+Maintenance warnings follow [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039).
+
+<a id="dd-util-072"></a>
+
+**DD-UTIL-072 — No hidden retry policy**
+
+Maintenance retry/fallback follows [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) and [FR-UTIL-105](../functional/utils-functional-specification-v01.md#fr-util-105).
+
 
 ---
 
@@ -521,134 +737,233 @@ recognition
     != authorization
     != delegated execution
     != technical success
-    != Utils acceptance
+    != Maintenance acceptance
     != application success
 ```
 
-**DD-UTIL-073 — Read-only means non-mutating**  
-Inspect, check and validate-only operations shall not mutate project resources.
+<a id="dd-util-073"></a>
 
-**DD-UTIL-074 — Mutation intent is explicit**  
-Repair, version update, package repair and cleanup deletion shall require explicit requested/authorized consequential intent.
+**DD-UTIL-073 — Read-only means non-mutating**
 
-**DD-UTIL-075 — Mutation remains target-bounded**  
-An authorized effect shall be restricted to targets and fields/resources necessary for the approved maintenance intent.
+Inspection/check/validate-only paths follow [FR-UTIL-014](../functional/utils-functional-specification-v01.md#fr-util-014).
 
-**DD-UTIL-076 — Preview does not authorize execution**  
-Producing a valid transformation/deletion preview establishes proposed effects only; authorization remains separately required where policy demands it.
+<a id="dd-util-074"></a>
 
-**DD-UTIL-077 — Stale source is revalidated**  
-Detectable material change between source observation/planning and mutation shall trigger revalidation, replanning or safe refusal rather than silent overwrite.
+**DD-UTIL-074 — Mutation intent is explicit**
 
-**DD-UTIL-078 — Cleanup scope cannot be configured away**  
-No cleanup pattern, alias or caller option may authorize deletion outside the managed scope and fixed safety boundary of the cleanup use case.
+Repair/version/package mutation follows [FR-UTIL-015](../functional/utils-functional-specification-v01.md#fr-util-015); cleanup deletion uses [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023) and [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022).
 
-**DD-UTIL-079 — Generated suggestions are inert**  
-AI-proposed names, versions, notes, paths or commands shall remain data until the owning Utils decision validates and separately authorizes any consequential effect.
+<a id="dd-util-075"></a>
+
+**DD-UTIL-075 — Mutation remains target-bounded**
+
+Effect bounds use [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014) for source and [FR-UTIL-084](../functional/utils-functional-specification-v01.md#fr-util-084) for cleanup.
+
+<a id="dd-util-076"></a>
+
+**DD-UTIL-076 — Preview does not authorize execution**
+
+Preview binds [DD-1.2 proposed effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview) to the transformation/deletion plan.
+
+<a id="dd-util-077"></a>
+
+**DD-UTIL-077 — Stale source is revalidated**
+
+Source revalidation follows [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068) and [FR-XFORM-069](../functional/source-transformation-functional-specification-v01.md#fr-xform-069).
+
+<a id="dd-util-078"></a>
+
+**DD-UTIL-078 — Cleanup scope cannot be configured away**
+
+Cleanup options remain constrained by [FR-UTIL-094](../functional/utils-functional-specification-v01.md#fr-util-094).
+
+<a id="dd-util-079"></a>
+
+**DD-UTIL-079 — Generated suggestions are inert**
+
+AI-suggested names, versions, notes, paths and commands follow [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
 ## 12. Failure, Cancellation, and Partial Effects
 
-**DD-UTIL-080 — Failure stage remains attributable**  
-Results shall distinguish scope/target resolution failure, unsupported source, validation finding, recognition failure, transformation failure, AI/provider failure, resource deletion failure, authorization failure and Utils/application rejection where applicable.
+<a id="dd-util-080"></a>
 
-**DD-UTIL-081 — Partial completion is first-class**  
-Multi-file repair, auto-version and cleanup operations shall report partial completion when some target effects complete and others do not.
+**DD-UTIL-080 — Failure stage remains attributable**
 
-**DD-UTIL-082 — No universal rollback claim**  
-Utils shall not claim rollback of completed source changes, provider requests or resource deletions unless the delegated mechanism actually provides and confirms it.
+Failures follow [FR-UTIL-101](../functional/utils-functional-specification-v01.md#fr-util-101). Recognition and resource deletion remain identifiable stages where applicable.
 
-**DD-UTIL-083 — Cancellation stops future effects**  
-Cancellation shall propagate through active delegated work where supported and prevent unstarted effects as soon as safely practical.
+<a id="dd-util-081"></a>
 
-**DD-UTIL-084 — Cancellation preserves completed effects**  
-Already completed writes/deletions remain explicit effects after cancellation and shall not be reported as though they never occurred.
+**DD-UTIL-081 — Partial completion is first-class**
+
+Multi-resource completion follows [FR-UTIL-020](../functional/utils-functional-specification-v01.md#fr-util-020) and [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-util-082"></a>
+
+**DD-UTIL-082 — No universal rollback claim**
+
+Source/provider/resource rollback claims follow [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046).
+
+<a id="dd-util-083"></a>
+
+**DD-UTIL-083 — Cancellation stops future effects**
+
+Cancellation follows [FR-UTIL-021](../functional/utils-functional-specification-v01.md#fr-util-021) and [DD-1.2 cancellation propagation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-util-084"></a>
+
+**DD-UTIL-084 — Cancellation preserves completed effects**
+
+Completed writes/deletions follow [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
+
+<a id="dd-util-085"></a>
 
 **DD-UTIL-085 — Indeterminate effects remain indeterminate**  
-If interruption or provider/resource failure leaves completion uncertain, Utils shall require verification or preserve uncertainty rather than guess success/failure.
+If interruption or provider/resource failure leaves completion uncertain, Maintenance shall require verification or preserve uncertainty rather than guess success/failure.
 
-**DD-UTIL-086 — Continuation policy is explicit**  
-Whether a multi-target operation continues after one target fails shall follow the requested/effective operation policy rather than incidental iteration behavior.
+<a id="dd-util-086"></a>
+
+**DD-UTIL-086 — Continuation policy is explicit**
+
+Independent later resources follow [PBC-FR-MAINT-COORD-027](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-027). Check cancellation before each new consequential resource effect and at other safe boundaries. Retain planned disposition, effect evidence, validation/acceptance and diagnostics using [DD-UTIL-018](#dd-util-018); shared effect interpretation is governed by [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
 
 ---
 
 ## 13. Headless and Interaction Independence
 
-**DD-UTIL-087 — Semantic contract is adapter-independent**  
-TUI, Headless and future adapters expressing equivalent Utils intent, scope, policy and authorization shall reach materially equivalent domain decisions.
+<a id="dd-util-087"></a>
 
-**DD-UTIL-088 — Headless never prompts**  
-Headless operation shall fail safely or return non-mutating diagnostic evidence when required target, repair policy, authorization or ambiguity resolution is absent.
+**DD-UTIL-087 — Semantic contract is adapter-independent**
 
-**DD-UTIL-089 — Interactive choices are presentation**  
-Menus for repair fields, package values, increment choices or cleanup confirmation shall project semantic choices already defined by the domain contract and shall not create TUI-only semantics.
+Maintenance adapter projections follow [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
-**DD-UTIL-090 — Machine-facing results are structured**  
-Headless callers shall determine operation state, findings and affected targets without parsing logs, provider prose or human-formatted summaries.
+<a id="dd-util-088"></a>
+
+**DD-UTIL-088 — Headless never prompts**
+
+Missing Headless targets, repair policy, authorization or disambiguation follows [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="dd-util-089"></a>
+
+**DD-UTIL-089 — Interactive choices are presentation**
+
+Repair-field/package/increment/cleanup choices use [FR-INV-019](../functional/application-invocation-functional-specification-v01.md#fr-inv-019) and the operation models in §7.
+
+<a id="dd-util-090"></a>
+
+**DD-UTIL-090 — Machine-facing results are structured**
+
+Maintenance findings and target outcomes follow [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021).
+
 
 ---
 
 ## 14. Concurrency, Idempotency, and Conflict Behaviour
 
+<a id="dd-util-091"></a>
+
 **DD-UTIL-091 — Freshness is checked at consequential boundaries**  
 Source/resource preconditions that can become stale shall be revalidated immediately before consequential execution where supported.
 
-**DD-UTIL-092 — Already-satisfied maintenance converges**  
-Repeating a repair against an already-correct target or cleanup against an already-absent eligible artefact should converge to no-op/unchanged semantics rather than manufacture new effects.
+<a id="dd-util-092"></a>
+
+**DD-UTIL-092 — Already-satisfied maintenance converges**
+
+Repeated satisfied repair/cleanup binds [FR-UTIL-055](../functional/utils-functional-specification-v01.md#fr-util-055) and [FR-UTIL-092](../functional/utils-functional-specification-v01.md#fr-util-092) to no-op interpretation.
+
+<a id="dd-util-093"></a>
 
 **DD-UTIL-093 — Auto-version is not blindly idempotent**  
 Source-file version maintenance shall not increment a file merely because the same command is repeated; a new increment requires applicable changed-file/change evidence under the effective policy.
 
-**DD-UTIL-094 — Concurrent changes are not silently overwritten**  
-Detectable concurrent source/resource changes shall be surfaced and deliberately handled rather than overwritten through stale assumptions.
+<a id="dd-util-094"></a>
 
-**DD-UTIL-095 — Multi-target ordering is not transactionality**  
-Deterministic or configured execution ordering does not imply all-or-nothing atomicity across independent files/resources.
+**DD-UTIL-094 — Concurrent changes are not silently overwritten**
+
+Concurrent source changes follow [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068) and [FR-XFORM-069](../functional/source-transformation-functional-specification-v01.md#fr-xform-069). Detectable resource changes shall likewise be surfaced and deliberately handled before effect execution.
+
+<a id="dd-util-095"></a>
+
+**DD-UTIL-095 — Multi-target ordering is not transactionality**
+
+Multi-target ordering applies [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046).
+
 
 ---
 
 ## 15. Security and Sensitive Information
 
+<a id="dd-util-096"></a>
+
 **DD-UTIL-096 — Content access is minimized**  
 Inspection, diagnostics and optional AI context shall use only content required for the requested maintenance decision.
 
-**DD-UTIL-097 — Sensitive values are not diagnostic payloads**  
-Known credentials, protected environment values and unrelated sensitive source content shall not be exposed merely because Utils scans or validates nearby resources.
+<a id="dd-util-097"></a>
 
-**DD-UTIL-098 — AI disclosure follows DD-2.7 policy**  
-Source/diff/header content supplied for optional AI classification shall satisfy the same managed-scope, minimization, trust and external-disclosure constraints as any other DD-2.7 request.
+**DD-UTIL-097 — Sensitive values are not diagnostic payloads**
+
+Nearby credentials/environment/sensitive source in diagnostics follows [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040).
+
+<a id="dd-util-098"></a>
+
+**DD-UTIL-098 — AI disclosure follows DD-2.7 policy**
+
+Optional source/diff/header AI context follows [FR-AI-057](../functional/ai-functional-specification-v01.md#fr-ai-057), [FR-AI-088](../functional/ai-functional-specification-v01.md#fr-ai-088), [FR-AI-090](../functional/ai-functional-specification-v01.md#fr-ai-090) and [FR-AI-096](../functional/ai-functional-specification-v01.md#fr-ai-096).
+
+<a id="dd-util-099"></a>
 
 **DD-UTIL-099 — Project content is untrusted data**  
-Instructions embedded in source comments, logs, temporary files or revision notes shall not redefine Utils scope, authorization, provider policy or application behavior.
+Instructions embedded in source comments, logs, temporary files or revision notes shall not redefine Maintenance scope, authorization, provider policy or application behavior.
 
-**DD-UTIL-100 — Cleanup paths are safety-sensitive**  
-Symlinks, indirection, path normalization or equivalent resource mechanisms shall not be permitted to escape the authorized cleanup boundary.
+<a id="dd-util-100"></a>
+
+**DD-UTIL-100 — Cleanup paths are safety-sensitive**
+
+Cleanup target normalization and symlink/indirection handling apply the [Resource Access indirection contract](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) to the authorized cleanup boundary.
+
 
 ---
 
 ## 16. Extensibility and Replaceability
 
-**DD-UTIL-101 — New utilities require ownership proof**  
-A future operation shall not be added to Utils merely because it is cross-cutting or convenient; its primary intent and absence of a stronger owner shall be established first.
+<a id="dd-util-101"></a>
 
-**DD-UTIL-102 — Source/provider replaceability is preserved**  
-Utils contracts shall not require one scanner, parser, AST/CST, regex strategy, Git provider, AI provider, transformation engine or filesystem implementation.
+**DD-UTIL-101 — New utilities require ownership proof**
+
+Future Maintenance placement follows [Design](../appmanager-design-specification-v01.md#_10-9-maintenance-domain) through [DD-UTIL-066](#dd-util-066).
+
+<a id="dd-util-102"></a>
+
+**DD-UTIL-102 — Source/provider replaceability is preserved**
+
+Scanner/parser/AST/CST/regex/Git/AI/transformation/filesystem substitution follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-util-103"></a>
 
 **DD-UTIL-103 — Header convention is semantic, not parser topology**  
 Stable semantic header fields/rules may be refined without making one comment syntax or parser representation the universal application contract unless separately approved.
 
-**DD-UTIL-104 — No generic maintenance framework by naming similarity**  
-Header repair, auto-version and cleanup shall not be collapsed into a generic `UtilityAction`/plugin framework merely because they share target/effect/result shapes.
+<a id="dd-util-104"></a>
 
-**DD-UTIL-105 — Implementation topology remains open**  
-This design does not require one service, class hierarchy, package, process, executable, plugin protocol or source-tree layout.
+**DD-UTIL-104 — No generic maintenance framework by naming similarity**
+
+Maintenance header repair, source-version and cleanup shapes apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
+
+<a id="dd-util-105"></a>
+
+**DD-UTIL-105 — Implementation topology remains open**
+
+Concrete service/class/package/process/executable/protocol/source-layout decisions follow [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
 ## 17. Testability and Conformance Requirements
 
-Core Utils policy shall be testable with deterministic substitutes for Resource Access, Repository Capability, Source Intelligence, Source Transformation and AI Capability.
+Core Maintenance policy shall be testable with deterministic substitutes for Resource Access, Repository Capability, Source Intelligence, Source Transformation and AI Capability.
 
 Tests shall cover at least:
 
@@ -679,14 +994,20 @@ Tests shall cover at least:
 - compatibility delegation preserving Docs/Settings semantics;
 - provider substitution behind shared capability contracts.
 
-**DD-UTIL-106 — Domain policy is independently testable**  
-Utils acceptance, eligibility, stronger-owner and continuation decisions shall be testable without requiring live Git hosts, AI providers or implementation-specific source services.
+<a id="dd-util-106"></a>
 
-**DD-UTIL-107 — Capability tests do not redefine Utils semantics**  
-Scanner, parser, Git, AI, transformation and filesystem integration tests may verify adapters/providers but shall not substitute for Utils-domain conformance tests.
+**DD-UTIL-106 — Domain policy is independently testable**  
+Maintenance acceptance, eligibility, stronger-owner and continuation decisions shall be testable without requiring live Git hosts, AI providers or implementation-specific source services.
+
+<a id="dd-util-107"></a>
+
+**DD-UTIL-107 — Capability tests do not redefine Maintenance semantics**
+Scanner, parser, Git, AI, transformation and filesystem integration tests may verify adapters/providers but shall not substitute for Maintenance-domain conformance tests.
+
+<a id="dd-util-108"></a>
 
 **DD-UTIL-108 — Ownership-boundary tests are mandatory design evidence**  
-Conformance testing shall include negative cases proving that Docs automation, contributor CRUD, Git workflow effects, App clean/reset, Quality gates and generic metadata management are not silently reintroduced as Utils authority.
+Conformance testing shall include negative cases proving that Docs automation, contributor CRUD, Git workflow effects, App clean/reset, Quality gates and generic metadata management are not silently reintroduced as Maintenance authority.
 
 ---
 
@@ -709,7 +1030,7 @@ Conformance testing shall include negative cases proving that Docs automation, c
 
 ### 18.2 Cross-authority traceability
 
-| Authority | Principal Utils contracts |
+| Authority | Principal Maintenance contracts |
 |---|---|
 | DD-1.1 Application Invocation | `DD-UTIL-006`, `073`–`076`, `087`–`090` |
 | DD-1.2 Execution Outcomes | `DD-UTIL-008`, `016`, `018`–`019`, `080`–`086` |
@@ -725,27 +1046,10 @@ Conformance testing shall include negative cases proving that Docs automation, c
 | DD-3.4 Docs Domain | `DD-UTIL-002`, `059`, `061`, `066`, `108` |
 | DD-4.1 Quality Domain | `DD-UTIL-069`, `108` |
 | DD-4.2 Settings Domain | `DD-UTIL-002`, `035`, `060`, `070`, `108` |
-| DD-4.3 AI Domain | `DD-UTIL-013`, `079`; AI assistance remains Utils-owned when Utils intent is primary |
+| DD-4.3 AI Domain | `DD-UTIL-013`, `079`; AI assistance remains Maintenance-owned when Maintenance intent is primary |
 
 ---
 
 ## 19. Conformance Invariants
 
-A conforming DD-4.4 implementation shall preserve all of the following:
-
-1. **Utils is not a catch-all.** A stronger approved domain owner always prevails over namespace or implementation convenience.
-2. **Application authority remains DD-1-owned.** Utils does not own managed-project scope, effective-configuration resolution, canonical outcomes or final Application Engine acceptance.
-3. **Recognition is not repair authority.** Source/header facts remain evidence until explicit Utils maintenance intent and authorization establish a bounded transformation.
-4. **Source mutation remains DD-2.5-owned mechanically.** Utils owns maintenance intent/postconditions, not generic edit planning/execution internals.
-5. **Repository evidence does not transfer Git authority.** Changed-file/diff facts may inform maintenance without granting commit, synchronization, push or remote semantics.
-6. **AI remains advisory.** AI classification or generated notes/names are proposals; provider success does not establish Utils success or mutation authority.
-7. **Source-file version is not application/release version.** The two semantic scopes shall not be collapsed.
-8. **Cleanup is bounded and narrower than App clean/reset.** Discovery does not authorize deletion and configurable patterns cannot escape managed scope.
-9. **Compatibility delegation preserves the stronger owner.** Docs automation and contributor management do not become independent Utils semantics.
-10. **Partial and stale effects are truthful.** Completed effects, conflicts, cancellation and indeterminate state are not hidden behind false rollback or aggregate success.
-11. **Interactive and Headless semantics are equivalent.** Headless ambiguity or missing authorization fails safely rather than guessing.
-12. **Provider and implementation topology remain replaceable.** Current scanners, strategies, services, regexes, file APIs, Git/AI providers and TypeScript layout do not define permanent architecture.
-
-The central conformance rule is:
-
-> **A utility exists because its maintenance intent is genuinely cross-cutting and otherwise unowned—not because no stronger owner was consulted. Inspection does not authorize repair, discovery does not authorize deletion, and delegated intelligence does not authorize application effects.**
+Conformance review follows the stronger-owner gate, per-resource classification and coordinated plan in §7 and the inspection, repair, versioning and bounded cleanup in §8. The policy, lifecycle, failure/recovery and security clauses in §§9–16 supply their local acceptance and uncertainty conditions. §18 identifies the upstream contracts; this index adds no independent invariant set.

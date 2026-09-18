@@ -8,29 +8,17 @@
 >
 > **Detailed Design authority:** This document defines the permanent internal design by which AppManager resolves configuration candidates into effective configuration for application operations. It refines, but does not override, the root Design Specification, Functional Specifications, or accepted ADRs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md)
 >
-> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](dd-1-3-managed-project-detailed-design-v01.md), [DD-1.5 — Application Engine](dd-1-5-application-engine-detailed-design-v01.md), [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
-> **Planning source:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md)
+> **Planning source:** [Detailed Design Register](../project_management/detailed-design-register-v01.md)
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, resolution stages, evidence models, and authority boundaries through which AppManager obtains configuration candidates from approved sources and produces effective configuration for a specific invocation, managed project, managed scope, operation, or capability request.
+Configuration Resolution turns approved source candidates into effective values for an invocation, project, scope, operation or capability request. Concern descriptors select applicable sources and policy; candidate and provenance models retain the evidence needed to explain the selected value or failure. The Application Engine consumes that result under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
 
-The central design rule is:
-
-> **Configuration sources provide candidates. Configuration resolution determines effective values. The Application Engine retains authority over how effective configuration influences AppManager behaviour.**
-
-A second governing rule is:
-
-> **Resolution determines which value applies; it does not acquire authority over the use case that consumes that value.**
-
-A third governing rule is:
-
-> **A value becoming available does not make it effective; source applicability, candidate validity, precedence, fallback policy, sensitivity, and operation context must all be resolved under AppManager semantics.**
-
-Where managed-project identity and configuration applicability depend on one another, this design shall be read with [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md), which defines the staged bootstrap-versus-project-aware resolution contract without changing DD-1.4 ownership of configuration semantics.
+The stage contract in [§8](#_8-resolution-context) separates bootstrap eligibility from project-aware resolution. The [Engine lifecycle](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) coordinates these inputs with project resolution and scope decisions.
 
 ## 2. Scope
 
@@ -133,9 +121,7 @@ context-independent configuration candidates
       domain / capability semantics
 ```
 
-This is a semantic dependency view, not a requirement for two resolver implementations, two services, two passes for every operation, or one fixed call sequence. Operations that do not require bootstrap/project staging may resolve directly with the context they require.
-
-Configuration Resolution is a permanent responsibility boundary. It does not imply a separate process, package, executable, service, or transport.
+The diagram projects the [Engine staged lifecycle](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) through the configuration boundary. [Bounded resolution](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-007) governs staging; [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) governs topology independence.
 
 ## 5. Responsibility Model
 
@@ -190,33 +176,13 @@ The descriptor defines configuration semantics, not presentation labels or stora
 
 ### 6.3 Ownership of meaning
 
-The concern owner defines what the value means and what constraints are materially required for its use.
-
-Configuration Resolution owns how valid candidates become effective.
-
-Therefore:
-
-> **Domain meaning and resolution mechanics are distinct responsibilities.**
-
-A domain may define that a value must satisfy a particular semantic constraint, but it shall not invent a private precedence chain for an otherwise shared concern.
+Concern meaning and constraints follow [FR-CONFIG-063](../functional/configuration-functional-specification-v01.md#fr-config-063). Shared resolution follows [FR-CONFIG-017](../functional/configuration-functional-specification-v01.md#fr-config-017) through the descriptor above.
 
 ## 7. Configuration Source Contract
 
 ### 7.1 Source classes
 
-The shared model shall support approved source classes including, where applicable:
-
-- tool-level configuration;
-- project-shared configuration;
-- project-local configuration;
-- explicit invocation values;
-- environment-derived values;
-- provider-derived values;
-- contextual or detected values;
-- built-in defaults;
-- interactively acquired values.
-
-Not every concern uses every source class.
+Source classes bind [FR-CONFIG-005](../functional/configuration-functional-specification-v01.md#fr-config-005) to the source-instance contract below. Each concern descriptor selects which approved classes participate.
 
 ### 7.2 Source identity versus source class
 
@@ -279,49 +245,41 @@ A bootstrap resolution context intentionally lacks authoritative managed-project
 
 ### 8.2 Context authority
 
-Resolution context is input to configuration resolution. It does not itself become configuration.
-
-A project fact, selected file, repository identity, host selection, detected framework fact, or provider property becomes a candidate only where the concern explicitly permits contextual or detected input.
+Resolution context supplies observations under [FR-CONFIG-066](../functional/configuration-functional-specification-v01.md#fr-config-066). Project, file, repository, host, framework and provider facts participate only through the descriptor’s permitted contextual/detected-input class.
 
 ### 8.3 Bootstrap resolution dependency
 
-Before authoritative managed-project identity exists, only concerns and sources whose applicability and effective value do not depend on that unresolved identity, project topology or managed scope may participate. Those concerns form the bounded bootstrap subset defined by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md).
+Bootstrap resolution supplies the context-independent effective values needed by the [Engine's staged lifecycle](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle). It uses this specification's concern catalogue, validation, precedence, fallback, sensitivity and provenance contracts at both stages.
 
-Bootstrap resolution uses the same concern catalogue, candidate validation, precedence, fallback, sensitivity and provenance semantics as later resolution. It is not a second configuration system.
+#### DD-CORE-BOOT-001 — No circular applicability {#dd-core-boot-001}
 
-Bootstrap effective configuration may contribute governed project hints or other permitted evidence to DD-1.3. It does not itself establish project identity, managed scope, targetability, mutation authority or authorization.
+A candidate cannot establish the project identity on which its own applicability or effective value depends. This excludes candidates requiring unresolved topology, managed entities, repository relationships or managed scope, including project-scoped configuration whose location or interpretation requires that same project.
+
+#### DD-CORE-BOOT-002 — Bootstrap subset {#dd-core-boot-002}
+
+Only concerns and sources explicitly valid without the unresolved project context participate in bootstrap resolution. A concern may permit explicit invocation values, independent host/integration context, tool configuration, environment-derived values, built-in defaults or another explicitly approved context-independent source. This list grants no source universal applicability; the concern's validation and precedence still apply.
+
+#### DD-CORE-BOOT-003 — Project-aware eligibility {#dd-core-boot-003}
+
+Project-, topology-, entity-, repository-, layer-, resource- and scope-dependent candidates become eligible only when DD-1.3 has supplied the context required by the concern. Bootstrap values are passed as [project-resolution evidence](dd-1-3-managed-project-detailed-design-v01.md#dd-core-boot-004).
+
+#### DD-CORE-BOOT-005 — Operation snapshot context {#dd-core-boot-005}
+
+The operation-facing snapshot is accepted only after the context required by its constituent concerns is available. A bootstrap snapshot is therefore not automatically a complete operation snapshot. The scope decision consumes effective values according to [DD-1.5's scope checkpoint](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009).
 
 ### 8.4 Managed Project dependency
 
-Project-scoped source participation requires sufficient DD-1.3 managed-project context.
-
-The configuration resolver shall not infer project association merely from:
-
-- current working directory;
-- a nearby configuration file;
-- repository containment;
-- adapter-provided host selection;
-- framework marker presence.
-
-Those may contribute project evidence through DD-1.3, but project association used by project/scope-aware configuration resolution shall consume the resolved managed-project model.
+Project association follows [FR-CONFIG-064](../functional/configuration-functional-specification-v01.md#fr-config-064) and [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution). The resolver consumes DD-1.3 context at the [§8.3 eligibility boundary](#_8-3-bootstrap-resolution-dependency); current directories, nearby files, repository containment, host selections and framework markers enter that project owner as evidence.
 
 ### 8.5 Managed scope dependency
 
-Where a configuration concern genuinely requires an already-resolved managed scope to determine its applicability, DD-1.4 shall consume that scope.
-
-Managed scope is not, however, a universal prerequisite for all project-aware configuration. Where DD-1.3 scope or exclusion semantics themselves depend upon an operation-effective configuration value, that value may be resolved from sufficient managed-project context before final scope acceptance and then supplied to DD-1.3 as governed input.
-
-Configuration shall not silently broaden scope, and Configuration Resolution does not acquire scope authority merely because a scope decision consumes an effective value.
+Scope-dependent concern eligibility follows [DD-CORE-BOOT-003](#dd-core-boot-003). A concern supplying a value needed for scope finalization uses the conditional [DD-1.5 scope checkpoint](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009), once its required project context exists. Scope authority follows [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
 
 ## 9. Candidate Model
 
 ### 9.1 Candidate versus effective value
 
-A candidate is a possible value supplied by an approved source.
-
-An effective value is the result of governed resolution.
-
-These are not interchangeable.
+The source-supplied candidate model below feeds governed resolution under [Design](../appmanager-design-specification-v01.md#_8-2-configuration-resolution-and-effective-configuration). Its effective result is represented separately in [§15](#_15-resolution-result).
 
 ### 9.2 Candidate fields
 
@@ -358,16 +316,7 @@ Exact language-level representations remain Implementation Specification concern
 
 ### 9.4 Empty value semantics
 
-Empty is not globally equivalent to absent.
-
-A concern may define empty as:
-
-- valid concrete value;
-- explicit clearing/unset instruction;
-- invalid;
-- equivalent to absence.
-
-The candidate model must preserve enough information for the concern's validation/resolution policy to decide correctly.
+Empty-value interpretation follows [FR-CONFIG-027](../functional/configuration-functional-specification-v01.md#fr-config-027). The §9.3 representation retains enough information for a concern to treat empty as a concrete value, explicit clearing/unset, invalid or absent.
 
 ## 10. Source Applicability
 
@@ -404,19 +353,7 @@ Presence alone cannot move a candidate into the effective set.
 
 ### 10.3 Project-local and project-shared applicability
 
-Where historical project-local/project-shared/tool-level tiers remain valid for a concern, the project association and required scope context must be resolved before those candidates participate.
-
-The known precedence:
-
-```text
-project-local
-    -> project-shared
-    -> tool-level
-```
-
-shall apply only for concerns whose policy adopts those tiers.
-
-It is not a universal precedence chain for every source class.
+Project-local/project-shared/tool ordering follows [FR-CONFIG-018](../functional/configuration-functional-specification-v01.md#fr-config-018) for applicable tiers. Project/scope association is established through [§8](#_8-resolution-context) before those candidates enter precedence.
 
 ## 11. Candidate Acquisition
 
@@ -482,12 +419,7 @@ A validation result shall support at least:
 
 ### 12.3 Higher-priority invalid candidate
 
-The resolver shall not globally assume either:
-
-- invalid higher-priority candidate always blocks; or
-- invalid higher-priority candidate always falls through.
-
-The concern's resolution policy must define this behaviour.
+Higher-priority invalid candidates follow [FR-CONFIG-024](../functional/configuration-functional-specification-v01.md#fr-config-024) through the concern policy in §13.
 
 ### 12.4 Safety-sensitive invalid candidates
 
@@ -495,16 +427,7 @@ Where falling back would conceal a material misconfiguration, security problem, 
 
 ### 12.5 Invocation candidate validation
 
-Explicit invocation candidates are not trusted merely because the caller supplied them directly.
-
-They remain subject to:
-
-- override permission;
-- validation;
-- safety constraints;
-- managed-project applicability;
-- managed-scope constraints where the concern requires them;
-- sensitivity rules.
+Invocation candidates follow [FR-CONFIG-012](../functional/configuration-functional-specification-v01.md#fr-config-012) and [FR-CONFIG-013](../functional/configuration-functional-specification-v01.md#fr-config-013) through the same validation stages, including project/scope applicability and sensitivity.
 
 ## 13. Resolution Policy
 
@@ -531,46 +454,25 @@ A resolution policy may define:
 
 ### 13.3 No universal source order
 
-There shall be no assumed global precedence such as:
-
-```text
-invocation -> environment -> project -> tool -> default
-```
-
-unless a concern explicitly adopts it.
-
-Different concerns may legitimately position source classes differently.
+Additional source ordering follows [FR-CONFIG-018](../functional/configuration-functional-specification-v01.md#fr-config-018) through the concern’s §13.2 policy; the descriptor does not install a universal chain.
 
 ### 13.4 Explicit caller values
 
-An explicit invocation value may receive high precedence only where the concern permits invocation-level override.
-
-An invocation cannot override:
-
-- non-overridable application safety policy;
-- immutable architectural constraints;
-- managed-scope boundaries;
-- concern-specific restrictions that explicitly reject invocation override.
+Invocation overrides apply [FR-CONFIG-013](../functional/configuration-functional-specification-v01.md#fr-config-013). Non-overridable safety, architecture, scope and concern constraints remain outside the permitted override.
 
 ### 13.5 Built-in defaults
 
-A built-in default participates only where deliberately defined as safe and valid.
-
-The resolver shall not manufacture a default to avoid failure.
+Built-in defaults follow [FR-CONFIG-029](../functional/configuration-functional-specification-v01.md#fr-config-029).
 
 ### 13.6 Interactive completion
 
-Interactive acquisition is a candidate-acquisition mechanism, not a precedence mechanism by itself.
-
-The policy defines when an interactively acquired candidate may participate and where it ranks.
+Interactive acquisition follows [Design](../appmanager-design-specification-v01.md#_8-4-separation-of-resolution-and-interaction); the concern policy assigns candidate eligibility and precedence.
 
 ## 14. Configuration Resolver
 
 ### 14.1 Resolver responsibility
 
-The Configuration Resolver applies concern metadata, source applicability, candidate validation, resolution policy, and current context to produce a deterministic resolution result.
-
-This is the principal resolver-pattern responsibility for DD-1.4.
+The resolver applies the local descriptor, applicability, candidate and policy models under [FR-CONFIG-016](../functional/configuration-functional-specification-v01.md#fr-config-016) and [FR-CONFIG-022](../functional/configuration-functional-specification-v01.md#fr-config-022). The flow below shows their collaboration.
 
 ### 14.2 Conceptual resolution flow
 
@@ -603,16 +505,7 @@ effective value OR structured resolution failure
 
 ### 14.3 Resolver non-authority
 
-The resolver may decide which value is effective.
-
-It shall not:
-
-- execute the consuming use case;
-- expand managed scope;
-- decide unrelated domain policy;
-- authorize consequential effects;
-- treat a configuration value as proof that an operation is safe;
-- directly persist a transient candidate merely because it resolved successfully.
+Effective-value selection follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) at the consuming-use-case boundary. Persistence follows [§25](#_25-persistence-boundary), and supplying a value does not satisfy the independent authorization requirement in [§31.3](#_31-3-authorization-independence).
 
 ## 15. Resolution Result
 
@@ -651,17 +544,13 @@ An effective configuration value shall be capable of carrying:
 
 ### 15.3 Optional absence
 
-Optional absence is not automatically a failure and is not automatically a default.
-
-The consuming use case determines what optional absence means after governed resolution has established that no effective value exists.
+Optional absence follows [FR-CONFIG-033](../functional/configuration-functional-specification-v01.md#fr-config-033) after resolution establishes that no effective value exists.
 
 ## 16. Effective Configuration Snapshot
 
 ### 16.1 Purpose
 
-An operation that requires multiple configuration concerns should consume a coherent effective-configuration snapshot rather than repeatedly rereading raw sources throughout execution.
-
-A bootstrap effective value or bootstrap snapshot is a bounded stage result used only for concerns resolvable without managed-project context. It is not automatically the operation-facing snapshot.
+The snapshot gives an operation a coherent set of the effective values in §15. Its stage completeness follows [DD-CORE-BOOT-005](#dd-core-boot-005).
 
 ### 16.2 Snapshot properties
 
@@ -671,18 +560,14 @@ An operation-effective configuration snapshot should be:
 - associated with the invocation/use case;
 - associated with the relevant managed project once project context is required;
 - associated with the relevant managed scope where that scope is already established and required by the constituent concerns;
-- capable of preceding final managed-scope acceptance where DD-1.3 scope/exclusion semantics consume configuration values that can be resolved from sufficient managed-project context;
+- staged relative to managed-scope acceptance under [DD-CORE-BOOT-009](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009);
 - composed only of governed effective values and explicit optional absences;
 - capable of exposing safe provenance;
 - stable for the phase of execution that depends on it.
 
 ### 16.3 No retroactive mutation
 
-A durable settings change occurring after a snapshot is established shall not silently mutate that snapshot.
-
-Future operations may observe the change.
-
-The current operation observes it only if its owning workflow explicitly supports dynamic re-resolution.
+Accepted snapshots apply [FR-CONFIG-051](../functional/configuration-functional-specification-v01.md#fr-config-051). Future-operation visibility follows [FR-CONFIG-050](../functional/configuration-functional-specification-v01.md#fr-config-050), while opt-in dynamic re-resolution is defined in §27.4.
 
 ### 16.4 Selective snapshot construction
 
@@ -700,9 +585,7 @@ The batch shall preserve individual concern provenance and failure reasons.
 
 ### 17.2 Required-set semantics
 
-If any required concern fails resolution, effects depending on that concern shall not begin.
-
-A workflow may proceed with independent work only where the use-case design explicitly defines that behaviour and DD-1.2 partial-result semantics represent it correctly.
+Dependent effects follow [FR-CONFIG-032](../functional/configuration-functional-specification-v01.md#fr-config-032). Independent work may proceed only where the owning use-case design permits it, using [DD-1.2 partial results](dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
 
 ### 17.3 Cross-concern validation
 
@@ -733,20 +616,11 @@ Provenance shall preserve enough information to answer, where safe:
 
 ### 18.2 Provenance is not raw source disclosure
 
-Provenance may identify a protected source without returning the secret itself.
-
-For example, it may safely state:
-
-```text
-source class: protected environment-derived credential
-status: present and valid
-```
-
-without exposing the credential.
+Source/status explanation applies [FR-CONFIG-046](../functional/configuration-functional-specification-v01.md#fr-config-046). For example, a protected environment credential can be reported as present and valid without exposing its value.
 
 ### 18.3 Consumer access
 
-Consumers needing provenance shall consume the resolver's provenance model rather than rereading sources and reconstructing precedence independently.
+Provenance consumers use the §18.1 model under [FR-CONFIG-045](../functional/configuration-functional-specification-v01.md#fr-config-045).
 
 ## 19. Explainability
 
@@ -770,23 +644,17 @@ An explanation may include:
 
 ### 19.2 Explanation is not presentation
 
-The resolver exposes structured explanation data.
-
-TUI, Headless, GUI, IDE, CI, or automation adapters decide how to render it.
+Structured explanation is projected under [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) for each adapter.
 
 ### 19.3 Explanation minimisation
 
-Sensitive candidate content shall be redacted or omitted.
-
-The explanation model should prefer semantic reason codes and safe summaries over raw source dumps.
+Explanation uses [§22 sensitivity handling](#_22-sensitive-configuration), preferring semantic reason codes and safe summaries over raw source dumps.
 
 ## 20. Interactive Acquisition
 
 ### 20.1 Hand-off boundary
 
-When policy permits interactive acquisition and non-interactive resolution cannot satisfy the concern, the resolver may return an interaction-required state.
-
-The invocation/application layer may then request an adapter to acquire a candidate.
+When permitted under [Design](../appmanager-design-specification-v01.md#_8-4-separation-of-resolution-and-interaction), the resolver returns its `interaction required` state to the invocation/application layer for candidate acquisition.
 
 ### 20.2 Re-entry into resolution
 
@@ -805,52 +673,31 @@ The adapter does not directly inject an effective value.
 
 ### 20.3 Cancellation
 
-Interactive cancellation is not an empty candidate.
-
-It shall be represented through DD-1.1/DD-1.2 cancellation or failure semantics as appropriate to the workflow.
+Acquisition cancellation applies [FR-CONFIG-038](../functional/configuration-functional-specification-v01.md#fr-config-038) through [DD-1.2 cancellation](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 ### 20.4 Persistence
 
-An interactively acquired value remains one-off unless the owning use case separately authorizes persistence.
+Acquired candidates follow [FR-CONFIG-047](../functional/configuration-functional-specification-v01.md#fr-config-047) and [FR-CONFIG-048](../functional/configuration-functional-specification-v01.md#fr-config-048).
 
 ## 21. Headless Resolution
 
 ### 21.1 Deterministic non-interactive behaviour
 
-Headless resolution shall:
-
-- use applicable non-interactive sources;
-- apply the same validation and precedence semantics as interactive modes;
-- use defined fallback/defaults where permitted;
-- fail clearly when required configuration remains unresolved;
-- never block waiting for a prompt.
+Headless resolution uses [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) with the same candidate validation and policy models.
 
 ### 21.2 Interaction-required state in Headless mode
 
-If a concern can only be satisfied through an interactive candidate under current inputs, Headless execution shall return a deterministic structured failure indicating the unresolved concern and permitted remediation where safe.
+A Headless `interaction required` result maps to [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) and [FR-CONFIG-034](../functional/configuration-functional-specification-v01.md#fr-config-034), identifying the unresolved concern and safe remediation.
 
 ### 21.3 No automation weakening
 
-Headless or CI execution does not weaken:
-
-- validation;
-- sensitivity rules;
-- precedence;
-- scope constraints;
-- non-overridable policy;
-- requiredness.
+Automation applies [FR-CONFIG-041](../functional/configuration-functional-specification-v01.md#fr-config-041) to the local concern/candidate models.
 
 ## 22. Sensitive Configuration
 
 ### 22.1 Classification
 
-Configuration shall support sensitivity classes sufficient to distinguish ordinary shareable values from protected values such as:
-
-- secrets;
-- credentials;
-- access tokens;
-- private keys;
-- sensitive provider configuration.
+The descriptor and candidate sensitivity fields implement [Design](../appmanager-design-specification-v01.md#_8-7-sensitive-configuration) for credentials, tokens, private keys and other protected configuration.
 
 ### 22.2 Protected-value representation
 
@@ -860,16 +707,7 @@ Exact secure-value technology belongs to Implementation Specification.
 
 ### 22.3 Least disclosure
 
-Sensitive values shall not be included unnecessarily in:
-
-- diagnostics;
-- warnings;
-- events;
-- logs;
-- reports;
-- result payloads;
-- provenance explanations;
-- adapter rendering.
+Diagnostics, warnings, events, logs, reports, payloads, provenance and rendering apply [Design](../appmanager-design-specification-v01.md#_8-7-sensitive-configuration) through [DD-1.2 redaction](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
 
 ### 22.4 Sensitivity propagation
 
@@ -879,7 +717,7 @@ It shall not be accidentally downgraded merely because a provider, adapter, or c
 
 ### 22.5 Protected-source non-authority
 
-A secure store or provider may protect value material, but it does not decide AppManager applicability, precedence, or policy.
+Protected-value sources follow [Design](../appmanager-design-specification-v01.md#_8-1-configuration-model) through the source contract.
 
 ## 23. Defaults and Fallbacks
 
@@ -896,17 +734,17 @@ The model shall distinguish:
 
 ### 23.2 Fallback provenance
 
-When fallback occurs, provenance/explanation should preserve that fact where useful.
+Fallback is recorded in [§18 provenance](#_18-provenance) and [§19 explanation](#_19-explainability) where useful.
 
 ### 23.3 No silent masking
 
-Fallback shall not silently mask an explicit higher-priority misconfiguration where policy defines that error as blocking.
+Blocking higher-priority errors follow [FR-CONFIG-024](../functional/configuration-functional-specification-v01.md#fr-config-024) and [FR-CONFIG-028](../functional/configuration-functional-specification-v01.md#fr-config-028) in the concern policy.
 
 ## 24. Conflict Handling
 
 ### 24.1 Equal-authority conflicts
 
-Where two materially conflicting candidates remain at an equivalent policy position and no deterministic tie-break exists, the resolver shall return conflict rather than choose arbitrarily.
+Equal-policy-position conflicts follow [FR-CONFIG-072](../functional/configuration-functional-specification-v01.md#fr-config-072) when no deterministic tie-break is available.
 
 ### 24.2 Conflict diagnostics
 
@@ -920,56 +758,35 @@ Conflict diagnostics should identify:
 
 ### 24.3 Interactive disambiguation
 
-Interactive selection may be used only where the concern's policy permits it.
-
-The selected choice shall re-enter resolution as governed candidate evidence or explicit disambiguation input rather than bypassing policy.
+Permitted selection follows [Design](../appmanager-design-specification-v01.md#_8-4-separation-of-resolution-and-interaction) through the re-entry model in §20.2. It supplies candidate evidence or explicit disambiguation input to the policy.
 
 ## 25. Persistence Boundary
 
 ### 25.1 Resolution is read/selection semantics
 
-Configuration Resolution does not own durable CRUD.
-
-Persisting, updating, or deleting configuration belongs to Settings-domain or another explicitly owning use case.
+Durable management is consumed through [Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) or another explicit persistence owner under [FR-CONFIG-047](../functional/configuration-functional-specification-v01.md#fr-config-047) and [FR-CONFIG-075](../functional/configuration-functional-specification-v01.md#fr-config-075).
 
 ### 25.2 One-off candidate rule
 
-A supplied invocation or interactive candidate shall not be persisted merely because it resolved successfully.
+One-off invocation/interactive candidates apply [FR-CONFIG-047](../functional/configuration-functional-specification-v01.md#fr-config-047) and [FR-CONFIG-049](../functional/configuration-functional-specification-v01.md#fr-config-049).
 
 ### 25.3 Explicit promotion
 
-Detected/provider/environment/state-derived information becomes durable configuration only through an explicit approved persistence operation or defined persistence policy.
+Durable promotion of detected/provider/environment/state information applies [FR-CONFIG-060](../functional/configuration-functional-specification-v01.md#fr-config-060).
 
 ### 25.4 Settings integration
 
-Settings-domain operations may write or remove values, but shall not redefine:
-
-- precedence;
-- source applicability;
-- fallback;
-- requiredness;
-- effective-value semantics.
-
-Those remain configuration-resolution concerns plus the owning concern policy.
+Settings writes/removals follow [FR-CONFIG-075](../functional/configuration-functional-specification-v01.md#fr-config-075) when they become candidate inputs to this resolver.
 
 ## 26. Configuration Versus Operational State
 
 ### 26.1 Authority separation
 
-The model shall distinguish durable configuration from:
-
-- operational state;
-- logs;
-- diagnostics;
-- reports;
-- generated artefacts;
-- caches;
-- provider observations;
-- temporary execution metadata.
+Durable configuration, operational state, logs, reports, generated artefacts, caches and temporary/provider observations are classified under [Design](../appmanager-design-specification-v01.md#_8-8-configuration-state-reports-and-logs).
 
 ### 26.2 No accidental promotion
 
-A value found in operational state shall not automatically become a configuration candidate unless the concern explicitly permits that source class.
+Operational-state inputs apply [Design](../appmanager-design-specification-v01.md#_8-8-configuration-state-reports-and-logs) through the permitted-source declaration in §6.2.
 
 ### 26.3 Cache non-authority
 
@@ -981,7 +798,7 @@ Cached data must retain the authority/provenance semantics of the source/result 
 
 ### 27.1 Future-operation visibility
 
-After a successful durable configuration change, future resolution shall be capable of observing that change according to its scope and precedence.
+Durable changes become eligible for future resolution under [FR-CONFIG-050](../functional/configuration-functional-specification-v01.md#fr-config-050).
 
 ### 27.2 Invalidation responsibility
 
@@ -991,7 +808,7 @@ The implementation must ensure stale cached data does not silently override newe
 
 ### 27.3 Snapshot stability
 
-Invalidation affects future resolutions, not already-accepted immutable snapshots, unless a workflow explicitly supports dynamic re-resolution.
+Invalidation preserves accepted snapshots under [FR-CONFIG-051](../functional/configuration-functional-specification-v01.md#fr-config-051); dynamic re-resolution follows §27.4.
 
 ### 27.4 Dynamic re-resolution
 
@@ -1033,7 +850,7 @@ The resolver supplies evidence; it does not independently authorize continuation
 
 ### 29.1 Diagnostic categories
 
-Configuration diagnostics shall integrate with DD-1.2 and should support categories including:
+Configuration-local distinctions map through [DD-OUTCLAR-006](dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006). The model should support:
 
 - unknown configuration concern;
 - source unavailable;
@@ -1069,13 +886,13 @@ Where useful and safe, diagnostics may identify:
 
 ### 29.3 Redaction
 
-Diagnostics shall not include sensitive values merely to make failures easier to debug.
+Diagnostic value exposure follows [§22](#_22-sensitive-configuration) and [DD-1.2 redaction](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
 
 ## 30. Outcome Integration
 
 ### 30.1 DD-1.2 relationship
 
-Configuration resolution produces normalized resolution evidence that is projected into DD-1.2 diagnostics/outcomes by the owning invocation/use case.
+Resolution evidence maps into [DD-1.2 diagnostics](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) through its [local-refinement rule](dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006).
 
 ### 30.2 Resolver result versus application outcome
 
@@ -1090,17 +907,17 @@ The Application Engine/use case determines whether it causes:
 
 ### 30.3 Warnings
 
-A configuration warning may remain non-fatal unless concern/domain policy promotes it to failure.
+Configuration warnings apply [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) under the owning concern/domain acceptance policy.
 
 ## 31. Invocation Integration
 
 ### 31.1 Explicit invocation values
 
-DD-1.1 explicit options/inputs may contribute configuration candidates only for concerns that permit them.
+DD-1.1 candidates follow [FR-CONFIG-012](../functional/configuration-functional-specification-v01.md#fr-config-012) and [FR-CONFIG-013](../functional/configuration-functional-specification-v01.md#fr-config-013).
 
 ### 31.2 Provenance of explicit values
 
-The resolver shall preserve that the value came explicitly from the invocation rather than pretending it originated in durable settings.
+Explicit invocation origin is retained by [§18 provenance](#_18-provenance).
 
 ### 31.3 Authorization independence
 
@@ -1110,50 +927,21 @@ For example, a value such as `force=true` or a target branch name cannot automat
 
 ## 32. Managed Project Integration
 
-DD-1.3 and DD-1.4 collaborate through the staged contract in [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md); neither is globally upstream of the other for every stage.
+The [resolution context contract in §8](#_8-resolution-context) defines configuration's stage-specific inputs; [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) coordinates the stages. Configuration consumes the project model rather than rediscovering it. Project-side interpretation and conflict reporting follow [DD-1.3 §29](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution).
 
-### 32.1 Bootstrap contribution to DD-1.3
+A scope-sensitive concern may resolve differently for the root application, one or several layers, one or several repositories, or selected resources. Its snapshot preserves the relevant scope association. Values needed to decide scope follow [DD-CORE-BOOT-009](dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-009).
 
-Before authoritative managed-project identity exists, DD-1.4 may supply only governed bootstrap effective configuration whose own applicability does not depend on that unresolved identity. DD-1.3 may consume those values as project-resolution evidence but retains authority over project identity and context.
-
-### 32.2 Project-aware DD-1.3 dependency
-
-After sufficient Managed Project Context exists, Configuration Resolution consumes DD-1.3 project identity, project topology and managed entities to determine project-aware source applicability and effective values.
-
-It does not independently rediscover or replace those project semantics.
-
-### 32.3 Scope-sensitive concerns
-
-A concern may resolve differently for:
-
-- root application;
-- one managed layer;
-- multiple managed layers;
-- one repository;
-- multiple repositories;
-- selected files/resources.
-
-Where the concern requires an already-resolved managed scope, the effective snapshot shall preserve that scope association. Where DD-1.3 scope/exclusion semantics instead require an operation-effective value that can be resolved from sufficient project context, DD-1.4 may supply that value before final scope acceptance.
-
-### 32.4 Configuration cannot expand scope
-
-Even an effective value cannot authorize targets outside the DD-1.3 scope that is ultimately resolved and accepted for the operation. Configuration Resolution supplies governed values; DD-1.3/Application Engine retain scope and targetability authority.
-
-### 32.5 Conflict and re-resolution
-
-Project-aware configuration that materially conflicts with the project identity or bootstrap assumptions shall produce structured evidence for DD-1.5 to handle through explicit revalidation, bounded re-resolution, disambiguation or failure. DD-1.3/DD-1.4 shall not enter an uncontrolled recursive resolution loop.
+Resolution diagnostics should distinguish missing bootstrap values, invalid candidates, inapplicable sources, bootstrap/project evidence conflict, unresolved project identity, premature project-dependent resolution, later configuration/context conflict, unresolved scope-dependent values, required re-resolution and unsafe or unsupported cycles. These are local conditions mapped through [DD-1.2 §9](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model); safe provenance is retained without exposing sensitive configuration values.
 
 ## 33. Provider and Capability Integration
 
 ### 33.1 Provider-derived candidates
 
-A provider/capability may supply candidates where the concern explicitly permits it.
-
-The provider's native default does not automatically become AppManager's default.
+Provider/capability candidates follow [Design](../appmanager-design-specification-v01.md#_8-1-configuration-model) through the concern descriptor.
 
 ### 33.2 Provider configuration consumption
 
-Capabilities should receive effective AppManager configuration, not independently read competing settings sources for shared concerns.
+Capabilities consume the §15 result under [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020).
 
 ### 33.3 Provider-local configuration
 
@@ -1188,7 +976,7 @@ Parsing and interpretation shall not assume project-controlled data is safe mere
 
 ### 35.2 External values
 
-Environment, provider, host-tool, and externally supplied values are candidate evidence and shall be validated before use.
+Environment, provider, host and external values apply [FR-CONFIG-023](../functional/configuration-functional-specification-v01.md#fr-config-023) through candidate validation.
 
 ### 35.3 Secret minimisation
 
@@ -1200,18 +988,7 @@ Configuration values shall not be allowed to redefine the configuration system's
 
 ## 36. Cross-Mode Equivalence
 
-TUI, Headless, GUI, IDE/host-tool, CI, automation agents, and future adapters shall use the same:
-
-- concern identities;
-- source applicability semantics;
-- candidate validation;
-- precedence;
-- fallback;
-- sensitivity;
-- effective-value semantics;
-- bootstrap-versus-project-aware staging semantics where staging is required.
-
-Interaction modes may differ only in how they acquire optional interactive candidates and render explanation/diagnostics.
+Configuration context and candidate acquisition apply [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence). The shared [§8 staging rules](#_8-resolution-context) and [§20 re-entry model](#_20-interactive-acquisition) apply to each adapter projection.
 
 ## 37. Extensibility
 
@@ -1275,31 +1052,7 @@ Detailed Design conformance tests should be able to verify at least:
 
 ## 39. Design Invariants
 
-The following invariants are normative for downstream design:
-
-1. configuration sources provide candidates, not authority;
-2. candidate presence does not imply applicability;
-3. applicability is evaluated before precedence;
-4. candidate and effective value are distinct models;
-5. absent, explicit unset, and empty remain distinguishable where semantically relevant;
-6. precedence is concern-specific, not universally inferred;
-7. invocation overrides apply only where permitted;
-8. invalid-candidate fallback is policy-defined;
-9. built-in defaults must be deliberately defined and safe;
-10. interactive acquisition supplies candidates, not effective values directly;
-11. Headless mode never requires a prompt;
-12. provenance does not require sensitive-value disclosure;
-13. resolution does not imply persistence;
-14. operational state and caches do not silently become configuration authority;
-15. effective snapshots are stable for the operation phase that consumes them;
-16. bootstrap resolution is restricted to concerns and sources whose applicability does not depend on unresolved managed-project identity;
-17. project/scope-aware concerns become eligible only when their required DD-1.3 context exists;
-18. configuration cannot expand managed scope;
-19. resolving a value before scope finalization does not transfer scope authority to DD-1.4;
-20. the resolver does not own consuming use-case semantics;
-21. Settings persistence does not redefine precedence;
-22. provider defaults do not automatically become AppManager defaults;
-23. equivalent contexts yield materially equivalent effective resolution.
+The operative local contracts are descriptors/sources (§§6–7), staged context (§8), candidate/applicability/validation/policy (§§9–13), resolution/snapshots (§§14–17), provenance/explanation (§§18–19), sensitivity (§22), conflict/persistence (§§24–25), invalidation (§27) and authorization independence (§31.3). This index adds no duplicate normative summary.
 
 ## 40. Traceability to Functional Requirements
 
@@ -1341,27 +1094,19 @@ DD-1.4 supplies configuration-resolution evidence projected into those models.
 
 ### 41.3 DD-1.3 Managed Project
 
-DD-1.3 owns project identity, topology, managed entities, managed scope and targetability.
-
-DD-1.4 may first provide bootstrap effective configuration as bounded project-resolution evidence, then consumes sufficient DD-1.3 context to determine project/scope-aware source applicability and effective values. The staged collaboration is governed by [Application Core Bootstrap Resolution Clarification](clarifications/application-core-bootstrap-resolution-clarification-v01.md); neither side acquires the other's authority.
+[DD-1.3](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution) supplies project context and consumes eligible bootstrap evidence. The direct stage owners are [§8](#_8-resolution-context) and [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle).
 
 ### 41.4 DD-1.5 Application Engine
 
-DD-1.5 defines when the Application Engine requests bootstrap or project/scope-aware configuration resolution, how snapshots enter use-case execution context, how managed-scope/policy decisions consume effective values, and when bounded re-resolution is permitted.
-
-The Application Engine remains authoritative over application sequencing and semantics; DD-1.4 remains authoritative over configuration resolution semantics.
+[DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) coordinates resolution requests, snapshot acceptance, scope/policy checkpoints and bounded re-resolution.
 
 ### 41.5 Shared capabilities
 
-DD-2 capability designs shall consume effective configuration and may contribute provider/context candidates only where approved.
-
-They shall not invent competing configuration resolution semantics.
+Capability consumers use [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020); provider candidates enter the §7 source contract under [FR-CONFIG-007](../functional/configuration-functional-specification-v01.md#fr-config-007).
 
 ### 41.6 Settings domain
 
-The Settings domain shall own configuration-management workflows and persistence operations.
-
-It shall use DD-1.4 concern, scope, provenance, and resolution semantics rather than redefining them.
+[DD-4.2 Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) supplies durable resource-management workflows under [FR-CONFIG-075](../functional/configuration-functional-specification-v01.md#fr-config-075).
 
 ## 42. ADR-0001 Compatibility
 
@@ -1373,78 +1118,12 @@ Future runtime changes may preserve these responsibility boundaries without requ
 
 ## 43. Downstream Detailed Design Requirements
 
-Later Detailed Designs shall preserve the following constraints:
-
-- DD-1.5 Application Engine must consume effective configuration rather than raw source values and must preserve staged bootstrap/project-aware resolution where required;
-- Resource Access may read/write configuration resources but must not decide precedence;
-- Process Execution must receive already-authorized effective execution options rather than reading AppManager settings ad hoc;
-- Repository Capability may contribute repository/provider observations but not configuration authority;
-- Source Intelligence may contribute detected/contextual candidates only where a concern permits detection;
-- Source Transformation strategies may consume effective configuration but must not bypass resolution;
-- AI Capability must separate provider-native defaults from AppManager effective configuration;
-- Documentation, Quality, and Nuxt capabilities must not create private precedence chains;
-- resource registries/templates may define configuration concerns but shall resolve them through this shared model;
-- domain orchestrators must request concern-specific effective values through this boundary;
-- Utils must not become an informal fallback location for ad hoc configuration lookup.
+The §41 collaboration map identifies consumers. Their effective-value integration follows [FR-CONFIG-017](../functional/configuration-functional-specification-v01.md#fr-config-017) and [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020), with source participation under §7 and stage eligibility under §8. This applies to domain workflows, capabilities and registry/template concerns without a separate precedence implementation.
 
 ## 44. Conformance Criteria
 
-A downstream design conforms to DD-1.4 only if all of the following are true:
-
-1. raw configuration sources are not consumed directly where a governed concern exists;
-2. candidates remain distinguishable from effective values;
-3. source applicability is explicit;
-4. concern-specific precedence/fallback is deterministic;
-5. project-local/project-shared/tool precedence is used only where the concern adopts it;
-6. invocation overrides are permissioned rather than assumed;
-7. Headless behavior is deterministic and non-interactive;
-8. interactive acquisition re-enters the same resolver;
-9. sensitive values are minimized and provenance remains safe;
-10. one-off values are not silently persisted;
-11. bootstrap values are not mistaken for the complete operation-effective snapshot;
-12. configuration used before project resolution does not require unresolved project identity for its own applicability;
-13. project/scope-aware sources participate only after sufficient DD-1.3 context exists;
-14. effective snapshots are coherent and stable for the phase that consumes them;
-15. changed durable configuration affects future resolution without retroactively mutating accepted snapshots;
-16. project/scope configuration consumes DD-1.3 rather than reconstructing project identity;
-17. configuration cannot expand managed scope or bypass authorization;
-18. resolving configuration before final scope acceptance where required does not transfer scope authority to DD-1.4;
-19. Settings CRUD remains distinct from resolution semantics;
-20. capability providers do not redefine AppManager configuration semantics;
-21. configuration diagnostics integrate with DD-1.2;
-22. all supported interaction modes preserve equivalent semantics.
+Conformance is assessed against the models indexed in §39, their canonical references and the tests in §38. This section introduces no second acceptance checklist.
 
 ## 45. Summary
 
-AppManager configuration resolution is a governed application-core responsibility that converts source-specific candidate evidence into stable, explainable, safe effective configuration.
-
-The permanent semantic flow is:
-
-```text
-approved sources
-    -> applicable sources for the current resolution stage
-    -> candidates + provenance
-    -> validation
-    -> concern-specific precedence / selection / fallback
-    -> effective values
-    -> bootstrap result or immutable operation snapshot as applicable
-    -> Application Engine / DD-1.3 / use-case semantics
-```
-
-The key boundaries are:
-
-> **source != candidate authority**
-
-> **candidate != effective value**
-
-> **bootstrap effective value != complete operation snapshot**
-
-> **effective value != application policy**
-
-> **resolution != persistence**
-
-> **configuration != managed scope**
-
-> **configuration != authorization**
-
-These distinctions allow later domain and capability designs to share deterministic configuration semantics without collapsing Settings, project discovery, managed-scope authority, provider mechanics, or application authority into one configuration service.
+The resolver flow in §14 connects approved candidate evidence to effective values. The result then serves either bootstrap coordination or an operation snapshot under §8; the consumer uses it through the §41 collaboration map. The source, candidate, snapshot, persistence and authorization models keep those responsibilities understandable and separate.

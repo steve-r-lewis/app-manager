@@ -539,6 +539,14 @@ Absolute URLs remain appropriate for external sources, cross-repository referenc
 
 ---
 
+### 7.10 Detailed Design reading conventions {#detailed-design-reading-conventions}
+
+Item numbering and authoring order, like family numbering, confer no superior authority on a sibling Detailed Design. A specification constrains consumption of its own assigned contract; shared rules derive from their governing Design/Functional owner or the independently owned contract actually consumed. References and concise local bindings identify inherited obligations; local preconditions, models, state distinctions, policies, workflows, safety, failure and recovery refinements remain with their semantic owner.
+
+A generic delegation diagram is explanatory unless a requirement makes a represented relationship normative. Diagrams expressing local ordering, state, safety or evidence refinements must preserve those refinements during editorial reduction.
+
+Historical implementation observations in Detailed Designs are non-normative provenance unless a separate Detailed Design requirement establishes the permanent constraint. Concrete implementation disposition belongs to the corresponding Implementation Specification, subject to upstream conformance; a historical observation cannot override that specification or become a source of product architecture. This does not make Implementation Specifications authority over Detailed Design.
+
 ## 8. Level 4 - Implementation Specification
 
 ### 8.1 Purpose

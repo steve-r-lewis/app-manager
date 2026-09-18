@@ -6,7 +6,7 @@
 >
 > **Primary implementations:** [IS-16 — Nuxt Domain](../is-16-nuxt-domain-implementation-specification-v01.md), [IS-13 — Nuxt Capability](../is-13-nuxt-capability-implementation-specification-v01.md)
 >
-> **DD binding:** [Nuxt Domain Command Model Clarification](../../dd_3_high_coupling_domains/clarifications/nuxt-domain-command-model-clarification-v01.md), [Nuxt Command Model Capability Clarification](../../dd_2_shared_capabilities/clarifications/nuxt-command-model-capability-clarification-v01.md)
+> **DD binding:** [Nuxt Domain Command Model](../../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#add), [Nuxt Command Model Capability](../../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#operation-evidence)
 
 ## 1. Purpose
 

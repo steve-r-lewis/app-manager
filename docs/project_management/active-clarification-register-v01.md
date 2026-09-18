@@ -18,39 +18,19 @@ None remain active after NCR-1. Eight Design clarification vehicles have been in
 
 None remain active after NCR-1. Thirteen Functional clarification vehicles have been integrated into the twelve primary Functional Specifications or their existing Design/governance owners. Their stable requirement identities remain in the primary specifications. See the [NCR ledger](ncr-working-proposition-ledger-v01.md#_4-clarification-integration-and-retirement) for retirement and identity accounting.
 
-The DD and Implementation clarifications below remain active. Their integration belongs to NCR-2 and NCR-3 respectively; NCR-1 has not reduced their normative content.
+Detailed Design clarification integration is recorded below. Implementation clarifications remain active for NCR-3; their semantics have not been reduced in NCR-2.
 
 ## 4. Detailed Design Clarifications — DD-1
 
-| Clarification | Scope / purpose |
-|---|---|
-| [`application-core-bootstrap-resolution-clarification-v01.md`](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md) | DD-1 bootstrap/configuration/managed-project resolution. |
-| [`application-outcome-and-diagnostic-ownership-clarification-v01.md`](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md) | Canonical application outcome/diagnostic ownership. |
+None remain active: 2 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification are complete on PR #180, pending independent review; the PR remains unmerged.
 
 ## 5. Detailed Design Clarifications — DD-2
 
-| Clarification | Scope / purpose |
-|---|---|
-| [`ai-functional-refinement-relationship-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/ai-functional-refinement-relationship-clarification-v01.md) | DD-2.7/AI Functional refinement. |
-| [`dd2-shared-capability-rationalisation-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/dd2-shared-capability-rationalisation-clarification-v01.md) | DR-4 rationalised DD-2 reading. |
-| [`dd2-sibling-authority-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/dd2-sibling-authority-clarification-v01.md) | DD-2 sibling authority. |
-| [`nuxt-layer-scaffold-artefact-ownership-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md) | Nuxt layer-scaffold artefact ownership. |
-| [`nuxt-command-model-capability-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/nuxt-command-model-capability-clarification-v01.md) | PBC-1 DD-2.10 support for Nuxt command correction. |
-| [`repository-source-intelligence-relationship-clarification-v01.md`](../dd_2_shared_capabilities/clarifications/repository-source-intelligence-relationship-clarification-v01.md) | Repository/Source Intelligence relationship. |
+None remain active: 6 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification are complete on PR #180, pending independent review; the PR remains unmerged.
 
 ## 6. Detailed Design Clarifications — DD-3/DD-4
 
-| Clarification | Scope / purpose |
-|---|---|
-| [`app-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/app-domain-command-model-clarification-v01.md) | PBC-1 DD-3.1 App correction. |
-| [`dd3-dd4-domain-rationalisation-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/dd3-dd4-domain-rationalisation-clarification-v01.md) | DR-5 rationalised domain-DD reading. |
-| [`git-coordinated-commit-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/git-coordinated-commit-clarification-v01.md) | PBC-1 DD-3.2 coordinated commit intent, repository-specific planning and partial-effect semantics. |
-| [`docs-coordinated-generation-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/docs-coordinated-generation-clarification-v01.md) | PBC-1 DD-3.4 coordinated artefact plans, mixed output dispositions, AI acceptance and continuation. |
-| [`nuxt-domain-operation-identity-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md) | Earlier Nuxt identity correction pending NCR consolidation. |
-| [`nuxt-domain-command-model-clarification-v01.md`](../dd_3_high_coupling_domains/clarifications/nuxt-domain-command-model-clarification-v01.md) | PBC-1 DD-3.3 Nuxt extension. |
-| [`maintenance-domain-reclassification-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/maintenance-domain-reclassification-clarification-v01.md) | PBC-1 DD-4.4 reclassification from Utils to Maintenance and stronger-owner gate. |
-| [`maintenance-coordinated-operations-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/maintenance-coordinated-operations-clarification-v01.md) | PBC-1 DD-4.4 coordinated Maintenance classification, planning, per-resource effects and continuation. |
-| [`ai-project-environment-domain-clarification-v01.md`](../dd_4_policy_and_resource_domains/clarifications/ai-project-environment-domain-clarification-v01.md) | PBC-1 DD-4.3 AI resource graph, provider-neutral representation and automatic-acceptance refinement. |
+None remain active: 9 vehicles integrated and retired during NCR-2. See the [single NCR ledger](ncr-working-proposition-ledger-v01.md#ncr2-clarification-integration) for non-normative lineage notices and successors. Physical reduction and final NCR-2 verification are complete on PR #180, pending independent review; the PR remains unmerged.
 
 ## 7. Implementation Clarifications
 

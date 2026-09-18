@@ -8,7 +8,7 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for documentation inspection, documentation models, extraction, aggregation, generation, rendering, documentation-tool delegation, optional AI enrichment and documentation-oriented validation beneath AppManager application authority. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](dd-2-2-process-execution-detailed-design-v01.md), [DD-2.4 — Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md)
 >
@@ -18,21 +18,7 @@
 
 ## 1. Purpose
 
-This specification defines the shared Documentation Capability boundary used to inspect documentable facts, construct normalized documentation models, aggregate those models, render proposed documentation content and delegate bounded documentation-tool operations without allowing parsers, renderers, templates, AI providers, Nuxt facts or documentation tools to acquire AppManager application authority.
-
-The governing rules are:
-
-> **Documentation Capability describes and renders approved information; it does not establish managed scope, application intent, mutation authority or final acceptance.**
-
-> **Documentation inspection is evidence-producing. Documentation generation produces proposed artefacts/content. Persistence or modification of existing resources requires the appropriate downstream authority.**
-
-> **Source facts, Nuxt facts, test facts, AI-generated prose and existing documentation have different provenance and shall not be collapsed into one undifferentiated truth source.**
-
-> **Documentation tooling execution is technical execution evidence, not documentation acceptance.**
-
-The capability provides stable reusable semantics beneath Docs-domain use cases and other approved workflows that consume documentation models or rendered documentation.
-
----
+Documentation Capability constructs and aggregates documentation models from selected source/domain facts and authored material, renders proposals, and delegates documentation tooling. Provenance and profile-relative coverage help the Docs workflow distinguish reliable facts, authored explanation, generated prose and missing evidence. Source transformation and application acceptance remain the directly referenced collaborators of those local contracts.
 
 ## 2. Scope
 
@@ -90,11 +76,18 @@ Documentation Capability shall not own:
 - project documentation governance for the AppManager repository itself;
 - final AppManager success, failure, partial-success or cancellation acceptance.
 
-**DD-DOCCAP-001 — Documentation execution remains subordinate**  
-Documentation Capability shall operate only on bounded targets, facts, models and output contracts supplied or authorized by the owning use case and shall not invent application intent, scope or authorization.
+<a id="dd-doccap-001"></a>
 
-**DD-DOCCAP-002 — Rendered content is not mutation authority**  
-A successfully rendered documentation artefact or update proposal shall not authorize creation, replacement or modification of a target resource.
+**DD-DOCCAP-001 — Documentation execution remains subordinate**
+
+Delegated documentation targets/models/output requests follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-doccap-002"></a>
+
+**DD-DOCCAP-002 — Rendered content is not mutation authority**
+
+Rendered documentation or update proposals follows [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
 
 ---
 
@@ -133,11 +126,18 @@ Application Engine / owning Docs use case
        Process Execution, etc.)
 ```
 
-**DD-DOCCAP-003 — Capability boundary is not the Docs domain**  
-The shared capability may be consumed by Docs-domain or other authorized use cases without assuming Docs-domain application ownership.
+<a id="dd-doccap-003"></a>
 
-**DD-DOCCAP-004 — No upward dispatch**  
-A renderer, documentation provider, template or generated document shall not dispatch arbitrary AppManager commands or expand workflow scope.
+**DD-DOCCAP-003 — Capability boundary is not the Docs domain**
+
+Documentation Capability used by non-Docs workflows follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-doccap-004"></a>
+
+**DD-DOCCAP-004 — No upward dispatch**
+
+Renderer/template/generated-text command requests follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
 
 ---
 
@@ -167,14 +167,22 @@ Each input should retain, where material:
 - sensitivity classification;
 - selection/exclusion evidence.
 
+<a id="dd-doccap-005"></a>
+
 **DD-DOCCAP-005 — Inputs are evidence, not automatic documentation truth**  
 The presence of an input shall not require every fact or text fragment within it to appear in generated documentation.
+
+<a id="dd-doccap-006"></a>
 
 **DD-DOCCAP-006 — Provenance remains distinguishable**  
 Reliably recognized structural facts, existing authored documentation, generated summaries and AI-generated prose shall remain distinguishable where their provenance affects acceptance.
 
-**DD-DOCCAP-007 — No hidden project crawl**  
-Documentation Capability shall not independently traverse arbitrary project resources to expand its input set outside the approved target/selection contract.
+<a id="dd-doccap-007"></a>
+
+**DD-DOCCAP-007 — No hidden project crawl**
+
+The capability input set binds [FR-DOCS-104](../functional/docs-functional-specification-v01.md#fr-docs-104) to the approved target/selection request.
+
 
 ---
 
@@ -195,11 +203,18 @@ A profile may include:
 - output grouping/splitting intent;
 - update versus generation intent as determined upstream.
 
-**DD-DOCCAP-008 — Profile does not establish managed scope**  
-A documentation profile may narrow approved content selection but shall not broaden DD-1.3 managed scope.
+<a id="dd-doccap-008"></a>
+
+**DD-DOCCAP-008 — Profile does not establish managed scope**
+
+Documentation-profile scope narrowing follows [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
+
+<a id="dd-doccap-009"></a>
 
 **DD-DOCCAP-009 — Stable semantic profile**  
 Equivalent profiles shall express equivalent documentation intent independent of presentation labels or one renderer implementation.
+
+<a id="dd-doccap-010"></a>
 
 **DD-DOCCAP-010 — Unsupported profile aspects are explicit**  
 A provider incapable of satisfying a required profile dimension shall report unsupported/partial evidence rather than silently omit it and claim full completion.
@@ -236,14 +251,24 @@ A documentation model may organize facts into semantic sections or blocks such a
 - generated explanatory prose;
 - warnings/limitations/unknowns.
 
-**DD-DOCCAP-011 — Model is provider-independent**  
-Parser ASTs, regex match objects, VitePress page objects, Markdown-library nodes and provider-native representations shall not become the universal shared documentation model merely because a current implementation uses them.
+<a id="dd-doccap-011"></a>
 
-**DD-DOCCAP-012 — Facts and prose remain distinguishable**  
-The model shall support distinguishing authoritative/reliably recognized facts from explanatory or generated prose where acceptance depends on that difference.
+**DD-DOCCAP-011 — Model is provider-independent**
 
-**DD-DOCCAP-013 — Unknown is not invented**  
+Parser ASTs, regex matches, VitePress page objects and Markdown-library nodes apply the [Design provider encapsulation contract](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) at the documentation model seam.
+
+<a id="dd-doccap-012"></a>
+
+**DD-DOCCAP-012 — Facts and prose remain distinguishable**
+
+Documentation-model fact/generated-prose provenance follows [DD-DOCCAP-006](#dd-doccap-006).
+
+<a id="dd-doccap-013"></a>
+
+**DD-DOCCAP-013 — Unknown is not invented**
+
 Where a required relationship or meaning cannot be established reliably, the model shall represent omission, ambiguity or unknown rather than fabricate a confirmed fact.
+
 
 ---
 
@@ -251,14 +276,25 @@ Where a required relationship or meaning cannot be established reliably, the mod
 
 Source-derived documentation shall consume DD-2.4 Source Intelligence rather than duplicating generic parsing/recognition authority.
 
-**DD-DOCCAP-014 — Structural facts come through approved recognition**  
-Where supported source structure is available from Source Intelligence, Documentation Capability shall consume normalized facts rather than reconstruct a competing universal parser model.
+<a id="dd-doccap-014"></a>
 
-**DD-DOCCAP-015 — Recognition does not authorize mutation**  
-Discovery of documentable declarations/regions does not authorize documentation injection or source modification.
+**DD-DOCCAP-014 — Structural facts come through approved recognition**
 
-**DD-DOCCAP-016 — Unsupported source remains explicit**  
-Unsupported or ambiguous source recognition shall result in bounded omission/diagnostic evidence rather than unsafe textual inference being promoted to structural fact.
+Structural source inputs use [Source Intelligence normalized facts](dd-2-4-source-intelligence-detailed-design-v01.md#_10-structural-fact-model).
+
+<a id="dd-doccap-015"></a>
+
+**DD-DOCCAP-015 — Recognition does not authorize mutation**
+
+Discovered documentable declarations/regions follows [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="dd-doccap-016"></a>
+
+**DD-DOCCAP-016 — Unsupported source remains explicit**
+
+Unsupported/ambiguous source facts apply [FR-DOCS-045](../functional/docs-functional-specification-v01.md#fr-docs-045) at the model-construction boundary.
+
+<a id="dd-doccap-017"></a>
 
 **DD-DOCCAP-017 — Raw text may be bounded evidence**  
 Raw excerpts may be used when explicitly permitted and appropriate, but their use shall not erase the distinction between text observation and recognized structure.
@@ -269,14 +305,25 @@ Raw excerpts may be used when explicitly permitted and appropriate, but their us
 
 Documentation may describe domain semantics without acquiring ownership of those semantics.
 
-**DD-DOCCAP-018 — Nuxt facts remain Nuxt-owned**  
-Nuxt layer/configuration/integration facts consumed for documentation shall originate from the Nuxt domain/capability or another approved authority rather than being redefined by Documentation Capability.
+<a id="dd-doccap-018"></a>
 
-**DD-DOCCAP-019 — Quality facts remain Quality-owned**  
-Documentation may describe recognized tests or consume supplied Quality evidence, but it shall not execute tests or establish quality-gate truth merely to document them.
+**DD-DOCCAP-018 — Nuxt facts remain Nuxt-owned**
 
-**DD-DOCCAP-020 — Repository facts remain repository-owned**  
-Repository relationships or revision provenance used in documentation shall not transfer repository semantics to Documentation Capability.
+Nuxt documentation inputs consume [DD-2.10 Nuxt facts](dd-2-10-nuxt-capability-detailed-design-v01.md#_6-nuxt-recognition-and-facts) and the owning Nuxt workflow interpretation.
+
+<a id="dd-doccap-019"></a>
+
+**DD-DOCCAP-019 — Quality facts remain Quality-owned**
+
+Recognized tests and supplied Quality evidence are consumed under [FR-DOCS-062](../functional/docs-functional-specification-v01.md#fr-docs-062).
+
+<a id="dd-doccap-020"></a>
+
+**DD-DOCCAP-020 — Repository facts remain repository-owned**
+
+Repository relationships/revisions are consumed through [DD-2.3](dd-2-3-repository-capability-detailed-design-v01.md); documentation records their provenance.
+
+<a id="dd-doccap-021"></a>
 
 **DD-DOCCAP-021 — Domain conflicts are not silently resolved**  
 If domain-authoritative facts conflict with lower-confidence or generated documentation content, the conflict shall be exposed or the lower-authority content excluded rather than silently replacing the authoritative fact.
@@ -287,11 +334,19 @@ If domain-authoritative facts conflict with lower-confidence or generated docume
 
 Existing documentation may provide useful authored context but is not automatically canonical project truth.
 
-**DD-DOCCAP-022 — Existing docs are contextual evidence**  
-Existing documentation may be inspected and reused according to policy while retaining provenance as authored documentation.
+<a id="dd-doccap-022"></a>
 
-**DD-DOCCAP-023 — Existing text does not grant rewrite authority**  
-Reading an existing document does not authorize replacement, deletion or restructuring of that document.
+**DD-DOCCAP-022 — Existing docs are contextual evidence**
+
+Existing-document inspection/reuse applies [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037); the model retains its authored-document provenance.
+
+<a id="dd-doccap-023"></a>
+
+**DD-DOCCAP-023 — Existing text does not grant rewrite authority**
+
+Read access to existing documentation follows [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="dd-doccap-024"></a>
 
 **DD-DOCCAP-024 — Stale documentation remains detectable evidence**  
 Where revision/freshness comparison is available, stale or mismatched documentation shall be representable rather than being treated as freshly synchronized.
@@ -302,20 +357,35 @@ Where revision/freshness comparison is available, stale or mismatched documentat
 
 Documentation aggregation combines multiple bounded models/facts into one or more documentation outputs.
 
-**DD-DOCCAP-025 — Aggregation follows selected inputs**  
-Aggregation shall operate only on inputs selected by the owning use case/profile rather than unbounded recursive filesystem discovery.
+<a id="dd-doccap-025"></a>
+
+**DD-DOCCAP-025 — Aggregation follows selected inputs**
+
+Aggregation input selection follows [DD-DOCCAP-007](#dd-doccap-007).
+
+<a id="dd-doccap-026"></a>
 
 **DD-DOCCAP-026 — Duplicate semantic inputs are normalized**  
 Overlapping documentation scopes shall not unintentionally duplicate the same logical fact/resource unless the profile explicitly requires repeated representation.
 
-**DD-DOCCAP-027 — Provenance survives aggregation**  
-Multi-file/multi-layer aggregation shall preserve sufficient provenance to attribute important facts, omissions and failures to their source targets.
+<a id="dd-doccap-027"></a>
 
-**DD-DOCCAP-028 — Partial aggregation is explicit**  
-If some inputs are unsupported, unavailable or fail inspection, the aggregate result shall retain those omissions/failures rather than imply complete coverage.
+**DD-DOCCAP-027 — Provenance survives aggregation**
 
-**DD-DOCCAP-029 — Empty optional categories are not failures**  
-A valid absence of optional layers/tests/other categories may produce an empty section or omission without becoming a capability failure.
+Multi-file/layer aggregation binds [FR-DOCS-102](../functional/docs-functional-specification-v01.md#fr-docs-102) to source-target provenance in the model.
+
+<a id="dd-doccap-028"></a>
+
+**DD-DOCCAP-028 — Partial aggregation is explicit**
+
+Aggregate omission/failure evidence applies [FR-DOCS-038](../functional/docs-functional-specification-v01.md#fr-docs-038) and [FR-DOCS-102](../functional/docs-functional-specification-v01.md#fr-docs-102).
+
+<a id="dd-doccap-029"></a>
+
+**DD-DOCCAP-029 — Empty optional categories are not failures**
+
+Validly empty optional categories apply [FR-DOCS-039](../functional/docs-functional-specification-v01.md#fr-docs-039), represented locally by an empty section or omission.
+
 
 ---
 
@@ -334,14 +404,22 @@ A normalized generation request may include:
 - preview requirement;
 - correlation/cancellation linkage.
 
+<a id="dd-doccap-030"></a>
+
 **DD-DOCCAP-030 — Generation is non-persistent by default**  
 The shared generation/rendering operation shall produce proposed content/artefacts and shall not implicitly persist them.
+
+<a id="dd-doccap-031"></a>
 
 **DD-DOCCAP-031 — Output destination remains upstream**  
 A renderer may suggest or report output metadata but shall not independently choose an application target path where target selection carries scope or overwrite consequences.
 
-**DD-DOCCAP-032 — Generation and update remain distinct**  
-Producing a proposed new artefact is distinct from modifying an existing documentation artefact.
+<a id="dd-doccap-032"></a>
+
+**DD-DOCCAP-032 — Generation and update remain distinct**
+
+Proposed new artefacts and existing-document changes follow [Design §6.8](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
 
 ---
 
@@ -349,14 +427,25 @@ Producing a proposed new artefact is distinct from modifying an existing documen
 
 Documentation Capability may consume DD-2.6 declarative templates.
 
-**DD-DOCCAP-033 — Templates remain declarative**  
-Documentation templates shall be resolved/rendered through approved Resource Registry and Template contracts rather than treated as arbitrary executable plugins.
+<a id="dd-doccap-033"></a>
 
-**DD-DOCCAP-034 — Template identity does not define Docs intent**  
-Selecting a template does not independently establish which project target, scope or documentation use case is authorized.
+**DD-DOCCAP-033 — Templates remain declarative**
 
-**DD-DOCCAP-035 — Template rendering is not persistence**  
-A successfully rendered template remains proposed documentation content until the owning use case authorizes downstream creation/update.
+Documentation templates consume the [Registry declarative contract](dd-2-6-resource-registry-and-template-detailed-design-v01.md#dd-reg-049) and its rendering model.
+
+<a id="dd-doccap-034"></a>
+
+**DD-DOCCAP-034 — Template identity does not define Docs intent**
+
+Template selection versus approved documentation target follows [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
+
+<a id="dd-doccap-035"></a>
+
+**DD-DOCCAP-035 — Template rendering is not persistence**
+
+Rendered template proposals follows [DD-DOCCAP-030](#dd-doccap-030).
+
+<a id="dd-doccap-036"></a>
 
 **DD-DOCCAP-036 — Missing template behavior is explicit**  
 A missing/incompatible template shall produce unavailable/unsupported evidence or invoke an explicitly permitted alternative path; it shall not silently select an unrelated template.
@@ -378,17 +467,28 @@ A rendered result may carry:
 - provider/renderer identity;
 - diagnostics.
 
+<a id="dd-doccap-037"></a>
+
 **DD-DOCCAP-037 — Rendering does not invent authoritative facts**  
 A renderer may structure/present facts but shall not create unsupported project semantics merely to fill a template.
 
-**DD-DOCCAP-038 — Deterministic path is preferred where possible**  
-Given materially equivalent model, template and rendering configuration, deterministic renderers should produce semantically equivalent output.
+<a id="dd-doccap-038"></a>
+
+**DD-DOCCAP-038 — Deterministic path is preferred where possible**
+
+Deterministic renderers bind [FR-DOCS-080](../functional/docs-functional-specification-v01.md#fr-docs-080) to equivalent model, template and rendering-configuration inputs.
+
+<a id="dd-doccap-039"></a>
 
 **DD-DOCCAP-039 — Formatting differences are not semantic authority**  
 Markdown, HTML, JSON or another format shall not redefine the underlying documentation facts merely because presentation differs.
 
-**DD-DOCCAP-040 — Provider-native renderer output is normalized**  
-Renderer-specific objects shall remain below the shared boundary; callers receive AppManager-oriented proposed content/evidence.
+<a id="dd-doccap-040"></a>
+
+**DD-DOCCAP-040 — Provider-native renderer output is normalized**
+
+Renderer objects at the shared boundary follows [DD-DOCCAP-011](#dd-doccap-011).
+
 
 ---
 
@@ -407,17 +507,30 @@ normalized documentation model
         -> AppManager acceptance
 ```
 
-**DD-DOCCAP-041 — New artefact creation remains downstream**  
-Documentation Capability shall not acquire generic Resource Access mutation authority merely because it generated a new document proposal.
+<a id="dd-doccap-041"></a>
 
-**DD-DOCCAP-042 — Existing-document updates route through transformation**  
-Bounded modification of an existing documentation resource shall use DD-2.5 Source Transformation where transformation semantics apply.
+**DD-DOCCAP-041 — New artefact creation remains downstream**
 
-**DD-DOCCAP-043 — Whole replacement is explicit**  
-Replacement of substantial existing authored documentation shall remain an owning-use-case policy/authorization decision and shall not occur as an incidental renderer behavior.
+Persistence of generated new-document proposals follows [DD-DOCCAP-030](#dd-doccap-030).
 
-**DD-DOCCAP-044 — Output collision is evidence, not overwrite permission**  
-Discovery that a proposed output already exists shall return collision/precondition evidence rather than silently replacing the resource.
+<a id="dd-doccap-042"></a>
+
+**DD-DOCCAP-042 — Existing-document updates route through transformation**
+
+Existing-document semantic modification follows [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture).
+
+<a id="dd-doccap-043"></a>
+
+**DD-DOCCAP-043 — Whole replacement is explicit**
+
+Substantial replacement of authored documentation follows [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
+<a id="dd-doccap-044"></a>
+
+**DD-DOCCAP-044 — Output collision is evidence, not overwrite permission**
+
+Output-existence checks return collision/precondition evidence for [FR-DOCS-076](../functional/docs-functional-specification-v01.md#fr-docs-076).
+
 
 ---
 
@@ -425,14 +538,24 @@ Discovery that a proposed output already exists shall return collision/precondit
 
 Some documentation use cases may propose comments, headers or structured documentation inside source.
 
-**DD-DOCCAP-045 — Injection planning does not bypass DD-2.5**  
-Documentation Capability may produce documentation content or a documentation-oriented transformation intent, but Source Transformation owns the bounded edit plan, stale-state checks, preservation and source-level validation.
+<a id="dd-doccap-045"></a>
 
-**DD-DOCCAP-046 — Documentable-region evidence is not write authority**  
-A recognized declaration, header position or documentation block does not authorize injection into source.
+**DD-DOCCAP-045 — Injection planning does not bypass DD-2.5**
 
-**DD-DOCCAP-047 — Existing source content is preserved by transformation contract**  
-Documentation Capability shall not implement a private source-rewrite path merely because it knows the intended documentation text.
+Documentation supplies content/intent to [DD-2.5 plans](dd-2-5-source-transformation-detailed-design-v01.md#_9-transformation-plan-contract) for existing-source injection.
+
+<a id="dd-doccap-046"></a>
+
+**DD-DOCCAP-046 — Documentable-region evidence is not write authority**
+
+Recognized header/declaration positions used for injection follows [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="dd-doccap-047"></a>
+
+**DD-DOCCAP-047 — Existing source content is preserved by transformation contract**
+
+Source rewrite paths for proposed documentation text follows [Design](../appmanager-design-specification-v01.md#_7-code-intelligence-and-transformation-architecture).
+
 
 ---
 
@@ -440,23 +563,41 @@ Documentation Capability shall not implement a private source-rewrite path merel
 
 Documentation Capability may consume DD-2.7 AI Capability for bounded summarization, drafting or enrichment.
 
-**DD-DOCCAP-048 — AI remains optional where deterministic baseline exists**  
-A deterministic documentation path shall not become unavailable merely because optional AI enrichment is unavailable.
+<a id="dd-doccap-048"></a>
+
+**DD-DOCCAP-048 — AI remains optional where deterministic baseline exists**
+
+The deterministic capability path applies [FR-DOCS-084](../functional/docs-functional-specification-v01.md#fr-docs-084) when optional AI is unavailable.
+
+<a id="dd-doccap-049"></a>
 
 **DD-DOCCAP-049 — AI output retains generated provenance**  
 AI-generated prose shall remain distinguishable from reliably inspected facts until accepted into the documentation model/output by the owning use case.
 
-**DD-DOCCAP-050 — Reliable facts dominate generated claims**  
-AI enrichment shall not knowingly replace reliable structural/domain facts with contradictory generated assertions.
+<a id="dd-doccap-050"></a>
 
-**DD-DOCCAP-051 — AI context remains bounded**  
-Context construction for AI enrichment shall follow DD-2.7 scope, sensitivity, minimization and disclosure rules.
+**DD-DOCCAP-050 — Reliable facts dominate generated claims**
 
-**DD-DOCCAP-052 — AI failure does not fabricate completeness**  
-If a required documentation meaning cannot be established after an AI/enrichment failure, the capability shall expose the limitation rather than fabricate content.
+Contradictory AI assertions versus reliable facts follows [DD-DOCCAP-021](#dd-doccap-021).
 
-**DD-DOCCAP-053 — AI cannot persist documentation directly**  
-AI-generated output remains proposed content and shall not directly write documentation or source resources.
+<a id="dd-doccap-051"></a>
+
+**DD-DOCCAP-051 — AI context remains bounded**
+
+AI enrichment uses [DD-2.7 context, sensitivity and disclosure contracts](dd-2-7-ai-capability-detailed-design-v01.md).
+
+<a id="dd-doccap-052"></a>
+
+**DD-DOCCAP-052 — AI failure does not fabricate completeness**
+
+Unresolved required meaning after enrichment failure applies [FR-DOCS-089](../functional/docs-functional-specification-v01.md#fr-docs-089).
+
+<a id="dd-doccap-053"></a>
+
+**DD-DOCCAP-053 — AI cannot persist documentation directly**
+
+AI-generated documentation before persistence follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -474,17 +615,29 @@ A tooling capability may expose:
 - generated artefact evidence;
 - provider diagnostics.
 
+<a id="dd-doccap-054"></a>
+
 **DD-DOCCAP-054 — Tooling availability is target-relative**  
 A documentation tool may be available for one documentation target/project and unavailable for another.
 
-**DD-DOCCAP-055 — Tool recognition does not launch it**  
-Recognition of VitePress or another documentation tool shall not start development/preview/build processes.
+<a id="dd-doccap-055"></a>
 
-**DD-DOCCAP-056 — Provider selection is governed**  
-Tool/provider selection shall consume explicit/effective configuration and capability constraints rather than incidental package-script or discovery order.
+**DD-DOCCAP-055 — Tool recognition does not launch it**
 
-**DD-DOCCAP-057 — Tooling provider independence**  
-VitePress, another static-site generator or a future provider shall remain below the shared contract unless a later approved specification intentionally makes one provider normative.
+Tool recognition applies [FR-DOCS-118](../functional/docs-functional-specification-v01.md#fr-docs-118) to development, preview and build startup.
+
+<a id="dd-doccap-056"></a>
+
+**DD-DOCCAP-056 — Provider selection is governed**
+
+Documentation tool selection consumes [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) and explicit capability constraints.
+
+<a id="dd-doccap-057"></a>
+
+**DD-DOCCAP-057 — Tooling provider independence**
+
+Static-site provider choice follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
 
 ---
 
@@ -492,17 +645,30 @@ VitePress, another static-site generator or a future provider shall remain below
 
 Documentation tooling generally delegates technical execution through DD-2.2.
 
-**DD-DOCCAP-058 — Process completion is not documentation success**  
-Process launch/completion, exit status and output shall be normalized under the requested documentation-tool operation before application interpretation.
+<a id="dd-doccap-058"></a>
 
-**DD-DOCCAP-059 — Development/preview launch is not generation success**  
-Successfully starting a long-running documentation server establishes provider execution state, not that documentation was generated, correct or accepted.
+**DD-DOCCAP-058 — Process completion is not documentation success**
 
-**DD-DOCCAP-060 — Build completion remains provider evidence**  
-A build provider may report successful technical completion and generated artefacts; Docs/Application Engine determines the application-level outcome.
+Tool launch/exit/output evidence uses [DD-2.2 process interpretation](dd-2-2-process-execution-detailed-design-v01.md#dd-proc-043) and documentation-operation-specific normalization.
 
-**DD-DOCCAP-061 — Shell boundaries remain explicit**  
-Documentation-tool invocation shall preserve DD-2.2 executable/argument/shell policy rather than accepting arbitrary command strings through the documentation contract.
+<a id="dd-doccap-059"></a>
+
+**DD-DOCCAP-059 — Development/preview launch is not generation success**
+
+Documentation-server start evidence follows [FR-DOCS-097](../functional/docs-functional-specification-v01.md#fr-docs-097) and [Process readiness](dd-2-2-process-execution-detailed-design-v01.md#dd-proc-067) before documentation acceptance.
+
+<a id="dd-doccap-060"></a>
+
+**DD-DOCCAP-060 — Build completion remains provider evidence**
+
+Documentation-build technical completion follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+<a id="dd-doccap-061"></a>
+
+**DD-DOCCAP-061 — Shell boundaries remain explicit**
+
+Documentation tool launch uses [DD-2.2 direct/shell boundaries](dd-2-2-process-execution-detailed-design-v01.md#_8-direct-execution-and-shell-boundary).
+
 
 ---
 
@@ -521,14 +687,23 @@ A normalized tooling result should represent where applicable:
 - cancellation/timeout evidence;
 - completeness.
 
+<a id="dd-doccap-062"></a>
+
 **DD-DOCCAP-062 — Long-running state remains explicit**  
 Development/preview operations shall not be forced into a completed-success model while still running.
 
-**DD-DOCCAP-063 — Generated tooling artefacts are effects**  
-Known build/output artefacts shall be reported as provider effects without granting permission to modify unrelated resources.
+<a id="dd-doccap-063"></a>
 
-**DD-DOCCAP-064 — Provider failure is normalized**  
-Tool launch, configuration, build, runtime and termination failures shall be represented as normalized capability evidence rather than exposed only as provider-native errors.
+**DD-DOCCAP-063 — Generated tooling artefacts are effects**
+
+Known tooling outputs apply [FR-DOCS-099](../functional/docs-functional-specification-v01.md#fr-docs-099) at the delegated-effect boundary.
+
+<a id="dd-doccap-064"></a>
+
+**DD-DOCCAP-064 — Provider failure is normalized**
+
+Local launch, configuration, build, runtime and termination failure classes normalize evidence for [FR-DOCS-098](../functional/docs-functional-specification-v01.md#fr-docs-098).
+
 
 ---
 
@@ -536,14 +711,25 @@ Tool launch, configuration, build, runtime and termination failures shall be rep
 
 Documentation validation may include bounded checks such as rendered-output validity, required-section presence, link/schema/frontmatter validity or provider-specific build validation where these are part of documentation generation/tooling semantics.
 
-**DD-DOCCAP-065 — Documentation validity is not universal Quality authority**  
-Documentation-oriented validation used to establish a Documentation Capability result shall not absorb independent Quality-domain checks merely because both produce findings.
+<a id="dd-doccap-065"></a>
 
-**DD-DOCCAP-066 — Source validity after source mutation remains DD-2.5**  
-When documentation is injected into existing source, source-level validation remains part of Source Transformation.
+**DD-DOCCAP-065 — Documentation validity is not universal Quality authority**
 
-**DD-DOCCAP-067 — Quality may consume documentation evidence independently**  
-DD-2.8 may later evaluate documentation-related quality criteria where Quality is the primary intent, but this does not transfer Docs generation semantics to Quality.
+Documentation-oriented validation applies [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067) at the independent Quality boundary.
+
+<a id="dd-doccap-066"></a>
+
+**DD-DOCCAP-066 — Source validity after source mutation remains DD-2.5**
+
+Injected source is validated under [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) through DD-2.5.
+
+<a id="dd-doccap-067"></a>
+
+**DD-DOCCAP-067 — Quality may consume documentation evidence independently**
+
+Independent documentation-related Quality assessment follows [FR-QUAL-066](../functional/quality-functional-specification-v01.md#fr-qual-066) and [FR-QUAL-067](../functional/quality-functional-specification-v01.md#fr-qual-067); generation ownership follows [FR-DOCS-100](../functional/docs-functional-specification-v01.md#fr-docs-100).
+
+<a id="dd-doccap-068"></a>
 
 **DD-DOCCAP-068 — Validation failure is distinct from rendering failure**  
 A rendered artefact may exist yet fail documentation-oriented validation; the states shall remain distinguishable.
@@ -566,27 +752,47 @@ A coverage record may represent:
 - enrichment omissions;
 - stale-input evidence.
 
+<a id="dd-doccap-069"></a>
+
 **DD-DOCCAP-069 — Completeness is profile-relative**  
 A result may claim complete coverage only relative to the approved target/profile actually evaluated.
 
-**DD-DOCCAP-070 — Unsupported content cannot count as documented**  
-Unsupported/failed inputs shall not silently increase completeness merely because other content was generated.
+<a id="dd-doccap-070"></a>
 
-**DD-DOCCAP-071 — Optional absence is represented correctly**  
-A legitimately absent optional category shall not be confused with failed or unsupported documentation coverage.
+**DD-DOCCAP-070 — Unsupported content cannot count as documented**
 
-**DD-DOCCAP-072 — No raw-dump requirement**  
-Completeness does not require verbatim inclusion of every source file; it requires satisfaction of the approved documentation profile from authorized facts/content.
+Unsupported/failed input coverage follows [DD-DOCCAP-028](#dd-doccap-028).
+
+<a id="dd-doccap-071"></a>
+
+**DD-DOCCAP-071 — Optional absence is represented correctly**
+
+Legitimate empty optional categories follows [DD-DOCCAP-029](#dd-doccap-029).
+
+<a id="dd-doccap-072"></a>
+
+**DD-DOCCAP-072 — No raw-dump requirement**
+
+Profile completeness applies [FR-DOCS-103](../functional/docs-functional-specification-v01.md#fr-docs-103) to authorized facts/content, without requiring verbatim inclusion of each source.
+
 
 ---
 
 ## 23. Partial Results and Multi-Artefact Operations
 
-**DD-DOCCAP-073 — Per-target/per-artefact evidence is retained**  
-Multi-target or multi-artefact operations shall preserve which targets/artefacts succeeded, failed, were omitted, unchanged or not attempted.
+<a id="dd-doccap-073"></a>
 
-**DD-DOCCAP-074 — Capability does not invent universal rollback**  
-Documentation Capability shall not claim transactional rollback of downstream writes or provider effects unless the owning components actually guarantee it.
+**DD-DOCCAP-073 — Per-target/per-artefact evidence is retained**
+
+Target/artefact result attribution uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-doccap-074"></a>
+
+**DD-DOCCAP-074 — Capability does not invent universal rollback**
+
+Transactional rollback claims for downstream writes/provider effects uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
+<a id="dd-doccap-075"></a>
 
 **DD-DOCCAP-075 — Render success may coexist with persistence failure**  
 A successfully rendered proposal and a failed downstream write/update are distinct stages and shall remain distinguishable.
@@ -595,17 +801,30 @@ A successfully rendered proposal and a failed downstream write/update are distin
 
 ## 24. Progress, Cancellation and Timeout
 
+<a id="dd-doccap-076"></a>
+
 **DD-DOCCAP-076 — Progress is target/stage aware**  
 Long-running documentation operations may expose model/target/render/enrichment/tool stages without making one UI event format normative.
 
-**DD-DOCCAP-077 — Cancellation propagates to active delegates**  
-DD-1 cancellation shall stop future documentation work and propagate to AI/tooling/provider execution where supported.
+<a id="dd-doccap-077"></a>
 
-**DD-DOCCAP-078 — Completed evidence remains after cancellation**  
-Cancellation shall not erase already completed inspection, render or known downstream-effect evidence.
+**DD-DOCCAP-077 — Cancellation propagates to active delegates**
 
-**DD-DOCCAP-079 — Cancellation does not imply rollback**  
-Cancellation shall not imply that generated files, external AI usage or running/terminated provider effects were reversed unless they actually were.
+Stop future documentation work and propagate supported provider cancellation under [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-doccap-078"></a>
+
+**DD-DOCCAP-078 — Completed evidence remains after cancellation**
+
+Established inspection/render/effect evidence after cancellation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-doccap-079"></a>
+
+**DD-DOCCAP-079 — Cancellation does not imply rollback**
+
+Generated-file, AI usage and tool effects after cancellation uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-doccap-080"></a>
 
 **DD-DOCCAP-080 — Timeout values are governed inputs**  
 Tooling or provider timeouts shall derive from approved configuration/request/provider constraints rather than hidden Detailed Design constants.
@@ -614,30 +833,51 @@ Tooling or provider timeouts shall derive from approved configuration/request/pr
 
 ## 25. Stale-State and Revision Semantics
 
+<a id="dd-doccap-081"></a>
+
 **DD-DOCCAP-081 — Documentation evidence is revision-relative**  
 Facts/models derived from inspected resources shall retain sufficient revision/snapshot context where staleness could materially affect updates or claims of freshness.
 
-**DD-DOCCAP-082 — No false freshness**  
-A documentation result shall not claim synchronization/freshness where required inputs failed to refresh or changed materially before acceptance.
+<a id="dd-doccap-082"></a>
 
-**DD-DOCCAP-083 — Existing-document update uses transformation stale checks**  
-When updating existing documentation from prior inspection, DD-2.5 stale-state/precondition semantics shall govern the actual transformation.
+**DD-DOCCAP-082 — No false freshness**
+
+Freshness claims apply [FR-DOCS-081](../functional/docs-functional-specification-v01.md#fr-docs-081). The capability also surfaces material input change before acceptance through its revision/snapshot context.
+
+<a id="dd-doccap-083"></a>
+
+**DD-DOCCAP-083 — Existing-document update uses transformation stale checks**
+
+Existing-output updates apply [DD-XFORM-029](dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-029) and [DD-XFORM-030](dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-030) before mutation.
+
 
 ---
 
 ## 26. Sensitive Information and Content Safety
 
+<a id="dd-doccap-084"></a>
+
 **DD-DOCCAP-084 — Sensitive facts are not automatically documentable**  
 The existence of sensitive configuration, credentials, environment data or protected source content within managed scope does not authorize inclusion in documentation.
 
-**DD-DOCCAP-085 — Diagnostics minimize sensitive content**  
-Capability diagnostics should identify targets/failures without unnecessarily reproducing protected source, prompts or configuration values.
+<a id="dd-doccap-085"></a>
 
-**DD-DOCCAP-086 — External disclosure uses DD-2.7 policy**  
-Documentation content supplied to external AI providers shall follow the AI Capability disclosure/sensitivity contract.
+**DD-DOCCAP-085 — Diagnostics minimize sensitive content**
 
-**DD-DOCCAP-087 — Generated documentation remains untrusted output until accepted**  
-Rendered or AI-generated content shall not acquire application authority merely because it is intended for human-readable documentation.
+Documentation diagnostics containing source, prompts or configuration uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
+<a id="dd-doccap-086"></a>
+
+**DD-DOCCAP-086 — External disclosure uses DD-2.7 policy**
+
+Documentation content sent to an external AI provider uses [DD-2.7 context/disclosure contracts](dd-2-7-ai-capability-detailed-design-v01.md).
+
+<a id="dd-doccap-087"></a>
+
+**DD-DOCCAP-087 — Generated documentation remains untrusted output until accepted**
+
+Generated human-readable documentation as application authority follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 
@@ -645,7 +885,7 @@ Rendered or AI-generated content shall not acquire application authority merely 
 
 ### 27.1 Resource Access
 
-Resource Access owns bounded read/write mechanics. Documentation Capability may consume supplied resource contents/evidence and return proposed output, but target persistence remains separately authorized.
+Documentation inputs and proposed outputs connect to the [Resource Access bounded request](dd-2-1-resource-access-detailed-design-v01.md#_9-bounded-resource-request-contract) at the separately authorized persistence stage.
 
 ### 27.2 Source Intelligence
 
@@ -665,14 +905,18 @@ AI supplies bounded proposed enrichment. Documentation Capability/owning Docs us
 
 ### 27.6 Process Execution
 
-Documentation tools may execute through DD-2.2. Process status remains technical evidence.
+Documentation tooling consumes [Process Execution](dd-2-2-process-execution-detailed-design-v01.md) readiness/completion evidence through its tooling contract.
 
 ### 27.7 Quality Capability
 
-Quality may independently assess documentation-related criteria; Documentation Capability does not inherit Quality gate authority.
+Independent Quality assessment consumes the [Quality criterion and gate contracts](dd-2-8-quality-capability-detailed-design-v01.md); documentation-specific validation remains the local validation concern.
 
-**DD-DOCCAP-088 — Capability composition preserves authority**  
-Combining shared capabilities shall not allow Documentation Capability to acquire their separate authorities or bypass their safety contracts.
+<a id="dd-doccap-088"></a>
+
+**DD-DOCCAP-088 — Capability composition preserves authority**
+
+Documentation composition with shared capabilities follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
 
 ---
 
@@ -689,34 +933,58 @@ A documentation provider/renderer may own technical mechanics including:
 - preview/dev server execution integration;
 - provider-specific diagnostics.
 
-**DD-DOCCAP-089 — Providers normalize upward**  
-Provider-native objects/results shall be translated into the shared Documentation Capability contracts before application interpretation.
+<a id="dd-doccap-089"></a>
+
+**DD-DOCCAP-089 — Providers normalize upward**
+
+Documentation-provider native result objects uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
+<a id="dd-doccap-090"></a>
 
 **DD-DOCCAP-090 — Provider limitations are explicit**  
 A provider unable to satisfy required format/profile/tooling semantics shall report unsupported/unavailable evidence rather than silently substituting materially different behavior.
 
-**DD-DOCCAP-091 — Provider replaceability**  
-Callers shall not require VitePress, one Markdown library, one AST shape or one renderer-native type to consume Documentation Capability results.
+<a id="dd-doccap-091"></a>
 
-**DD-DOCCAP-092 — No universal documentation plugin framework**  
-Recurring parser/renderer/provider naming patterns do not require a universal executable plugin system, common base class or cross-runtime protocol in Version 1.
+**DD-DOCCAP-091 — Provider replaceability**
+
+Consumer dependence on renderer/parser/VitePress native types follows [DD-DOCCAP-011](#dd-doccap-011).
+
+<a id="dd-doccap-092"></a>
+
+**DD-DOCCAP-092 — No universal documentation plugin framework**
+
+Documentation parser/renderer patterns apply [DD-ENG-046](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) and the [Design extension classes](../appmanager-design-specification-v01.md#_13-2-extension-classes). Concrete base classes and cross-runtime protocols remain [implementation choices](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
 ## 29. Relationship to DD-1 Outcomes
 
-**DD-DOCCAP-093 — Capability success is not automatically Docs success**  
-Inspection, rendering, AI enrichment or tooling success supplies evidence; the owning Docs use case/Application Engine determines whether the complete documentation intent was satisfied.
+<a id="dd-doccap-093"></a>
 
-**DD-DOCCAP-094 — Partial/mixed evidence is preserved**  
-Mixed target, render, enrichment, validation and persistence states shall remain available to DD-1.2 rather than collapsing prematurely to a Boolean.
+**DD-DOCCAP-093 — Capability success is not automatically Docs success**
 
-**DD-DOCCAP-095 — Final acceptance remains upstream**  
-Documentation Capability may establish that an output satisfies its bounded render/validation contract, but application acceptance remains with the owning use case.
+Inspection/render/enrichment/tool evidence in a Docs workflow follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+<a id="dd-doccap-094"></a>
+
+**DD-DOCCAP-094 — Partial/mixed evidence is preserved**
+
+Mixed render/enrichment/validation/persistence results uses [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-doccap-095"></a>
+
+**DD-DOCCAP-095 — Final acceptance remains upstream**
+
+Bounded render/validation satisfaction before application acceptance follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
 
 ---
 
 ## 30. Current Implementation Evidence and Reconciliation
+
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
 
 Current implementation evidence includes `app/services/codeService.ts`, source strategies and related file/AI services.
 
@@ -744,14 +1012,18 @@ These implementation facts do **not** make the following permanent architecture:
 - TypeScript/JavaScript/Vue support as the complete documentation architecture;
 - current module/package topology as a permanent subsystem boundary.
 
-**DD-DOCCAP-096 — Implementation must converge on approved boundaries**  
-Future Implementation Specifications shall adapt current code/documentation services to this Detailed Design rather than weakening shared capability boundaries to preserve incidental current structure.
+<a id="dd-doccap-096"></a>
+
+**DD-DOCCAP-096 — Implementation must converge on approved boundaries**
+
+Adapt concrete code/documentation services under the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
 ## 31. Security and Safety Model
 
-The capability shall protect against at least:
+The local exposure points below locate the target, provider, output, mutation and stale-state contracts in this design. They apply [Design safety boundaries](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) and the [local safety clauses](#dd-doccap-097); this threat-model index does not establish a second set of guarantees:
 
 - documentation target expansion beyond managed scope;
 - hidden recursive scans outside selected inputs;
@@ -766,8 +1038,13 @@ The capability shall protect against at least:
 - documentation-tool execution as a hidden side effect of inspection;
 - generated tooling artefacts overwriting unrelated resources.
 
-**DD-DOCCAP-097 — Documentation/provider content is untrusted evidence**  
-Existing documentation, rendered content, provider output and generated prose shall not redefine AppManager policy, scope, authorization or configuration.
+<a id="dd-doccap-097"></a>
+
+**DD-DOCCAP-097 — Documentation/provider content is untrusted evidence**
+
+Existing documentation, templates, rendered content, provider output/diagnostics and generated prose are untrusted data. They shall not redefine AppManager policy, scope, authorization, configuration or command authority.
+
+<a id="dd-doccap-098"></a>
 
 **DD-DOCCAP-098 — Output references are bounded**  
 Generated paths, links, include directives or provider-specific references shall remain data until validated by the downstream consumer responsible for their effects.
@@ -808,8 +1085,12 @@ Deterministic tests should cover at least:
 - partial multi-artefact result;
 - provider substitution behind the same normalized contract.
 
+<a id="dd-doccap-099"></a>
+
 **DD-DOCCAP-099 — Fake-provider conformance**  
 Core capability tests shall be expressible with deterministic fake source facts, renderers, AI results and documentation-tool providers.
+
+<a id="dd-doccap-100"></a>
 
 **DD-DOCCAP-100 — Real-provider tests remain adapter-specific**  
 Integration tests for VitePress, concrete Markdown libraries, source strategies or other providers may verify provider behavior below the shared boundary but shall not define AppManager documentation semantics.
@@ -818,46 +1099,7 @@ Integration tests for VitePress, concrete Markdown libraries, source strategies 
 
 ## 33. Conformance Invariants
 
-A conforming DD-2.9 implementation shall preserve all of the following:
-
-1. Documentation Capability is a shared technical capability beneath application authority.
-2. Documentation capability execution does not transfer Docs-domain/application authority.
-3. Managed scope and documentation target selection remain upstream.
-4. Inspection is evidence-producing and non-mutating.
-5. Documentable facts retain provenance where material.
-6. Authoritative structural/domain facts remain distinguishable from authored/generated prose.
-7. Unknown or unsupported meaning is not fabricated as fact.
-8. Documentation Capability does not independently crawl arbitrary project resources.
-9. Source structural facts come through Source Intelligence where supported.
-10. Nuxt/domain-specific semantics remain owned by their authoritative domains/capabilities.
-11. Existing documentation is contextual evidence, not automatic canonical truth.
-12. Aggregation follows bounded selected inputs and retains omissions/failures.
-13. Duplicate logical inputs are normalized where appropriate.
-14. Generation produces proposed content/artefacts rather than implicit persistence.
-15. Output target/path authority remains upstream/downstream as appropriate.
-16. New artefact creation and existing-resource update remain distinct.
-17. Existing-document/source updates route through Source Transformation when transformation semantics apply.
-18. Templates remain declarative and do not establish application intent or write authority.
-19. Rendering does not invent authoritative project facts.
-20. Optional AI enrichment does not make deterministic baseline generation provider-dependent where such a baseline exists.
-21. AI-generated prose remains proposal/evidence until accepted.
-22. Reliable facts are not silently replaced by contradictory generated claims.
-23. AI external disclosure follows DD-2.7.
-24. Documentation-tool recognition does not execute tooling.
-25. Process/tool completion is not documentation acceptance.
-26. Development/preview launch is not documentation-generation success.
-27. Documentation-oriented validation is distinct from Source Transformation validity and independent Quality authority.
-28. Completeness is relative to the approved target/profile.
-29. Unsupported/failed inputs do not count as documented coverage.
-30. Multi-target/multi-artefact results preserve component evidence.
-31. Cancellation does not erase completed evidence or imply rollback.
-32. Documentation freshness claims remain revision-aware where material.
-33. Sensitive information is not automatically documentable merely because it is accessible.
-34. Provider-native parser/renderer/tool objects remain below normalized contracts.
-35. Current `CodeService`, strategies, direct AI calls and direct writes are implementation evidence, not permanent architecture.
-36. No universal executable documentation plugin framework is introduced from naming similarity.
-
----
+Review input/profile/model contracts, source/domain/authored provenance, aggregation, rendering, update/injection, optional enrichment and tooling lifecycles. Documentation validation, coverage, freshness and per-artefact evidence retain their separate contracts; the testability section exercises both production and provider boundaries.
 
 ## 34. Traceability Summary
 
@@ -877,15 +1119,15 @@ A conforming DD-2.9 implementation shall preserve all of the following:
 
 ---
 
-## 35. Downstream Detailed Design Dependencies
+## 35. Contract Consumers and Implementation Dependencies {#_35-downstream-detailed-design-dependencies}
 
 ### 35.1 DD-2.10 Nuxt Capability
 
-Nuxt Capability shall provide Nuxt-specific recognition, metadata and scaffolding/configuration facts without transferring Nuxt semantic authority to Documentation Capability. DD-2.9 may consume those facts for documentation models.
+[Nuxt Capability](dd-2-10-nuxt-capability-detailed-design-v01.md) supplies recognized Nuxt metadata, scaffolding and configuration facts for the documentation model. Source and Nuxt facts retain the provenance distinctions in §7.
 
 ### 35.2 Domain Detailed Designs
 
-The later Docs-domain Detailed Design shall define documentation use-case orchestration using DD-2.9 and shall not duplicate shared inspection/model/render/provider contracts. App, Nuxt, Quality, AI and other domain designs may consume documentation models/proposals while retaining their own application authority.
+The [Docs domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md) composes the inspection/model/render contracts here into documentation workflows. App, Nuxt, Quality, AI and other consumers use those models/proposals under [Design §10.11](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows).
 
 ### 35.3 Implementation Specification
 
@@ -921,34 +1163,4 @@ These belong to Implementation Specification, effective configuration, provider 
 
 ## 37. Final Design Position
 
-The permanent Version 1 position is:
-
-> **Documentation Capability owns bounded documentation evidence modeling, aggregation, rendering, optional enrichment and documentation-tool delegation; application intent, managed scope, source mutation, persistence and final documentation acceptance remain outside the capability.**
-
-The canonical model is:
-
-```text
-owning Docs use case / managed scope / documentation profile
-                  + authoritative selected facts
-                              |
-                              v
-                 Documentation Capability
-                              |
-          normalize facts / provenance
-          compose documentation model
-          aggregate bounded inputs
-          render proposed documentation
-          optionally enrich through AI
-          optionally delegate docs tooling
-                              |
-                              v
-        normalized docs proposal/evidence
-                              |
-                              v
- owning use case -> authorized persistence/transformation
-                  -> validation -> AppManager acceptance
-```
-
-The central non-drift rule is:
-
-> **Documentation Capability may explain and render what AppManager knows; it does not gain authority to change what AppManager manages merely because it can describe it.**
+The [architectural position](#_4-architectural-position) provides the collaboration map. The local models and workflows above, together with their direct upstream bindings, define the Version 1 contract; the conformance and testability sections provide the review route.

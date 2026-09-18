@@ -8,31 +8,19 @@
 >
 > **Detailed Design authority:** This document defines the permanent shared contracts for bounded access to filesystem and resource-like project artefacts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs, or the DD-1 Application Core Detailed Designs.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
-> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
+> **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
 >
 > **Primary Functional authorities:** [docs/functional/managed-project-functional-specification-v01.md](../functional/managed-project-functional-specification-v01.md), [docs/functional/configuration-functional-specification-v01.md](../functional/configuration-functional-specification-v01.md), [docs/functional/source-transformation-functional-specification-v01.md](../functional/source-transformation-functional-specification-v01.md), [docs/functional/application-invocation-functional-specification-v01.md](../functional/application-invocation-functional-specification-v01.md)
 >
-> **Related domain Functional authorities:** App, Docs, Git, Nuxt, Settings, AI, Quality and Utils Functional Specifications where those domains inspect or mutate project resources.
+> **Related domain Functional authorities:** App, Docs, Git, Nuxt, Settings, AI, Quality and Maintenance Functional Specifications where those domains inspect or mutate project resources.
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state distinctions, safety boundaries and evidence model by which AppManager performs bounded access to filesystem and resource-like project artefacts on behalf of application use cases and shared capabilities.
+Resource Access performs bounded reads, inspections, enumeration and mutations of filesystem/resource-like project artefacts. Callers supply target and technical constraints; the capability normalizes references, verifies containment/preconditions and returns resource evidence. Its responsibilities and local operation contracts below explain how this differs from domain intent and source-format interpretation.
 
-The governing rule is:
-
-> **Technical ability to access a resource is evidence of accessibility, not authority to target or mutate it.**
-
-A second rule follows:
-
-> **Resource Access executes bounded resource operations supplied by an authoritative caller; it does not derive managed scope, application intent, authorization or final application acceptance.**
-
-A third rule is:
-
-> **Resource mutation mechanics and resource-format semantics are distinct. Resource Access may apply an approved write, create, delete or move, but it does not independently decide how structured source should be transformed.**
-
-Resource Access therefore provides a reusable capability beneath the Application Engine, Managed Project, Source Transformation and domain orchestration layers without becoming a filesystem-shaped alternate application architecture.
+Application authority is governed by [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); existing-source semantic change uses [Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md).
 
 ## 2. Scope
 
@@ -127,9 +115,7 @@ The caller supplies application-derived constraints. Resource Access enforces th
 
 ### 4.1 Capability boundary
 
-The Resource Access boundary exists even when Version 1 uses Node.js/TypeScript in one process.
-
-Provider-native path objects, filesystem exceptions, directory-entry types, file descriptors, streams, SDK objects or platform-specific error shapes shall not become the general AppManager resource model merely because they are convenient to expose in TypeScript.
+The Resource Access seam applies [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to native paths, directory entries, file descriptors, streams and filesystem errors. The normalized resource/request models below are the consumer-facing contract.
 
 ### 4.2 Relationship to Managed Project
 
@@ -191,6 +177,8 @@ A Resource Reference identifies the resource to which a bounded Resource Access 
 
 It shall be explicit enough to prevent Resource Access from searching broadly for a target merely because a caller supplied an imprecise string.
 
+<a id="dd-res-001"></a>
+
 ### DD-RES-001 — Canonical resource reference
 
 Resource Access shall operate on a canonical resource reference derived from caller-supplied target information before consequential access occurs.
@@ -219,9 +207,11 @@ A path may change while an AppManager semantic entity remains the same, and two 
 
 Resource Access may report normalized/effective location facts but shall not redefine upstream semantic identity.
 
+<a id="dd-res-002"></a>
+
 ### DD-RES-002 — Location is not application identity
 
-A filesystem path or provider location shall not automatically become the authoritative AppManager project, layer, repository, source or domain identity.
+Resource/provider locations are evidence inputs under [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); canonical resource identity is the local reference defined above.
 
 ## 7. Resource Kind Model
 
@@ -235,6 +225,8 @@ At minimum, the model shall distinguish where observable:
 - other/special/unsupported resource;
 - missing resource;
 - unknown because inspection failed or was not permitted.
+
+<a id="dd-res-003"></a>
 
 ### DD-RES-003 — Kind preservation
 
@@ -259,11 +251,15 @@ The shared operation model shall support at least:
 - create container/directory where explicitly requested;
 - delete container/directory where explicitly requested.
 
+<a id="dd-res-004"></a>
+
 ### DD-RES-004 — Read and mutation distinction
 
 Read/inspection requests and mutation requests shall be distinct in the capability contract.
 
 A caller asking to inspect, read or enumerate shall not trigger resource creation, normalization writes, format repair, cache creation or another consequential mutation as an incidental effect.
+
+<a id="dd-res-005"></a>
 
 ### DD-RES-005 — Create versus replace distinction
 
@@ -271,11 +267,15 @@ A request to create a resource shall be distinguishable from a request to replac
 
 The capability shall not silently convert a create collision into replacement unless the caller explicitly requested semantics that permit that outcome.
 
+<a id="dd-res-006"></a>
+
 ### DD-RES-006 — Delete versus absence distinction
 
 Deletion semantics shall state whether absence is an accepted no-op precondition or a conflict for the specific request.
 
 Resource Access shall not impose one global rule that missing-delete targets always succeed or always fail.
+
+<a id="dd-res-007"></a>
 
 ### DD-RES-007 — Move semantics
 
@@ -288,6 +288,8 @@ Move shall not silently become copy-plus-delete semantics at the architectural c
 ### 9.1 Purpose
 
 Every consequential Resource Access operation shall receive a bounded request describing the technical operation and the constraints under which that operation may execute.
+
+<a id="dd-res-008"></a>
 
 ### DD-RES-008 — Bounded request required
 
@@ -315,9 +317,11 @@ A bounded request shall be capable of representing:
 - correlation with invocation/use-case execution;
 - optional provider/capability configuration already resolved through DD-1.4.
 
+<a id="dd-res-009"></a>
+
 ### DD-RES-009 — Least authority request
 
-A Resource Access request shall carry only the technical authority needed for the delegated operation and shall not expose broader project mutation authority merely for convenience.
+The delegated resource request applies [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to its technical authority.
 
 ## 10. Path and Location Normalization
 
@@ -335,15 +339,21 @@ Normalization may include, as applicable:
 - case/case-folding evidence where the provider requires it;
 - distinguishing syntactic location from effective resolved target where links or indirection are involved.
 
+<a id="dd-res-010"></a>
+
 ### DD-RES-010 — No current-directory authority
 
-Resource Access shall not treat the process current working directory as implicit application authority when the caller has not explicitly supplied it as the request base.
+Use the caller-supplied base under [DD-RES-001](#dd-res-001); project authority follows [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="dd-res-011"></a>
 
 ### DD-RES-011 — Normalization does not expand scope
 
 Normalization shall not broaden caller-supplied containment or target constraints.
 
 A syntactically relative path that normalizes outside the approved boundary shall be rejected rather than accepted because the provider can access it.
+
+<a id="dd-res-012"></a>
 
 ### DD-RES-012 — Preserve reference provenance
 
@@ -355,6 +365,8 @@ Where material to diagnostics, stale-state checks or caller understanding, Resou
 
 Containment is a technical safety check against caller-supplied boundaries. It is not Managed Project scope derivation.
 
+<a id="dd-res-013"></a>
+
 ### DD-RES-013 — Caller-derived containment
 
 For operations whose safety depends on location containment, Resource Access shall verify the effective target against a containment boundary supplied or derived by an authoritative caller.
@@ -365,17 +377,23 @@ Resource Access shall not assume lexical path containment proves effective targe
 
 Where symbolic links, junctions, mount indirection, provider aliases or equivalent mechanisms can redirect access, the capability shall expose or enforce indirection semantics sufficient to avoid silent boundary escape.
 
+<a id="dd-res-014"></a>
+
 ### DD-RES-014 — Indirection cannot silently escape
 
 A resource request shall not follow indirection outside an approved containment boundary unless the caller's policy explicitly permits that external target and the effective target remains unambiguous.
+
+<a id="dd-res-015"></a>
 
 ### DD-RES-015 — Indirection evidence
 
 Inspection shall be capable of reporting whether a requested location is or traverses an indirection where that fact materially affects safety or caller interpretation.
 
+<a id="dd-res-016"></a>
+
 ### DD-RES-016 — No ownership by containment
 
-Passing containment validation establishes only that the target is technically inside the supplied boundary. It does not prove managed-scope inclusion, ownership, mutability or application authorization.
+Interpret containment evidence under [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) when the caller decides ownership and permitted effects.
 
 ## 12. Resource Inspection and Metadata Evidence
 
@@ -395,15 +413,21 @@ The evidence model shall be capable of representing, where available and relevan
 - sensitivity marker carried from caller/context;
 - provider-specific detail retained only as bounded evidence.
 
+<a id="dd-res-017"></a>
+
 ### DD-RES-017 — Expected failures are structured
 
 Expected resource states such as missing, inaccessible, wrong kind, conflict or stale revision shall be represented through structured evidence/diagnostics rather than requiring callers to classify arbitrary provider exceptions.
+
+<a id="dd-res-018"></a>
 
 ### DD-RES-018 — `exists` is insufficient where safety needs more
 
 Consumers shall not rely on a Boolean existence check when the requested operation depends on resource kind, effective target, access mode, revision or containment.
 
 ## 13. Read Contract
+
+<a id="dd-res-019"></a>
 
 ### DD-RES-019 — Read is content acquisition
 
@@ -418,17 +442,23 @@ The Resource Access contract shall support distinctions sufficient for consumers
 - opaque provider content where justified;
 - unsupported/indeterminate content mode.
 
+<a id="dd-res-020"></a>
+
 ### DD-RES-020 — No extension-based semantic authority
 
 File extension alone shall not give Resource Access authority to parse, validate or reinterpret content as configuration, source, documentation or another domain model.
 
 Format-aware parsing may be supplied by Source Intelligence, Configuration source adapters, Settings resource handlers or another owning capability above Resource Access.
 
+<a id="dd-res-021"></a>
+
 ### DD-RES-021 — Encoding is explicit where material
 
 Where text decoding affects correctness, the requested or detected encoding semantics shall be explicit enough to avoid silently corrupting content.
 
 Concrete supported encodings are Implementation Specification concerns unless later elevated by functional requirements.
+
+<a id="dd-res-022"></a>
 
 ### DD-RES-022 — Bounded reads
 
@@ -440,9 +470,13 @@ The exact thresholds and streaming mechanics belong to lower-level design unless
 
 Enumeration is read-only discovery beneath an explicitly bounded resource/container.
 
+<a id="dd-res-023"></a>
+
 ### DD-RES-023 — Explicit enumeration root
 
 Enumeration shall begin from an explicit normalized resource reference and shall not broaden into unrelated filesystem roots merely because traversal is technically possible.
+
+<a id="dd-res-024"></a>
 
 ### DD-RES-024 — Enumeration constraints
 
@@ -456,13 +490,17 @@ The request shall be capable of carrying caller-supplied constraints such as:
 - indirection-following policy;
 - bounded result/size constraints where needed.
 
+<a id="dd-res-025"></a>
+
 ### DD-RES-025 — Exclusions remain effective
 
 Excluded locations shall not re-enter an enumeration through alternate path syntax or indirection where the capability can determine equivalence safely.
 
+<a id="dd-res-026"></a>
+
 ### DD-RES-026 — Enumeration is evidence only
 
-A resource returned by enumeration is discovered/accessible evidence only. Enumeration shall not mark it managed, targetable, mutable or authorized.
+Enumeration results bind to [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) as discovery evidence.
 
 ## 15. Mutation Preconditions
 
@@ -480,13 +518,19 @@ Supported precondition classes shall include, where relevant:
 - containment and indirection constraints;
 - expected accessibility/mutation capability.
 
+<a id="dd-res-027"></a>
+
 ### DD-RES-027 — Preconditions before effect
 
 A mutation shall not begin if a required technical precondition is known to be false.
 
+<a id="dd-res-028"></a>
+
 ### DD-RES-028 — Preconditions do not authorize
 
-A resource satisfying all technical preconditions does not thereby become authorized for mutation. Application authorization remains upstream.
+Technical preconditions are inputs to the application authorization boundary in [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
+<a id="dd-res-029"></a>
 
 ### DD-RES-029 — Precondition evidence returned
 
@@ -496,21 +540,25 @@ When a mutation is rejected because a technical precondition failed, Resource Ac
 
 ### 16.1 Resource-level responsibility
 
-Resource Access owns technical detection of stale assumptions when the request supplies sufficient revision/precondition evidence.
-
-The Application Engine or owning use case owns the decision to retry, refresh, re-plan, request renewed authorization or fail.
+Resource Access detects technical staleness from the revision/preconditions in [§15](#_15-mutation-preconditions). Consumer recovery uses the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) and [invocation retry contract](../functional/application-invocation-functional-specification-v01.md#fr-inv-048).
 
 ### DD-RES-030 — Compare before consequential mutation
 
 Where a caller supplies expected revision or snapshot evidence, Resource Access shall verify that evidence at the latest safe point before the consequential mutation.
 
+<a id="dd-res-031"></a>
+
 ### DD-RES-031 — Stale state is explicit
 
 A detected stale-state mismatch shall be returned as a structured conflict rather than silently applying a mutation to the newer state.
 
+<a id="dd-res-032"></a>
+
 ### DD-RES-032 — No implicit retry authority
 
 Resource Access shall not independently retry a failed mutation in a way that could change target, overwrite newer content or bypass caller-visible conflict handling unless the retry is strictly technical, preserves identical semantics and is permitted by the request.
+
+<a id="dd-res-033"></a>
 
 ### DD-RES-033 — No universal locking requirement
 
@@ -520,21 +568,27 @@ Providers may use suitable implementation mechanisms, but application-level conc
 
 ## 17. Create and Write Semantics
 
+<a id="dd-res-034"></a>
+
 ### DD-RES-034 — Parent creation is explicit
 
 Creating missing parent directories/containers shall occur only where the request explicitly permits or requires that behaviour.
 
 A write shall not gain broad directory-creation authority implicitly.
 
+<a id="dd-res-035"></a>
+
 ### DD-RES-035 — Content application is bounded
 
 Resource Access may write supplied content to the explicitly identified target under the approved create/replace semantics. It shall not derive unrelated edits, append rules, merge policy or format-specific patch behaviour on its own.
 
+<a id="dd-res-036"></a>
+
 ### DD-RES-036 — No implicit append/update policy
 
-Generic Resource Access shall not interpret “update” as append-if-missing, merge-object-keys, rewrite-whole-file or another content policy merely from file extension or historical implementation convention.
+Append-if-missing, key merging and whole-file rewrite are content-policy cases of [DD-RES-035](#dd-res-035), routed through the owning transformation/resource handler rather than inferred from an extension or historical convenience method.
 
-Those semantics belong to the owning transformation/resource handler.
+<a id="dd-res-037"></a>
 
 ### DD-RES-037 — Preserve supplied bytes/text faithfully
 
@@ -548,41 +602,57 @@ Resource Access shall distinguish requested guarantees from best-effort provider
 
 A single-resource replacement may request a guarantee such as “target is either the previous complete resource or the new complete resource” where the provider can support it.
 
+<a id="dd-res-038"></a>
+
 ### DD-RES-038 — No false atomicity
 
-Resource Access shall not claim atomic replacement, transactional multi-resource mutation or rollback unless the selected provider and operation contract actually provide and verify that guarantee.
+Replacement and staging guarantees follow [DD-1.2 Consequential Effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects); expose only guarantees verified by the selected resource operation/provider.
+
+<a id="dd-res-039"></a>
 
 ### DD-RES-039 — Staging is subordinate
 
 Temporary/staging resources may be used to implement safe replacement, but they remain internal technical artefacts and shall not become application targets or durable managed resources merely because they exist.
 
+<a id="dd-res-040"></a>
+
 ### DD-RES-040 — Staging containment
 
 Staging resources used for a bounded mutation shall remain within a location/safety model compatible with the requested operation and shall not silently introduce a broader write surface.
+
+<a id="dd-res-041"></a>
 
 ### DD-RES-041 — Staging cleanup evidence
 
 Failure to clean up a temporary/staging artefact shall be reportable as secondary evidence when materially relevant, without replacing the primary mutation failure.
 
+<a id="dd-res-042"></a>
+
 ### DD-RES-042 — Multi-resource non-transactionality
 
-Unless a later design explicitly provides a validated transaction mechanism, multiple resource mutations shall be treated as individually consequential effects that may produce partial completion.
-
-Known completed effects shall be preserved in DD-1.2 outcome evidence.
+Compose multiple mutations as per-resource effects under [DD-1.2 Partial Completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion); this contract supplies no cross-resource transaction guarantee.
 
 ## 19. Delete Semantics
+
+<a id="dd-res-043"></a>
 
 ### DD-RES-043 — Delete target specificity
 
 A delete request shall identify the exact resource or bounded container target to remove and shall not infer recursive deletion from a generic file-delete request.
 
+<a id="dd-res-044"></a>
+
 ### DD-RES-044 — Recursive/container deletion is explicit
 
 Recursive directory/container deletion shall require an explicitly distinct request characteristic because its effect surface differs materially from deleting a single file/resource.
 
+<a id="dd-res-045"></a>
+
 ### DD-RES-045 — No adjacent deletion
 
 Deleting one approved resource shall not authorize removal of sibling, parent, generated, temporary or related resources unless those targets are separately included in the bounded request.
+
+<a id="dd-res-046"></a>
 
 ### DD-RES-046 — Delete effects are reported
 
@@ -590,17 +660,25 @@ Successful deletion shall produce an applied resource effect identifying the del
 
 ## 20. Move and Rename Semantics
 
+<a id="dd-res-047"></a>
+
 ### DD-RES-047 — Source and destination containment
 
 Move/rename operations shall validate both source and destination against applicable caller-supplied containment and indirection constraints.
+
+<a id="dd-res-048"></a>
 
 ### DD-RES-048 — Destination collision policy
 
 Destination-exists behaviour shall be explicit in the request. Resource Access shall not silently overwrite an existing destination merely because the underlying provider supports replacement rename semantics.
 
+<a id="dd-res-049"></a>
+
 ### DD-RES-049 — Move effect evidence
 
 A successful move shall report the original and resulting resource locations as one coherent applied effect where the provider can establish that relationship reliably.
+
+<a id="dd-res-050"></a>
 
 ### DD-RES-050 — Cross-provider/cross-boundary move
 
@@ -610,17 +688,25 @@ If a requested move cannot preserve move semantics because source and destinatio
 
 Resource Access shall preserve sensitivity classifications supplied by the owning context and shall minimise exposure of resource content and locations in diagnostics and evidence.
 
+<a id="dd-res-051"></a>
+
 ### DD-RES-051 — Sensitivity is propagated
 
 A resource classified as sensitive upstream shall remain marked sensitive through Resource Access requests, evidence, diagnostics and effects where that classification remains applicable.
 
+<a id="dd-res-052"></a>
+
 ### DD-RES-052 — Diagnostics minimise disclosure
 
-Resource-access diagnostics shall prefer safe resource identity, category and failure meaning over reproducing sensitive content, credentials, tokens, private keys or secret values.
+For resource errors apply [DD-1.2 Sensitive Information and Redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) using safe resource identity and failure meaning.
+
+<a id="dd-res-053"></a>
 
 ### DD-RES-053 — Content does not become telemetry by default
 
-Resource content shall not be included in generic logs, diagnostics, tracing or result payloads merely because the capability read or wrote it.
+Resource content in logs, tracing or result evidence follows [DD-1.2 Sensitive Information and Redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction). Reading or writing the bytes is not a disclosure requirement.
+
+<a id="dd-res-054"></a>
 
 ### DD-RES-054 — Sensitive staging
 
@@ -632,17 +718,25 @@ Temporary/staging mechanisms used for sensitive resources shall preserve an equi
 
 Resource Access shall observe cancellation where an operation is meaningfully cancellable, but cancellation semantics depend on the underlying provider and effect boundary.
 
+<a id="dd-res-055"></a>
+
 ### DD-RES-055 — Cancellation before effect
 
-If cancellation is observed before a consequential resource effect begins, Resource Access should avoid starting that effect.
+Observe cancellation before starting a resource effect under [DD-1.2 Cancellation Model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-res-056"></a>
 
 ### DD-RES-056 — Cancellation during non-interruptible effect
 
 If the provider cannot safely interrupt an already-started atomic or critical mutation, Resource Access may allow that bounded effect to reach a safe completion point and shall report what occurred.
 
+<a id="dd-res-057"></a>
+
 ### DD-RES-057 — Cancellation does not imply rollback
 
-Cancellation shall not be reported as rollback. Applied effects completed before cancellation remain applied unless separately compensated by an owning workflow.
+Report completed resource effects under [DD-1.2 Cancellation Model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model); compensation, when separately authorized, is a distinct effect.
+
+<a id="dd-res-058"></a>
 
 ### DD-RES-058 — Multi-resource cancellation
 
@@ -670,9 +764,13 @@ Resource Access evidence may include:
 - cancellation observation;
 - bounded provider detail.
 
+<a id="dd-res-059"></a>
+
 ### DD-RES-059 — Provider result normalization
 
-Provider-native errors, exception classes and result objects shall be normalized before crossing the Resource Access capability boundary.
+Normalize resource-provider failures through [DD-1.2 Provider Result Normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
+<a id="dd-res-060"></a>
 
 ### DD-RES-060 — Resource diagnostic categories
 
@@ -700,9 +798,11 @@ The capability shall support AppManager-oriented diagnostic categories including
 
 Provider-native codes may be retained as bounded detail but shall not become the primary application diagnostic contract.
 
+<a id="dd-res-061"></a>
+
 ### DD-RES-061 — Technical success is not application success
 
-A Resource Access operation completing successfully proves only that its bounded technical request succeeded. The owning use case and Application Engine determine final AppManager acceptance.
+The caller interprets successful resource execution under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 ## 24. Effects
 
@@ -718,9 +818,13 @@ Applicable resource effects include:
 - container deleted;
 - temporary/staging artefact created/removed where materially relevant.
 
+<a id="dd-res-062"></a>
+
 ### DD-RES-062 — Proposed and applied effects remain distinct
 
-A feasibility check, preview, prepared content or staged candidate shall not be represented as an applied resource effect until the target mutation actually occurs.
+Resource preview, prepared content and staged candidates use [DD-1.2 Proposed Effects and Preview](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview) until an actual target effect is observed.
+
+<a id="dd-res-063"></a>
 
 ### DD-RES-063 — Effect certainty
 
@@ -730,9 +834,13 @@ Where provider failure leaves the final resource state uncertain, the effect evi
 
 Resource Access may require effective configuration for technical concerns such as provider selection, encoding defaults, read limits, or other approved capability parameters.
 
+<a id="dd-res-064"></a>
+
 ### DD-RES-064 — Governed configuration only
 
-For AppManager-level configuration concerns, Resource Access shall consume DD-1.4 effective configuration or explicitly supplied resolved capability parameters rather than independently reading competing settings, environment variables or provider defaults.
+AppManager-level resource parameters consume [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result); provider-local defaults are bounded by DD-RES-065.
+
+<a id="dd-res-065"></a>
 
 ### DD-RES-065 — Provider defaults are bounded
 
@@ -741,6 +849,8 @@ A provider may use intrinsic technical defaults only where the Resource Access c
 ## 26. Provider Contract
 
 A Resource Provider implements concrete access to one resource system such as the local filesystem or a future test/virtual/provider-backed resource store.
+
+<a id="dd-res-066"></a>
 
 ### DD-RES-066 — Provider responsibility
 
@@ -756,25 +866,31 @@ A provider owns technical mechanics such as:
 
 It does not own AppManager project scope, use-case policy or final outcomes.
 
+<a id="dd-res-067"></a>
+
 ### DD-RES-067 — Provider replaceability
 
 The Resource Access contract shall be testable and consumable without requiring callers to depend on provider-native types or one particular filesystem API.
 
+<a id="dd-res-068"></a>
+
 ### DD-RES-068 — No speculative plugin framework
 
-Provider replaceability does not require a general executable plugin system, dynamic provider marketplace or runtime discovery mechanism.
-
-Provider selection/registration mechanisms belong to later Detailed Design or Implementation Specification if required.
+Resource provider replacement follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); no executable plugin system is required.
 
 ## 27. Structured Resources and Format-Aware Operations
 
 Historical implementation combines file I/O with JSON/JSONC parsing and update behaviour. That implementation is useful evidence but does not define the permanent capability boundary.
+
+<a id="dd-res-069"></a>
 
 ### DD-RES-069 — Resource Access does not own structured merge semantics
 
 Generic Resource Access shall not own schema validation, JSON object merging, JSONC comment-preserving edits, package metadata updates, Nuxt configuration mutation or source-aware transformation policy.
 
 Such behaviour belongs to the capability/domain that understands the structure and shall delegate only the resulting bounded read/write operation to Resource Access.
+
+<a id="dd-res-070"></a>
 
 ### DD-RES-070 — Structured read composition
 
@@ -787,6 +903,8 @@ Resource Access read
 ```
 
 without requiring Resource Access itself to become the parser authority.
+
+<a id="dd-res-071"></a>
 
 ### DD-RES-071 — Structured mutation composition
 
@@ -804,33 +922,47 @@ This preserves comment/format/schema-aware strategies where needed without embed
 
 ## 28. Interaction with Managed Project and Scope
 
+<a id="dd-res-072"></a>
+
 ### DD-RES-072 — Scope supplied by caller
 
-Resource Access shall receive sufficient caller-derived target/containment constraints to execute safely. It shall not independently traverse project structure to invent managed scope.
+Supply resource targets under [DD-RES-008](#dd-res-008) and containment under [DD-RES-013](#dd-res-013); managed scope comes from [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="dd-res-073"></a>
 
 ### DD-RES-073 — Technical rejection of out-of-bound targets
 
-If a request violates its supplied containment or target constraints, Resource Access shall reject it even if the provider can technically access the target.
+Apply [DD-RES-011](#dd-res-011), [DD-RES-013](#dd-res-013) and the fail-closed rule [DD-RES-084](#dd-res-084) to accessible but out-of-bound targets.
+
+<a id="dd-res-074"></a>
 
 ### DD-RES-074 — No upward authority transfer
 
-Resource Access reporting that a resource exists, is writable or is contained does not authorize an Engine/use case to mutate it if DD-1.3 targetability or application policy does not permit the effect.
+Writable/existing/contained evidence is consumed under [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) when assessing targetability.
 
 ## 29. Multi-Resource Operations
 
 Resource Access may execute a caller-supplied set of bounded resource requests where this provides coherent technical value.
 
+<a id="dd-res-075"></a>
+
 ### DD-RES-075 — Per-target evidence
 
-Multi-resource execution shall preserve per-target status, diagnostics and effects rather than collapsing all work into one Boolean result.
+Resource batches compose [DD-1.2 child results](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) with each resource identity and effect.
+
+<a id="dd-res-076"></a>
 
 ### DD-RES-076 — Ordering semantics
 
 Where the caller requires an order, Resource Access shall preserve that order or explicitly report that the provider cannot guarantee it.
 
+<a id="dd-res-077"></a>
+
 ### DD-RES-077 — Partial completion
 
-If a multi-resource operation stops after some effects have been applied, the result shall identify completed, failed, skipped and not-attempted targets sufficiently for DD-1.2 aggregation.
+On an interrupted batch, populate [DD-1.2 subordinate results](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) for completed, failed, skipped and unattempted resources.
+
+<a id="dd-res-078"></a>
 
 ### DD-RES-078 — No implicit compensation
 
@@ -840,13 +972,17 @@ Resource Access shall not automatically compensate earlier successful mutations 
 
 Resource Access shall not assume all operations are idempotent.
 
+<a id="dd-res-079"></a>
+
 ### DD-RES-079 — Operation-specific repeat semantics
 
 Create, replace, delete, move and write requests shall define enough precondition/collision semantics for a repeated request to have deterministic technical behaviour.
 
+<a id="dd-res-080"></a>
+
 ### DD-RES-080 — No application retry policy
 
-Evidence that an operation may be retried safely does not authorize Resource Access to decide when the application should retry.
+Resource retryability evidence follows [DD-1.2 Retryability and Repetition Evidence](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_22-retryability-and-repetition-evidence); mutation-specific retry constraints remain DD-RES-032.
 
 ## 31. Testability Requirements
 
@@ -873,9 +1009,13 @@ Tests should be able to verify at least:
 - staging cleanup evidence;
 - provider replaceability with a deterministic fake/in-memory provider.
 
+<a id="dd-res-081"></a>
+
 ### DD-RES-081 — Provider-independent conformance tests
 
 Core Resource Access conformance tests shall be expressible against a provider contract without depending on Node.js `fs` exception classes or operating-system-specific error text.
+
+<a id="dd-res-082"></a>
 
 ### DD-RES-082 — Real-provider tests where semantics differ
 
@@ -885,37 +1025,53 @@ Provider-specific tests shall additionally verify behaviours whose guarantees de
 
 The following invariants are mandatory:
 
+<a id="dd-res-083"></a>
+
 ### DD-RES-083 — Accessibility is not authority
 
-Technical access shall never be treated as managed scope, targetability or mutation authorization.
+Apply [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) to technical resource accessibility.
+
+<a id="dd-res-084"></a>
 
 ### DD-RES-084 — Effective target must be bounded
 
 A consequential operation shall not proceed when the capability cannot establish that the effective target satisfies the request's required containment/indirection constraints.
 
+<a id="dd-res-085"></a>
+
 ### DD-RES-085 — Read-only means no intentional mutation
 
-Inspection, metadata and read operations shall not intentionally mutate target project resources.
+Inspection and metadata access use the read-only request contract [DD-RES-004](#dd-res-004).
+
+<a id="dd-res-086"></a>
 
 ### DD-RES-086 — No hidden overwrite
 
-A collision shall not silently become replacement when the request does not permit overwrite.
+Use the create/replacement collision contract [DD-RES-005](#dd-res-005).
+
+<a id="dd-res-087"></a>
 
 ### DD-RES-087 — No hidden recursive destruction
 
-Recursive/container deletion shall never be inferred from a generic single-resource delete.
+Use the distinct recursive-deletion request in [DD-RES-043](#dd-res-043) and [DD-RES-044](#dd-res-044).
+
+<a id="dd-res-088"></a>
 
 ### DD-RES-088 — No provider-native authority
 
-Provider capabilities, defaults or APIs shall not redefine AppManager scope, policy, safety or application outcomes.
+Resource-provider APIs and defaults apply [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); intrinsic technical defaults use [DD-RES-065](#dd-res-065).
+
+<a id="dd-res-089"></a>
 
 ### DD-RES-089 — Sensitive minimization
 
-Sensitive resource content shall not be propagated beyond the minimum contract required for the owning operation.
+Resource content propagation applies [DD-1.2 Sensitive Information and Redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
+<a id="dd-res-090"></a>
 
 ### DD-RES-090 — Known effects survive failure
 
-Applied effects and materially uncertain effects shall remain reportable after failure or cancellation.
+Resource failures/cancellation preserve effect evidence under [DD-1.2 Consequential Effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) and [DD-1.2 Cancellation Model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model); uncertain resource completion follows DD-RES-063.
 
 ## 33. Deferred Implementation Decisions
 
@@ -945,6 +1101,8 @@ This Detailed Design intentionally does not choose:
 These belong to Implementation Specification, later Detailed Design where a permanent cross-capability contract genuinely requires them, project management where transitional, or ADR where a major architectural decision is introduced.
 
 ## 34. Current Implementation Evidence and Reconciliation
+
+This section is historical implementation evidence under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions), not permanent product authority.
 
 The current TypeScript `FileService` demonstrates useful implementation experience:
 
@@ -987,7 +1145,7 @@ The architectural conclusion is:
 |---|---|
 | application authority and delegated capability boundary | Root Design §§1–6; DD-1.5 |
 | scope/targetability separation | Managed Project Functional Specification; DD-1.3 |
-| effective configuration consumption | Configuration Functional Specification; DD-1.4; bootstrap clarification |
+| effective configuration consumption | Configuration Functional Specification; [DD-1.4 bootstrap contract](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context) |
 | outcomes, diagnostics, effects, partial completion | Application Invocation Functional Specification; DD-1.1; DD-1.2 |
 | stale-state/application revalidation | DD-1.5 |
 | provider-native isolation | ADR-0001; DD-1.2; DD-1.5 |
@@ -1002,54 +1160,18 @@ Primary traceability includes:
 - FR-INV-011–013, FR-INV-022–026, FR-INV-030–047;
 - Docs requirements covering target resolution, symlink safety, output collision, partial writes, exclusions, stale-source protection and fail-safe ambiguity;
 - Settings requirements covering explicit read/write intent, managed scope, structured-resource preservation and delegated persistence;
-- Nuxt, App, Git, AI, Quality and Utils requirements wherever bounded resource inspection or mutation is delegated beneath the owning use case.
+- Nuxt, App, Git, AI, Quality and Maintenance requirements wherever bounded resource inspection or mutation is delegated beneath the owning use case.
 
 ### 35.3 Downstream traceability
 
-Implementation Specifications shall map these `DD-RES-*` requirements to concrete TypeScript modules, provider implementations, tests, path handling, filesystem APIs, staging mechanics and migration from current source.
+Implementation mapping follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification), covering the resource/provider seam, path handling, filesystem operations, staging and migration. Consumer collaborations are indexed in §36.
 
-Later DD-2 capability designs shall consume this contract rather than redefine generic file/resource access semantics.
+## 36. Contract Consumers and Implementation Dependencies {#_36-conformance-rules-for-later-dd-2-designs}
 
-## 36. Conformance Rules for Later DD-2 Designs
+Consumers bind to the resource request, containment, revision and effect contracts defined here. The [Documentation Guide](../project-documentation-guide-v01.md#detailed-design-reading-conventions) governs same-level authority.
 
-Later shared capabilities shall conform to the following rules:
-
-1. **Process Execution** shall not perform arbitrary filesystem mutation outside its own explicit process effects and shall report such effects through normalized evidence where observable.
-2. **Repository Capability** shall use Resource Access for generic resource mechanics where appropriate but retain repository-specific semantics itself.
-3. **Source Intelligence** shall treat Resource Access reads as input evidence and remain read-only.
-4. **Source Transformation** shall construct and validate bounded transformation plans before delegating applied resource effects.
-5. **Resource Registry and Template** shall distinguish generation intent from replacement/mutation of existing resources.
-6. **AI Capability** shall not obtain resource mutation authority merely because it can propose content.
-7. **Quality Capability** shall treat files and reports as bounded resources without redefining Resource Access scope.
-8. **Documentation Capability** shall use explicit output scopes and preserve source/documentation ownership distinctions.
-9. **Nuxt Capability** shall not bypass generic resource safety merely because it understands Nuxt-specific paths or artefacts.
+The collaborating contracts are [Process Execution](dd-2-2-process-execution-detailed-design-v01.md) for process effects, [Repository](dd-2-3-repository-capability-detailed-design-v01.md) for repository primitives, [Source Intelligence](dd-2-4-source-intelligence-detailed-design-v01.md) for read-only facts, [Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md) for source plans, and [Registry/Templates](dd-2-6-resource-registry-and-template-detailed-design-v01.md) for rendered proposals. AI, Quality, Documentation and Nuxt consumers supply their locally resolved bounded resources through this contract; their own specifications define specialist intent/evidence.
 
 ## 37. Version 1 Resource Access Baseline
 
-The Version 1 Resource Access contract is established by the following summary:
-
-```text
-caller resolves application intent / project / scope / policy / authorization
-        |
-        v
-caller constructs bounded resource request
-        |
-        v
-Resource Access normalizes reference
-        |
-        v
-Resource Access verifies technical constraints
-        |
-        v
-provider performs bounded technical operation
-        |
-        v
-Resource Access normalizes evidence / diagnostics / effects
-        |
-        v
-Application Engine / owning use case interprets and accepts outcome
-```
-
-The central non-drift rule is:
-
-> **Resource Access answers “can this bounded resource operation be performed safely under the supplied technical constraints, and what technically happened?” It does not answer “should AppManager perform this operation?”**
+The [responsibility model](#_5-responsibility-model), request/reference contracts and operation sections establish the Resource Access baseline. For review, follow a supplied request through normalization, containment/preconditions, bounded provider work and returned evidence. Application interpretation consumes that evidence through [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md).

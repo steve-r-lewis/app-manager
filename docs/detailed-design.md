@@ -27,11 +27,6 @@ The family number is an organisational identity, not an additional specification
 | DD-1.4 | [Configuration Resolution](./dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md) | Complete |
 | DD-1.5 | [Application Engine](./dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md) | Complete |
 
-### DD-1 Clarifications
-
-- [Application Core Bootstrap Resolution](./dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md)
-- [Application Outcome and Diagnostic Ownership](./dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md)
-
 ## DD-2 — Shared Capabilities
 
 | ID | Detailed Design | Status |
@@ -47,11 +42,6 @@ The family number is an organisational identity, not an additional specification
 | DD-2.9 | [Documentation Capability](./dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md) | Complete |
 | DD-2.10 | [Nuxt Capability](./dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) | Complete |
 
-### DD-2 Clarifications
-
-- [Repository / Source Intelligence Relationship](./dd_2_shared_capabilities/clarifications/repository-source-intelligence-relationship-clarification-v01.md)
-- [Nuxt Layer Scaffold Artefact Ownership](./dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
-
 ## DD-3 — High-Coupling Domains
 
 | ID | Detailed Design | Status |
@@ -61,10 +51,6 @@ The family number is an organisational identity, not an additional specification
 | DD-3.3 | [Nuxt Domain](./dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) | Complete |
 | DD-3.4 | [Docs Domain](./dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md) | Complete |
 
-### DD-3 Clarifications
-
-- [Nuxt Domain Operation Identity](./dd_3_high_coupling_domains/clarifications/nuxt-domain-operation-identity-clarification-v01.md)
-
 ## DD-4 — Policy and Resource Domains
 
 | ID | Detailed Design | Status |
@@ -72,9 +58,9 @@ The family number is an organisational identity, not an additional specification
 | DD-4.1 | [Quality Domain](./dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) | Complete |
 | DD-4.2 | [Settings Domain](./dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) | Complete |
 | DD-4.3 | [AI Domain](./dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) | Complete |
-| DD-4.4 | [Utils Domain](./dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) | Complete |
+| DD-4.4 | [Maintenance Domain](./dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) | Complete |
 
-All Version 1 primary Detailed Design documents are complete. The active register records their canonical identities and paths; completed decomposition/audit programmes are retained as project history rather than current design authority.
+All Version 1 primary Detailed Design documents are authored. NCR-2 reduction is in progress; the seventeen former DD clarification vehicles have been integrated into primary owners and retired. The active register records their canonical identities and paths; completed decomposition/audit programmes are retained as project history rather than current design authority.
 
 ## Governing Navigation Sources
 

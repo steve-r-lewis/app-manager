@@ -10,7 +10,7 @@
 >
 > **Related Detailed Designs:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md)
 >
-> **Active clarification:** [Application Core Bootstrap Resolution](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md)
+> **Primary DD contract:** [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle)
 >
 > **Primary Functional authority:** [Managed Project Functional Specification](../functional/managed-project-functional-specification-v01.md)
 >
@@ -158,7 +158,7 @@ export interface TargetProjectRequest {
 }
 ```
 
-IS-22 translates host-specific selections into these AppManager-facing hints. IS-1 supplies the normalized request plus the bootstrap-effective configuration input allowed by the staged DD-1 clarification.
+IS-22 translates host-specific selections into these AppManager-facing hints. IS-1 supplies the normalized request plus the bootstrap-effective configuration input allowed by [DD-1.4 bootstrap eligibility](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#dd-core-boot-002).
 
 Absolute/relative path normalization occurs before technical inspection, but normalization does not establish project identity.
 
@@ -950,7 +950,7 @@ A temporary adapter may create a minimal `ProjectResolutionRequest` from legacy 
 | DD-1.3 Sections 29–33 | explicit staged IS-3 collaboration and bounded IS-4/IS-6/IS-7/IS-13 evidence dependencies |
 | DD-1.3 Section 34 | resolver responsibilities implemented directly; no generic resolver framework |
 | DD-1.3 Section 35 | all sixteen invariants retained as implementation rules/tests |
-| bootstrap clarification | only project-independent bootstrap configuration enters initial resolution; later config cannot recursively redefine project identity |
+| [DD-1.4 bootstrap context](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context) and [DD-1.3 project conflict handling](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md#dd-core-boot-004) | only project-independent bootstrap configuration enters initial resolution; later config cannot recursively redefine project identity |
 | IS-1 | project requirements/context/scope/targetability plug into the authoritative invocation lifecycle without taking final outcome authority |
 
 IS-2 also implements the Managed Project Functional Specification's observable requirements for deterministic project identity/context resolution, nested invocation, multi-repository topology, managed scope, ownership protection, cross-mode equivalence, partial-scope safety and stale-context handling.

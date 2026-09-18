@@ -8,7 +8,7 @@
 >
 > **Related Functional Specifications:** [application-invocation-functional-specification-v01.md](application-invocation-functional-specification-v01.md), [managed-project-functional-specification-v01.md](managed-project-functional-specification-v01.md), [configuration-functional-specification-v01.md](configuration-functional-specification-v01.md), [source-transformation-functional-specification-v01.md](source-transformation-functional-specification-v01.md), [app-functional-specification-v01.md](app-functional-specification-v01.md), [git-functional-specification-v01.md](git-functional-specification-v01.md), [settings-functional-specification-v01.md](settings-functional-specification-v01.md)
 >
-> **Downstream Detailed Design refinement:** [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
+> **Downstream Detailed Design refinement:** [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 >
 > **Historical planning provenance (non-normative):** [docs/project_management/functional-specification-decomposition-plan-v01.md](../project_management/functional-specification-decomposition-plan-v01.md)
 
@@ -400,7 +400,7 @@ The result shall identify the target entry and whether it was removed, already a
 
 ### 11.1 Purpose
 
-Layer creation assembles a selected profile into a supported baseline, then evaluates the resulting Nuxt layer. FR-NUXT-055–060 owns profile choice, artefact-class inclusion and orchestration acceptance. [Settings](settings-functional-specification-v01.md#_7-application-metadata), [Docs](docs-functional-specification-v01.md#_10-documentation-generation-and-update), [Git](git-functional-specification-v01.md#_7-repository-initialisation) and [Source Transformation](source-transformation-functional-specification-v01.md#_13-generation-versus-mutation) supply the independently owned contracts used by scaffold steps. The [scaffold DD clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md) records downstream refinement only.
+Layer creation assembles a selected profile into a supported baseline, then evaluates the resulting Nuxt layer. FR-NUXT-055–060 owns profile choice, artefact-class inclusion and orchestration acceptance. [Settings](settings-functional-specification-v01.md#_7-application-metadata), [Docs](docs-functional-specification-v01.md#_10-documentation-generation-and-update), [Git](git-functional-specification-v01.md#_7-repository-initialisation) and [Source Transformation](source-transformation-functional-specification-v01.md#_13-generation-versus-mutation) supply the independently owned contracts used by scaffold steps. The [scaffold DD](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) records downstream refinement only.
 
 <a id="fr-nuxt-051"></a>
 

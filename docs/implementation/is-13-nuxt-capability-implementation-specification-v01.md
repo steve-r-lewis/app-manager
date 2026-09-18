@@ -8,7 +8,7 @@
 >
 > **Primary Detailed Design:** [DD-2.10 — Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md)
 >
-> **Binding clarification:** [Nuxt Layer Scaffold Artefact Ownership Clarification](../dd_2_shared_capabilities/clarifications/nuxt-layer-scaffold-artefact-ownership-clarification-v01.md)
+> **Primary DD contract:** [Nuxt Layer Scaffold Artefact Ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry)
 >
 > **Related Detailed Designs:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md), [DD-2.2 — Process Execution](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md), [DD-2.3 — Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-2.7 — AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md), [DD-2.8 — Quality Capability](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md), [DD-2.9 — Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md), [DD-3.3 — Nuxt Domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md)
 >
@@ -1150,7 +1150,7 @@ Concrete TypeScript-config provider tests use fixtures covering ordinary `define
 | Nuxt validation | DD-NUXTCAP-034–036; FR-NUXT-011, 041, 107; IS-8/11 boundary |
 | layer model | DD-NUXTCAP-037–039; FR-NUXT-051–092 |
 | layer profiles | DD-NUXTCAP-040–043; FR-NUXT-051–070 |
-| scaffold/template | DD-NUXTCAP-044–047; FR-NUXT-058–070; IS-9; scaffold clarification |
+| scaffold/template | DD-NUXTCAP-044–047; FR-NUXT-058–070; IS-9; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | creation result/partial state | DD-NUXTCAP-048–050; FR-NUXT-068–070, 108–109 |
 | AI | DD-NUXTCAP-051–053; IS-10/12 |
 | repository boundary | DD-NUXTCAP-054–056; FR-NUXT-064–070; IS-6/15 |

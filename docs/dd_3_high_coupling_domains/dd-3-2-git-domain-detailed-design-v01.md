@@ -8,31 +8,17 @@
 >
 > **Detailed Design authority:** This document defines the permanent Git-domain orchestration, repository-scope policy, decision, state and result contracts by which AppManager realises managed-repository use cases through the DD-1 Application Core and DD-2 Shared Capability contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/git-functional-specification-v01.md](../functional/git-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs and active clarifications.
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [docs/functional/git-functional-specification-v01.md](../functional/git-functional-specification-v01.md), accepted ADRs, and the normative DD-1/DD-2 Detailed Designs.
 >
-> **Authoring controls:** [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [DD-3.2 Git Domain Handover](../project_management/dd3-2-git-domain-handover-v01.md)
+> **Authoring controls:** [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [DD-3.2 Git Domain Handover](../project_management/dd3-2-git-domain-handover-v01.md)
 
 ---
 
 ## 1. Purpose
 
-This specification defines the permanent internal Git-domain design for repository-management intent across AppManager managed projects.
+This specification refines [Git Functional contracts](../functional/git-functional-specification-v01.md) for repository-management intent. Its repository scope, eligibility, operation plan and per-repository results distinguish recognition, selection, authorization and acceptance. The workflows in §8 compose bounded repository primitives into coordinated operations.
 
-The Git domain composes authoritative Application Core context with bounded repository and supporting capabilities to realise repository inspection, repository initialisation, commit creation, push, synchronisation, managed repository relationships, managed-layer repository initialisation and deliberately authorised remote-repository deletion.
-
-The governing rule is:
-
-> **The Git domain owns repository-management intent, operation-specific repository policy and multi-repository orchestration; DD-2.3 Repository Capability owns repository facts and bounded repository primitives; the Application Engine retains final application authority.**
-
-A second rule is:
-
-> **Repository recognition, repository membership, operation selection, eligibility, authorization, technical execution, Git-domain acceptance and final AppManager acceptance are distinct semantic stages.**
-
-A third rule is:
-
-> **A Git-domain use case is defined by repository intent and required postconditions, not by a Git command, library API, hosting-provider operation, current working directory, source path or implementation topology.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
@@ -115,8 +101,8 @@ This design consumes, but does not redefine:
 - [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md);
 - [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md);
 - [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md);
-- [Application Core Bootstrap Resolution Clarification](../dd_1_application_core/clarifications/application-core-bootstrap-resolution-clarification-v01.md);
-- [Application Outcome and Diagnostic Ownership Clarification](../dd_1_application_core/clarifications/application-outcome-and-diagnostic-ownership-clarification-v01.md);
+- [Application Core Bootstrap Resolution](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle);
+- [Application Outcome and Diagnostic Ownership](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract);
 - [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md).
 
 ### 3.3 Shared capability authorities
@@ -125,7 +111,7 @@ The principal shared capability is [DD-2.3 — Repository Capability](../dd_2_sh
 
 Supporting capability authorities include Resource Access, Process Execution and AI Capability where required by an approved Git use case. Source Intelligence may be composed by an owning workflow when actual source structure is required, but repository diff/status evidence does not become source-structural evidence by implication.
 
-The [Repository / Source Intelligence Relationship Clarification](../dd_2_shared_capabilities/clarifications/repository-source-intelligence-relationship-clarification-v01.md) governs that distinction.
+The [Repository / Source Intelligence Relationship](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md#repository-context) governs that distinction.
 
 ### 3.4 Accepted runtime decision
 
@@ -210,9 +196,12 @@ This describes semantic authority, not a required call graph or source topology.
 | Configuration Resolution | consumes immutable operation-effective values for Git policy, defaults and capability constraints |
 | Application Engine | receives authoritative execution context and returns Git-domain interpretation for final acceptance |
 
+<a id="dd-git-001"></a>
+
 ### DD-GIT-001 — No local reconstruction of Application Core authority
 
-The Git domain shall not reconstruct managed scope, effective configuration, invocation authorization or canonical outcomes from current working directory, repository discovery, raw configuration, provider state or presentation input.
+The Git orchestration context is supplied under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); the consumed records are described in §7.
+
 
 ---
 
@@ -227,19 +216,26 @@ The Git domain shall not reconstruct managed scope, effective configuration, inv
 | Source Transformation | only where a separately approved Git-domain intent requires existing-source mutation not already a repository primitive |
 | AI Capability | optional commit-message proposal generation from bounded approved context |
 
+<a id="dd-git-002"></a>
+
 ### DD-GIT-002 — Repository Capability is a primitive boundary
 
-The Git domain shall express bounded repository intent to DD-2.3 without exposing provider commands as its application contract. DD-2.3 technical completion is evidence until Git-domain interpretation establishes whether the requested repository intent was satisfied.
+Git interprets the bounded repository evidence from DD-2.3 under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance). The collaboration in §6 identifies the primitive boundary.
+
+<a id="dd-git-003"></a>
 
 ### DD-GIT-003 — No bypass by provider convenience
 
-The availability of a Git CLI, library, remote-host API or provider SDK shall not permit Git-domain orchestration to bypass DD-2.3's normalized repository contract merely because direct invocation is convenient.
+Provider invocation follows the Repository Capability boundary in [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and §6; direct provider convenience is not an alternative domain dependency.
+
 
 ---
 
 ## 7. Domain Contract Model
 
 The following contracts are conceptual semantic records, not concrete TypeScript interfaces.
+
+<a id="dd-git-004"></a>
 
 ### DD-GIT-004 — Git Operation Identity
 
@@ -258,6 +254,8 @@ delete_remote_repository
 
 Presentation aliases shall not create separate semantics.
 
+<a id="dd-git-005"></a>
+
 ### DD-GIT-005 — Repository Operation Scope
 
 A Git-domain operation scope shall bind the requested Git intent to authoritative DD-1.3 managed scope and shall be capable of distinguishing, where applicable:
@@ -270,6 +268,8 @@ all_managed_repositories
 ```
 
 The scope shall preserve stable managed repository identities and relevant relationship context. It shall not be defined solely by discovered paths.
+
+<a id="dd-git-006"></a>
 
 ### DD-GIT-006 — Repository Eligibility Decision
 
@@ -285,11 +285,15 @@ blocking condition or diagnostic
 
 Eligibility is operation-specific and does not alter DD-1.3 managed membership.
 
+<a id="dd-git-007"></a>
+
 ### DD-GIT-007 — Remote Selection Decision
 
 Where an operation requires a remote, the Git domain shall resolve or consume an explicit remote selection sufficiently to avoid ambiguous provider action. The decision shall preserve the repository, remote identity, intended operation and evidence supporting applicability.
 
 A conventional name such as `origin` is not universal authority.
+
+<a id="dd-git-008"></a>
 
 ### DD-GIT-008 — Commit Intent
 
@@ -300,18 +304,27 @@ target managed repository
 approved change/staging scope
 staging policy
 commit-message source and accepted message
-relevant repository preconditions
+fresh repository/change preconditions
+applicable authorization/effect evidence
 ```
 
+For coordinated scope, derive this intent separately for each eligible repository requiring a commit. The enclosing intent retains the resolved scope/topology revision, application-visible ordering, continuation policy, cancellation linkage and per-repository intent/result correlation. It does not impose one message, revision or staging set across repositories.
+
 The staging policy shall distinguish already-staged changes from changes AppManager is authorized to stage. Arbitrary shell text or an unbounded whole-project assumption shall not satisfy commit intent.
+
+<a id="dd-git-009"></a>
 
 ### DD-GIT-009 — Commit Message Proposal
 
 An AI-generated commit message is a proposal associated with bounded repository change evidence and provenance. It shall remain distinguishable from the application-accepted commit message.
 
+<a id="dd-git-010"></a>
+
 ### DD-GIT-010 — Synchronisation Intent
 
 A synchronisation intent shall identify the target repository scope and the approved integration policy required by DD-2.3. It shall not delegate conflict-resolution policy to provider defaults when those defaults could discard, rewrite or materially alter local work.
+
+<a id="dd-git-011"></a>
 
 ### DD-GIT-011 — Repository Relationship Intent
 
@@ -328,6 +341,8 @@ expected existing ownership/tracking state
 
 Relationship intent is distinct from provider-specific relationship metadata.
 
+<a id="dd-git-012"></a>
+
 ### DD-GIT-012 — Remote Deletion Intent
 
 Remote-repository deletion shall require a target-bound destructive intent capable of preserving:
@@ -342,6 +357,8 @@ strong authorization evidence bound to that target
 ```
 
 A local remote name, URL fragment or repository directory name alone is insufficient destructive target authority.
+
+<a id="dd-git-013"></a>
 
 ### DD-GIT-013 — Repository Operation Result
 
@@ -359,9 +376,13 @@ A repository-scoped Git result payload shall be capable of carrying:
 
 It composes DD-1.2 semantics and shall not create a competing generic outcome envelope.
 
+<a id="dd-git-014"></a>
+
 ### DD-GIT-014 — Coordinated Git Result
 
 A multi-repository operation shall preserve an ordered or otherwise correlatable set of repository-scoped results together with scope identity, continuation decisions and known cross-repository drift/recovery information.
+
+<a id="dd-git-015"></a>
 
 ### DD-GIT-015 — Git Recovery Position
 
@@ -382,17 +403,23 @@ This is evidence, not a rollback or automatic-resume guarantee.
 
 ### 8.1 General orchestration rules
 
+<a id="dd-git-016"></a>
+
 ### DD-GIT-016 — Authoritative context precedes consequential Git work
 
-Consequential Git use cases shall begin from Engine-established context sufficient to identify the managed project, operation-specific managed scope, effective configuration, invocation intent and required authorization state.
+The entry condition for these Git workflows is the Application Engine context under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority), bound to the operation records in §7.
+
+<a id="dd-git-017"></a>
 
 ### DD-GIT-017 — Evidence refresh before effect
 
-Where correctness depends on mutable repository state, the Git domain shall obtain or validate sufficiently fresh DD-2.3 evidence before consequential execution. Material stale-state evidence shall cause revalidation, rejection or explicit policy handling rather than blind execution.
+Refresh DD-2.3 evidence before effect under [FR-GIT-108](../functional/git-functional-specification-v01.md#fr-git-108). The revision/state guard is specified in [DD-GIT-061](#dd-git-061).
+
+<a id="dd-git-018"></a>
 
 ### DD-GIT-018 — Domain acceptance follows repository evidence
 
-The Git domain shall interpret DD-2.3 evidence against the use-case postconditions before reporting domain acceptance to the Application Engine.
+Apply [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) to repository evidence and the requested Git postconditions.
 
 ### 8.2 Repository inspection
 
@@ -407,9 +434,11 @@ The orchestration shall:
 5. minimise sensitive repository configuration values;
 6. return inspection evidence without granting later mutation authority.
 
+<a id="dd-git-019"></a>
+
 ### DD-GIT-019 — Inspection is non-authorising
 
-Successful inspection shall not be reused as authorization for a later consequential operation.
+Inspection evidence follows [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting); its local interpretation supplies the eligibility record in [DD-GIT-006](#dd-git-006).
 
 ### 8.3 Repository initialisation
 
@@ -423,13 +452,17 @@ For an approved repository-initialisation request, Git orchestration shall:
 6. re-inspect sufficient resulting repository state;
 7. interpret whether the requested repository postcondition was established and report remaining follow-on action.
 
+<a id="dd-git-020"></a>
+
 ### DD-GIT-020 — Existing repository preservation
 
-An already recognized repository shall not be silently reinitialised merely to make the requested operation convenient. Repair or migration requires separately approved semantics.
+Initialisation applies [FR-GIT-022](../functional/git-functional-specification-v01.md#fr-git-022). Layer repository filtering additionally follows [FR-GIT-084](../functional/git-functional-specification-v01.md#fr-git-084).
 
 ### 8.4 Commit
 
-Commit orchestration applies to one explicitly resolved managed repository in Version 1.
+Commit uses a selected repository, an explicit selected set or all managed repositories resolved through the existing repository-scope contract. Before commit effects, obtain sufficient fresh evidence to classify every requested repository as eligible, ineligible, already satisfied or indeterminate; eligibility can narrow DD-1.3 scope but discovery cannot expand it.
+
+For every eligible repository requiring a commit, apply the sequence below. Review/preview covers the planned scope and materially consequential staging/message policy before execution where required; Headless resolves the same information without prompting. After each effect, retain its resulting evidence before applying the existing continuation/cancellation policy. No-change repositories receive no artificial commit.
 
 The semantic sequence is:
 
@@ -446,23 +479,31 @@ resolved repository scope
     -> Git-domain acceptance
 ```
 
+<a id="dd-git-021"></a>
+
 ### DD-GIT-021 — Commit scope is explicit
 
-Git orchestration shall not silently stage unrelated changes. If the requested staging policy cannot be represented safely from available evidence, commit execution shall not proceed.
+Staging applies [FR-GIT-031](../functional/git-functional-specification-v01.md#fr-git-031). If available evidence cannot safely represent the requested staging policy, commit execution shall not proceed.
+
+<a id="dd-git-022"></a>
 
 ### DD-GIT-022 — No-change is not fabricated success
 
-If no eligible change can produce a new commit, the result shall represent the actual condition rather than claiming that a commit was created.
+The commit no-change decision applies [FR-GIT-029](../functional/git-functional-specification-v01.md#fr-git-029).
+
+<a id="dd-git-023"></a>
 
 ### DD-GIT-023 — Commit message acceptance remains Git/application-owned
 
-A commit message may originate from explicit caller input, an approved deterministic source or an AI proposal, but the message used for commit creation shall be accepted under Git-domain/invocation policy before the commit primitive executes.
+Resolve each repository’s message under [FR-GIT-032](../functional/git-functional-specification-v01.md#fr-git-032) before its commit primitive executes. Under [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow), authorized automatic acceptance uses deterministic Git criteria established before proposal generation; the proposal/accepted-message distinction is defined in [DD-GIT-009](#dd-git-009).
+
+The coordinated result adds each repository’s eligibility/planning state, material staging effects, accepted-message provenance, resulting revision, skip/already-satisfied reason and remaining/recovery action to the repository result. Failure, cancellation, staleness or uncertainty follows §12 without erasing earlier commits. Recovery that changes completed history requires a subsequent explicitly authorized Git operation; it is not an implicit rollback.
+
+<a id="dd-git-024"></a>
 
 ### DD-GIT-024 — AI is optional and subordinate
 
-Failure, unavailability or rejection of AI-assisted message generation shall not prevent the manual commit path where all non-AI commit requirements are satisfied.
-
-AI context shall be bounded to approved repository/change evidence and shall obey DD-2.7 trust, disclosure and sensitivity constraints.
+The optional message-assistance path applies [FR-GIT-033](../functional/git-functional-specification-v01.md#fr-git-033), [FR-GIT-034](../functional/git-functional-specification-v01.md#fr-git-034), [FR-GIT-035](../functional/git-functional-specification-v01.md#fr-git-035) and [FR-GIT-036](../functional/git-functional-specification-v01.md#fr-git-036). Its proposal record is [DD-GIT-009](#dd-git-009).
 
 ### 8.5 Repository-scoped push
 
@@ -478,13 +519,17 @@ Push orchestration shall:
 8. obtain resulting evidence where required;
 9. interpret repository/remote-specific success, failure or already-current state.
 
+<a id="dd-git-025"></a>
+
 ### DD-GIT-025 — Push is repository intent only
 
-Successful push shall not imply build, quality validation, release or deployment success.
+Push composition applies [FR-GIT-048](../functional/git-functional-specification-v01.md#fr-git-048) and [FR-GIT-099](../functional/git-functional-specification-v01.md#fr-git-099).
+
+<a id="dd-git-026"></a>
 
 ### DD-GIT-026 — Ambiguous remote blocks push
 
-Where multiple applicable remotes exist and policy cannot deterministically resolve the intended target, the Git domain shall require explicit selection or fail safely.
+Remote selection applies [FR-GIT-044](../functional/git-functional-specification-v01.md#fr-git-044) using [DD-GIT-007](#dd-git-007).
 
 ### 8.6 Coordinated push
 
@@ -492,17 +537,23 @@ All-managed-repositories push is a Git-domain orchestration over an explicitly r
 
 The domain shall establish the complete reviewed scope and per-repository eligibility before initiating effects where reasonably possible. Each repository then receives repository-scoped push semantics.
 
+<a id="dd-git-027"></a>
+
 ### DD-GIT-027 — Per-repository truth is retained
 
-A failure in one repository shall not erase or rewrite the truth of repositories already pushed, skipped or found already current.
+Coordinated push projects [DD-GIT-013](#dd-git-013) into [DD-GIT-014](#dd-git-014) under [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036) and [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
+
+<a id="dd-git-028"></a>
 
 ### DD-GIT-028 — Continuation policy is explicit
 
-Whether processing continues after an individual repository failure shall be a Git use-case policy resolved before or at a defined decision point. Provider failure shall not silently choose continuation policy.
+Push continuation applies [FR-GIT-056](../functional/git-functional-specification-v01.md#fr-git-056). Establish that policy before execution or at an explicitly supported decision point; provider iteration order does not supply it.
+
+<a id="dd-git-029"></a>
 
 ### DD-GIT-029 — No multi-repository transaction fiction
 
-Coordinated push shall not claim universal atomicity or rollback. Completed remote effects remain completed unless separately proven otherwise.
+Coordinated Git effects apply [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046).
 
 ### 8.7 Synchronisation
 
@@ -517,13 +568,17 @@ For each repository, the domain shall:
 5. interpret resulting repository state;
 6. preserve per-repository partial effects and cross-repository drift evidence.
 
+<a id="dd-git-030"></a>
+
 ### DD-GIT-030 — Synchronisation shall not invent destructive conflict policy
 
-Merge conflicts, divergence, missing upstream or local changes requiring a policy decision shall be surfaced unless an explicitly specified and authorized strategy resolves the condition without violating the Functional baseline.
+Synchronisation applies [FR-GIT-068](../functional/git-functional-specification-v01.md#fr-git-068), [FR-GIT-069](../functional/git-functional-specification-v01.md#fr-git-069) and [FR-GIT-109](../functional/git-functional-specification-v01.md#fr-git-109) using the intent in [DD-GIT-010](#dd-git-010).
+
+<a id="dd-git-031"></a>
 
 ### DD-GIT-031 — Narrow synchronisation may expose drift
 
-When the managed relationship model makes it knowable that a deliberately narrow scope can leave related repositories at inconsistent revisions, Git orchestration should attach a domain warning without broadening scope automatically.
+Narrow synchronisation exposes the relationship drift diagnostics required by [FR-GIT-073](../functional/git-functional-specification-v01.md#fr-git-073) without broadening the resolved scope.
 
 ### 8.8 Managed repository relationships
 
@@ -538,9 +593,11 @@ Relationship establishment shall:
 7. delegate only the bounded relationship primitive to DD-2.3;
 8. revalidate relationship state and report whether a later commit or other action remains required.
 
+<a id="dd-git-032"></a>
+
 ### DD-GIT-032 — Relationship mechanics do not own project topology
 
-DD-2.3 may execute a relationship primitive, but DD-1.3 remains authoritative for the managed-project relationship model. Git-domain acceptance shall not silently rewrite project topology from provider state alone.
+After relationship execution, project topology remains governed by [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution). Git returns the relationship evidence to that owner.
 
 ### 8.9 Managed-layer repository initialisation
 
@@ -548,9 +605,11 @@ When invoked directly or by a Nuxt-owned layer workflow, Git orchestration shall
 
 For multiple layers, each target shall retain independent eligibility and outcome evidence.
 
+<a id="dd-git-033"></a>
+
 ### DD-GIT-033 — Nuxt ownership is preserved
 
-A Nuxt workflow may delegate repository initialisation to Git, but Git acceptance establishes repository postconditions only. It shall not claim that Nuxt layer creation itself succeeded.
+Layer-creation repository follow-on uses [FR-NUXT-065](../functional/nuxt-functional-specification-v01.md#fr-nuxt-065) and [FR-NUXT-067](../functional/nuxt-functional-specification-v01.md#fr-nuxt-067); acceptance of the Git portion uses repository evidence.
 
 ### 8.10 Remote-repository deletion
 
@@ -571,17 +630,24 @@ explicit destructive Git intent
     -> Application Engine acceptance
 ```
 
+<a id="dd-git-034"></a>
+
 ### DD-GIT-034 — No inferred destructive target
 
-The Git domain shall not guess remote owner, organisation, account or repository identity from a personal default, local directory name or unrelated context.
+Remote-deletion target resolution applies [FR-GIT-088](../functional/git-functional-specification-v01.md#fr-git-088) and [FR-GIT-089](../functional/git-functional-specification-v01.md#fr-git-089) through [DD-GIT-012](#dd-git-012).
+
+<a id="dd-git-035"></a>
 
 ### DD-GIT-035 — Strong authorization is target-bound
 
-Remote-deletion authorization shall be materially stronger than ordinary consequential confirmation and shall be bound sufficiently to the exact resolved target to prevent reuse for a different repository.
+Deletion authorization applies [FR-GIT-091](../functional/git-functional-specification-v01.md#fr-git-091) and [FR-GIT-092](../functional/git-functional-specification-v01.md#fr-git-092).
+
+<a id="dd-git-036"></a>
 
 ### DD-GIT-036 — No cascading deletion
 
-Deletion of one remote repository shall not imply deletion of local repositories, related remote repositories, managed relationships or other project resources.
+Deletion scope applies [FR-GIT-095](../functional/git-functional-specification-v01.md#fr-git-095).
+
 
 ---
 
@@ -590,6 +656,8 @@ Deletion of one remote repository shall not imply deletion of local repositories
 The Git domain does not own a durable replacement for repository state; repository facts remain DD-2.3 evidence and managed topology remains DD-1.3 state.
 
 It does own transient orchestration state needed to preserve decision and effect truth during a Git use case.
+
+<a id="dd-git-037"></a>
 
 ### DD-GIT-037 — Git orchestration state
 
@@ -608,41 +676,59 @@ accepted | rejected | partially_completed | cancelled | indeterminate
 
 Not every use case requires every state, and these states do not replace DD-1.2 terminal outcome semantics.
 
+<a id="dd-git-038"></a>
+
 ### DD-GIT-038 — Multi-repository progress state
 
 A coordinated operation shall preserve per-repository positions such as pending, skipped/already-satisfied, executing, completed, failed, conflicted, cancelled or not-attempted sufficiently to reconstruct truthful partial completion.
 
+<a id="dd-git-039"></a>
+
 ### DD-GIT-039 — State transitions do not grant authority
 
-Progressing through orchestration state shall not manufacture missing managed scope, authorization or provider capability.
+Git orchestration states refine the workflow, subject to [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and the supplied authority in §7.
+
 
 ---
 
 ## 10. Domain Policy and Decision Rules
 
+<a id="dd-git-040"></a>
+
 ### DD-GIT-040 — Scope is intent-relative
 
-A managed repository set is not automatically the operation scope. Git orchestration shall bind caller intent to the subset permitted by DD-1.3 operation scope and the requested use case.
+Bind the repository subset to [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) through [DD-GIT-005](#dd-git-005).
+
+<a id="dd-git-041"></a>
 
 ### DD-GIT-041 — Eligibility is narrower than membership
 
-Managed-project membership is necessary but not universally sufficient for a Git effect. The Git domain shall determine operation-specific eligibility from authoritative context plus DD-2.3 evidence.
+Determine the operation-specific eligibility predicate in [DD-GIT-006](#dd-git-006) from authoritative context and DD-2.3 evidence; managed membership is the input, not the predicate result.
+
+<a id="dd-git-042"></a>
 
 ### DD-GIT-042 — No broadest-scope fallback
 
-Ambiguous intent shall not default to all managed repositories merely because that scope is available.
+Resolve ambiguous synchronisation scope under [FR-GIT-066](../functional/git-functional-specification-v01.md#fr-git-066). Other Git intents use the explicit scope record in [DD-GIT-005](#dd-git-005).
+
+<a id="dd-git-043"></a>
 
 ### DD-GIT-043 — Provider defaults are not application policy
 
 Provider defaults for remote selection, pull strategy, force behaviour, conflict handling, credential context, deletion target or continuation shall not become AppManager policy unless explicitly accepted by an authoritative contract.
 
+<a id="dd-git-044"></a>
+
 ### DD-GIT-044 — Force-like semantics require separate authority
 
-A provider flag or API option that rewrites history, discards changes, overrides conflicts or broadens effects shall not be enabled merely under a generic `force` concept. The corresponding application semantics require explicit specification and authorization.
+Force-like provider options apply [FR-GIT-110](../functional/git-functional-specification-v01.md#fr-git-110).
+
+<a id="dd-git-045"></a>
 
 ### DD-GIT-045 — Technical capability does not imply enabled destructive use case
 
-The presence of a DD-2.3 remote deletion primitive or provider capability does not mean remote deletion is enabled for Version 1 operation. Enablement remains an application/domain policy decision under the Functional requirement.
+The remote-deletion primitive is consumed only under the enablement contract in [FR-GIT-087](../functional/git-functional-specification-v01.md#fr-git-087).
+
 
 ---
 
@@ -662,49 +748,72 @@ repository recognition
     != AppManager application success
 ```
 
+<a id="dd-git-046"></a>
+
 ### DD-GIT-046 — Mutation intent originates above Repository Capability
 
-DD-2.3 shall receive already-bounded mutation intent. Repository evidence or provider capability shall not independently create Git mutation intent.
+The domain supplies DD-2.3 intent through [DD-GIT-008](#dd-git-008) under [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-git-047"></a>
 
 ### DD-GIT-047 — Authorization is effect-relative
 
-The Git domain shall preserve the consequence classification of requested effects so DD-1 invocation/application policy can require appropriate authorization. Read-only inspection, ordinary consequential repository mutation and destructive remote deletion shall not be treated as equivalent authorization classes.
+Read-only inspection, ordinary consequential repository mutation and destructive remote deletion bind [FR-GIT-101](../functional/git-functional-specification-v01.md#fr-git-101) to the corresponding DD-1 authorization checkpoints.
+
+<a id="dd-git-048"></a>
 
 ### DD-GIT-048 — Scope review precedes coordinated effects where required
 
-Where invocation policy requires review of a consequential multi-repository operation, the resolved repository set and material remote targets shall be reviewable before effects begin.
+Review the repository set under [FR-GIT-053](../functional/git-functional-specification-v01.md#fr-git-053) together with material remote targets where invocation policy requires review.
+
+<a id="dd-git-049"></a>
 
 ### DD-GIT-049 — Stale authorization-sensitive identity invalidates execution
 
-If repository or remote identity materially changes after authorization such that the authorized target is no longer the execution target, authorization shall not be silently carried forward.
+A material repository/remote identity change after authorization applies [DD-ENG-027](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-027) to the exact execution target.
+
+<a id="dd-git-050"></a>
 
 ### DD-GIT-050 — Completed effects remain truthful
 
-Cancellation, later failure or rollback inability shall not cause AppManager to report already-created commits, pushes, synchronisations, relationships or deletions as though they never occurred.
+Git results preserve effects under [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036) and [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
+
 
 ---
 
 ## 12. Failure, Cancellation, and Partial Effects
 
+<a id="dd-git-051"></a>
+
 ### DD-GIT-051 — Capability failure remains repository-scoped evidence
 
 Repository/provider failure shall preserve the affected managed repository and functional stage so Git orchestration can interpret the failure without collapsing it into project absence or unknown-command semantics.
 
+<a id="dd-git-052"></a>
+
 ### DD-GIT-052 — Cancellation stops new effects
 
-After cancellation is safely observed, coordinated Git orchestration shall stop initiating further consequential repository effects. In-flight provider behavior remains governed by the applicable capability contract.
+Coordinated cancellation applies [FR-GIT-104](../functional/git-functional-specification-v01.md#fr-git-104). In-flight behavior remains governed by DD-2.3.
+
+<a id="dd-git-053"></a>
 
 ### DD-GIT-053 — Cancellation is not rollback
 
-Cancellation shall not imply reversal of completed local or remote effects.
+Completed Git effects after cancellation apply [FR-INV-032](../functional/application-invocation-functional-specification-v01.md#fr-inv-032).
+
+<a id="dd-git-054"></a>
 
 ### DD-GIT-054 — Partial completion is first-class
 
-When some repositories complete and others fail, conflict, cancel or remain unattempted, Git orchestration shall preserve the per-repository truth needed for DD-1.2 partial-success/partial-effect interpretation.
+Aggregate the repository records in [DD-GIT-013](#dd-git-013) under [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-git-055"></a>
 
 ### DD-GIT-055 — Retry requires revalidation
 
-A retry or continuation after failure shall revalidate repository state, remote identity, managed scope and any authorization assumptions that may have become stale. A previous request shall not be blindly replayed merely because its provider operation failed.
+Retry/continuation applies [FR-GIT-108](../functional/git-functional-specification-v01.md#fr-git-108) and the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) to repository state, remote identity, managed scope and authorization assumptions before replay.
+
+<a id="dd-git-056"></a>
 
 ### DD-GIT-056 — Indeterminate provider effects remain indeterminate
 
@@ -714,61 +823,89 @@ If a provider failure leaves it unknown whether a consequential remote effect co
 
 ## 13. Headless and Interaction Independence
 
+<a id="dd-git-057"></a>
+
 ### DD-GIT-057 — One Git semantic model across adapters
 
-TUI, Headless, GUI, IDE, CI and automation adapters shall express the same Git-domain intents and receive semantically equivalent scope, policy and outcomes.
+Git adapters follow [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="dd-git-058"></a>
 
 ### DD-GIT-058 — Selection is structural, not menu-owned
 
-Repository, remote, change-set and relationship-candidate choices shall be representable through invocation inputs/context. A TUI menu is one acquisition mechanism, not the semantic owner of selection.
+Repository, remote, change-set and relationship-candidate selections bind [FR-GIT-112](../functional/git-functional-specification-v01.md#fr-git-112) to the intent records in §7.
+
+<a id="dd-git-059"></a>
 
 ### DD-GIT-059 — Headless ambiguity fails safely
 
-When required repository scope, remote identity, commit-message decision or destructive target/authorization cannot be resolved non-interactively, Headless execution shall return structured diagnostics rather than prompt or choose the broadest/default target.
+Missing scope, remote identity, message decision or destructive target/authorization follows [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020).
+
+<a id="dd-git-060"></a>
 
 ### DD-GIT-060 — Machine-consumable coordinated results
 
-Multi-repository results shall preserve repository identities and per-repository states without requiring callers to parse human terminal output.
+Coordinated repository records in [DD-GIT-014](#dd-git-014) are exposed under [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021).
+
 
 ---
 
 ## 14. Concurrency, Idempotency, and Conflict Behaviour
 
+<a id="dd-git-061"></a>
+
 ### DD-GIT-061 — Repository-state preconditions guard consequential work
 
 Where concurrent or external repository changes could invalidate an approved operation, Git orchestration shall use DD-2.3 revision/state preconditions or fresh evidence sufficient to detect material conflict before consequential execution.
+
+<a id="dd-git-062"></a>
 
 ### DD-GIT-062 — Parallelism shall not change semantics
 
 An implementation may later choose sequential or bounded parallel execution where permitted, but concurrency shall not change resolved scope, continuation policy, per-repository truth, authorization requirements or outcome semantics.
 
+<a id="dd-git-063"></a>
+
 ### DD-GIT-063 — Already-satisfied states are explicit
 
-Operations such as push with nothing to transfer, an already-existing valid relationship, or initialisation of an already-valid repository shall be represented according to their use-case semantics rather than forced through a mutating provider call solely to obtain success.
+Already-satisfied Git states use [FR-GIT-047](../functional/git-functional-specification-v01.md#fr-git-047), [FR-GIT-076](../functional/git-functional-specification-v01.md#fr-git-076) and [FR-GIT-022](../functional/git-functional-specification-v01.md#fr-git-022), without forcing a mutation merely to produce success.
+
+<a id="dd-git-064"></a>
 
 ### DD-GIT-064 — Commit is not generally idempotent
 
 Commit creation shall not be retried as though it were inherently idempotent. After uncertain or failed execution, resulting repository revision/status evidence shall be checked before another commit is attempted.
 
+<a id="dd-git-065"></a>
+
 ### DD-GIT-065 — Remote effects require post-failure verification where uncertain
 
-Push, synchronisation and remote deletion may have externally visible effects that cannot be inferred safely from local provider failure alone. Recovery shall prefer verification evidence over blind replay.
+Remote-effect verification applies [DD-GIT-056](#dd-git-056) to push, synchronisation and deletion before recovery replay.
+
 
 ---
 
 ## 15. Security and Sensitive Information
 
+<a id="dd-git-066"></a>
+
 ### DD-GIT-066 — Credential material remains below Git-domain results
 
-Credentials, tokens, authorization headers, credential-helper outputs and equivalent secrets shall not be included in Git-domain result payloads or ordinary diagnostics merely because repository/provider operations used them.
+Git-domain payloads apply [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to credentials, authorization headers and credential-helper output.
+
+<a id="dd-git-067"></a>
 
 ### DD-GIT-067 — Remote identity is not necessarily secret but is bounded
 
 Repository URLs, owner/account names and remote metadata shall be exposed only to the extent required by the approved use case, diagnostics, review or recovery context.
 
+<a id="dd-git-068"></a>
+
 ### DD-GIT-068 — AI disclosure is separately governed
 
-Repository diffs, commit history, file names and configuration may contain sensitive project information. Commit-message AI assistance shall disclose only approved bounded context under DD-2.7 policy; Git scope does not itself authorize external disclosure.
+Commit-message disclosure applies [FR-GIT-036](../functional/git-functional-specification-v01.md#fr-git-036) through DD-2.7. Repository diffs, history, filenames and configuration are disclosure inputs, not authority to disclose.
+
+<a id="dd-git-069"></a>
 
 ### DD-GIT-069 — Destructive provider authorization is least-scope
 
@@ -778,25 +915,36 @@ Remote deletion shall use only the provider authorization/capability required fo
 
 ## 16. Extensibility and Replaceability
 
+<a id="dd-git-070"></a>
+
 ### DD-GIT-070 — Repository provider replaceability
 
-A replacement Git/repository provider shall preserve DD-2.3 contracts and shall not alter Git-domain use-case semantics, scope, policy, safety or result meaning.
+Repository provider substitution follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) at the DD-2.3 seam.
+
+<a id="dd-git-071"></a>
 
 ### DD-GIT-071 — Remote-host provider replaceability
 
-Git-domain remote operations shall depend on AppManager-oriented remote identity and bounded repository capability semantics rather than making one hosting provider's object model the general Git-domain contract.
+The remote identity model in [DD-GIT-012](#dd-git-012) binds the provider-independent capability contract in [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-git-072"></a>
 
 ### DD-GIT-072 — AI provider replacement is invisible to commit authority
 
-Changing or removing an AI provider shall not change the manual commit path or transfer commit-message acceptance to AI Capability.
+AI provider substitution preserves [FR-GIT-033](../functional/git-functional-specification-v01.md#fr-git-033) and [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
+<a id="dd-git-073"></a>
 
 ### DD-GIT-073 — No generic repository workflow framework by similarity
 
-Repeated repository-scoped orchestration across push, synchronisation or future Git operations shall not by itself justify a new generic framework. Shared abstraction requires genuinely shared semantics not already owned by DD-1 or DD-2.
+Repository-scoped push/synchronization orchestration apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
+
+<a id="dd-git-074"></a>
 
 ### DD-GIT-074 — Implementation topology remains open
 
-Nothing in this design requires one Git service, one class per use case, a separate process, a particular package structure, direct CLI execution, a particular Git library or a particular remote-host SDK.
+[The Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) leaves service/class/package/process and Git CLI/library/hosting-SDK topology open.
+
 
 ---
 
@@ -804,33 +952,49 @@ Nothing in this design requires one Git service, one class per use case, a separ
 
 The design shall permit independent verification of Git-domain policy and orchestration using controlled substitutes for DD-1 context and DD-2 capabilities.
 
+<a id="dd-git-075"></a>
+
 ### DD-GIT-075 — Scope-policy testability
 
 Tests shall be able to demonstrate that root, selected repository, selected set and all-managed-repositories intents resolve without filesystem-discovery authority or silent scope expansion.
+
+<a id="dd-git-076"></a>
 
 ### DD-GIT-076 — Repository-capability substitution
 
 Git orchestration shall be testable against controlled DD-2.3 evidence/results without requiring a live Git provider for every domain-policy test.
 
+<a id="dd-git-077"></a>
+
 ### DD-GIT-077 — Multi-repository partial-effect testability
 
 Tests shall be able to exercise per-repository success, failure, skip, conflict, cancellation, continuation and indeterminate states and verify truthful aggregation.
+
+<a id="dd-git-078"></a>
 
 ### DD-GIT-078 — Safety-boundary testability
 
 Tests shall be able to prove that recognition does not authorize mutation, ambiguous remotes block consequential execution, unrelated changes are not silently staged, destructive target identity is exact, and target-bound authorization is enforced.
 
+<a id="dd-git-079"></a>
+
 ### DD-GIT-079 — AI independence testability
 
 Commit creation shall be testable with AI unavailable, AI failing, AI proposing output and caller/policy rejecting or revising the proposal.
+
+<a id="dd-git-080"></a>
 
 ### DD-GIT-080 — Headless determinism testability
 
 Tests shall verify that missing repository/remote/destructive inputs fail structurally in Headless mode rather than triggering presentation-specific prompting or implicit defaults.
 
+<a id="dd-git-081"></a>
+
 ### DD-GIT-081 — Stale-state and retry testability
 
 Tests shall be able to introduce repository-state changes between inspection and execution and verify deliberate revalidation/rejection rather than blind use of stale evidence.
+
+<a id="dd-git-082"></a>
 
 ### DD-GIT-082 — Provider replacement testability
 
@@ -866,53 +1030,78 @@ The following matrix groups the principal Detailed Design contracts by their Fun
 
 ## 19. Conformance Invariants
 
+<a id="dd-git-ci-001"></a>
+
 ### DD-GIT-CI-001 — Domain/capability seam
 
-Git-domain application intent, repository-scope policy, orchestration and acceptance shall remain above DD-2.3 Repository Capability facts and bounded primitives.
+The Git/Repository seam in §6 binds [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-git-ci-002"></a>
 
 ### DD-GIT-CI-002 — Managed scope authority
 
-Repository discovery or provider accessibility shall never independently establish managed-project membership, operation scope or mutation authority.
+Repository discovery evidence is consumed under [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) and [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting).
+
+<a id="dd-git-ci-003"></a>
 
 ### DD-GIT-CI-003 — Application Core authority
 
-The Git domain shall consume DD-1 managed scope and effective configuration and shall return domain interpretation for final Application Engine acceptance; it shall not become a second Application Engine.
+The context and final acceptance path in §8 follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
+<a id="dd-git-ci-004"></a>
 
 ### DD-GIT-CI-004 — Evidence before acceptance
 
-Provider or Repository Capability success shall not independently constitute Git-domain or AppManager application success.
+Repository evidence acceptance follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+<a id="dd-git-ci-005"></a>
 
 ### DD-GIT-CI-005 — Explicit consequential scope
 
-Consequential repository operations shall execute only against repositories and remotes resolved within the authorized operation scope; ambiguity shall not broaden scope.
+The scope and remote records in §7 bind [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting), [FR-GIT-044](../functional/git-functional-specification-v01.md#fr-git-044) and [FR-GIT-066](../functional/git-functional-specification-v01.md#fr-git-066).
+
+<a id="dd-git-ci-006"></a>
 
 ### DD-GIT-CI-006 — Local-work protection
 
-Synchronisation and conflict handling shall not silently discard local work, rewrite history or resolve destructive conflicts without separately specified and authorized semantics.
+Local-work protection follows [FR-GIT-069](../functional/git-functional-specification-v01.md#fr-git-069) and [FR-GIT-109](../functional/git-functional-specification-v01.md#fr-git-109).
+
+<a id="dd-git-ci-007"></a>
 
 ### DD-GIT-CI-007 — Truthful partial effects
 
-Multi-repository failure or cancellation shall preserve completed effects and per-repository outcomes and shall not imply universal transactionality or rollback.
+Coordinated results apply [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036), [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) and [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046).
+
+<a id="dd-git-ci-008"></a>
 
 ### DD-GIT-CI-008 — AI remains optional proposal
 
-AI assistance shall not be required for ordinary commit creation and AI output shall not acquire commit authority.
+Message assistance binds [FR-GIT-033](../functional/git-functional-specification-v01.md#fr-git-033) and [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) through the per-repository proposal/accepted-message model.
+
+<a id="dd-git-ci-009"></a>
 
 ### DD-GIT-CI-009 — Destructive target exactness
 
-Remote-repository deletion, where enabled, shall require exact target identity and strong target-bound authorization and shall not cascade implicitly.
+The deletion record binds [FR-GIT-088](../functional/git-functional-specification-v01.md#fr-git-088), [FR-GIT-091](../functional/git-functional-specification-v01.md#fr-git-091), [FR-GIT-092](../functional/git-functional-specification-v01.md#fr-git-092) and [FR-GIT-095](../functional/git-functional-specification-v01.md#fr-git-095).
+
+<a id="dd-git-ci-010"></a>
 
 ### DD-GIT-CI-010 — Interaction independence
 
-Equivalent Git intent shall retain equivalent scope, policy, safety and result semantics across TUI, Headless, GUI, IDE, CI and automation adapters.
+Git adapter projections apply [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
+
+<a id="dd-git-ci-011"></a>
 
 ### DD-GIT-CI-011 — Provider independence
 
-Git-domain contracts shall not expose Git CLI syntax, one library model, one remote-host provider model or one runtime topology as the permanent application architecture.
+Provider seams apply [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); [the implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) governs concrete runtime topology.
+
+<a id="dd-git-ci-012"></a>
 
 ### DD-GIT-CI-012 — Repository/source distinction
 
-Repository status, revision and diff evidence shall remain distinct from DD-2.4 source-structural facts unless an owning workflow explicitly composes both capabilities.
+Git structural-evidence composition follows [DD-2.4 repository-context interpretation](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md#repository-context).
+
 
 ---
 

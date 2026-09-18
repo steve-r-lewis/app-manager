@@ -14,15 +14,15 @@ This document is the required entry point for `docs/project_management/`. It sep
 
 ## 2. Current Project State
 
-The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is in progress. NCR-1 — Design and Functional is complete on `ai/ncr1-design-functional` in PR #179, pending review and merge. NCR-2 has not begun.
+The Version 1 Design, Functional, Detailed Design and Implementation Specification corpus has been authored through Level 4. DR — Documentation Rationalisation is closed. PBC-1 — Pre-NCR Baseline Correction is complete. NCR — Normative Corpus Reduction is in progress. NCR-1 — Design and Functional is complete and merged in PR #179 at `b041d440faf032b2954e5a8be2fbc7894988717f`. NCR-2 — Detailed Design is complete on `ai/ncr2-detailed-design` for independent review in [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180).
 
 PRs #170–#177 completed the bounded PBC-1 semantic corrections: Version 1 GUI/interaction/portability restoration; App command correction; Nuxt command correction; `utils` to `maintenance` reclassification; broader project-side AI development-environment restoration; coordinated multi-repository `git.commit`; coordinated multi-target/multi-artefact Docs generation/update; and coordinated multi-resource Maintenance validation/repair/source-version/cleanup semantics.
 
 PR #177 merged and live `master` was independently verified at `0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`. That exact SHA is the **semantically complete pre-NCR baseline**.
 
-The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. DD and Implementation vehicles remain active for their respective later NCR passes.
+The final cross-domain bulk-action sanity review found no additional correction required for App, Nuxt, Quality, Settings or AI. PBC-1 is therefore closed as a semantic baseline-correction activity; its Design/Functional clarification vehicles have now been integrated and retired by NCR-1. NCR-2 has integrated and retired all seventeen DD vehicles; the primary-DD physical reduction and final verification are complete on PR #180, pending independent review. Implementation vehicles remain active for NCR-3.
 
-**Current phase:** NCR-1 complete on the PR branch; PR #179 awaits review/merge. The [single working proposition ledger](ncr-working-proposition-ledger-v01.md) records canonical ownership, preservation, physical reduction, clarification retirement and verification. Implementation remains paused until NCR-5 passes and live `master` is verified.
+**Current phase:** Independent review of completed NCR-2. PR #179 is merged; PR #180 is ready for review and remains unmerged. The [single working proposition ledger](ncr-working-proposition-ledger-v01.md) records canonical ownership, preservation, physical reduction, clarification retirement and verification. Implementation remains paused until NCR-5 passes and live `master` is verified.
 
 ## 3. Baseline Roles
 
@@ -39,7 +39,8 @@ The final cross-domain bulk-action sanity review found no additional correction 
 | PBC-1 AI project-environment checkpoint | `eff7212ab9a44e0889d81d21964618344ae9927b` | PR #174 merge. |
 | PBC-1 coordinated Git checkpoint | `f9679e61f2cf613a46100fac88ec70c23970309d` | PR #175 merge. |
 | PBC-1 coordinated Docs checkpoint | `a56bface1cef5518112961fabe9c62f4147ee436` | PR #176 merge. |
-| **Semantically complete pre-NCR baseline** | **`0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`** | **Verified PR #177 merge; authoritative NCR working and semantic-preservation comparison baseline.** |
+| **Semantically complete pre-NCR baseline** | **`0d96d6e0123072e8b2f57bfa25bd8f6554edfc19`** | **Verified PR #177 merge; immutable NCR semantic-preservation comparison baseline.** |
+| NCR-1 merged / NCR-2 physical starting baseline | `b041d440faf032b2954e5a8be2fbc7894988717f` | Independently verified live `origin/master`; PR #179 merged and closed. |
 
 No current commit is designated the final lean implementation documentation baseline; that remains deferred until NCR-5 passes.
 
@@ -75,8 +76,8 @@ NCR's objective remains: every independently meaningful normative proposition ha
 
 The five-pass decomposition remains unchanged after re-evaluation against the complete semantic baseline:
 
-1. NCR-1 — Design and Functional: complete on PR #179;
-2. NCR-2 — Detailed Design: not begun;
+1. NCR-1 — Design and Functional: complete, PR #179 merged;
+2. NCR-2 — Detailed Design: complete for independent review, PR #180 unmerged;
 3. NCR-3 — Implementation Specifications;
 4. NCR-4 — Horizontal Reduction;
 5. NCR-5 — Final Cardinality and Semantic Verification.
@@ -113,6 +114,6 @@ The established normative hierarchy is unchanged. Project-management records do 
 
 ## 10. Next Objective
 
-Review PR #179 against the recorded NCR-1 disposition. After its separately authorised merge, independently verify live `master` before beginning NCR-2. PR #179 has not been merged by this execution; no NCR-2 or implementation work is included.
+Independently review NCR-2 in PR #180. The single ledger records its completed integration, physical reduction, final horizontal review and completion gates. NCR-3 has not begun; this state does not authorise a new pass or merging PR #180.
 
-The authoritative merged PR #178 baseline for PR #179 is `6e5cd1834d2b262ef7822491d6c42edc7b75cb08`. The accidentally advanced local `master` pointer is not a baseline and has been left untouched. Semantic preservation is compared with the immutable pre-NCR SHA in §3.
+The physical starting baseline is the independently verified NCR-1 merge in §3. Local `master` remains untouched. NCR-3, NCR-4 and NCR-5 are future work; implementation remains paused until NCR-5 and verification of resulting live `master`. PR #180 must remain unmerged during this work package.

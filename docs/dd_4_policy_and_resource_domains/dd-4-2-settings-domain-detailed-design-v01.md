@@ -6,9 +6,9 @@
 >
 > **Status:** Version 1 Detailed Design Specification
 >
-> **Detailed Design authority:** This document defines the permanent Settings-domain orchestration, settings-scope policy, metadata/resource-management decisions, state and result contracts for explicit AppManager settings, managed-project metadata, environment definitions, contributors, licence resources and declarative template resources through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted clarifications, ADRs, DD-1 or DD-2 Detailed Designs.
+> **Detailed Design authority:** This document defines the permanent Settings-domain orchestration, settings-scope policy, metadata/resource-management decisions, state and result contracts for explicit AppManager settings, managed-project metadata, environment definitions, contributors, licence resources and declarative template resources through approved DD-1 Application Core and DD-2 Shared Capability contracts. It refines, but does not override, the root Design Specification, Functional Specifications, accepted ADRs within their scope, or consumed DD-1/DD-2 contracts.
 >
-> **Governing sources:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Settings Functional Specification](../functional/settings-functional-specification-v01.md), [App / Settings Environment-Definition Ownership — App Functional Specification](../functional/app-functional-specification-v01.md#fr-app-016), [Detailed Design Decomposition Plan and Canonical Register](../project_management/detailed-design-decomposition-plan-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v01.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
+> **Sources and navigation:** [Project Documentation Guide](../project-documentation-guide-v01.md), [AppManager Design Specification](../appmanager-design-specification-v01.md), [Settings Functional Specification](../functional/settings-functional-specification-v01.md), [App / Settings Environment-Definition Ownership — App Functional Specification](../functional/app-functional-specification-v01.md#fr-app-016), [Detailed Design Register](../project_management/detailed-design-register-v01.md), [Domain Detailed Design Authoring Guide](../project_management/domain-detailed-design-authoring-guide-v02.md), [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >
 > **Related Detailed Design authorities:** [DD-1.1 — Application Invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md), [DD-1.2 — Execution Outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md), [DD-1.3 — Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md), [DD-1.4 — Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md), [DD-1.5 — Application Engine](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md), [DD-2.1 — Resource Access](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md), [DD-2.3 — Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md), [DD-2.4 — Source Intelligence](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md), [DD-2.5 — Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md), [DD-2.6 — Resource Registry and Template](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md), [DD-3.1 — App Domain](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md), [DD-3.2 — Git Domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md), [DD-3.3 — Nuxt Domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md), [DD-3.4 — Docs Domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md)
 
@@ -16,19 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent domain-level composition by which AppManager inspects and manages supported settings, metadata and declarative resources without allowing persistence mechanisms, configuration sources, registries, parsers or neighbouring domains to acquire Settings application authority.
+This specification refines [Settings Functional contracts](../functional/settings-functional-specification-v01.md) for settings, metadata and declarative-resource management. Its class-specific scope, identity and mutation plans distinguish operator identity, project metadata and managed resources. Persisted values connect to [Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md); managing a resource is distinct from its consuming domain applying it.
 
-The governing rules are:
-
-> **Settings owns explicit settings and metadata-management intent, semantic setting/resource scope, operation-specific validation and Settings-domain acceptance; Configuration Resolution owns how configuration candidates become effective values; the Application Engine retains final application authority.**
-
-> **Persistence is not precedence: changing a durable value does not redefine configuration applicability, precedence, provenance or already-resolved runtime behaviour.**
-
-> **Resource management is not resource execution: registering, adding or deleting a declarative resource does not transfer the domain semantics of applying that resource into Settings.**
-
-> **AppManager operator identity, managed-project metadata and managed resources are distinct semantic scopes even where their records contain similarly named fields.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
@@ -78,14 +68,24 @@ The Settings Functional Specification defines `FR-SET-001`–`FR-SET-116`. This 
 
 The App / Settings Environment-Definition Ownership Clarification is normative for the App-initialisation seam: App owns lifecycle intent and sequencing; Settings owns persisted environment-definition CRUD; Configuration remains separate.
 
-**DD-SET-001 — Functional ownership is preserved**  
-This design shall refine the complete `FR-SET` surface without transferring Settings-owned persisted-resource semantics to a caller that merely composes them.
+<a id="dd-set-001"></a>
 
-**DD-SET-002 — Configuration authority is preserved**  
-DD-1.4 remains authoritative for candidate applicability, validation for resolution, precedence, provenance and effective configuration. Settings shall not reconstruct or override those semantics.
+**DD-SET-001 — Functional ownership is preserved**
 
-**DD-SET-003 — Capability evidence remains subordinate**  
-Successful parsing, rendering, writing, registry mutation or source transformation shall remain subordinate evidence until the Settings use case determines whether its requested intent was satisfied and the Application Engine accepts the application outcome.
+The resource workflows refine [FR-SET-101](../functional/settings-functional-specification-v01.md#fr-set-101) while preserving the complete Settings Functional surface.
+
+<a id="dd-set-002"></a>
+
+**DD-SET-002 — Configuration authority is preserved**
+
+Persisted-resource management binds [FR-CONFIG-075](../functional/configuration-functional-specification-v01.md#fr-config-075) to [DD-1.4 resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md).
+
+<a id="dd-set-003"></a>
+
+**DD-SET-003 — Capability evidence remains subordinate**
+
+Settings acceptance of parser, renderer, registry, persistence and transformation evidence follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
 
 ---
 
@@ -143,11 +143,18 @@ Application Engine acceptance -> DD-1.2 outcome
 
 This diagram expresses authority and dependency, not mandatory implementation topology.
 
-**DD-SET-004 — Metadata is not operational authority**  
-Managing repository, licence, version or other metadata shall not grant Settings authority over the operational domain associated with that metadata.
+<a id="dd-set-004"></a>
 
-**DD-SET-005 — Resource management is not execution authority**  
-Settings may manage declarative resources while the domain that applies a resource retains its own use-case semantics and acceptance.
+**DD-SET-004 — Metadata is not operational authority**
+
+Metadata operations bind [FR-SET-101](../functional/settings-functional-specification-v01.md#fr-set-101) to their consuming domain; repository and automatic-versioning boundaries are specified by [FR-SET-042](../functional/settings-functional-specification-v01.md#fr-set-042) and [FR-SET-048](../functional/settings-functional-specification-v01.md#fr-set-048).
+
+<a id="dd-set-005"></a>
+
+**DD-SET-005 — Resource management is not execution authority**
+
+Declarative resource management follows [FR-SET-098](../functional/settings-functional-specification-v01.md#fr-set-098).
+
 
 ---
 
@@ -155,20 +162,36 @@ Settings may manage declarative resources while the domain that applies a resour
 
 Settings composes DD-1 rather than recreating it.
 
-**DD-SET-006 — Invocation binding**  
-Settings shall consume the normalized invocation and interaction context from DD-1.1. Interactive menus/prompts are presentation; they shall resolve to the same semantic operations available Headlessly.
+<a id="dd-set-006"></a>
 
-**DD-SET-007 — Outcome binding**  
-Settings shall attach domain-specific result evidence to DD-1.2 canonical outcomes rather than define a competing generic success/failure envelope.
+**DD-SET-006 — Invocation binding**
 
-**DD-SET-008 — Managed-project binding**  
-Project-scoped Settings operations shall consume DD-1.3 managed-project identity and approved scope and shall not infer mutation authority from current working directory or resource visibility.
+Settings consumes [DD-1.1 invocation](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md) under [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
-**DD-SET-009 — Configuration binding**  
-Where a Settings operation needs effective policy/configuration, it shall consume the applicable DD-1.4 snapshot. A persisted value written by Settings is not automatically the value in that snapshot.
+<a id="dd-set-007"></a>
 
-**DD-SET-010 — Application Engine binding**  
-The Application Engine remains responsible for application-level coordination, authorization context and final acceptance.
+**DD-SET-007 — Outcome binding**
+
+Settings result evidence composes [DD-1.2 outcomes](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
+
+<a id="dd-set-008"></a>
+
+**DD-SET-008 — Managed-project binding**
+
+Project-scoped operations bind [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) and [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) to DD-1.3.
+
+<a id="dd-set-009"></a>
+
+**DD-SET-009 — Configuration binding**
+
+Settings uses [DD-1.4 resolution results](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) for effective policy; persisted/effective distinction follows [FR-SET-029](../functional/settings-functional-specification-v01.md#fr-set-029).
+
+<a id="dd-set-010"></a>
+
+**DD-SET-010 — Application Engine binding**
+
+Settings coordination and acceptance follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
+
 
 ---
 
@@ -176,20 +199,37 @@ The Application Engine remains responsible for application-level coordination, a
 
 Settings coordinates shared capabilities only where required by the selected operation.
 
-**DD-SET-011 — Resource Access composition**  
-New-resource creation, deletion, bounded reads and resource preconditions may use DD-2.1; resource mechanics do not determine Settings semantic correctness.
+<a id="dd-set-011"></a>
 
-**DD-SET-012 — Source Intelligence composition**  
-Recognition of structured metadata or environment definitions may consume DD-2.4 facts. Recognition does not establish Settings scope, intent or mutation authorization.
+**DD-SET-011 — Resource Access composition**
 
-**DD-SET-013 — Source Transformation composition**  
-Modification of an existing structured artefact shall route through DD-2.5 with Settings supplying bounded intent, preservation constraints and approved target scope.
+The resource effects in §8 use [DD-2.1](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md) under [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
-**DD-SET-014 — Registry and Template composition**  
-Licence catalogues and declarative template resources may consume DD-2.6 identity, provenance, validation, resolution and rendering contracts. Registry validity or successful rendering does not authorize persistence.
+<a id="dd-set-012"></a>
 
-**DD-SET-015 — Repository evidence composition**  
-Where repository metadata consistency can be checked reliably, DD-2.3 repository facts may inform a warning/rejection decision; Settings shall not mutate repository state through that evidence path.
+**DD-SET-012 — Source Intelligence composition**
+
+Metadata/environment recognition uses [DD-2.4](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md) under [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="dd-set-013"></a>
+
+**DD-SET-013 — Source Transformation composition**
+
+Settings existing-artefact intents bind [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033) to DD-2.5 with preservation constraints and approved target scope.
+
+<a id="dd-set-014"></a>
+
+**DD-SET-014 — Registry and Template composition**
+
+Licence/template contributions consume [DD-2.6](../dd_2_shared_capabilities/dd-2-6-resource-registry-and-template-detailed-design-v01.md) under [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates).
+
+<a id="dd-set-015"></a>
+
+**DD-SET-015 — Repository evidence composition**
+
+Repository facts from DD-2.3 inform [FR-SET-043](../functional/settings-functional-specification-v01.md#fr-set-043); effects remain bounded by [FR-SET-042](../functional/settings-functional-specification-v01.md#fr-set-042).
+
+<a id="dd-set-016"></a>
 
 **DD-SET-016 — Capability selection is operation-relative**  
 Settings shall not require every operation to pass through every shared capability merely because multiple resource classes are supported by the domain.
@@ -209,6 +249,8 @@ Version 1 Settings operation identities include semantic families for:
 - create/delete licence resources and explicitly coupled licence metadata;
 - list/add/delete declarative template resources.
 
+<a id="dd-set-017"></a>
+
 **DD-SET-017 — Semantic operation identity precedes storage mechanics**  
 An operation shall be identified by Settings intent and semantic target, not by a filename, JSON key, parser method or provider command.
 
@@ -222,14 +264,23 @@ A Settings target shall distinguish at least:
 - persisted environment-definition source;
 - managed declarative resource.
 
-**DD-SET-018 — Scope is explicit**  
-Every operation shall bind to an unambiguous semantic scope before consequential work.
+<a id="dd-set-018"></a>
 
-**DD-SET-019 — Similar field shapes do not collapse scopes**  
-Operator identity and project author/contributor metadata shall remain distinct even where they share `name`, `email`, `url` or similar fields.
+**DD-SET-018 — Scope is explicit**
 
-**DD-SET-020 — Persisted and effective values are distinct**  
-Where a persisted setting can differ from DD-1.4 effective configuration, the result model shall preserve that distinction rather than imply equivalence.
+Bind Settings scope under [FR-SET-022](../functional/settings-functional-specification-v01.md#fr-set-022) before consequential work.
+
+<a id="dd-set-019"></a>
+
+**DD-SET-019 — Similar field shapes do not collapse scopes**
+
+Operator and project identity follow [FR-SET-023](../functional/settings-functional-specification-v01.md#fr-set-023); contributor collection identity uses [DD-SET-032](#dd-set-032).
+
+<a id="dd-set-020"></a>
+
+**DD-SET-020 — Persisted and effective values are distinct**
+
+The result model exposes [FR-SET-029](../functional/settings-functional-specification-v01.md#fr-set-029).
 
 ### 7.3 Domain result payload
 
@@ -247,8 +298,12 @@ A Settings result may carry:
 - warnings and sensitivity/redaction metadata;
 - stale/conflict/indeterminate evidence.
 
-**DD-SET-021 — Sensitive result projection**  
-Domain results shall identify sensitive-value state without requiring secret material to be exposed.
+<a id="dd-set-021"></a>
+
+**DD-SET-021 — Sensitive result projection**
+
+Sensitive state in the result model follows [FR-SET-017](../functional/settings-functional-specification-v01.md#fr-set-017) and the reveal boundary in [DD-SET-057](#dd-set-057).
+
 
 ---
 
@@ -272,71 +327,126 @@ resolve invocation/context
  -> return domain evidence for Application Engine acceptance
 ```
 
-**DD-SET-022 — Read paths terminate before mutation**  
-Inspection/listing operations shall not cross the consequential-effect boundary merely to normalize or repair discovered content.
+<a id="dd-set-022"></a>
 
-**DD-SET-023 — Validation precedes intended mutation**  
-A proposed setting, metadata field or resource shall satisfy applicable Settings validation before persistence is intentionally attempted.
+**DD-SET-022 — Read paths terminate before mutation**
+
+Read/list paths apply [FR-SET-012](../functional/settings-functional-specification-v01.md#fr-set-012) and [FR-SET-115](../functional/settings-functional-specification-v01.md#fr-set-115) rather than normalizing or repairing discovered content implicitly.
+
+<a id="dd-set-023"></a>
+
+**DD-SET-023 — Validation precedes intended mutation**
+
+Settings validation applies [FR-SET-014](../functional/settings-functional-specification-v01.md#fr-set-014) and [FR-SET-015](../functional/settings-functional-specification-v01.md#fr-set-015) before persistence.
 
 ### 8.2 AppManager settings
 
-**DD-SET-024 — Durable preference change is prospective**  
-Changing an AppManager setting shall affect future resolution/use according to its owning configuration semantics; Settings shall not claim to mutate an already-resolved operation snapshot unless an upstream contract explicitly permits refresh.
+<a id="dd-set-024"></a>
+
+**DD-SET-024 — Durable preference change is prospective**
+
+Durable preference changes apply [FR-CONFIG-051](../functional/configuration-functional-specification-v01.md#fr-config-051) to operation snapshots.
 
 ### 8.3 Managed-project metadata
 
-**DD-SET-025 — Field-bounded metadata update**  
-A single-field or collection-item update shall preserve unrelated supported metadata and shall not broaden into whole-project normalization without explicit intent.
+<a id="dd-set-025"></a>
 
-**DD-SET-026 — Repository metadata remains declarative**  
-Repository URL/type mutation may consult repository facts but shall not initialize, alter remotes, commit, push or synchronize a repository.
+**DD-SET-025 — Field-bounded metadata update**
+
+Field/item updates apply [FR-SET-115](../functional/settings-functional-specification-v01.md#fr-set-115) and [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
+<a id="dd-set-026"></a>
+
+**DD-SET-026 — Repository metadata remains declarative**
+
+Repository metadata changes apply [FR-SET-042](../functional/settings-functional-specification-v01.md#fr-set-042).
 
 ### 8.4 Environment definitions
 
-**DD-SET-027 — Environment source is explicit**  
-Environment CRUD shall identify one supported persisted environment source; discovery of multiple sources shall not authorize broad mutation.
+<a id="dd-set-027"></a>
 
-**DD-SET-028 — Create protection**  
-Create-environment operations shall not silently overwrite an existing definition.
+**DD-SET-027 — Environment source is explicit**
 
-**DD-SET-029 — Entry-bounded update**  
-Set/unset shall affect only the selected key in the selected source while preserving unrelated supported content where practical.
+Environment source selection applies [FR-SET-059](../functional/settings-functional-specification-v01.md#fr-set-059).
 
-**DD-SET-030 — Runtime environment remains separate**  
-Persisted environment mutation shall not be represented as mutation of an already-running process environment.
+<a id="dd-set-028"></a>
 
-**DD-SET-031 — App initialisation delegates, it does not duplicate**  
-When DD-3.1 App requires environment-definition creation during existing-application initialisation, Settings shall execute its canonical persisted environment operation under the App/Settings clarification; App retains lifecycle sequencing and acceptance.
+**DD-SET-028 — Create protection**
+
+Environment creation applies [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061).
+
+<a id="dd-set-029"></a>
+
+**DD-SET-029 — Entry-bounded update**
+
+Environment set/unset binds [FR-SET-065](../functional/settings-functional-specification-v01.md#fr-set-065) and [FR-SET-066](../functional/settings-functional-specification-v01.md#fr-set-066) to the selected source; preservation follows [Design](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation).
+
+<a id="dd-set-030"></a>
+
+**DD-SET-030 — Runtime environment remains separate**
+
+Persisted environment effects apply [FR-SET-070](../functional/settings-functional-specification-v01.md#fr-set-070).
+
+<a id="dd-set-031"></a>
+
+**DD-SET-031 — App initialisation delegates, it does not duplicate**
+
+App preparation consumes the environment operation in [FR-SET-060](../functional/settings-functional-specification-v01.md#fr-set-060) and [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061) through [FR-SET-102](../functional/settings-functional-specification-v01.md#fr-set-102).
 
 ### 8.5 Contributors
 
-**DD-SET-032 — Contributor identity is unambiguous**  
-Add/remove operations shall use sufficient contributor identity to avoid accidental mutation of another entry.
+<a id="dd-set-032"></a>
 
-**DD-SET-033 — Duplicate contributor policy**  
-Materially equivalent contributor entries shall not be duplicated without explicit intent.
+**DD-SET-032 — Contributor identity is unambiguous**
+
+Contributor add/remove identity binds [FR-SET-078](../functional/settings-functional-specification-v01.md#fr-set-078) and [FR-SET-080](../functional/settings-functional-specification-v01.md#fr-set-080) to the selected entry.
+
+<a id="dd-set-033"></a>
+
+**DD-SET-033 — Duplicate contributor policy**
+
+Contributor equivalence applies [FR-SET-077](../functional/settings-functional-specification-v01.md#fr-set-077).
 
 ### 8.6 Licences
 
-**DD-SET-034 — Licence identity precedes rendering/creation**  
-A licence resource operation shall resolve an unambiguous supported licence identity and applicable target before generating or writing licence material.
+<a id="dd-set-034"></a>
 
-**DD-SET-035 — Licence text provenance matters**  
-Standard licence text shall derive from an approved curated/authoritative source through applicable registry/provider contracts; Settings shall not invent material licence terms.
+**DD-SET-034 — Licence identity precedes rendering/creation**
 
-**DD-SET-036 — Coupled licence effects are explicit**  
-If an operation includes both licence-resource and declared-metadata effects, both intended effects shall be represented before execution and evaluated separately afterward.
+Licence creation binds [FR-SET-083](../functional/settings-functional-specification-v01.md#fr-set-083) to the resolved Settings target.
+
+<a id="dd-set-035"></a>
+
+**DD-SET-035 — Licence text provenance matters**
+
+Licence text comes through the registry/provider collaboration under [FR-SET-084](../functional/settings-functional-specification-v01.md#fr-set-084).
+
+<a id="dd-set-036"></a>
+
+**DD-SET-036 — Coupled licence effects are explicit**
+
+Coupled licence effects apply [FR-SET-057](../functional/settings-functional-specification-v01.md#fr-set-057) and [FR-SET-086](../functional/settings-functional-specification-v01.md#fr-set-086). Represent both intended effects before execution and evaluate their individual states afterward.
 
 ### 8.7 Declarative templates
 
-**DD-SET-037 — Template class is explicit**  
-Add/delete operations shall bind to the exact registry/template class and item identity.
+<a id="dd-set-037"></a>
 
-**DD-SET-038 — Aggregate listing is read-only composition**  
-Settings may aggregate template summaries across classes while preserving class/owner identity and without inventing a unified schema.
+**DD-SET-037 — Template class is explicit**
 
-**DD-SET-039 — No generic executable extension**  
-Template management shall not become arbitrary code loading, script execution or a universal plugin framework.
+Template add/delete binds [FR-SET-096](../functional/settings-functional-specification-v01.md#fr-set-096) and [FR-SET-097](../functional/settings-functional-specification-v01.md#fr-set-097) to the selected class/item.
+
+<a id="dd-set-038"></a>
+
+**DD-SET-038 — Aggregate listing is read-only composition**
+
+Aggregate template summaries apply [FR-SET-094](../functional/settings-functional-specification-v01.md#fr-set-094) and [FR-SET-095](../functional/settings-functional-specification-v01.md#fr-set-095).
+
+<a id="dd-set-039"></a>
+
+**DD-SET-039 — No generic executable extension**
+
+Declarative template management follows [Design](../appmanager-design-specification-v01.md#_13-2-extension-classes).
+
 
 ---
 
@@ -357,14 +467,25 @@ context-resolved
  -> accepted | rejected | unchanged | partial | cancelled | indeterminate
 ```
 
-**DD-SET-040 — State progression does not manufacture authority**  
-Reaching a later state shall not grant broader scope or mutation authority than the invocation and approved managed scope supplied.
+<a id="dd-set-040"></a>
 
-**DD-SET-041 — No-op is first-class**  
-A materially equivalent set/update or absent-key removal may terminate as unchanged without fabricating an effect.
+**DD-SET-040 — State progression does not manufacture authority**
 
-**DD-SET-042 — Multi-effect state is per effect**  
-Coupled resource/metadata operations shall preserve the state of each intended effect so partial completion remains observable.
+Settings states describe the operation under [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting); they do not enlarge the supplied authority.
+
+<a id="dd-set-041"></a>
+
+**DD-SET-041 — No-op is first-class**
+
+Equivalent updates and absent-key removal apply [FR-SET-016](../functional/settings-functional-specification-v01.md#fr-set-016) and [FR-SET-067](../functional/settings-functional-specification-v01.md#fr-set-067).
+
+<a id="dd-set-042"></a>
+
+**DD-SET-042 — Multi-effect state is per effect**
+
+Coupled effects use [DD-SET-036](#dd-set-036) and [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-set-043"></a>
 
 **DD-SET-043 — Observation and mutation revisions remain distinguishable**  
 Where a mutation is based on prior content, the operation shall retain enough revision/precondition evidence to detect supported stale-write conflicts.
@@ -373,48 +494,88 @@ Where a mutation is based on prior content, the operation shall retain enough re
 
 ## 10. Domain Policy and Decision Rules
 
+<a id="dd-set-044"></a>
+
 **DD-SET-044 — Applicability is semantic**  
 A field/resource is eligible only when supported by the selected Settings operation and target model; physical presence alone is insufficient.
+
+<a id="dd-set-045"></a>
 
 **DD-SET-045 — Unsupported is not absent**  
 An unsupported metadata field, resource class or environment syntax shall not be silently represented as merely unset.
 
-**DD-SET-046 — Effective configuration is queried, not inferred**  
-If the caller needs the effective value or provenance of a configurable concern, Settings shall consume DD-1.4 evidence rather than infer it from the persisted source it manages.
+<a id="dd-set-046"></a>
 
-**DD-SET-047 — Manual version setting does not own derivation policy**  
-Settings may validate and persist an explicitly supplied version but shall not absorb automatic version derivation owned by another use case.
+**DD-SET-046 — Effective configuration is queried, not inferred**
 
-**DD-SET-048 — External reachability is evidence-dependent**  
-Syntactically valid repository, funding or bug-reporting URLs shall not be claimed reachable unless an approved capability actually establishes that fact.
+Effective values use [DD-1.4 resolution results](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result); provenance follows [FR-CONFIG-045](../functional/configuration-functional-specification-v01.md#fr-config-045).
 
-**DD-SET-049 — Licence suitability is outside Settings authority**  
-Catalogue membership and successful licence creation do not constitute legal advice or a determination of project suitability.
+<a id="dd-set-047"></a>
 
-**DD-SET-050 — Template ownership survives management**  
-Settings management of a declarative resource shall preserve the semantic owner that later consumes/applies it.
+**DD-SET-047 — Manual version setting does not own derivation policy**
+
+Manual version setting applies [FR-SET-048](../functional/settings-functional-specification-v01.md#fr-set-048) and [FR-SET-049](../functional/settings-functional-specification-v01.md#fr-set-049).
+
+<a id="dd-set-048"></a>
+
+**DD-SET-048 — External reachability is evidence-dependent**
+
+Repository/bug URL reachability follows [FR-SET-044](../functional/settings-functional-specification-v01.md#fr-set-044). Funding URLs shall likewise not be claimed reachable without approved capability evidence.
+
+<a id="dd-set-049"></a>
+
+**DD-SET-049 — Licence suitability is outside Settings authority**
+
+Licence catalogue/creation results apply [FR-SET-090](../functional/settings-functional-specification-v01.md#fr-set-090).
+
+<a id="dd-set-050"></a>
+
+**DD-SET-050 — Template ownership survives management**
+
+Template management follows [FR-SET-098](../functional/settings-functional-specification-v01.md#fr-set-098).
+
 
 ---
 
 ## 11. Safety, Mutation, and Authorization
 
-**DD-SET-051 — Inspection is non-mutating**  
-Read/list/inspect operations shall remain non-mutating.
+<a id="dd-set-051"></a>
 
-**DD-SET-052 — Mutation intent is explicit**  
-Create, set, update, add, remove and delete effects shall not be inferred from inspection or recognition.
+**DD-SET-051 — Inspection is non-mutating**
 
-**DD-SET-053 — Consequential authorization is operation-relative**  
-Deletion, replacement and other consequential operations shall consume the applicable confirmation or explicit non-interactive authorization policy before effect execution.
+Read/list/inspect behavior applies [FR-SET-012](../functional/settings-functional-specification-v01.md#fr-set-012).
 
-**DD-SET-054 — Mutation is target-bounded**  
-An authorized Settings operation shall affect only its selected setting/resource and explicitly coupled effects within approved scope.
+<a id="dd-set-052"></a>
 
-**DD-SET-055 — Existing-resource replacement is not implicit**  
-Creation shall not silently replace an existing environment definition, licence artefact or template item where replacement is materially consequential.
+**DD-SET-052 — Mutation intent is explicit**
 
-**DD-SET-056 — Indirection does not escape scope**  
-Symlinks, aliases, registry references or provider-resolved paths shall not allow a Settings operation to mutate outside the approved resource boundary.
+Mutation intent follows [FR-SET-012](../functional/settings-functional-specification-v01.md#fr-set-012).
+
+<a id="dd-set-053"></a>
+
+**DD-SET-053 — Consequential authorization is operation-relative**
+
+Deletion/replacement and other consequential effects consume [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023) before execution.
+
+<a id="dd-set-054"></a>
+
+**DD-SET-054 — Mutation is target-bounded**
+
+Selected setting/resource effects bind [FR-SET-115](../functional/settings-functional-specification-v01.md#fr-set-115) to the approved scope; expressly coupled effects follow [DD-SET-036](#dd-set-036).
+
+<a id="dd-set-055"></a>
+
+**DD-SET-055 — Existing-resource replacement is not implicit**
+
+Creation collisions apply [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061), [FR-SET-085](../functional/settings-functional-specification-v01.md#fr-set-085) and [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) for template items.
+
+<a id="dd-set-056"></a>
+
+**DD-SET-056 — Indirection does not escape scope**
+
+Settings symlinks, aliases, registry references and provider-resolved paths apply the [Resource Access indirection contract](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) within the approved resource boundary.
+
+<a id="dd-set-057"></a>
 
 **DD-SET-057 — Secret reveal is not implied by management authority**  
 Permission to set, unset or inspect the existence of a sensitive value does not imply permission to emit its plaintext value.
@@ -423,20 +584,37 @@ Permission to set, unset or inspect the existence of a sensitive value does not 
 
 ## 12. Failure, Cancellation, and Partial Effects
 
-**DD-SET-058 — Failure is stage-attributable**  
-Settings failures shall distinguish target resolution, validation, authorization, read/recognition, registry/provider, transformation/persistence, verification and Settings acceptance where material.
+<a id="dd-set-058"></a>
 
-**DD-SET-059 — Partial completion is first-class**  
-Where an operation has multiple intended effects, completion of only a subset shall be represented as partial rather than complete success.
+**DD-SET-058 — Failure is stage-attributable**
 
-**DD-SET-060 — No universal rollback claim**  
-Settings shall report actual effects and shall not imply rollback unless the delegated capability genuinely provides and completes it.
+Failures apply [FR-SET-108](../functional/settings-functional-specification-v01.md#fr-set-108); recognition, registry/provider and verification stages remain distinguishable where material.
 
-**DD-SET-061 — Cancellation stops future effects**  
-Cancellation shall prevent not-yet-started Settings effects as soon as safely practical and propagate to active delegated work where supported.
+<a id="dd-set-059"></a>
 
-**DD-SET-062 — Cancellation preserves completed effects**  
-Already completed effects remain part of the result and shall not be erased by cancellation semantics.
+**DD-SET-059 — Partial completion is first-class**
+
+Multi-effect Settings completion uses [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-set-060"></a>
+
+**DD-SET-060 — No universal rollback claim**
+
+Settings rollback claims apply [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046).
+
+<a id="dd-set-061"></a>
+
+**DD-SET-061 — Cancellation stops future effects**
+
+Settings cancellation applies [FR-SET-111](../functional/settings-functional-specification-v01.md#fr-set-111) and [DD-1.2 cancellation propagation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-set-062"></a>
+
+**DD-SET-062 — Cancellation preserves completed effects**
+
+Completed Settings effects apply [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045).
+
+<a id="dd-set-063"></a>
 
 **DD-SET-063 — Indeterminate effect requires verification**  
 If persistence may have occurred but completion cannot be established reliably, the operation shall report indeterminate state and recovery/verification guidance rather than guess success or failure.
@@ -445,74 +623,130 @@ If persistence may have occurred but completion cannot be established reliably, 
 
 ## 13. Headless and Interaction Independence
 
-**DD-SET-064 — One semantic contract across adapters**  
-TUI, Headless and future adapters shall express equivalent Settings intent, semantic scope, policy and results.
+<a id="dd-set-064"></a>
 
-**DD-SET-065 — Interactive selection is presentation**  
-Menus/prompts may help select a setting, resource, source or value but shall not create semantics unavailable to non-interactive callers.
+**DD-SET-064 — One semantic contract across adapters**
 
-**DD-SET-066 — Headless ambiguity fails safely**  
-Missing or ambiguous target, environment source, metadata identity, licence identity or template class shall produce structured failure rather than prompting or selecting a broad default.
+Settings adapters apply [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
-**DD-SET-067 — Machine-consumable sensitivity**  
-Structured Headless results shall communicate redaction/presence state without requiring secret disclosure or parsing terminal prose.
+<a id="dd-set-065"></a>
+
+**DD-SET-065 — Interactive selection is presentation**
+
+Setting/resource/source/value choice acquisition applies [FR-INV-019](../functional/application-invocation-functional-specification-v01.md#fr-inv-019) to the §7 intent model.
+
+<a id="dd-set-066"></a>
+
+**DD-SET-066 — Headless ambiguity fails safely**
+
+Unresolved Settings inputs apply [FR-SET-116](../functional/settings-functional-specification-v01.md#fr-set-116) and [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) for Headless execution.
+
+<a id="dd-set-067"></a>
+
+**DD-SET-067 — Machine-consumable sensitivity**
+
+Headless redaction/presence evidence applies [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021) and [FR-SET-017](../functional/settings-functional-specification-v01.md#fr-set-017) under the reveal boundary in [DD-SET-057](#dd-set-057).
+
 
 ---
 
 ## 14. Concurrency, Idempotency, and Conflict Behaviour
 
+<a id="dd-set-068"></a>
+
 **DD-SET-068 — Consequential preconditions are revalidated**  
 Where practical, stale-sensitive mutations shall revalidate relevant target/revision/existence preconditions immediately before effect execution.
+
+<a id="dd-set-069"></a>
 
 **DD-SET-069 — Equivalent updates are repeatable**  
 Repeating a materially equivalent set/update/add request should converge to unchanged or the same semantic state rather than accumulate unintended duplicate effects.
 
-**DD-SET-070 — Collection identity prevents duplicates**  
-Keyword, contributor and registry-item operations shall use semantic identity/equivalence rules appropriate to their class to avoid accidental duplication.
+<a id="dd-set-070"></a>
 
-**DD-SET-071 — Concurrent change is not silently overwritten**  
-If the target changed materially after inspection and the conflict is detectable, Settings shall reject, refresh or require renewed intent rather than silently overwrite the newer state.
+**DD-SET-070 — Collection identity prevents duplicates**
 
-**DD-SET-072 — Coupled effects do not imply transactions**  
-A licence-resource-plus-metadata operation may define coordinated intent without claiming atomic transactionality across capabilities unless such a guarantee actually exists.
+Collection identity binds [FR-SET-054](../functional/settings-functional-specification-v01.md#fr-set-054) for keywords, [FR-SET-077](../functional/settings-functional-specification-v01.md#fr-set-077) for contributors and [FR-SET-093](../functional/settings-functional-specification-v01.md#fr-set-093) for template classes; class-appropriate identity/equivalence shall also prevent accidental registry-item duplication.
+
+<a id="dd-set-071"></a>
+
+**DD-SET-071 — Concurrent change is not silently overwritten**
+
+Concurrent target changes apply [FR-XFORM-068](../functional/source-transformation-functional-specification-v01.md#fr-xform-068) and [FR-XFORM-069](../functional/source-transformation-functional-specification-v01.md#fr-xform-069).
+
+<a id="dd-set-072"></a>
+
+**DD-SET-072 — Coupled effects do not imply transactions**
+
+Coupled licence-resource/metadata intent in [DD-SET-036](#dd-set-036) applies [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046).
+
 
 ---
 
 ## 15. Security and Sensitive Information
 
-**DD-SET-073 — Sensitivity follows data, not storage format**  
-Sensitive classification shall survive normalization, parsing, result projection and diagnostics regardless of whether the value came from a settings store, environment definition or other approved source.
+<a id="dd-set-073"></a>
 
-**DD-SET-074 — Secret values are minimized**  
-Settings shall avoid placing plaintext secrets in normal output, logs, diagnostics, provenance records or generic effect summaries.
+**DD-SET-073 — Sensitivity follows data, not storage format**
+
+Settings applies [sensitivity propagation](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_22-4-sensitivity-propagation) across parsing, normalization, result projection and diagnostics for settings-store values, environment definitions and other approved sources.
+
+<a id="dd-set-074"></a>
+
+**DD-SET-074 — Secret values are minimized**
+
+Plaintext secrets in output, logs, diagnostics, provenance and effect summaries apply [FR-SET-017](../functional/settings-functional-specification-v01.md#fr-set-017) and [DD-1.2 sensitive-information handling](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
+<a id="dd-set-075"></a>
 
 **DD-SET-075 — Untrusted resource content remains data**  
 Environment content, metadata strings, licence/template resources and provider-returned content shall not acquire authority to redefine AppManager commands, policy, scope or configuration.
 
+<a id="dd-set-076"></a>
+
 **DD-SET-076 — External resource acquisition is bounded**  
 Where a catalogue/provider obtains declarative material externally, trust/provenance and applicable disclosure/network policy shall remain explicit; acquired content does not bypass validation or authorization.
 
-**DD-SET-077 — Diagnostics preserve usefulness without disclosure**  
-Sensitive failures should identify the affected semantic key/resource and stage while redacting unnecessary protected content.
+<a id="dd-set-077"></a>
+
+**DD-SET-077 — Diagnostics preserve usefulness without disclosure**
+
+Sensitive key/resource/stage diagnostics apply [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040).
+
 
 ---
 
 ## 16. Extensibility and Replaceability
 
-**DD-SET-078 — Storage/provider replaceability**  
-Settings semantics shall not require one storage format, parser, registry implementation, licence provider or resource service.
+<a id="dd-set-078"></a>
 
-**DD-SET-079 — Registry classes remain specialised**  
-Shared DD-2.6 registry infrastructure shall not force licence, AI, Docs, Nuxt or other declarative resources into one interchangeable schema/lifecycle.
+**DD-SET-078 — Storage/provider replaceability**
+
+Storage/parser/registry/licence/resource provider substitution applies [FR-SET-004](../functional/settings-functional-specification-v01.md#fr-set-004) and [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-set-079"></a>
+
+**DD-SET-079 — Registry classes remain specialised**
+
+Licence, AI, Docs, Nuxt and other resource classes apply [FR-SET-095](../functional/settings-functional-specification-v01.md#fr-set-095) when consuming DD-2.6 infrastructure.
+
+<a id="dd-set-080"></a>
 
 **DD-SET-080 — New setting/resource classes require defined ownership**  
 A new class may be introduced only when its semantic scope, validation, mutation and consuming-domain ownership are sufficiently defined.
 
-**DD-SET-081 — No generic domain framework from shape similarity**  
-Repeated CRUD terminology or similarly shaped metadata records shall not justify a universal domain base service/request/result abstraction.
+<a id="dd-set-081"></a>
 
-**DD-SET-082 — Implementation topology remains open**  
-This design shall not require a Settings class/service/package/process, one adapter per metadata class, one registry runtime or a specific TypeScript source layout.
+**DD-SET-081 — No generic domain framework from shape similarity**
+
+Settings CRUD and metadata record shapes apply the [shared-abstraction criterion](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-046) within the existing DD-1/DD-2 ownership boundaries.
+
+<a id="dd-set-082"></a>
+
+**DD-SET-082 — Implementation topology remains open**
+
+Concrete Settings service/package/process/adapter/registry/source-layout decisions follow [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
+
 
 ---
 
@@ -540,11 +774,17 @@ Tests shall cover at least:
 - Headless ambiguity and adapter equivalence;
 - provider substitution without semantic change.
 
+<a id="dd-set-083"></a>
+
 **DD-SET-083 — Domain policy is independently testable**  
 Settings orchestration/policy shall be testable with capability substitutes without requiring live external catalogues or one concrete storage technology.
 
+<a id="dd-set-084"></a>
+
 **DD-SET-084 — Provider tests do not define the contract**  
 Integration tests for concrete parsers, stores, licence sources or registries may verify adapter behavior below the boundary but shall not redefine Settings semantics.
+
+<a id="dd-set-085"></a>
 
 **DD-SET-085 — Ownership-boundary tests are mandatory design evidence**  
 Conformance testing shall verify that Settings does not acquire configuration precedence, Git effects, App lifecycle, template execution or legal-decision authority and that composing domains do not duplicate Settings-owned environment/resource semantics.
@@ -579,27 +819,10 @@ Cross-authority traceability:
 - DD-2.4/DD-2.5: recognition/transformation — `DD-SET-012`–`013`, `023`, `025`, `068`, `071`;
 - DD-2.6: registries/templates — `DD-SET-014`, `034`–`039`, `079`;
 - DD-2.3/DD-3.2: repository facts/effects boundary — `DD-SET-015`, `026`;
-- DD-3.1 plus App/Settings clarification: environment-definition delegation — `DD-SET-031`.
+- DD-3.1 plus [FR-APP-016](../functional/app-functional-specification-v01.md#fr-app-016): environment-definition delegation — `DD-SET-031`.
 
 ---
 
 ## 19. Conformance Invariants
 
-A conforming DD-4.2 design shall preserve all of the following:
-
-1. **Application authority remains DD-1-owned.** Settings-domain acceptance is subordinate to final Application Engine acceptance and canonical DD-1.2 outcomes.
-2. **Settings does not own configuration resolution.** Persistence, source presence or Settings validation does not redefine DD-1.4 precedence, applicability, provenance or effective values.
-3. **Managed scope remains DD-1.3-owned.** Resource visibility, current working directory or registry discovery does not establish Settings mutation scope.
-4. **Operator identity and project metadata remain distinct.** Similar field names do not authorize cross-scope writes or synthesized equivalence.
-5. **Persisted environment CRUD has one semantic owner.** Settings owns it; App may compose it for lifecycle initialization without duplicating it.
-6. **Recognition and rendering do not authorize mutation.** DD-2.4/DD-2.6 evidence remains subordinate to explicit Settings intent, scope and authorization.
-7. **Existing-resource mutation remains DD-2.5-owned mechanically.** Settings supplies intent/policy; Source Transformation supplies bounded mutation and source-validity evidence.
-8. **Metadata is not operational authority.** Repository metadata does not grant Git authority; version metadata does not grant automatic versioning authority; template management does not grant consuming-domain execution authority.
-9. **Sensitive-value management does not imply disclosure authority.** Secret presence and mutation may be represented without plaintext exposure.
-10. **Partial effects remain truthful.** Coupled licence/resource/metadata operations shall not claim transactionality, rollback or complete success when only part completed.
-11. **Provider and representation independence is preserved.** No concrete storage format, parser, registry, licence source, class/service or source topology is part of the permanent domain contract unless separately approved.
-12. **Interactive and Headless semantics remain equivalent.** Presentation may differ; Settings intent, scope, policy, authorization and outcomes shall not.
-
-The central conformance rule is:
-
-> **Settings may manage durable values, metadata and declarative resources, but neither persistence nor resource ownership transfers configuration precedence, neighbouring-domain operational authority, or final application authority into Settings.**
+Conformance review follows the class-specific identity, setting/resource scope and mutation plans in §7 and the persistence, environment definitions, contributor/metadata management and declarative resources in §8. The policy, lifecycle, failure/recovery and security clauses in §§9–16 supply their local acceptance and uncertainty conditions. §18 identifies the upstream contracts; this index adds no independent invariant set.

@@ -6,7 +6,7 @@
 >
 > **Clarifies:** IS-14 — App Domain Implementation Specification
 >
-> **Primary Detailed Design clarification:** [App Domain Command Model Detailed Design Clarification](../../dd_3_high_coupling_domains/clarifications/app-domain-command-model-clarification-v01.md)
+> **Primary Detailed Design contract:** [App Domain Command Model Detailed Design](../../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#_7-domain-contract-model)
 
 ## 1. Canonical Implementation Identities
 
