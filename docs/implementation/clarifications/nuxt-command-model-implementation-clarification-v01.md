@@ -12,7 +12,7 @@
 
 This clarification corrects IS-16's eight-command catalogue and supplies the minimum implementation delta for the five added Nuxt intents. It preserves the IS-16/IS-13 domain-capability separation and the modular typed replaceability requirements restored by PBC-1.
 
-NCR-3 shall integrate this delta into IS-16/IS-13 and retire this temporary clarification.
+A direct-edit work package shall integrate this delta into IS-16/IS-13 and retire this temporary clarification.
 
 ## 2. Canonical Catalogue
 
@@ -71,7 +71,7 @@ export interface CleanupNuxtInput {
 }
 ```
 
-Exact type/module names may be consolidated during NCR-3 implementation-specification rationalisation, but equivalent explicit typed information is required. `Record<string, unknown>` above is only an extensibility envelope for an explicitly supported artefact/module class; it shall not become arbitrary provider argument or shell input.
+Exact type/module names may be consolidated during a future implementation-specification compression pass, but equivalent explicit typed information is required. `Record<string, unknown>` above is only an extensibility envelope for an explicitly supported artefact/module class; it shall not become arbitrary provider argument or shell input.
 
 ## 4. Use-Case Implementations
 

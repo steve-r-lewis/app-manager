@@ -94,4 +94,4 @@ No `ai.prompt.run` command is introduced.
 
 The AI domain changes from 4 to 22 canonical commands and the total Version 1 catalogue from 78 to 96 commands, with other domain counts unchanged.
 
-NCR-3 shall fold this delta into IS-20 after the governing Design/Functional/DD corrections have been integrated.
+A direct-edit work package shall fold this delta into IS-20 after the governing Design/Functional/DD corrections have been integrated.

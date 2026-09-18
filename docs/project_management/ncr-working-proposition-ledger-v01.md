@@ -1878,7 +1878,7 @@ IS-2’s request-input sentence names DD-1.4 bootstrap eligibility instead of th
 
 ## 11. NCR-2 completion disposition
 
-NCR-2 is complete and merged via [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180) at `33024e4346cc14de94e1a02d4357f50e95b5d7de`. This disposition supersedes the in-progress gate statements in the chronological checkpoints above; those statements describe their respective checkpoints, not current state. NCR-3, NCR-4 and NCR-5 remain future work. Implementation remains paused until NCR-5 and verification of the resulting live master.
+NCR-2 is complete and merged via [PR #180](https://github.com/steve-r-lewis/app-manager/pull/180) at `33024e4346cc14de94e1a02d4357f50e95b5d7de`. This disposition supersedes the in-progress gate statements in the chronological checkpoints above; those statements describe their respective checkpoints, not current state. NCR-3, NCR-4 and NCR-5 are superseded by the Documentation Compression and Modularisation initiative ([README §10](README.md#_10-current-work)); their objective continues as direct-edit work packages rather than a further ledger-tracked programme. Implementation remains paused until that initiative's exit criteria pass and the resulting live master is verified.
 
 ### 11.1 Semantic and horizontal result
 

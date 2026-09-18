@@ -18,7 +18,7 @@ None remain active after NCR-1. Eight Design clarification vehicles have been in
 
 None remain active after NCR-1. Thirteen Functional clarification vehicles have been integrated into the twelve primary Functional Specifications or their existing Design/governance owners. Their stable requirement identities remain in the primary specifications. See the [NCR ledger](ncr-working-proposition-ledger-v01.md#_4-clarification-integration-and-retirement) for retirement and identity accounting.
 
-Detailed Design clarification integration is recorded below. Implementation clarifications remain active for NCR-3; their semantics have not been reduced in NCR-2.
+Detailed Design clarification integration is recorded below. Implementation clarifications remain active pending direct-edit integration (§7); NCR-3 is superseded by that work.
 
 ## 4. Detailed Design Clarifications — DD-1
 
