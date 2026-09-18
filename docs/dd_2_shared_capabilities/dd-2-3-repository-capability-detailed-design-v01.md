@@ -702,7 +702,7 @@ An integration attempt may leave repository state changed or conflicted before f
 
 ### DD-REPO-064 — Pull primitive is not multi-repository sync
 
-Project-wide integration uses the [Git synchronization contract](../functional/git-functional-specification-v01.md#_11-synchronisation); this section defines only the supplied repository primitive.
+Project-wide integration uses the [Git synchronization contract](../functional/git-functional-specification-v01.md#_10-synchronisation); this section defines only the supplied repository primitive.
 
 
 ---

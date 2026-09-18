@@ -435,7 +435,7 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-REPO-029` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-REPO-044` | [Git commit contract](../functional/git-functional-specification-v01.md#_8-commit) |
 | `DD-REPO-058` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
-| `DD-REPO-064` | [Git synchronization contract](../functional/git-functional-specification-v01.md#_11-synchronisation) |
+| `DD-REPO-064` | [Git synchronization contract](../functional/git-functional-specification-v01.md#_10-synchronisation) |
 | `DD-REPO-070` | [Git push use case](../functional/git-functional-specification-v01.md#_9-push) |
 | `DD-REPO-074` | [Git domain scope and orchestration contracts](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_7-domain-contract-model) |
 | `DD-REPO-078` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
