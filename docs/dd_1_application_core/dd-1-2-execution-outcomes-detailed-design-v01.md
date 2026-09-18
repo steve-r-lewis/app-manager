@@ -135,7 +135,7 @@ The design is decomposed into the following permanent responsibilities:
 6. **Outcome Contract** — owns the canonical shared envelope semantics representing the Application Engine's final accepted status and domain result payload attachment.
 7. **Outcome Aggregator** — combines child/stage/target results while preserving information rather than flattening it into a Boolean.
 8. **Provider Result Normalizer** — converts provider-native results and failures into bounded AppManager execution evidence.
-9. **Outcome Interpreter** — applies owning use-case semantics to normalized evidence and determines AppManager-level acceptance.
+9. **Acceptance Semantics** — defines the status model and interpretation examples (technical success versus application failure, technical failure versus non-fatal) that the [DD-1.5 Outcome Interpretation responsibility](dd-1-5-application-engine-detailed-design-v01.md#dd-eng-007) applies to normalized evidence to determine AppManager-level acceptance. DD-1.2 owns this contract; it does not itself perform the interpretation.
 10. **Outcome Projection Boundary** — defines the semantic obligations that DD-1.1 and adapters must preserve when exposing canonical outcome information without making presentation or transport structures authoritative.
 
 These are logical responsibilities, not a requirement for one implementation class per responsibility.
