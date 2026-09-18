@@ -1,3 +1,17 @@
+# AI Project Environment Implementation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-20 — AI Domain Implementation Specification](../../implementation/is-20-ai-domain-implementation-specification-v01.md) §5 (22 canonical identities), §§41.1–41.2 (aggregate inspection/resource graph), §§41.3–41.7 (Prompt/Agent/Skill/Tool/Policy families) and §41.8 (automatic acceptance contract).
+>
+> **Disposition:** The AI domain's expansion from 4 to 22 canonical commands, the six-family resource graph, and the cross-domain automatic-acceptance contract have all been applied directly to IS-20, building on [DD-4.3 — AI Domain](../../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) and the [AI Functional Specification](../../functional/ai-functional-specification-v01.md), both already corrected in PBC-1. `ai.instruction.replace` was renamed to `ai.instruction.update` throughout IS-20. No information from this clarification remains solely recorded here. The Version 1 catalogue total (96 commands, AI domain 22) stated in this clarification's §8 is unchanged from the already-accepted PBC-1 figure.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # AI Project Environment Implementation Clarification
 
 > **Status:** Active Implementation clarification
