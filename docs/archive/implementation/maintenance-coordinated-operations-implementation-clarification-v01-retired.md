@@ -1,3 +1,17 @@
+# IS-21 Coordinated Maintenance Operations Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-21 — Maintenance Domain Implementation Specification](../../implementation/is-21-utils-domain-implementation-specification-v01.md) §7 (four-cardinality `UtilsMaintenanceScope`), §7.1 (`MaintenanceResourceClassification`), §7.2 (`CoordinatedMaintenancePlan`/`MaintenancePlanItem`) and §13 (`HeaderValidationItemResult`).
+>
+> **Disposition:** The coordinated scope/classification/plan model has been applied directly to IS-21, building on [DD-4.4 — Maintenance Domain](../../dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md) §7.1–7.2, which already accepted this exact cardinality and nine-variant classification model. IS-21's previous three-variant scope (`file`/`managed_component`/`managed_source_set`) lacked an explicit multi-resource `selected` cardinality and had no pre-execution classification model at all (only the post-execution `UtilsTargetResult` state); both gaps are now closed. No information from this clarification remains solely recorded here.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # IS-21 Coordinated Maintenance Operations Clarification
 
 > **Document type:** Implementation clarification
