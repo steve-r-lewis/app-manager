@@ -511,8 +511,6 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-XFORM-086` | [DD-XFORM-008](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md#dd-xform-008) |
 | `DD-XFORM-088` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 | `DD-XFORM-089` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
-
-Checkpoint C interim: 179 reviewed requirement bodies reduced across DD-2.1 through DD-2.5, plus duplicate purpose/conformance summaries in the first three. All 1,915 definitions remain, now with stable direct anchors. New links checked, one synchronization anchor corrected, and `git diff --check` passes after EOF normalization. The rest of the primary corpus and final horizontal review remain outstanding; this is not checkpoint C completion.
 | `DD-REG-001` | [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
 | `DD-REG-003` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
 | `DD-REG-009` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
@@ -743,5 +741,222 @@ Checkpoint C interim: 179 reviewed requirement bodies reduced across DD-2.1 thro
 | `DD-NUXTCAP-094` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020); [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) |
 | `DD-NUXTCAP-099` | [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
 | `DD-QUALCAP-040` | [FR-QUAL-004](../functional/quality-functional-specification-v01.md#fr-qual-004) |
+| `DD-APP-016` | [FR-APP-014](../functional/app-functional-specification-v01.md#fr-app-014) |
+| `DD-APP-018` | [Settings FR-SET-060](../functional/settings-functional-specification-v01.md#fr-set-060); [FR-SET-061](../functional/settings-functional-specification-v01.md#fr-set-061) |
+| `DD-APP-019` | [FR-APP-017](../functional/app-functional-specification-v01.md#fr-app-017) |
+| `DD-APP-020` | [FR-APP-019](../functional/app-functional-specification-v01.md#fr-app-019) |
+| `DD-APP-022` | [FR-APP-027](../functional/app-functional-specification-v01.md#fr-app-027) |
+| `DD-APP-024` | [FR-APP-030](../functional/app-functional-specification-v01.md#fr-app-030) |
+| `DD-APP-025` | [FR-APP-032](../functional/app-functional-specification-v01.md#fr-app-032) |
+| `DD-APP-028` | [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014) |
+| `DD-APP-030` | [FR-APP-030](../functional/app-functional-specification-v01.md#fr-app-030); [FR-APP-032](../functional/app-functional-specification-v01.md#fr-app-032) |
+| `DD-APP-032` | [FR-APP-047](../functional/app-functional-specification-v01.md#fr-app-047) |
+| `DD-APP-033` | [FR-APP-045](../functional/app-functional-specification-v01.md#fr-app-045) |
+| `DD-APP-037` | [FR-APP-057](../functional/app-functional-specification-v01.md#fr-app-057) |
+| `DD-APP-038` | [FR-APP-059](../functional/app-functional-specification-v01.md#fr-app-059) |
+| `DD-APP-039` | [FR-APP-063](../functional/app-functional-specification-v01.md#fr-app-063) |
+| `DD-APP-041` | [FR-APP-064](../functional/app-functional-specification-v01.md#fr-app-064) |
+| `DD-APP-043` | [FR-APP-071](../functional/app-functional-specification-v01.md#fr-app-071) |
+| `DD-APP-046` | [FR-APP-081](../functional/app-functional-specification-v01.md#fr-app-081) |
+| `DD-APP-047` | [FR-APP-084](../functional/app-functional-specification-v01.md#fr-app-084) |
+| `DD-APP-051` | [FR-APP-094](../functional/app-functional-specification-v01.md#fr-app-094) |
+| `DD-APP-052` | [FR-APP-095](../functional/app-functional-specification-v01.md#fr-app-095); [FR-APP-096](../functional/app-functional-specification-v01.md#fr-app-096) |
+| `DD-APP-054` | [FR-APP-098](../functional/app-functional-specification-v01.md#fr-app-098) |
+| `DD-APP-059` | [FR-APP-005](../functional/app-functional-specification-v01.md#fr-app-005) |
+| `DD-APP-061` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-APP-081` | [FR-APP-024](../functional/app-functional-specification-v01.md#fr-app-024) |
+| `DD-APP-082` | [FR-APP-047](../functional/app-functional-specification-v01.md#fr-app-047) |
+| `DD-APP-085` | [FR-APP-017](../functional/app-functional-specification-v01.md#fr-app-017) |
+| `DD-APP-087` | [FR-APP-078](../functional/app-functional-specification-v01.md#fr-app-078) |
+| `DD-APP-011` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-APP-014` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-APP-023` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-APP-044` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-APP-063` | [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) |
+| `DD-APP-065` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-APP-066` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-APP-076` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-APP-078` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-APP-089` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-APP-069` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-APP-070` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-APP-071` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-APP-073` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-APP-075` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-APP-088` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-APP-004` | [DD-1.2 child-result model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-APP-008` | [FR-APP-044](../functional/app-functional-specification-v01.md#fr-app-044); [FR-APP-045](../functional/app-functional-specification-v01.md#fr-app-045); [FR-APP-052](../functional/app-functional-specification-v01.md#fr-app-052) |
+| `DD-APP-013` | [DD-APP-003 stage contract](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-003) |
+| `DD-APP-017` | [FR-APP-024](../functional/app-functional-specification-v01.md#fr-app-024) |
+| `DD-APP-026` | [FR-APP-035](../functional/app-functional-specification-v01.md#fr-app-035); [FR-APP-037](../functional/app-functional-specification-v01.md#fr-app-037) |
+| `DD-APP-036` | [DD-APP-058](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-058); [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023) |
+| `DD-APP-040` | [DD-APP-015](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-015) |
+| `DD-APP-042` | [FR-APP-067](../functional/app-functional-specification-v01.md#fr-app-067); [FR-APP-068](../functional/app-functional-specification-v01.md#fr-app-068); [FR-APP-069](../functional/app-functional-specification-v01.md#fr-app-069) |
+| `DD-APP-045` | [FR-APP-071](../functional/app-functional-specification-v01.md#fr-app-071); [capability bindings](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#_6-consumed-dd-2-shared-capabilities) |
+| `DD-APP-048` | [FR-APP-085](../functional/app-functional-specification-v01.md#fr-app-085); [FR-APP-086](../functional/app-functional-specification-v01.md#fr-app-086); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-APP-050` | [FR-APP-092](../functional/app-functional-specification-v01.md#fr-app-092); [FR-APP-093](../functional/app-functional-specification-v01.md#fr-app-093); [DD-APP-009](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-009) |
+| `DD-APP-053` | [DD-2.2 structured arguments](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#dd-proc-014) |
+| `DD-APP-060` | [DD-APP-009](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-009) |
+| `DD-APP-064` | [creation plan](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-007); [Clean plan](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-031); [Reset plan](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-034); [effect classification](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-058) |
+| `DD-APP-067` | [DD-ENG-027](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-027) |
+| `DD-APP-068` | [Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md); [Settings FR-SET-060](../functional/settings-functional-specification-v01.md#fr-set-060); [Git](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) |
+| `DD-APP-072` | [DD-APP-015](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-015) |
+| `DD-APP-077` | [Application Invocation request contract](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md) |
+| `DD-APP-086` | [DD-2.2 environment contracts](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_11-environment-contract); [DD-1.4 effective configuration](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) |
+| `DD-APP-CI-001` | [Design](../appmanager-design-specification-v01.md#_5-1-domain-oriented-command-model) |
+| `DD-APP-CI-002` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-APP-CI-003` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-APP-CI-004` | [DD-1.4](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md) |
+| `DD-APP-CI-005` | [Settings FR-SET-060/061](../functional/settings-functional-specification-v01.md#fr-set-060) |
+| `DD-APP-CI-006` | [DD-APP-031](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-031); [DD-APP-034](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-034); [DD-APP-035](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-035) |
+| `DD-APP-CI-007` | [FR-APP-059](../functional/app-functional-specification-v01.md#fr-app-059); [FR-APP-062](../functional/app-functional-specification-v01.md#fr-app-062) |
+| `DD-APP-CI-008` | [FR-APP-070](../functional/app-functional-specification-v01.md#fr-app-070); [FR-APP-081](../functional/app-functional-specification-v01.md#fr-app-081) |
+| `DD-APP-CI-009` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-APP-CI-010` | [FR-APP-019](../functional/app-functional-specification-v01.md#fr-app-019); [FR-APP-083](../functional/app-functional-specification-v01.md#fr-app-083) |
+| `DD-APP-CI-011` | [DD-APP-009](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-009); [FR-APP-094](../functional/app-functional-specification-v01.md#fr-app-094) |
+| `DD-APP-CI-012` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-APP-CI-013` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-APP-CI-014` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-APP-CI-015` | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-GIT-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-GIT-002` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-GIT-003` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-GIT-016` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-GIT-017` | [FR-GIT-108](../functional/git-functional-specification-v01.md#fr-git-108); [DD-GIT-061](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-061) |
+| `DD-GIT-018` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-GIT-019` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting); [DD-GIT-006](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-006) |
+| `DD-GIT-020` | [FR-GIT-022](../functional/git-functional-specification-v01.md#fr-git-022); [FR-GIT-084](../functional/git-functional-specification-v01.md#fr-git-084) |
+| `DD-GIT-021` | [FR-GIT-031](../functional/git-functional-specification-v01.md#fr-git-031) |
+| `DD-GIT-022` | [FR-GIT-029](../functional/git-functional-specification-v01.md#fr-git-029) |
+| `DD-GIT-024` | [FR-GIT-033](../functional/git-functional-specification-v01.md#fr-git-033); [FR-GIT-034](../functional/git-functional-specification-v01.md#fr-git-034); [FR-GIT-035](../functional/git-functional-specification-v01.md#fr-git-035); [FR-GIT-036](../functional/git-functional-specification-v01.md#fr-git-036); [DD-GIT-009](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-009) |
+| `DD-GIT-025` | [FR-GIT-048](../functional/git-functional-specification-v01.md#fr-git-048); [FR-GIT-099](../functional/git-functional-specification-v01.md#fr-git-099) |
+| `DD-GIT-026` | [FR-GIT-044](../functional/git-functional-specification-v01.md#fr-git-044); [DD-GIT-007](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-007) |
+| `DD-GIT-027` | [DD-GIT-013](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-013); [DD-GIT-014](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-014); [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-GIT-028` | [FR-GIT-056](../functional/git-functional-specification-v01.md#fr-git-056) |
+| `DD-GIT-029` | [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-GIT-030` | [FR-GIT-068](../functional/git-functional-specification-v01.md#fr-git-068); [FR-GIT-069](../functional/git-functional-specification-v01.md#fr-git-069); [FR-GIT-109](../functional/git-functional-specification-v01.md#fr-git-109); [DD-GIT-010](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-010) |
+| `DD-GIT-031` | [FR-GIT-073](../functional/git-functional-specification-v01.md#fr-git-073) |
+| `DD-GIT-032` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-GIT-033` | [FR-NUXT-065](../functional/nuxt-functional-specification-v01.md#fr-nuxt-065); [FR-NUXT-067](../functional/nuxt-functional-specification-v01.md#fr-nuxt-067) |
+| `DD-GIT-034` | [FR-GIT-088](../functional/git-functional-specification-v01.md#fr-git-088); [FR-GIT-089](../functional/git-functional-specification-v01.md#fr-git-089); [DD-GIT-012](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-012) |
+| `DD-GIT-035` | [FR-GIT-091](../functional/git-functional-specification-v01.md#fr-git-091); [FR-GIT-092](../functional/git-functional-specification-v01.md#fr-git-092) |
+| `DD-GIT-036` | [FR-GIT-095](../functional/git-functional-specification-v01.md#fr-git-095) |
+| `DD-GIT-039` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-GIT-040` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting); [DD-GIT-005](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-005) |
+| `DD-GIT-041` | [DD-GIT-006](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-006) |
+| `DD-GIT-042` | [FR-GIT-066](../functional/git-functional-specification-v01.md#fr-git-066); [DD-GIT-005](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-005) |
+| `DD-GIT-044` | [FR-GIT-110](../functional/git-functional-specification-v01.md#fr-git-110) |
+| `DD-GIT-045` | [FR-GIT-087](../functional/git-functional-specification-v01.md#fr-git-087) |
+| `DD-GIT-046` | [DD-GIT-008](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-008); [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-GIT-048` | [FR-GIT-053](../functional/git-functional-specification-v01.md#fr-git-053) |
+| `DD-GIT-050` | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-GIT-052` | [FR-GIT-104](../functional/git-functional-specification-v01.md#fr-git-104) |
+| `DD-GIT-053` | [FR-INV-032](../functional/application-invocation-functional-specification-v01.md#fr-inv-032) |
+| `DD-GIT-054` | [DD-GIT-013](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-013); [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-GIT-057` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-GIT-058` | [FR-GIT-112](../functional/git-functional-specification-v01.md#fr-git-112) |
+| `DD-GIT-059` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-GIT-060` | [DD-GIT-014](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-014); [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021) |
+| `DD-GIT-063` | [FR-GIT-047](../functional/git-functional-specification-v01.md#fr-git-047); [FR-GIT-076](../functional/git-functional-specification-v01.md#fr-git-076); [FR-GIT-022](../functional/git-functional-specification-v01.md#fr-git-022) |
+| `DD-GIT-065` | [DD-GIT-056](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-056) |
+| `DD-GIT-066` | [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-GIT-068` | [FR-GIT-036](../functional/git-functional-specification-v01.md#fr-git-036) |
+| `DD-GIT-070` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-GIT-071` | [DD-GIT-012](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-012); [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-GIT-072` | [FR-GIT-033](../functional/git-functional-specification-v01.md#fr-git-033); [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-GIT-074` | [The Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-GIT-CI-001` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-GIT-CI-002` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-GIT-CI-003` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-GIT-CI-004` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-GIT-CI-005` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting); [FR-GIT-044](../functional/git-functional-specification-v01.md#fr-git-044); [FR-GIT-066](../functional/git-functional-specification-v01.md#fr-git-066) |
+| `DD-GIT-CI-006` | [FR-GIT-069](../functional/git-functional-specification-v01.md#fr-git-069); [FR-GIT-109](../functional/git-functional-specification-v01.md#fr-git-109) |
+| `DD-GIT-CI-007` | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-GIT-CI-008` | [FR-GIT-033](../functional/git-functional-specification-v01.md#fr-git-033); [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-GIT-CI-009` | [FR-GIT-088](../functional/git-functional-specification-v01.md#fr-git-088); [FR-GIT-091](../functional/git-functional-specification-v01.md#fr-git-091); [FR-GIT-092](../functional/git-functional-specification-v01.md#fr-git-092); [FR-GIT-095](../functional/git-functional-specification-v01.md#fr-git-095) |
+| `DD-GIT-CI-010` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-GIT-CI-011` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); [the implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-GIT-CI-012` | [DD-2.4 repository-context interpretation](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md#repository-context) |
+| `DD-NUXT-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-NUXT-002` | [DD-1.5 bootstrap sequencing](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-core-boot-006) |
+| `DD-NUXT-003` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); [Design](../appmanager-design-specification-v01.md#_10-7-nuxt-domain) |
+| `DD-NUXT-004` | [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058); [DD-NUXT-011](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-011) |
+| `DD-NUXT-015` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [DD-NUXT-006](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-006) |
+| `DD-NUXT-017` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXT-019` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXT-020` | [FR-NUXT-092](../functional/nuxt-functional-specification-v01.md#fr-nuxt-092); [FR-NUXT-091](../functional/nuxt-functional-specification-v01.md#fr-nuxt-091) |
+| `DD-NUXT-021` | [FR-NUXT-024](../functional/nuxt-functional-specification-v01.md#fr-nuxt-024) |
+| `DD-NUXT-022` | [FR-NUXT-026](../functional/nuxt-functional-specification-v01.md#fr-nuxt-026); [FR-NUXT-032](../functional/nuxt-functional-specification-v01.md#fr-nuxt-032) |
+| `DD-NUXT-023` | [DD-NUXT-008](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-008); [FR-NUXT-036](../functional/nuxt-functional-specification-v01.md#fr-nuxt-036); [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014) |
+| `DD-NUXT-024` | [FR-NUXT-037](../functional/nuxt-functional-specification-v01.md#fr-nuxt-037); [FR-NUXT-038](../functional/nuxt-functional-specification-v01.md#fr-nuxt-038) |
+| `DD-NUXT-025` | [FR-NUXT-041](../functional/nuxt-functional-specification-v01.md#fr-nuxt-041); [FR-NUXT-107](../functional/nuxt-functional-specification-v01.md#fr-nuxt-107) |
+| `DD-NUXT-026` | [FR-NUXT-047](../functional/nuxt-functional-specification-v01.md#fr-nuxt-047) |
+| `DD-NUXT-027` | [FR-NUXT-048](../functional/nuxt-functional-specification-v01.md#fr-nuxt-048) |
+| `DD-NUXT-028` | [FR-NUXT-054](../functional/nuxt-functional-specification-v01.md#fr-nuxt-054) |
+| `DD-NUXT-029` | [DD-NUXT-009](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-009); [FR-NUXT-057](../functional/nuxt-functional-specification-v01.md#fr-nuxt-057); [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) |
+| `DD-NUXT-030` | [DD-NUXT-011](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-011); [FR-NUXT-055](../functional/nuxt-functional-specification-v01.md#fr-nuxt-055); [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) |
+| `DD-NUXT-031` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-NUXT-032` | [FR-NUXT-061](../functional/nuxt-functional-specification-v01.md#fr-nuxt-061) |
+| `DD-NUXT-033` | [FR-NUXT-062](../functional/nuxt-functional-specification-v01.md#fr-nuxt-062); [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow); [FR-XFORM-060](../functional/source-transformation-functional-specification-v01.md#fr-xform-060) |
+| `DD-NUXT-034` | [FR-NUXT-065](../functional/nuxt-functional-specification-v01.md#fr-nuxt-065); [FR-NUXT-066](../functional/nuxt-functional-specification-v01.md#fr-nuxt-066); [FR-NUXT-067](../functional/nuxt-functional-specification-v01.md#fr-nuxt-067); [FR-NUXT-068](../functional/nuxt-functional-specification-v01.md#fr-nuxt-068) |
+| `DD-NUXT-035` | [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-NUXT-036` | [FR-NUXT-072](../functional/nuxt-functional-specification-v01.md#fr-nuxt-072) |
+| `DD-NUXT-037` | [DD-NUXT-012](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-012); [FR-NUXT-073](../functional/nuxt-functional-specification-v01.md#fr-nuxt-073); [managed identity authority](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| `DD-NUXT-038` | [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017) |
+| `DD-NUXT-039` | [FR-NUXT-081](../functional/nuxt-functional-specification-v01.md#fr-nuxt-081) |
+| `DD-NUXT-040` | [FR-NUXT-084](../functional/nuxt-functional-specification-v01.md#fr-nuxt-084) |
+| `DD-NUXT-041` | [FR-NUXT-088](../functional/nuxt-functional-specification-v01.md#fr-nuxt-088) |
+| `DD-NUXT-042` | [FR-NUXT-089](../functional/nuxt-functional-specification-v01.md#fr-nuxt-089); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content); [DD-NUXT-007](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-007) |
+| `DD-NUXT-043` | [FR-NUXT-091](../functional/nuxt-functional-specification-v01.md#fr-nuxt-091) |
+| `DD-NUXT-045` | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) |
+| `DD-NUXT-046` | [DD-NUXT-061](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-061) |
+| `DD-NUXT-048` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-NUXT-049` | [FR-NUXT-032](../functional/nuxt-functional-specification-v01.md#fr-nuxt-032); [FR-NUXT-035](../functional/nuxt-functional-specification-v01.md#fr-nuxt-035) |
+| `DD-NUXT-050` | [FR-NUXT-105](../functional/nuxt-functional-specification-v01.md#fr-nuxt-105); [DD-NUXT-007](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-007) |
+| `DD-NUXT-051` | [FR-NUXT-093](../functional/nuxt-functional-specification-v01.md#fr-nuxt-093); [FR-NUXT-094](../functional/nuxt-functional-specification-v01.md#fr-nuxt-094); [FR-NUXT-096](../functional/nuxt-functional-specification-v01.md#fr-nuxt-096) |
+| `DD-NUXT-052` | [FR-DOCS-100](../functional/docs-functional-specification-v01.md#fr-docs-100); [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058); [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
+| `DD-NUXT-055` | [FR-NUXT-067](../functional/nuxt-functional-specification-v01.md#fr-nuxt-067) |
+| `DD-NUXT-056` | [FR-NUXT-060](../functional/nuxt-functional-specification-v01.md#fr-nuxt-060) |
+| `DD-NUXT-057` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXT-058` | [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014) |
+| `DD-NUXT-059` | [Design](../appmanager-design-specification-v01.md#_6-8-generation-and-templates) |
+| `DD-NUXT-060` | [Design §7.10](../appmanager-design-specification-v01.md#_7-10-non-destructive-transformation) |
+| `DD-NUXT-062` | [FR-NUXT-054](../functional/nuxt-functional-specification-v01.md#fr-nuxt-054); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXT-063` | [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040) |
+| `DD-NUXT-064` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXT-066` | [DD-1.2 cancellation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| `DD-NUXT-067` | [FR-INV-032](../functional/application-invocation-functional-specification-v01.md#fr-inv-032) |
+| `DD-NUXT-068` | [DD-NUXT-013](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-013); [DD-1.2 partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| `DD-NUXT-069` | [DD-NUXT-014](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-014); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-NUXT-070` | [DD-NUXT-018](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-018); [FR-NUXT-068](../functional/nuxt-functional-specification-v01.md#fr-nuxt-068) |
+| `DD-NUXT-071` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-NUXT-072` | [FR-NUXT-111](../functional/nuxt-functional-specification-v01.md#fr-nuxt-111) |
+| `DD-NUXT-073` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-NUXT-074` | [DD-NUXT-013](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-013); [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021) |
+| `DD-NUXT-075` | [FR-NUXT-037](../functional/nuxt-functional-specification-v01.md#fr-nuxt-037); [FR-NUXT-046](../functional/nuxt-functional-specification-v01.md#fr-nuxt-046); [FR-NUXT-078](../functional/nuxt-functional-specification-v01.md#fr-nuxt-078) |
+| `DD-NUXT-076` | [DD-NUXT-061](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-061) |
+| `DD-NUXT-077` | [FR-NUXT-038](../functional/nuxt-functional-specification-v01.md#fr-nuxt-038); [FR-NUXT-079](../functional/nuxt-functional-specification-v01.md#fr-nuxt-079) |
+| `DD-NUXT-079` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-NUXT-082` | [FR-INV-040](../functional/application-invocation-functional-specification-v01.md#fr-inv-040) |
+| `DD-NUXT-085` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXT-086` | [FR-XFORM-048](../functional/source-transformation-functional-specification-v01.md#fr-xform-048) |
+| `DD-NUXT-087` | [DD-NUXT-009](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-009); [Design](../appmanager-design-specification-v01.md#_6-9-registries) |
+| `DD-NUXT-088` | [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) |
+| `DD-NUXT-CI-001` | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| `DD-NUXT-CI-002` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXT-CI-003` | [FR-XFORM-014](../functional/source-transformation-functional-specification-v01.md#fr-xform-014) |
+| `DD-NUXT-CI-004` | [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058); [DD-2.10 scaffold collaborators](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
+| `DD-NUXT-CI-005` | [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017); [FR-NUXT-076](../functional/nuxt-functional-specification-v01.md#fr-nuxt-076); [FR-NUXT-084](../functional/nuxt-functional-specification-v01.md#fr-nuxt-084); [FR-NUXT-088](../functional/nuxt-functional-specification-v01.md#fr-nuxt-088) |
+| `DD-NUXT-CI-006` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-NUXT-CI-007` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| `DD-NUXT-CI-008` | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| `DD-NUXT-CI-009` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-NUXT-CI-010` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| `DD-NUXT-CI-011` | [Design](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows); [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058) |
+| `DD-NUXT-CI-012` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+
+Checkpoint C interim: 179 reviewed requirement bodies reduced across DD-2.1 through DD-2.5, plus duplicate purpose/conformance summaries in the first three. All 1,915 definitions remain, now with stable direct anchors. New links checked, one synchronization anchor corrected, and `git diff --check` passes after EOF normalization. The rest of the primary corpus and final horizontal review remain outstanding; this is not checkpoint C completion.
 
 Checkpoint C shared-capability interim: the first numbered-clause pass covers all ten DD-2 primaries, with 409 distinct duplicate bodies replaced so far. Duplicate purpose/final rule collections and conformance checklists have been removed from all ten, retaining architecture diagrams and local models/workflows. Same-shaped registry classes, source/domain facts, Quality criteria, and provider lifecycle contracts remain distinct. Definition multiset remains 1,915; new link/anchor checks and `git diff --check` pass. Additional unnumbered DD-2 prose, DD-1 and domain reduction plus final horizontal verification remain outstanding.
+
+The next domain checkpoint reviews App, Git and Nuxt numbered clauses against their Functional owners and shared execution contracts. 622 distinct requirement bodies have now been reduced across the ongoing C pass. App script discovery retains its read-only delta; named lifecycle preference and absence of implicit script lifecycle stages have separate direct Functional references. Git retains exact-target authorization invalidation, operation-specific eligibility, uncertain-effect recovery, non-idempotent commit retry, coordinated commit/message provenance and provider-substitution test obligations. Nuxt retains its independent target/applicability/creation/contribution/relationship/recovery models, required-versus-optional stage rule, host-relative validity, concurrent mutation guards and five integrated operation workflows. These similarly shaped models are domain specializations, not candidates for a universal plan or result framework. The final horizontal review, remaining domains, DD-1 and unnumbered occurrence pass remain open; this is not the NCR-2 completion gate.
