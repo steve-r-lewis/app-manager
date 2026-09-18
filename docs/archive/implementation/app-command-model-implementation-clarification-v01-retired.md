@@ -1,3 +1,17 @@
+# App Command Model Implementation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-14 — App Domain Implementation Specification](../../implementation/is-14-app-domain-implementation-specification-v01.md) §5 (corrected 8-command identity set), §17 (Prepare), §21 (Post-Install as subordinate stage), §24.1 (Generate), §29 (Reset-and-Prepare composition) and §44 (declared-script-runner collaborator).
+>
+> **Disposition:** The corrected 8-command Version 1 App identity set (`create`, `prepare`, `develop`, `build`, `preview`, `generate`, `clean`, `reset`) has been applied directly to IS-14, building on [DD-3.1 — App Domain](../../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md), which already accepted this exact set. `app.initialise` was renamed `app.prepare`; `app.post-install` and the former `app.run-script` mechanism became subordinate/internal (a lifecycle stage and the `declared-script-runner` collaborator respectively, neither independently invocable); `app.reinitialise` was removed as a registered use case in favour of an adapter-composed workflow over `app.reset` and `app.prepare`; `app.generate` was added as a new named lifecycle action alongside Develop/Build/Preview. No information from this clarification remains solely recorded here.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # App Command Model Implementation Clarification
 
 > **Document type:** Implementation clarification
