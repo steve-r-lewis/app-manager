@@ -1,3 +1,17 @@
+# IS-15 Coordinated Git Commit Implementation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-15 — Git Domain Implementation Specification](../../implementation/is-15-git-domain-implementation-specification-v01.md) §11 (`CommitGitInput.scope`), §12 (`RepositoryCommitPlan`), §13–14 (per-repository message/AI resolution, automatic acceptance) and §15.1 (Coordinated Commit runner/recovery reuse).
+>
+> **Disposition:** The single-repository `CommitGitInput` restriction and the statement "Version 1 commit remains single-repository" have been replaced directly in IS-15 with the same `GitRepositoryScopeRequest` cardinality already used by inspect/push/synchronise, per [Git Functional Specification §8.1](../../functional/git-functional-specification-v01.md#_8-1-coordinated-commit) — this corrects IS-15 to match Functional-level authority already accepted in PBC-1 (PR #175), not a new design decision. Coordinated commit reuses the existing `coordinated-operation-runner`, continuation policy, cancellation and recovery machinery already documented for push/synchronise rather than introducing new domain-generic types. No information from this clarification remains solely recorded here. The canonical command list stated in this clarification's §7 (eight Git commands, no `git.commit-all`) was already true in IS-15 and required no change.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # IS-15 Coordinated Git Commit Implementation Clarification
 
 > **Status:** Active Implementation clarification
