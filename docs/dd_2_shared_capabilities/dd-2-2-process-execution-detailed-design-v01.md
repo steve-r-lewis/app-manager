@@ -18,23 +18,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state distinctions, safety boundaries and evidence model by which AppManager delegates bounded execution to operating-system processes and command-line tools.
+Process Execution delegates bounded external-tool launches and observes their lifecycle. The request separates executable identity, structured arguments and explicit direct/shell form; the evidence distinguishes launch, output, termination, timeout and uncertainty. These distinctions let consuming domains interpret tool behavior without depending on a process API.
 
-The governing rule is:
-
-> **Process completion is technical execution evidence, not AppManager application success.**
-
-A second rule follows:
-
-> **Process Execution executes an already-authorized bounded technical request; it does not invent command intent, managed scope, application policy or final acceptance criteria.**
-
-A third rule is:
-
-> **Executable identity, arguments and shell interpretation are distinct concerns. Shell interpretation is an explicit execution property, not an accidental consequence of command-string convenience.**
-
-Process Execution therefore provides a reusable capability beneath application/domain orchestration while preventing provider-native process semantics from becoming AppManager application semantics.
-
----
+Application interpretation follows [DD-1.2 §19](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation); the local contracts below define what the process boundary can observe and guarantee.
 
 ## 2. Scope
 
@@ -174,6 +160,8 @@ These are permanent responsibility distinctions, not a requirement for one imple
 
 ## 6. Process Execution Request Contract
 
+<a id="dd-proc-001"></a>
+
 ### DD-PROC-001 — Bounded execution request
 
 Every process launch shall be represented by a bounded Process Execution request before consequential execution begins.
@@ -197,13 +185,19 @@ The request shall be capable of representing, where relevant:
 
 Exact field names and language-level types belong to Implementation Specification.
 
+<a id="dd-proc-002"></a>
+
 ### DD-PROC-002 — No command-string authority
 
 An arbitrary command string shall not be treated as sufficient application authority merely because Process Execution can pass it to a shell or process API.
 
+<a id="dd-proc-003"></a>
+
 ### DD-PROC-003 — Least execution authority
 
 A request shall carry only the technical execution authority needed for the delegated operation. Process Execution shall not broaden executable identity, arguments, environment, working context or termination authority for convenience.
+
+<a id="dd-proc-004"></a>
 
 ### DD-PROC-004 — Caller intent remains upstream
 
@@ -217,9 +211,13 @@ The request may carry correlation or semantic labels supplied by the caller, but
 
 Process Execution shall distinguish the executable/tool selected by an upstream authority from the provider-specific mechanism used to locate and launch it.
 
+<a id="dd-proc-005"></a>
+
 ### DD-PROC-005 — Explicit executable identity
 
 Direct execution shall identify the executable/tool separately from its argument sequence.
+
+<a id="dd-proc-006"></a>
 
 ### DD-PROC-006 — Tool resolution is bounded
 
@@ -227,11 +225,15 @@ Where provider search-path resolution is permitted, the request or effective cap
 
 Process Execution shall not perform broad project scanning to guess which tool the application intended.
 
+<a id="dd-proc-007"></a>
+
 ### DD-PROC-007 — Executability is not application eligibility
 
 The fact that a binary, script or command can be located and launched does not make it an approved AppManager operation.
 
 For example, package-script eligibility, Git operation policy and quality-tool selection remain with their owning semantics.
+
+<a id="dd-proc-008"></a>
 
 ### DD-PROC-008 — Resolved executable evidence
 
@@ -249,9 +251,13 @@ Direct execution invokes an executable with an argument vector without intention
 
 Shell-mediated execution intentionally delegates command parsing, expansion or composition to a shell/provider command interpreter.
 
+<a id="dd-proc-009"></a>
+
 ### DD-PROC-009 — Invocation form is explicit
 
 The Process Execution request shall distinguish direct execution from shell-mediated execution.
+
+<a id="dd-proc-010"></a>
 
 ### DD-PROC-010 — No silent shell escalation
 
@@ -259,13 +265,19 @@ A request for direct execution shall not silently be converted into shell-mediat
 
 If the requested form cannot be honored, the capability shall report unsupported/invalid execution rather than weaken the contract silently.
 
+<a id="dd-proc-011"></a>
+
 ### DD-PROC-011 — Shell execution requires upstream permission
 
 Shell-mediated execution shall occur only when the caller has supplied or authorized a shell execution form consistent with the owning use-case policy.
 
+<a id="dd-proc-012"></a>
+
 ### DD-PROC-012 — Shell syntax remains provider-bounded
 
 Shell operators, interpolation, pipelines, redirection, command substitution and platform-specific quoting are provider/shell semantics. Higher application contracts shall not depend on their incidental representation where an AppManager-oriented contract can express the intended operation directly.
+
+<a id="dd-proc-013"></a>
 
 ### DD-PROC-013 — Platform adaptation cannot change intent
 
@@ -275,17 +287,25 @@ Provider-specific adaptation needed to launch a supported executable on a platfo
 
 ## 9. Arguments
 
+<a id="dd-proc-014"></a>
+
 ### DD-PROC-014 — Argument sequence preservation
 
 For direct execution, arguments shall remain a structured ordered sequence through the capability boundary rather than being flattened into a shell-parsed string.
+
+<a id="dd-proc-015"></a>
 
 ### DD-PROC-015 — No argument reinterpretation
 
 Process Execution shall not independently add, remove, reorder or reinterpret application-significant arguments except for provider-level adaptation explicitly permitted by the request contract.
 
+<a id="dd-proc-016"></a>
+
 ### DD-PROC-016 — Sensitive arguments
 
-Arguments marked or known by the caller as sensitive shall be minimized or redacted in logs, diagnostics, events and returned evidence while preserving sufficient information to diagnose the operation safely.
+Apply [DD-PROC-084](#dd-proc-084) and [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to arguments classified sensitive by the caller, retaining safe diagnostic context.
+
+<a id="dd-proc-017"></a>
 
 ### DD-PROC-017 — Argument limits and provider rejection
 
@@ -299,21 +319,27 @@ Provider/OS argument-size or representation limits shall be normalized as techni
 
 A process request may identify a working directory or equivalent provider context.
 
+<a id="dd-proc-018"></a>
+
 ### DD-PROC-018 — Working context is explicit where material
 
 Where process behavior depends on working location, the request shall identify the intended working context rather than allowing incidental host process state to determine application semantics.
 
+<a id="dd-proc-019"></a>
+
 ### DD-PROC-019 — Current working directory is not project authority
 
-The AppManager host process's current working directory shall not be treated by Process Execution as authoritative managed-project identity or managed scope.
+A deliberately supplied working directory is a bounded request input; managed identity/scope follows [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
-A caller may deliberately supply it as the bounded working context after higher-level resolution.
+<a id="dd-proc-020"></a>
 
 ### DD-PROC-020 — Working context validation
 
 Process Execution shall detect and normalize technical failures such as missing, inaccessible or invalid working context where they prevent launch.
 
 It shall not broaden the working context to another directory in an attempt to make execution succeed unless an upstream contract explicitly permits fallback.
+
+<a id="dd-proc-021"></a>
 
 ### DD-PROC-021 — Working context does not grant resource authority
 
@@ -327,31 +353,42 @@ A process running inside a directory may technically access resources beyond it.
 
 The process environment is an execution input and shall be constructed according to caller-approved semantics.
 
+<a id="dd-proc-022"></a>
+
 ### DD-PROC-022 — Explicit environment policy
 
 The request shall distinguish inherited environment, supplied additions/overrides, removed variables and isolated/minimal environment modes where those distinctions are required by the owning use case.
 
+<a id="dd-proc-023"></a>
+
 ### DD-PROC-023 — No private configuration precedence
 
-Process Execution shall not read arbitrary project settings, environment files or provider defaults to create its own competing effective-configuration model.
+Construct the process environment from [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result) or resolved environment instructions, under its configuration authority.
 
-It consumes effective values or bounded environment instructions supplied through higher-level configuration semantics.
+<a id="dd-proc-024"></a>
 
 ### DD-PROC-024 — Environment inheritance is not authority
 
 Inherited host environment values are technical inputs, not automatically authoritative AppManager configuration.
 
+<a id="dd-proc-025"></a>
+
 ### DD-PROC-025 — Sensitive environment handling
 
-Secrets, credentials, tokens, keys and other sensitive environment values shall not be unnecessarily copied into diagnostics, output events, command descriptions or logs.
+Sensitive environment values follow [DD-PROC-084](#dd-proc-084) and [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
+<a id="dd-proc-026"></a>
 
 ### DD-PROC-026 — Environment minimization
 
 Where a use case requires a restricted environment, Process Execution shall be capable of launching with a bounded environment rather than always inheriting the complete host environment.
 
+<a id="dd-proc-027"></a>
+
 ### DD-PROC-027 — Environment evidence
 
-Returned evidence may describe safe environment characteristics relevant to execution, but shall not reproduce sensitive values merely for traceability.
+Environment evidence may retain safe characteristics under [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
 
 ---
 
@@ -367,17 +404,24 @@ Potential modes include:
 - caller-managed stream/channel;
 - provider-specific interactive mode where deliberately supported.
 
+<a id="dd-proc-028"></a>
+
 ### DD-PROC-028 — No accidental interactivity
 
 A Headless or automation-safe request shall not unexpectedly become dependent on inherited interactive stdin merely because the external tool chooses to prompt.
+
+<a id="dd-proc-029"></a>
 
 ### DD-PROC-029 — Input mode is execution semantics
 
 Where input behavior can affect determinism, cancellation or safety, the requested input mode shall be explicit.
 
+<a id="dd-proc-030"></a>
+
 ### DD-PROC-030 — Sensitive stdin
 
-Sensitive supplied input shall be handled according to the same minimization principles as sensitive environment and arguments.
+Sensitive stdin uses the channel constraint [DD-PROC-084](#dd-proc-084) and [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
 
 ---
 
@@ -394,9 +438,13 @@ The capability shall support output handling modes sufficient for consumers to c
 - combined provider output only where the distinction is not required;
 - bounded combinations of capture and streaming where supported.
 
+<a id="dd-proc-031"></a>
+
 ### DD-PROC-031 — stdout and stderr remain distinguishable
 
 Where the provider exposes distinct stdout and stderr channels and the distinction is material, Process Execution shall preserve it rather than flattening all output into presentation text.
+
+<a id="dd-proc-032"></a>
 
 ### DD-PROC-032 — Output is evidence, not status
 
@@ -404,21 +452,31 @@ Text written to stdout or stderr shall not independently establish success or fa
 
 A tool may emit warnings on stderr and succeed, or emit error-looking text and still exit normally; interpretation belongs to the owning capability/use case where tool-specific semantics require it.
 
+<a id="dd-proc-033"></a>
+
 ### DD-PROC-033 — Streaming is structured
 
 Where streaming output is exposed beyond raw passthrough, events shall carry correlation, channel and ordering information sufficient for machine consumers without parsing terminal decoration.
+
+<a id="dd-proc-034"></a>
 
 ### DD-PROC-034 — Presentation passthrough is not canonical evidence
 
 Inherited terminal output may be useful for interactive tools, but a caller shall not be required to scrape that presentation stream to determine the normalized process result.
 
+<a id="dd-proc-035"></a>
+
 ### DD-PROC-035 — Output limits
 
 Captured or buffered output shall support bounded-size handling where required to prevent unbounded memory/resource consumption.
 
+<a id="dd-proc-036"></a>
+
 ### DD-PROC-036 — Truncation is explicit
 
 If output is truncated, dropped or unavailable because of configured limits/provider behavior, that fact shall be represented explicitly in technical evidence.
+
+<a id="dd-proc-037"></a>
 
 ### DD-PROC-037 — Sensitive output minimization
 
@@ -448,17 +506,25 @@ request accepted
                 -> observation lost/indeterminate
 ```
 
+<a id="dd-proc-038"></a>
+
 ### DD-PROC-038 — Launch failure differs from process failure
 
 Failure to create/start a process shall remain distinguishable from a process that started and later exited unsuccessfully.
+
+<a id="dd-proc-039"></a>
 
 ### DD-PROC-039 — Started state is evidence
 
 Where meaningful, the capability shall be able to report that the process actually started before later failure/cancellation.
 
+<a id="dd-proc-040"></a>
+
 ### DD-PROC-040 — Exit and signal remain distinct
 
 A normal exit code and signal/forced termination evidence shall not be silently collapsed into one provider-specific numeric code where that loses material meaning.
+
+<a id="dd-proc-041"></a>
 
 ### DD-PROC-041 — Unknown termination is explicit
 
@@ -484,9 +550,13 @@ Process Execution shall return normalized technical evidence capable of represen
 - normalized diagnostics;
 - bounded provider detail where useful.
 
+<a id="dd-proc-042"></a>
+
 ### DD-PROC-042 — Exit zero is not AppManager success
 
-A zero exit code is technical evidence only. The owning capability/use case determines whether it satisfies application acceptance criteria.
+Interpret a zero exit code through [DD-1.2 application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation).
+
+<a id="dd-proc-043"></a>
 
 ### DD-PROC-043 — Non-zero exit is not universally fatal
 
@@ -494,25 +564,36 @@ A non-zero exit code shall be reported accurately, but Process Execution shall n
 
 Some tools use non-zero codes to represent findings or other tool-specific states whose meaning belongs to the consuming capability.
 
+<a id="dd-proc-044"></a>
+
 ### DD-PROC-044 — Signal termination is not successful exit
 
 A process terminated by signal/forced termination shall not be normalized as an ordinary successful zero exit merely because no numeric exit code is available.
 
+<a id="dd-proc-045"></a>
+
 ### DD-PROC-045 — Raw provider result isolation
 
-Callers above the capability boundary shall not be required to understand Node.js `ChildProcess`, `ExecException`, POSIX wait status, Windows process objects or another provider-native representation.
+The process-provider representation follows [DD-1.2 normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization); callers consume the process evidence defined here.
+
 
 ---
 
 ## 16. Provider and Tool Availability
 
+<a id="dd-proc-046"></a>
+
 ### DD-PROC-046 — Availability is explicit
 
 The capability shall distinguish inability to launch because the requested executable/tool/provider is unavailable from a process that launched and returned a failing result.
 
+<a id="dd-proc-047"></a>
+
 ### DD-PROC-047 — Unsupported invocation form
 
 A provider that cannot honor a requested shell mode, I/O mode, cancellation guarantee or other material execution property shall report that limitation rather than silently weakening the request.
+
+<a id="dd-proc-048"></a>
 
 ### DD-PROC-048 — No implicit substitute tool
 
@@ -520,9 +601,12 @@ Process Execution shall not silently substitute another executable, package mana
 
 Fallback selection belongs to the owning capability/use case or an explicitly delegated provider-selection contract.
 
+<a id="dd-proc-049"></a>
+
 ### DD-PROC-049 — Availability discovery is not application availability
 
-Technical presence of an executable does not by itself make an AppManager command available. Command availability remains governed by DD-1.1/DD-1.5 and owning domain semantics.
+Executable presence feeds [DD-1.1 command availability](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md); domain availability is not decided by this capability.
+
 
 ---
 
@@ -532,9 +616,13 @@ Technical presence of an executable does not by itself make an AppManager comman
 
 A timeout/deadline is a request to constrain execution duration. It is not itself proof that the process has stopped.
 
+<a id="dd-proc-050"></a>
+
 ### DD-PROC-050 — Timeout is explicit
 
 Where a timeout applies, the request shall carry the applicable duration/deadline semantics rather than relying on an undocumented provider default.
+
+<a id="dd-proc-051"></a>
 
 ### DD-PROC-051 — Timeout observation versus termination
 
@@ -546,13 +634,19 @@ The capability shall distinguish:
 - stronger termination attempted where permitted;
 - terminal process state.
 
+<a id="dd-proc-052"></a>
+
 ### DD-PROC-052 — Timeout does not imply rollback
 
-A timed-out process may already have performed external effects. Process Execution shall not imply rollback or absence of effects merely because the timeout path was triggered.
+Timeout effects follow [DD-1.2 consequential effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
+<a id="dd-proc-053"></a>
 
 ### DD-PROC-053 — Timeout evidence
 
 The normalized result shall identify timeout participation separately from ordinary process failure where known.
+
+<a id="dd-proc-054"></a>
 
 ### DD-PROC-054 — Provider timeout limitations
 
@@ -566,21 +660,31 @@ If a provider timeout mechanism cannot guarantee termination of descendants or e
 
 Process Execution consumes cancellation intent propagated from DD-1 invocation/Engine coordination.
 
+<a id="dd-proc-055"></a>
+
 ### DD-PROC-055 — Cancellation is cooperative at application level
 
 A cancellation request shall not be reported as terminal cancellation until the relevant execution state is sufficiently known for the owning use case to interpret it.
+
+<a id="dd-proc-056"></a>
 
 ### DD-PROC-056 — Cancellation propagation
 
 When cancellation is requested and the execution contract supports termination, Process Execution shall propagate an appropriate termination request to the active process/provider.
 
+<a id="dd-proc-057"></a>
+
 ### DD-PROC-057 — Graceful versus stronger termination
 
 Where the provider supports multiple termination strengths, the contract shall distinguish graceful/requested termination from stronger/forced termination sufficiently to avoid implying they are equivalent.
 
+<a id="dd-proc-058"></a>
+
 ### DD-PROC-058 — Escalation requires permission
 
 Escalating from graceful termination to stronger termination shall occur only when the request/capability policy permits it. The capability shall not invent an application-level kill policy.
+
+<a id="dd-proc-059"></a>
 
 ### DD-PROC-059 — Cancellation race
 
@@ -588,9 +692,13 @@ If the process completes concurrently with cancellation, the capability shall pr
 
 The owning use case determines final application status.
 
+<a id="dd-proc-060"></a>
+
 ### DD-PROC-060 — Termination failure
 
 Failure to terminate a process shall be represented explicitly. A cancellation request is not proof that the process stopped.
+
+<a id="dd-proc-061"></a>
 
 ### DD-PROC-061 — Effects remain external
 
@@ -604,13 +712,19 @@ Known higher-level effects are accumulated by the owning capability/use case thr
 
 External tools may create child/descendant processes. Terminating the immediate process does not universally guarantee that descendants have stopped.
 
+<a id="dd-proc-062"></a>
+
 ### DD-PROC-062 — No false tree-termination guarantee
 
 The capability shall not claim complete process-tree termination unless the selected provider/mechanism deliberately provides and verifies that guarantee to the required level.
 
+<a id="dd-proc-063"></a>
+
 ### DD-PROC-063 — Descendant policy is explicit where required
 
 Where a use case requires descendant termination behavior, that requirement shall be expressed in the bounded request/capability contract rather than inferred from generic cancellation.
+
+<a id="dd-proc-064"></a>
 
 ### DD-PROC-064 — Detached/background behavior
 
@@ -622,19 +736,27 @@ Version 1 need not expose detached execution unless an owning use case requires 
 
 ## 20. Interactive and Long-Running Processes
 
+<a id="dd-proc-065"></a>
+
 ### DD-PROC-065 — Interactive execution is explicit
 
 Processes requiring terminal interaction, prompts, TTY behavior or inherited streams shall use an execution mode that explicitly permits those characteristics.
 
+<a id="dd-proc-066"></a>
+
 ### DD-PROC-066 — Interactive presentation does not own semantics
 
-Terminal interactivity may affect how input/output is transported, but it shall not create a separate application workflow from equivalent Headless semantics.
+Interactive terminal transport binds to [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence); the explicit I/O contract carries its local differences.
+
+<a id="dd-proc-067"></a>
 
 ### DD-PROC-067 — Long-running readiness is not process start
 
 For development servers, preview servers or other long-running tools, successful process start does not necessarily establish application readiness.
 
 If readiness matters, the owning capability/use case shall define the readiness evidence/check rather than Process Execution universally equating `started` with `ready`.
+
+<a id="dd-proc-068"></a>
 
 ### DD-PROC-068 — Long-running terminal outcome
 
@@ -660,13 +782,19 @@ Useful process-level event classes may include:
 - launch failed;
 - output truncated.
 
+<a id="dd-proc-069"></a>
+
 ### DD-PROC-069 — Correlated events
 
-Process events shall be correlatable to the invocation, stage/target and process execution request where required by the parent workflow.
+Process events use [DD-1.2 correlation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_25-correlation-and-causality) for invocation, stage/target and process request.
+
+<a id="dd-proc-070"></a>
 
 ### DD-PROC-070 — Event ordering
 
 Where stdout/stderr interleaving or lifecycle ordering is material, the event model shall preserve sequence/ordering evidence to the extent provided by the execution mechanism without claiming stronger global ordering than the provider can guarantee.
+
+<a id="dd-proc-071"></a>
 
 ### DD-PROC-071 — Event loss does not redefine result
 
@@ -697,49 +825,71 @@ Capability-level diagnostics should distinguish, where meaningful:
 - observation lost/indeterminate state;
 - provider/runtime failure.
 
+<a id="dd-proc-072"></a>
+
 ### DD-PROC-072 — Provider detail is subordinate
 
-Provider-native error codes/messages may be retained as bounded diagnostic detail but shall not become the only machine-readable meaning.
+Process-provider codes/messages use [DD-1.2 normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) as bounded detail.
+
+<a id="dd-proc-073"></a>
 
 ### DD-PROC-073 — Diagnostic redaction
 
-Diagnostics shall avoid reproducing sensitive arguments, environment values, stdin content or output where sufficient safe diagnostic meaning can be provided without them.
+Process diagnostics apply [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to arguments, environment, stdin and output.
+
 
 ---
 
 ## 23. Retry, Repetition and Fallback
 
+<a id="dd-proc-074"></a>
+
 ### DD-PROC-074 — No implicit application retry
 
 Process Execution shall not silently repeat a consequential process invocation merely because launch or execution failed.
 
+<a id="dd-proc-075"></a>
+
 ### DD-PROC-075 — Technical retry evidence
 
-The capability may report transience/retryability evidence where safely knowable, but the owning use case determines whether another attempt is permitted.
+Report process transience/retryability under [DD-1.2 retry evidence](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_22-retryability-and-repetition-evidence).
+
+<a id="dd-proc-076"></a>
 
 ### DD-PROC-076 — Launch retry versus operation retry
 
 Even a failure before confirmed process start shall not automatically authorize retry if provider uncertainty means the launch state is indeterminate.
 
+<a id="dd-proc-077"></a>
+
 ### DD-PROC-077 — No implicit fallback
 
-Fallback to another tool, executable, shell, provider or execution mode requires explicit higher-level semantics or delegated provider-selection policy.
+Tool/shell/provider substitution applies the selection boundary [DD-PROC-048](#dd-proc-048), including a change of execution mode.
+
 
 ---
 
 ## 24. Concurrency and Isolation
 
+<a id="dd-proc-078"></a>
+
 ### DD-PROC-078 — Invocation isolation
 
 Mutable execution state, cancellation handles, output streams and correlation data for one process request shall not leak into an unrelated invocation.
+
+<a id="dd-proc-079"></a>
 
 ### DD-PROC-079 — No universal serialization
 
 Process Execution shall not impose one global serialization rule on all external processes. Application-level conflicts remain coordinated by DD-1.5.
 
+<a id="dd-proc-080"></a>
+
 ### DD-PROC-080 — Shared technical limits
 
 The capability may enforce bounded technical concurrency/resource limits where required for runtime safety, provided those limits do not silently redefine application ordering or acceptance semantics.
+
+<a id="dd-proc-081"></a>
 
 ### DD-PROC-081 — Conflict evidence remains upstream
 
@@ -749,27 +899,36 @@ If concurrent processes create resource/repository/domain conflicts, the owning 
 
 ## 25. Security and Sensitive Information
 
+<a id="dd-proc-082"></a>
+
 ### DD-PROC-082 — Shell minimization
 
 Direct execution should be preferred where it can faithfully express the approved technical invocation. Shell-mediated execution shall not be used merely as a convenience for argument composition.
+
+<a id="dd-proc-083"></a>
 
 ### DD-PROC-083 — No log-as-command reconstruction requirement
 
 Logging/diagnostics shall not require reconstructing a copy-pasteable command line when doing so would expose secrets or create misleading quoting semantics.
 
+<a id="dd-proc-084"></a>
+
 ### DD-PROC-084 — Sensitive-channel minimization
 
 Sensitive values shall be propagated only through the execution channels required by the delegated operation and shall be minimized in persistent/shared evidence.
+
+<a id="dd-proc-085"></a>
 
 ### DD-PROC-085 — Provider inheritance boundaries
 
 Process Execution shall not assume that inherited descriptors, environment, terminal state or other host process capabilities are safe for every child invocation. The request/provider contract shall bound them where material.
 
+<a id="dd-proc-086"></a>
+
 ### DD-PROC-086 — Process capability is not sandboxing
 
-This design does not claim that ordinary process execution provides filesystem, network, credential or OS sandboxing.
+Ordinary process execution uses the isolation limitation [DD-PROC-021](#dd-proc-021). Stronger filesystem, network, credential or OS isolation needs an explicit approved design; it is not provided by this contract.
 
-If a use case requires isolation stronger than ordinary process boundaries, that isolation requires an explicit capability/design decision rather than being inferred from this contract.
 
 ---
 
@@ -790,17 +949,24 @@ A normalized process result may contribute:
 - provider availability evidence;
 - bounded provider detail.
 
+<a id="dd-proc-087"></a>
+
 ### DD-PROC-087 — Process result is capability evidence
 
-A normalized process result shall remain distinguishable from the final application outcome.
+The normalized process result composes [DD-1.2 evidence/status layers](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model).
+
+<a id="dd-proc-088"></a>
 
 ### DD-PROC-088 — No Boolean collapse
 
 Process evidence shall not be reduced to a Boolean when exit, signal, launch, timeout, cancellation, output or uncertainty distinctions are required for correct interpretation.
 
+<a id="dd-proc-089"></a>
+
 ### DD-PROC-089 — Effect claims remain bounded
 
-The generic process capability may record that a process was executed or terminated, but shall not claim complete knowledge of domain effects caused by the external tool unless those effects are separately observed and normalized by the owning capability.
+For external-tool effect completeness apply [DD-PROC-061](#dd-proc-061). Execution/termination evidence describes only what this capability observed.
+
 
 ---
 
@@ -812,9 +978,11 @@ App lifecycle use cases may delegate dependency installation, development, build
 
 The App domain/use case remains responsible for lifecycle sequencing, script eligibility, prerequisites, managed scope, acceptance criteria and composed outcomes.
 
+<a id="dd-proc-090"></a>
+
 ### DD-PROC-090 — Declared project scripts remain application-bounded
 
-Process Execution shall not turn the App domain's approved project-declared script execution into a generic arbitrary-shell application command.
+The App script collaborator follows [DD-3.1 declared-script selection](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-009); Process Execution supplies its bounded launch mechanics.
 
 ### 27.2 Quality
 
@@ -838,6 +1006,8 @@ Repository Capability may use a Git CLI provider through Process Execution, but 
 
 An AI capability may invoke a local CLI/tool through Process Execution. Provider/model semantics, context policy, response validation and AI acceptance remain with AI capability/application semantics.
 
+<a id="dd-proc-091"></a>
+
 ### DD-PROC-091 — Tool reuse does not merge capability ownership
 
 Two capabilities using the same executable/process mechanism shall not be merged into one semantic authority merely because their technical execution path is shared.
@@ -848,11 +1018,15 @@ Two capabilities using the same executable/process mechanism shall not be merged
 
 Package-manager recognition and selection are implementation and owning-use-case concerns, not Process Execution authority merely because package managers are executable tools.
 
+<a id="dd-proc-092"></a>
+
 ### DD-PROC-092 — Process Execution does not own package-manager policy by default
 
 Package-manager recognition/selection belongs to the capability or use-case semantics that know why a package manager is needed, unless a later approved shared capability explicitly owns that concern.
 
 Process Execution may launch the selected package manager but shall not infer application policy from lockfiles or silently choose a fallback package manager merely because it can execute one.
+
+<a id="dd-proc-093"></a>
 
 ### DD-PROC-093 — Tool selection precedes bounded execution
 
@@ -862,17 +1036,25 @@ Where package-manager, runtime or tool selection is required, the selected execu
 
 ## 29. Provider Model and Replaceability
 
+<a id="dd-proc-094"></a>
+
 ### DD-PROC-094 — Provider-neutral capability semantics
 
-The Process Execution contract shall remain meaningful independently of the concrete Node.js process API selected for Version 1.
+The process-provider contract applies [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) independently of the selected Node.js API.
+
+<a id="dd-proc-095"></a>
 
 ### DD-PROC-095 — No speculative transport
 
-Provider neutrality does not require a language-neutral RPC protocol, separate worker process or out-of-process service in Version 1.
+Apply [Documentation Guide §7.5](../project-documentation-guide-v01.md#_7-5-permanent-design-versus-migration-design) to process representation; no RPC protocol, worker or out-of-process service is mandated.
+
+<a id="dd-proc-096"></a>
 
 ### DD-PROC-096 — Provider replacement preserves semantics
 
 A replacement provider shall preserve the requested invocation form, working context, environment, I/O, timeout, cancellation and evidence semantics to the level promised by the capability contract or report unsupported behavior explicitly.
+
+<a id="dd-proc-097"></a>
 
 ### DD-PROC-097 — Provider-native extensions are bounded
 
@@ -908,9 +1090,12 @@ The following are implementation choices rather than permanent architecture:
 - synchronous lockfile checks;
 - direct logger calls as the canonical event/diagnostic contract.
 
+<a id="dd-proc-098"></a>
+
 ### DD-PROC-098 — Implementation conforms to the approved contract
 
-Implementation Specifications shall map concrete process-execution code to this Detailed Design rather than altering this Detailed Design to preserve incidental implementation method shapes.
+Concrete process code is specified under the [Documentation Guide Level 4 boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification), preserving this DD contract.
+
 
 ---
 
@@ -918,9 +1103,13 @@ Implementation Specifications shall map concrete process-execution code to this 
 
 Process Execution shall be testable independently of full application/domain orchestration.
 
+<a id="dd-proc-099"></a>
+
 ### DD-PROC-099 — Provider substitution
 
 Tests shall be able to substitute or simulate the process provider sufficiently to exercise request validation, lifecycle normalization, output handling, cancellation, timeout and failure classification without launching real external tools for every test.
+
+<a id="dd-proc-100"></a>
 
 ### DD-PROC-100 — Deterministic lifecycle tests
 
@@ -943,6 +1132,8 @@ The contract shall support deterministic testing of at least:
 - sensitive-value redaction;
 - concurrent invocation isolation.
 
+<a id="dd-proc-101"></a>
+
 ### DD-PROC-101 — Application acceptance tests remain above
 
 Capability tests may establish that normalized technical evidence is correct. Tests for whether that evidence means AppManager application success belong to the owning capability/use case and Engine acceptance layer.
@@ -951,32 +1142,7 @@ Capability tests may establish that normalized technical evidence is correct. Te
 
 ## 32. Conformance Invariants
 
-Every conforming Process Execution implementation shall preserve these invariants:
-
-1. process completion is technical evidence, not AppManager application success;
-2. execution requests are bounded before launch;
-3. executable identity and arguments remain explicit for direct execution;
-4. direct and shell-mediated execution are distinguishable;
-5. shell execution is never silently introduced when a direct-execution guarantee was requested;
-6. current working directory is not managed-project authority;
-7. environment inheritance is not configuration authority;
-8. sensitive arguments/environment/input/output are minimized in shared evidence;
-9. stdout/stderr text is not itself success/failure semantics;
-10. launch failure differs from started-process failure;
-11. exit code and signal/termination evidence remain distinguishable where material;
-12. signal-killed or indeterminate processes are not silently reported as successful zero exits;
-13. timeout request is not proof of termination;
-14. cancellation request is not proof of termination;
-15. cancellation/timeout do not imply rollback of tool effects;
-16. descendant termination is not guaranteed unless explicitly provided;
-17. executable availability is not AppManager command availability;
-18. Process Execution does not silently retry or substitute tools/providers;
-19. package-manager/tool selection policy does not belong here merely because tools are processes;
-20. provider-native process objects remain below the capability boundary;
-21. normalized process evidence is compatible with DD-1.2 and remains distinct from final application outcomes;
-22. the capability boundary does not require one class, package, process or runtime topology.
-
----
+Conformance is assessed through the request and invocation-form contracts (§§6–9), context/environment/I/O (§§10–13), lifecycle and availability (§§14–16), timeout/cancellation/descendants (§§17–19), interactive readiness (§20), events/diagnostics/retry/concurrency (§§21–24), security and outcome boundaries (§§25–26), and provider/test obligations. The test scenarios in DD-PROC-100 exercise these contracts; this index adds no second requirement set.
 
 ## 33. Traceability
 
@@ -1024,24 +1190,4 @@ AI shall define provider/model request and response semantics independently of a
 
 ## 35. Final Design Position
 
-Process Execution is the shared technical boundary for bounded external-process invocation in AppManager Version 1.
-
-Its permanent responsibility is to answer questions such as:
-
-- what executable invocation was requested;
-- under what bounded working/environment/I/O constraints;
-- whether launch occurred;
-- what output/lifecycle evidence was observed;
-- how the process terminated;
-- whether timeout or cancellation participated;
-- what provider/tool availability or technical failures occurred.
-
-It does **not** answer the higher-level question:
-
-> **Did this process result satisfy the AppManager use case?**
-
-That remains an Application Engine/owning-use-case decision under the DD-1 contracts.
-
-The central boundary is therefore:
-
-> **Process Execution owns bounded execution mechanics and normalized process evidence; AppManager application authority remains above it.**
+The request and lifecycle sections define bounded process execution; normalized technical evidence is consumed through [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md). The local distinctions between launch, readiness, termination and uncertain effects are the basis for domain interpretation.

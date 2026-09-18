@@ -201,6 +201,8 @@ The diagram describes semantic authority, not a mandatory call graph.
 | Configuration Resolution | supplies operation-effective documentation, provider, template, AI and tooling policy values |
 | Application Engine | supplies authoritative execution context and performs final acceptance |
 
+<a id="dd-docs-001"></a>
+
 ### DD-DOCS-001 — No local reconstruction of Application Core authority
 
 The Docs domain shall not reconstruct managed scope, effective configuration, invocation authorization or canonical outcome semantics from current working directory, recursive discovery, raw configuration, provider state or presentation choices.
@@ -209,13 +211,19 @@ The Docs domain shall not reconstruct managed scope, effective configuration, in
 
 ## 6. Consumed DD-2 Shared Capabilities
 
+<a id="dd-docs-002"></a>
+
 ### DD-DOCS-002 — Documentation Capability is the principal specialist boundary
 
 DD-3.4 shall consume DD-2.9 for bounded documentation inspection/modeling, aggregation, rendering, proposed documentation outputs, documentation-tool capability evidence and documentation-oriented validation rather than duplicating those mechanics.
 
+<a id="dd-docs-003"></a>
+
 ### DD-DOCS-003 — Capability success remains subordinate evidence
 
 A successful scan, model, render, AI response, transformation, resource write, process launch or documentation build shall not by itself establish Docs-domain success.
+
+<a id="dd-docs-004"></a>
 
 ### DD-DOCS-004 — Capability composition preserves specialist authority
 
@@ -227,23 +235,33 @@ Coordinating DD-2 capabilities shall not transfer their permanent semantic autho
 
 ### 7.1 Docs operation identity
 
+<a id="dd-docs-005"></a>
+
 **DD-DOCS-005 — Stable operation identities**  
 Docs-domain intent shall distinguish at least complete-application documentation, application-source documentation, all-layers documentation, selected-layer documentation, tests documentation, selected-file documentation, documentation generation/update and supported documentation development/build/preview operations where applicable.
 
 ### 7.2 Documentation target
+
+<a id="dd-docs-006"></a>
 
 **DD-DOCS-006 — Semantic target identity**  
 A Docs target shall identify its target class and authoritative managed-project/resource identity rather than relying on path or current working directory alone.
 
 Supported target classes include complete managed application, application source, all eligible managed layers, selected managed layer, recognized tests and one selected eligible file.
 
+<a id="dd-docs-007"></a>
+
 **DD-DOCS-007 — Root/layer distinction is preserved**  
 The root application, each managed layer and aggregate layer scopes shall remain distinguishable throughout orchestration and results.
+
+<a id="dd-docs-008"></a>
 
 **DD-DOCS-008 — Duplicate target normalization**  
 Overlapping scopes that reach the same logical resource shall not cause accidental duplicate documentation in one logical operation unless explicitly requested by the profile.
 
 ### 7.3 Documentation eligibility decision
+
+<a id="dd-docs-009"></a>
 
 **DD-DOCS-009 — Eligibility is operation-relative**  
 Managed membership or filesystem presence alone shall not establish documentability. Eligibility may depend on target class, supported recognition, documentation policy, selected profile, sensitivity and requested operation.
@@ -252,16 +270,24 @@ A decision should distinguish `eligible`, `ineligible`, `unsupported`, `ambiguou
 
 ### 7.4 Documentation profile
 
+<a id="dd-docs-010"></a>
+
 **DD-DOCS-010 — Profile is semantic, not renderer topology**  
 A documentation profile may express requested information categories, exclusions, output kind, detail, aggregation/grouping, required/optional enrichment and completeness expectations without requiring one template, renderer or file layout.
+
+<a id="dd-docs-011"></a>
 
 **DD-DOCS-011 — Profile may narrow but not broaden managed scope**  
 Profile selection shall not create target authority beyond DD-1.3 scope.
 
 ### 7.5 Documentation output intent
 
+<a id="dd-docs-012"></a>
+
 **DD-DOCS-012 — Generation and update are distinct intents**  
 Creating a new documentation artefact and changing an existing artefact shall remain semantically distinct because they have different collision, preservation, authorization and transformation requirements.
+
+<a id="dd-docs-013"></a>
 
 **DD-DOCS-013 — Output destination is explicit before writes**  
 Consequential documentation work shall resolve the intended output target/scope unambiguously before persistence or transformation.
@@ -282,8 +308,12 @@ The plan remains immutable during the consequential stage; authority/safety-rele
 
 ### 7.6 Coverage and result payload
 
+<a id="dd-docs-014"></a>
+
 **DD-DOCS-014 — Coverage is profile-relative**  
 Docs completeness shall be evaluated only against the approved target/profile, including required, optional, unsupported, omitted, failed and empty-but-valid categories.
+
+<a id="dd-docs-015"></a>
 
 **DD-DOCS-015 — Domain payload composes DD-1.2**  
 Docs-specific target, artefact, coverage, freshness and tooling evidence shall extend canonical DD-1.2 semantics rather than create a competing application outcome envelope.
@@ -309,92 +339,140 @@ A Docs use case shall conceptually:
 11. interpret coverage, freshness, omissions, effects and subordinate failures;
 12. return Docs-domain evidence for Application Engine acceptance.
 
+<a id="dd-docs-016"></a>
+
 **DD-DOCS-016 — Read-only inspection does not cross the mutation boundary**  
 Inspection, extraction or derivation shall not create/update resources or start documentation tooling unless that consequential effect is explicitly part of the selected use case.
 
 ### 8.2 Complete-application documentation
 
+<a id="dd-docs-017"></a>
+
 **DD-DOCS-017 — Complete application means managed composition**  
 Complete-application documentation shall derive its target set from the resolved managed project and profile rather than an unbounded recursive filesystem scan.
 
+<a id="dd-docs-018"></a>
+
 **DD-DOCS-018 — Partial coverage remains truthful**  
 Failure or unsupported status for one required component shall remain attributable and shall prevent a false claim of complete coverage.
+
+<a id="dd-docs-019"></a>
 
 **DD-DOCS-019 — Empty optional categories are not failures**  
 A project with no managed layers, tests or another optional category may still satisfy a profile that permits that category to be empty.
 
 ### 8.3 Application-source documentation
 
+<a id="dd-docs-020"></a>
+
 **DD-DOCS-020 — Source facts remain recognition evidence**  
 Docs shall consume supported DD-2.4 structural facts and shall not promote unsupported textual inference to confirmed source structure.
+
+<a id="dd-docs-021"></a>
 
 **DD-DOCS-021 — Documentation injection is a separate consequential path**  
 When documentation is inserted into existing source, Docs supplies documentation intent/content while DD-2.5 owns bounded edit planning, preservation, stale-state checks, application and source-level validation.
 
 ### 8.4 Layer documentation
 
+<a id="dd-docs-022"></a>
+
 **DD-DOCS-022 — Layer documentation consumes authoritative Nuxt facts**  
 Nuxt layer/configuration/integration facts shall be obtained from DD-2.10/DD-3.3 or another approved authority; Docs shall not recreate Nuxt recognition.
 
+<a id="dd-docs-023"></a>
+
 **DD-DOCS-023 — Repository topology does not determine documentability**  
 A layer's repository relationship, shared repository or absence of independent repository identity shall not by itself determine whether the managed layer is documentable.
+
+<a id="dd-docs-024"></a>
 
 **DD-DOCS-024 — All-layers continuation is explicit**  
 A failure for one layer may permit safe continuation to remaining eligible layers according to Docs policy, while preserving per-layer truth and final partial completion.
 
 ### 8.5 Test documentation
 
+<a id="dd-docs-025"></a>
+
 **DD-DOCS-025 — Documentation of tests is not test execution**  
 Docs may describe recognized test structures and reliable test/source relationships without acquiring Quality execution or gate authority.
+
+<a id="dd-docs-026"></a>
 
 **DD-DOCS-026 — Unresolved test relationships remain unresolved**  
 Docs shall not invent a test-to-source relationship when approved evidence cannot establish it.
 
 ### 8.6 Selected-file documentation
 
+<a id="dd-docs-027"></a>
+
 **DD-DOCS-027 — Selected file resolves exactly one eligible resource**  
 A selected-file use case shall fail safely on ambiguity, unsupported/binary input or out-of-scope target rather than silently choosing or treating it as documentable text.
 
 ### 8.7 Generation and update
 
+<a id="dd-docs-028"></a>
+
 **DD-DOCS-028 — Proposed content precedes persistence**  
 Rendering/generation through DD-2.9 produces proposed documentation; persistence remains a separately authorized stage.
+
+<a id="dd-docs-029"></a>
 
 **DD-DOCS-029 — Existing-output collision is not overwrite authority**  
 An existing destination shall trigger the applicable update/replacement/collision policy rather than silent replacement.
 
+<a id="dd-docs-030"></a>
+
 **DD-DOCS-030 — Narrow update is preferred where semantically supported**  
 Where an existing documentation artefact has a recognized bounded update region, Docs shall prefer the approved bounded transformation path over unnecessary whole-document replacement.
+
+<a id="dd-docs-031"></a>
 
 **DD-DOCS-031 — Substantial replacement is explicit**  
 Replacement or material restructuring of existing authored documentation requires managed ownership, explicit applicable policy and authorization/confirmation evidence where required. Unrelated authored documentation remains a refused collision, not an implicit overwrite target.
 
 ### 8.8 AI-assisted documentation
 
+<a id="dd-docs-032"></a>
+
 **DD-DOCS-032 — AI is optional where deterministic baseline exists**  
 Failure or absence of optional AI enrichment shall not make deterministic documentation unavailable where the requested baseline can be produced without AI.
 
+<a id="dd-docs-033"></a>
+
 **DD-DOCS-033 — AI output is proposed documentation evidence**  
 For individual artefacts or bounded plan portions, resolve AI acceptance criteria before generation under [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow). Preserve generated provenance. A pre-authorized automatic path accepts only proposals satisfying those criteria; a review-required proposal remains pending until the decision. The proposal cannot change targets/output paths, preservation/sensitivity policy or stale-write checks.
+
+<a id="dd-docs-034"></a>
 
 **DD-DOCS-034 — Reliable facts dominate contradictory generated claims**  
 Docs shall not knowingly accept AI prose that contradicts higher-authority structural or domain facts without explicit conflict handling.
 
 ### 8.9 Documentation tooling
 
+<a id="dd-docs-035"></a>
+
 **DD-DOCS-035 — Tooling target is explicit**  
 Development, build or preview shall identify the documentation project/target unambiguously and shall not silently choose between AppManager's own documentation and a managed project's documentation.
 
+<a id="dd-docs-036"></a>
+
 **DD-DOCS-036 — Tool launch/build evidence is not Docs acceptance**  
 Provider launch, process success, server start or build completion remains subordinate evidence interpreted against the requested Docs tooling intent.
+
+<a id="dd-docs-037"></a>
 
 **DD-DOCS-037 — Long-running tooling state remains explicit**  
 Development/preview operations may remain running; their result/state model shall not falsely represent them as completed generation operations.
 
 ### 8.10 Extraction and aggregation
 
+<a id="dd-docs-038"></a>
+
 **DD-DOCS-038 — Aggregation follows bounded selection policy**  
 Aggregation shall use approved targets, managed scope, profile and exclusions rather than an unbounded recursive scan.
+
+<a id="dd-docs-039"></a>
 
 **DD-DOCS-039 — Provenance survives aggregation**  
 Important facts, omissions, unsupported inputs and failures shall remain attributable after multi-file/multi-layer aggregation.
@@ -411,16 +489,24 @@ Continuation operates at target/artefact granularity. After failure, refusal or 
 
 ## 9. Domain State and State Transitions
 
+<a id="dd-docs-040"></a>
+
 **DD-DOCS-040 — Conceptual domain states**  
 A Docs operation may progress through `context_resolved`, `target_resolved`, `eligibility_established`, `evidence_acquired`, `model_composed`, `proposal_ready`, `authorization_satisfied`, `persisting_or_tooling`, `validating`, `interpreting`, and terminal domain positions such as `accepted`, `rejected`, `partially_completed`, `cancelled` or `indeterminate`.
 
 These states are semantic checkpoints, not required classes or persistence records.
 
+<a id="dd-docs-041"></a>
+
 **DD-DOCS-041 — Read-only operations terminate before persistence**  
 Inspection/extraction operations may move from model/evidence interpretation directly to acceptance without passing through mutation/tooling states.
 
+<a id="dd-docs-042"></a>
+
 **DD-DOCS-042 — Multi-target state is per target/artefact**  
 Coordinated documentation shall retain each target/artefact's semantic position rather than deriving all state from one aggregate provider status.
+
+<a id="dd-docs-043"></a>
 
 **DD-DOCS-043 — State progression does not manufacture authority**  
 Reaching a later state does not retroactively authorize an earlier ambiguous target, unsupported input or unapproved effect.
@@ -429,23 +515,37 @@ Reaching a later state does not retroactively authorize an earlier ambiguous tar
 
 ## 10. Domain Policy and Decision Rules
 
+<a id="dd-docs-044"></a>
+
 **DD-DOCS-044 — Current working directory is context, not target authority**  
 Working directory may contribute invocation context but shall not be the sole semantic documentation selector.
+
+<a id="dd-docs-045"></a>
 
 **DD-DOCS-045 — Discovery never broadens scope**  
 Recognition of extra files, layers, tests, documentation or tooling shall not automatically add them to the approved documentation target set.
 
+<a id="dd-docs-046"></a>
+
 **DD-DOCS-046 — Unsupported does not count as documented**  
 Unsupported or failed required inputs shall not be counted toward complete documentation coverage merely because other outputs were produced.
+
+<a id="dd-docs-047"></a>
 
 **DD-DOCS-047 — Existing documentation is contextual evidence**  
 Existing authored documentation may contribute context but shall not automatically override fresher authoritative source/domain facts or grant rewrite authority.
 
+<a id="dd-docs-048"></a>
+
 **DD-DOCS-048 — No false freshness**  
 Docs shall not claim refreshed/synchronized documentation when required inputs could not be refreshed, became materially stale, or a required update failed.
 
+<a id="dd-docs-049"></a>
+
 **DD-DOCS-049 — Retry/fallback is governed**  
 A provider/capability failure shall not silently authorize changed targets, changed providers or changed semantics unless effective policy permits that retry/fallback.
+
+<a id="dd-docs-050"></a>
 
 **DD-DOCS-050 — Tool availability is target-relative**  
 Recognition of a documentation provider/tool for one target shall not imply availability for all documentation targets.
@@ -454,20 +554,32 @@ Recognition of a documentation provider/tool for one target shall not imply avai
 
 ## 11. Safety, Mutation, and Authorization
 
+<a id="dd-docs-051"></a>
+
 **DD-DOCS-051 — Documentation recognition is not mutation authority**  
 Recognition of a documentable target, declaration, documentation region, existing artefact or output path shall not authorize a write.
+
+<a id="dd-docs-052"></a>
 
 **DD-DOCS-052 — Mutation authority is output-bounded**  
 A Docs write/update shall be limited to the explicitly approved documentation output or bounded documentation region and shall not silently extend to unrelated source/configuration.
 
+<a id="dd-docs-053"></a>
+
 **DD-DOCS-053 — New creation and existing-resource mutation use different effect paths**  
 New authorized documentation resources use the approved Resource Access creation path; existing-resource changes use Source Transformation where transformation semantics apply.
+
+<a id="dd-docs-054"></a>
 
 **DD-DOCS-054 — Symlink/indirection escape is prohibited**  
 Target/output resolution shall preserve DD-1.3/DD-2.1 scope safety and shall not allow indirection to escape approved documentation scope.
 
+<a id="dd-docs-055"></a>
+
 **DD-DOCS-055 — No implicit deletion**  
 Generation/update shall not delete unrelated existing documentation merely because it is absent from a newly generated set.
+
+<a id="dd-docs-056"></a>
 
 **DD-DOCS-056 — Tooling effects are explicit**  
 Starting servers, processes or builds shall be consequential Docs intents and shall not occur as hidden side effects of read-only inspection.
@@ -476,20 +588,32 @@ Starting servers, processes or builds shall be consequential Docs intents and sh
 
 ## 12. Failure, Cancellation, and Partial Effects
 
+<a id="dd-docs-057"></a>
+
 **DD-DOCS-057 — Failure remains target/stage attributable**  
 Target-resolution, inspection, modeling, enrichment, rendering, persistence, transformation, tooling and acceptance failures shall remain distinguishable where material.
+
+<a id="dd-docs-058"></a>
 
 **DD-DOCS-058 — Partial completion is first-class**  
 Multi-target/multi-artefact operations shall preserve successful, unchanged, skipped, unsupported, failed and not-attempted states rather than collapse mixed outcomes.
 
+<a id="dd-docs-059"></a>
+
 **DD-DOCS-059 — No universal rollback claim**  
 Docs shall not imply transactional rollback across generated files, transformations, external AI usage or documentation-tool effects unless the owning lower-level contract guarantees it.
+
+<a id="dd-docs-060"></a>
 
 **DD-DOCS-060 — Cancellation stops future work when safely observed**  
 Cancellation shall stop new stages/targets and propagate to active delegates where supported while preserving already completed effects/evidence.
 
+<a id="dd-docs-061"></a>
+
 **DD-DOCS-061 — Cancellation does not erase completed effects**  
 Written/updated artefacts, AI disclosures, generated tooling outputs and process effects that already occurred remain truthful in the result.
+
+<a id="dd-docs-062"></a>
 
 **DD-DOCS-062 — Indeterminate effects require verification**  
 Where persistence/tooling completion is uncertain, Docs shall preserve indeterminate state and require verification/recovery rather than fabricate success or failure.
@@ -498,14 +622,22 @@ Where persistence/tooling completion is uncertain, Docs shall preserve indetermi
 
 ## 13. Headless and Interaction Independence
 
+<a id="dd-docs-063"></a>
+
 **DD-DOCS-063 — One semantic model across adapters**  
 TUI, Headless, IDE, GUI, CI and future adapters shall express equivalent Docs intent, target/profile policy, safety and acceptance semantics.
+
+<a id="dd-docs-064"></a>
 
 **DD-DOCS-064 — Interactive selection is presentation only**  
 Menus/file pickers may help choose among eligible targets but shall resolve to the same semantic target contracts available to non-interactive callers.
 
+<a id="dd-docs-065"></a>
+
 **DD-DOCS-065 — Headless ambiguity fails safely**  
 Missing or ambiguous required target, output destination, overwrite/replacement intent or consequential tooling selection shall produce structured failure rather than prompting or guessing.
+
+<a id="dd-docs-066"></a>
 
 **DD-DOCS-066 — Results are machine-consumable**  
 Automation shall be able to identify requested scope, target/artefact states, coverage, warnings, effects and failures without parsing human UI text or provider stdout/stderr.
@@ -514,17 +646,27 @@ Automation shall be able to identify requested scope, target/artefact states, co
 
 ## 14. Concurrency, Idempotency, and Conflict Behaviour
 
+<a id="dd-docs-067"></a>
+
 **DD-DOCS-067 — Consequential preconditions are revalidated**  
 Output existence, target revision, relevant source facts and other material preconditions shall be revalidated before applying a previously prepared consequential action where staleness could matter.
+
+<a id="dd-docs-068"></a>
 
 **DD-DOCS-068 — Deterministic generation is semantically repeatable**  
 Given materially equivalent authoritative facts, profile and effective configuration, deterministic documentation generation should produce semantically equivalent output.
 
+<a id="dd-docs-069"></a>
+
 **DD-DOCS-069 — AI enrichment does not create deterministic identity**  
 Where AI enrichment is explicitly non-deterministic, repeatability claims shall distinguish deterministic baseline content from optional generated prose.
 
+<a id="dd-docs-070"></a>
+
 **DD-DOCS-070 — Concurrent change is not silently overwritten**  
 If an existing documentation/source target materially changes after inspection/planning, Docs shall revalidate/replan or fail according to DD-2.5 rather than blindly apply stale content.
+
+<a id="dd-docs-071"></a>
 
 **DD-DOCS-071 — Already-satisfied output is explicit**  
 Where requested documentation already satisfies the accepted postcondition, Docs may report unchanged/already-satisfied evidence rather than manufacture a write.
@@ -533,17 +675,27 @@ Where requested documentation already satisfies the accepted postcondition, Docs
 
 ## 15. Security and Sensitive Information
 
+<a id="dd-docs-072"></a>
+
 **DD-DOCS-072 — Accessible does not mean documentable**  
 Credentials, secrets, protected environment/configuration values and sensitive source content shall not be included merely because they are accessible within managed scope.
+
+<a id="dd-docs-073"></a>
 
 **DD-DOCS-073 — External disclosure is separately governed**  
 Context supplied to AI or external documentation providers shall follow DD-2.7 and effective disclosure policy, including minimization and sensitivity constraints.
 
+<a id="dd-docs-074"></a>
+
 **DD-DOCS-074 — Generated/provider content is untrusted data**  
 Existing docs, templates, renderer output, AI prose and provider diagnostics shall not redefine AppManager policy, scope, configuration or command authority.
 
+<a id="dd-docs-075"></a>
+
 **DD-DOCS-075 — Diagnostics minimize sensitive content**  
 Docs diagnostics shall identify useful target/stage failure information without unnecessarily reproducing protected source, prompts, configuration or credentials.
+
+<a id="dd-docs-076"></a>
 
 **DD-DOCS-076 — Generated references remain data until validated**  
 Paths, links, include directives, frontmatter or provider-specific references generated in documentation shall not independently authorize filesystem, process or application actions.
@@ -552,17 +704,27 @@ Paths, links, include directives, frontmatter or provider-specific references ge
 
 ## 16. Extensibility and Replaceability
 
+<a id="dd-docs-077"></a>
+
 **DD-DOCS-077 — Documentation providers are replaceable behind DD-2.9**  
 Docs-domain semantics shall not require VitePress, one Markdown parser/renderer, one static-site tool or one provider-native model.
+
+<a id="dd-docs-078"></a>
 
 **DD-DOCS-078 — Source recognition remains replaceable behind DD-2.4**  
 Changing source-recognition providers shall not require changing Docs target/profile/acceptance semantics where equivalent facts are supplied.
 
+<a id="dd-docs-079"></a>
+
 **DD-DOCS-079 — AI providers remain replaceable and subordinate**  
 Changing or removing an AI provider shall not transfer documentation authority or eliminate deterministic documentation paths that do not semantically require AI.
 
+<a id="dd-docs-080"></a>
+
 **DD-DOCS-080 — No generic domain framework from workflow similarity**  
 Similarity between Docs, Nuxt, Git or other domain orchestration shall not create a generic domain workflow/request/result framework unless genuinely shared semantics not already owned by DD-1/DD-2 are separately approved.
+
+<a id="dd-docs-081"></a>
 
 **DD-DOCS-081 — Implementation topology remains open**  
 No contract in DD-3.4 requires a particular TypeScript service, class, package, process, source path or provider wiring.
@@ -598,11 +760,17 @@ Conformance testing shall cover at least:
 - provider substitution without changing domain semantics;
 - deterministic Headless ambiguity handling.
 
+<a id="dd-docs-082"></a>
+
 **DD-DOCS-082 — Domain policy is testable with capability substitutes**  
 Core Docs target/profile policy, orchestration and evidence interpretation shall be testable with deterministic substitutes for DD-2.9 and supporting capabilities rather than requiring concrete providers.
 
+<a id="dd-docs-083"></a>
+
 **DD-DOCS-083 — Concrete-provider tests do not define the contract**  
 VitePress, Markdown, parser, AI, process or template integration tests may verify provider mechanics but shall not redefine DD-3.4 semantics.
+
+<a id="dd-docs-084"></a>
 
 **DD-DOCS-084 — Ownership-boundary tests are mandatory design evidence**  
 Tests shall demonstrate that rendering, AI, transformation, process, Nuxt, source-recognition or persistence success does not independently establish Docs-domain success when Docs acceptance conditions are unsatisfied.
@@ -634,49 +802,73 @@ This grouped traceability expresses semantic contract families and does not impl
 
 ## 19. Conformance Invariants
 
+<a id="dd-docs-ci-001"></a>
+
 ### DD-DOCS-CI-001 — Application authority remains DD-1-owned
 
 Docs shall not independently redefine managed scope, effective configuration, canonical outcomes, invocation semantics or final Application Engine acceptance.
+
+<a id="dd-docs-ci-002"></a>
 
 ### DD-DOCS-CI-002 — DD-2.9 remains the bounded Documentation Capability
 
 Docs application intent, target/profile policy and orchestration shall remain distinct from DD-2.9 documentation modeling, rendering, aggregation, tooling and bounded validation semantics.
 
+<a id="dd-docs-ci-003"></a>
+
 ### DD-DOCS-CI-003 — Documentation recognition does not authorize mutation
 
 Discovery of source, documentation, layers, tests, files, tooling or output destinations shall not independently grant write/process authority.
+
+<a id="dd-docs-ci-004"></a>
 
 ### DD-DOCS-CI-004 — Documentation truth remains provenance-sensitive
 
 Reliable structural/domain facts, existing authored documentation and generated/AI prose shall remain distinguishable where their authority affects acceptance.
 
+<a id="dd-docs-ci-005"></a>
+
 ### DD-DOCS-CI-005 — Source mutation remains DD-2.5-owned
 
 Existing documentation/source updates shall not bypass Source Transformation preservation, stale-state and validation contracts for implementation convenience.
+
+<a id="dd-docs-ci-006"></a>
 
 ### DD-DOCS-CI-006 — Domain facts remain with their owners
 
 Nuxt, Quality, Git, App and other domain semantics consumed by Docs shall not transfer into Docs merely because they are documented.
 
+<a id="dd-docs-ci-007"></a>
+
 ### DD-DOCS-CI-007 — Technical success is subordinate evidence
 
 Renderer, parser, AI, process, build, transformation or persistence success shall not independently constitute Docs-domain or AppManager application success.
+
+<a id="dd-docs-ci-008"></a>
 
 ### DD-DOCS-CI-008 — Completeness and freshness are truthful
 
 Unsupported/failed required inputs shall not count as documented, and stale/failed refreshes shall not be represented as synchronized documentation.
 
+<a id="dd-docs-ci-009"></a>
+
 ### DD-DOCS-CI-009 — Partial effects remain truthful
 
 Failure/cancellation shall preserve completed documentation writes, transformations, AI disclosures and tooling effects; DD-3.4 shall not imply universal rollback.
+
+<a id="dd-docs-ci-010"></a>
 
 ### DD-DOCS-CI-010 — Headless and interactive semantics remain equivalent
 
 Presentation mechanisms may collect target choices but shall not redefine Docs target, profile, safety, authorization or acceptance semantics.
 
+<a id="dd-docs-ci-011"></a>
+
 ### DD-DOCS-CI-011 — Provider independence is preserved
 
 VitePress, Markdown/parser/renderer types, AI providers, template engines and process implementations shall remain below stable AppManager-oriented contracts unless separately made normative.
+
+<a id="dd-docs-ci-012"></a>
 
 ### DD-DOCS-CI-012 — Detailed Design remains topology-independent
 

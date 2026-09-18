@@ -20,23 +20,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state distinctions, safety boundaries and evidence model by which AppManager performs bounded repository operations on behalf of authoritative application use cases.
+Repository Capability supplies normalized repository state and bounded local/remote primitives. Its request contracts make repositories, refs, remotes, revisions and consequential options explicit so Git orchestration can reason about effects without depending on a CLI or host SDK.
 
-The governing rule is:
-
-> **Repository capability supplies repository facts and executes bounded repository primitives; it does not own Git-domain application intent, repository scope policy, or final application acceptance.**
-
-A second rule follows:
-
-> **Repository recognition establishes repository evidence, not authority to mutate, synchronise, push, commit, relate, initialise or delete that repository.**
-
-A third rule is:
-
-> **Repository-provider completion is execution evidence. The owning Git/application use case determines whether the requested repository intent was satisfied.**
-
-The Repository Capability therefore sits between AppManager application/domain semantics and concrete repository providers such as Git tooling, libraries, local repository APIs, and remote-host providers.
-
----
+[Git Domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) supplies application intent and coordinated policy. Source parsing consumes the separate [DD-2.4 snapshot contract](dd-2-4-source-intelligence-detailed-design-v01.md#repository-context). The following local models distinguish repository facts from both concerns.
 
 ## 2. Scope
 
@@ -212,6 +198,8 @@ These are permanent responsibility distinctions, not mandatory implementation cl
 
 ## 6. Repository Reference Contract
 
+<a id="dd-repo-001"></a>
+
 ### DD-REPO-001 — Explicit repository reference
 
 Every repository operation shall target a bounded repository reference rather than relying on ambient process location as implicit authority.
@@ -228,13 +216,19 @@ A repository reference shall be capable of representing, where relevant:
 
 Exact fields and serialization belong to Implementation Specification.
 
+<a id="dd-repo-002"></a>
+
 ### DD-REPO-002 — Reference is not authority
 
-Possession of a repository reference does not itself establish application authorization to mutate the repository.
+Repository references are technical inputs under [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); the bounded request still requires caller authority.
+
+<a id="dd-repo-003"></a>
 
 ### DD-REPO-003 — No ambient-CWD authority
 
-Provider APIs may require a working directory, but the host process's current working directory shall not implicitly select the application repository.
+Repository selection follows [DD-REPO-001](#dd-repo-001); a provider working-directory parameter does not select the application target.
+
+<a id="dd-repo-004"></a>
 
 ### DD-REPO-004 — Stable identity over incidental path
 
@@ -245,6 +239,8 @@ Where the managed model has a stable repository identity distinct from its local
 ## 7. Repository Recognition
 
 Repository recognition is a read-only evidence-producing responsibility.
+
+<a id="dd-repo-005"></a>
 
 ### DD-REPO-005 — Recognition result
 
@@ -258,17 +254,25 @@ Recognition shall be capable of distinguishing at least:
 - provider unavailable;
 - indeterminate/error state.
 
+<a id="dd-repo-006"></a>
+
 ### DD-REPO-006 — Recognition does not mutate
 
 Recognition shall not initialize, repair, fetch, clean, reset, stage, commit or otherwise mutate repository state in order to make recognition succeed.
 
+<a id="dd-repo-007"></a>
+
 ### DD-REPO-007 — Recognition does not assign managed ownership
 
-A recognized repository remains evidence for Managed Project and use-case logic. Recognition alone shall not assign the repository to the managed project or operation scope.
+Repository recognition contributes project evidence under [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="dd-repo-008"></a>
 
 ### DD-REPO-008 — Nested repository evidence
 
 Where nested or overlapping repositories are technically observable, recognition should preserve enough evidence for higher-level topology resolution rather than silently selecting the nearest or outermost repository as universal truth.
+
+<a id="dd-repo-009"></a>
 
 ### DD-REPO-009 — Provider-specific markers remain below boundary
 
@@ -277,6 +281,8 @@ Where nested or overlapping repositories are technically observable, recognition
 ---
 
 ## 8. Repository Identity and Revision Evidence
+
+<a id="dd-repo-010"></a>
 
 ### DD-REPO-010 — Repository identity facts
 
@@ -290,13 +296,19 @@ Where available, normalized identity evidence may include:
 - remote-host identity derived from configured remote information where safely and unambiguously recognized;
 - worktree/common-repository relationships where materially relevant.
 
+<a id="dd-repo-011"></a>
+
 ### DD-REPO-011 — Revision identities are evidence
 
-Commit/object/revision identifiers are repository facts. They do not independently establish AppManager project identity or application correctness.
+Revision identifiers remain repository evidence under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) and the [source-snapshot distinction](dd-2-4-source-intelligence-detailed-design-v01.md#repository-context).
+
+<a id="dd-repo-012"></a>
 
 ### DD-REPO-012 — Detached state is explicit
 
 Detached-head or equivalent non-branch states shall be represented distinctly from a normal named branch where that distinction affects later operations.
+
+<a id="dd-repo-013"></a>
 
 ### DD-REPO-013 — Unknown identity remains unknown
 
@@ -326,37 +338,54 @@ The capability shall be able to represent, where available and relevant:
 - repository operation in progress where provider exposes it safely;
 - shallow or incomplete-history facts where materially relevant.
 
+<a id="dd-repo-014"></a>
+
 ### DD-REPO-014 — Status is multidimensional
 
 Repository status shall not be collapsed into a single `isDirty` Boolean when callers require staged, unstaged, conflict, upstream or divergence distinctions.
+
+<a id="dd-repo-015"></a>
 
 ### DD-REPO-015 — Clean is not synchronized
 
 A clean worktree does not imply that the repository is synchronized with a remote or that it is eligible to push/pull.
 
+<a id="dd-repo-016"></a>
+
 ### DD-REPO-016 — Ahead/behind are contextual facts
 
 Ahead/behind evidence is meaningful only relative to a resolved comparison/upstream ref. The capability shall not present such counts without preserving the applicable reference context where needed.
 
+<a id="dd-repo-017"></a>
+
 ### DD-REPO-017 — Status acquisition does not authorize mutation
 
-Reading status shall not create implicit authority to stage, reset, pull, push or resolve conflicts.
+Consume status as evidence under [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) before any separately requested repository effect.
+
 
 ---
 
 ## 10. Repository Configuration Facts
 
+<a id="dd-repo-018"></a>
+
 ### DD-REPO-018 — Bounded configuration inspection
 
 Repository Capability may expose repository configuration facts required by approved use cases, including branch tracking, remotes, user identity or provider settings where applicable.
 
+<a id="dd-repo-019"></a>
+
 ### DD-REPO-019 — Sensitive configuration minimization
 
-Credentials, credential-helper outputs, embedded tokens, authorization headers and equivalent sensitive values shall not be unnecessarily exposed through normalized configuration results.
+Repository configuration evidence applies [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to credentials, helper output and authentication data.
+
+<a id="dd-repo-020"></a>
 
 ### DD-REPO-020 — Git configuration is not AppManager configuration
 
 Repository-native configuration may be evidence/input to Git-domain behavior, but it is distinct from DD-1.4 AppManager effective configuration and shall not create a competing AppManager configuration-precedence model.
+
+<a id="dd-repo-021"></a>
 
 ### DD-REPO-021 — Configuration source/provenance
 
@@ -366,21 +395,31 @@ Where provider configuration scope matters, the capability should preserve enoug
 
 ## 11. Branches, Refs and Tracking
 
+<a id="dd-repo-022"></a>
+
 ### DD-REPO-022 — Branch/ref facts
 
 The capability shall expose normalized branch/ref facts required by approved use cases without requiring callers to consume provider-native ref objects.
+
+<a id="dd-repo-023"></a>
 
 ### DD-REPO-023 — Local and remote refs remain distinct
 
 Local branch identity, remote-tracking refs and remote branch targets shall not be conflated.
 
+<a id="dd-repo-024"></a>
+
 ### DD-REPO-024 — Upstream relation is explicit
 
 A branch may have no upstream, one resolved upstream, or an ambiguous/invalid tracking state. Those states shall remain distinguishable.
 
+<a id="dd-repo-025"></a>
+
 ### DD-REPO-025 — Ref mutation requires explicit request
 
 Creating, renaming, switching or deleting branches/refs shall occur only through an explicit bounded request from an owning use case/capability.
+
+<a id="dd-repo-026"></a>
 
 ### DD-REPO-026 — No implicit default-branch rewrite
 
@@ -401,21 +440,31 @@ A local repository may contain zero, one or multiple remotes. A normalized remot
 - remote repository identity where unambiguous;
 - availability/validation evidence where explicitly requested.
 
+<a id="dd-repo-027"></a>
+
 ### DD-REPO-027 — Multiple remotes are first-class
 
 The capability shall not assume `origin` is the only meaningful remote.
+
+<a id="dd-repo-028"></a>
 
 ### DD-REPO-028 — Remote selection is supplied
 
 When an operation requires a particular remote, the owning use case shall resolve or supply the intended remote under its application semantics. Repository Capability shall not silently choose among ambiguous remotes.
 
+<a id="dd-repo-029"></a>
+
 ### DD-REPO-029 — Remote URL is not authorization
 
-Possessing or recognizing a remote URL does not authorize network access, push or remote-host mutation.
+Remote references follow [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) as inputs to a separately authorized network or mutation request.
+
+<a id="dd-repo-030"></a>
 
 ### DD-REPO-030 — Fetch and push endpoints may differ
 
 The contract shall preserve separate fetch/push endpoint facts where the repository provider supports them.
+
+<a id="dd-repo-031"></a>
 
 ### DD-REPO-031 — Remote identity parsing is bounded
 
@@ -427,6 +476,8 @@ Host/provider/repository identity may be normalized from a remote reference wher
 
 Repository Capability shall expose bounded change evidence for commit planning, AI assistance, preview, diagnostics and other approved consumers.
 
+<a id="dd-repo-032"></a>
+
 ### DD-REPO-032 — Change domains remain distinguishable
 
 The contract shall be able to distinguish, where relevant:
@@ -436,17 +487,25 @@ The contract shall be able to distinguish, where relevant:
 - revision versus revision changes;
 - repository versus upstream/remote changes.
 
+<a id="dd-repo-033"></a>
+
 ### DD-REPO-033 — Diff output is evidence
 
 A textual patch may be one representation of change evidence, but general callers shall not be required to infer all semantics from provider-formatted patch text where structured facts are available.
+
+<a id="dd-repo-034"></a>
 
 ### DD-REPO-034 — Large diff bounding
 
 Diff/change retrieval shall support bounding, summarization metadata or truncation evidence where required to avoid unbounded memory/context use.
 
+<a id="dd-repo-035"></a>
+
 ### DD-REPO-035 — Sensitive diff handling
 
 Repository diffs may contain secrets or private source. Consumers such as AI capability shall receive only the bounded context authorized by the owning use case and applicable sensitive-information policy.
+
+<a id="dd-repo-036"></a>
 
 ### DD-REPO-036 — Diff retrieval does not stage
 
@@ -458,25 +517,37 @@ Reading a diff or change set shall not alter staging state.
 
 Staging is a repository mutation primitive whose application semantics remain with the Git use case.
 
+<a id="dd-repo-037"></a>
+
 ### DD-REPO-037 — Explicit staging target
 
 A staging request shall identify the bounded change/resource set intended for staging or explicitly indicate the approved whole-repository scope.
+
+<a id="dd-repo-038"></a>
 
 ### DD-REPO-038 — No hidden stage-all
 
 Repository Capability shall not silently expand a selected staging request to the entire repository merely because the provider exposes a convenient `add .` operation.
 
+<a id="dd-repo-039"></a>
+
 ### DD-REPO-039 — Staging preconditions
 
 Where a caller supplies expected status/revision evidence, the capability shall validate that evidence before applying staging changes or report stale-state conflict.
+
+<a id="dd-repo-040"></a>
 
 ### DD-REPO-040 — Staging result
 
 The normalized result shall identify the technical staging outcome and sufficient resulting status/change evidence for the caller to determine whether the requested staging intent was satisfied.
 
+<a id="dd-repo-041"></a>
+
 ### DD-REPO-041 — Unstaging/reset distinction
 
 Removing changes from the index without discarding worktree content shall remain distinguishable from destructive reset/discard operations.
+
+<a id="dd-repo-042"></a>
 
 ### DD-REPO-042 — Destructive reset is not generic staging
 
@@ -486,25 +557,37 @@ Repository Capability shall not expose a vague reset primitive whose semantics c
 
 ## 15. Commit Primitive
 
+<a id="dd-repo-043"></a>
+
 ### DD-REPO-043 — Bounded commit request
 
 A commit request shall identify the target repository and the already-resolved commit message plus any explicit repository-provider options required by the approved use case.
 
+<a id="dd-repo-044"></a>
+
 ### DD-REPO-044 — Commit-message authority remains upstream
 
-Repository Capability does not decide whether a commit message is acceptable, whether AI should generate it, or whether a human must approve it.
+Commit-message source and acceptance policy come from the [Git commit contract](../functional/git-functional-specification-v01.md#_8-commit); the primitive receives the resolved message in DD-REPO-043.
+
+<a id="dd-repo-045"></a>
 
 ### DD-REPO-045 — Staging behavior is explicit
 
 Commit creation shall not implicitly stage additional changes unless the bounded commit request explicitly includes an already-approved staging behavior.
 
+<a id="dd-repo-046"></a>
+
 ### DD-REPO-046 — Commit identity evidence
 
 On successful technical commit creation, the capability should return normalized evidence of the created revision/commit identity and resulting repository state where available.
 
+<a id="dd-repo-047"></a>
+
 ### DD-REPO-047 — No commit created is distinct
 
 Provider behavior indicating that no commit was created, including no eligible staged changes, shall remain distinguishable from successful new commit creation.
+
+<a id="dd-repo-048"></a>
 
 ### DD-REPO-048 — Hook/provider effects
 
@@ -514,21 +597,31 @@ Repository hooks or provider extensions may affect commit execution. Their raw o
 
 ## 16. Repository Initialization
 
+<a id="dd-repo-049"></a>
+
 ### DD-REPO-049 — Explicit initialization target
 
 Initialization shall target an explicit bounded repository location/reference supplied by an authorized caller.
+
+<a id="dd-repo-050"></a>
 
 ### DD-REPO-050 — Existing repository detection
 
 If a repository already exists at or governs the target, the capability shall report that fact and shall not silently reinitialize/replace identity unless a separately specified repair/migration use case explicitly requests it.
 
+<a id="dd-repo-051"></a>
+
 ### DD-REPO-051 — Initialization options are supplied
 
 Default branch, repository-local identity or similar initialization inputs shall come from explicit request/effective configuration semantics above the capability.
 
+<a id="dd-repo-052"></a>
+
 ### DD-REPO-052 — Initialization does not imply remote creation
 
 Creating a local repository does not create a remote-host repository, add a remote, push history or establish a managed-project relationship unless separately requested and authorized.
+
+<a id="dd-repo-053"></a>
 
 ### DD-REPO-053 — Initialization evidence
 
@@ -540,25 +633,36 @@ The result shall distinguish newly initialized, already existing, unsupported, f
 
 Fetch updates local remote-tracking/object state from an explicitly selected remote/reference context.
 
+<a id="dd-repo-054"></a>
+
 ### DD-REPO-054 — Explicit fetch source
 
 A fetch request shall identify the intended remote and any branch/refspec/depth constraints required by the owning semantics.
+
+<a id="dd-repo-055"></a>
 
 ### DD-REPO-055 — Fetch is not integration
 
 A successful fetch does not imply that the current branch/worktree was updated or that the repository is synchronized.
 
+<a id="dd-repo-056"></a>
+
 ### DD-REPO-056 — Fetch effects are repository effects
 
 Fetch may alter local repository object/ref state even when the worktree is unchanged. The capability shall not misrepresent it as a pure read operation.
+
+<a id="dd-repo-057"></a>
 
 ### DD-REPO-057 — Authentication/network evidence
 
 Authentication failure, remote absence, network failure and provider unavailability shall remain distinguishable where the provider can establish those categories.
 
+<a id="dd-repo-058"></a>
+
 ### DD-REPO-058 — Fetch success is not Git-use-case success
 
-The owning use case decides whether fetched state satisfies a larger synchronization or inspection intent.
+Fetch evidence is interpreted under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) for the caller's synchronization/inspection intent.
+
 
 ---
 
@@ -566,45 +670,66 @@ The owning use case decides whether fetched state satisfies a larger synchroniza
 
 A provider may offer a `pull` operation, but its integration behavior can materially affect local history and worktree state. Therefore the capability contract shall not treat bare `pull` as policy-free.
 
+<a id="dd-repo-059"></a>
+
 ### DD-REPO-059 — Integration strategy is explicit
 
 Where a pull/integration primitive is used, the request shall supply or unambiguously identify the approved integration strategy required by the owning Git semantics, such as fast-forward-only, merge, rebase or another supported provider mode.
+
+<a id="dd-repo-060"></a>
 
 ### DD-REPO-060 — No provider-default merge policy
 
 Repository Capability shall not rely on an uncontrolled provider/user configuration default for a material integration-policy decision when the AppManager use case requires deterministic behavior.
 
+<a id="dd-repo-061"></a>
+
 ### DD-REPO-061 — Local changes/conflict evidence
 
 Conditions such as uncommitted changes, non-fast-forward divergence, merge/rebase conflicts or missing upstream shall be surfaced as structured repository evidence rather than silently resolved destructively.
+
+<a id="dd-repo-062"></a>
 
 ### DD-REPO-062 — No silent conflict resolution
 
 Repository Capability shall not auto-resolve merge conflicts, discard local changes or rewrite history unless a separately approved use case explicitly authorizes those effects.
 
+<a id="dd-repo-063"></a>
+
 ### DD-REPO-063 — Integration may partially mutate
 
 An integration attempt may leave repository state changed or conflicted before failing. The result shall preserve known resulting state/effects rather than imply rollback.
 
+<a id="dd-repo-064"></a>
+
 ### DD-REPO-064 — Pull primitive is not multi-repository sync
 
-A single-repository pull/integration primitive does not own project-wide synchronization sequencing, scope selection, continuation policy or partial-success aggregation.
+Project-wide integration uses the [Git synchronization contract](../functional/git-functional-specification-v01.md#_11-synchronisation); this section defines only the supplied repository primitive.
+
 
 ---
 
 ## 19. Push Primitive
 
+<a id="dd-repo-065"></a>
+
 ### DD-REPO-065 — Explicit push target
 
 A push request shall identify the repository, selected remote and source/target ref relationship sufficiently to avoid relying on ambiguous provider defaults where those defaults affect meaning.
+
+<a id="dd-repo-066"></a>
 
 ### DD-REPO-066 — No implicit force
 
 Repository Capability shall never turn an ordinary push request into force/force-with-lease or equivalent history-rewriting behavior silently.
 
+<a id="dd-repo-067"></a>
+
 ### DD-REPO-067 — Force behavior requires explicit higher-level semantics
 
 If a later approved use case permits history-rewriting push, the bounded request shall carry that explicit authority and required preconditions. A generic `force` Boolean from a provider API is not sufficient architectural policy.
+
+<a id="dd-repo-068"></a>
 
 ### DD-REPO-068 — Push result evidence
 
@@ -619,13 +744,18 @@ The result should expose, where available:
 - created/updated remote ref evidence;
 - bounded provider diagnostics.
 
+<a id="dd-repo-069"></a>
+
 ### DD-REPO-069 — Push is not deployment
 
 Repository Capability shall not infer deployment, release or CI success from a successful push.
 
+<a id="dd-repo-070"></a>
+
 ### DD-REPO-070 — Push success is repository evidence
 
-The owning Git/application use case determines whether the requested push intent is fully satisfied, especially when multiple remotes or repositories are involved.
+Push evidence returns to the [Git push use case](../functional/git-functional-specification-v01.md#_9-push) for interpretation across its requested repositories/remotes.
+
 
 ---
 
@@ -633,41 +763,59 @@ The owning Git/application use case determines whether the requested push intent
 
 The decomposition plan permits repository synchronization primitives, but application-level synchronization remains a Git-domain use case.
 
+<a id="dd-repo-071"></a>
+
 ### DD-REPO-071 — Bounded synchronization primitive
 
 A Repository Capability synchronization primitive, if provided, shall operate on exactly one supplied repository and shall require all material technical policy inputs needed for deterministic execution.
+
+<a id="dd-repo-072"></a>
 
 ### DD-REPO-072 — No hidden project traversal
 
 The primitive shall not scan for submodules, layers or neighbouring repositories and synchronize them merely because they are discoverable.
 
+<a id="dd-repo-073"></a>
+
 ### DD-REPO-073 — Relationship update requires explicit inclusion
 
 If a single-repository synchronization request includes provider-supported relationship updates such as submodule initialization/update, that behavior shall be explicit in the request rather than an unconditional hidden side effect.
 
+<a id="dd-repo-074"></a>
+
 ### DD-REPO-074 — Domain synchronization remains above
 
-Root-only, selected-repository, selected-set and all-managed-repositories synchronization scope, sequencing, continuation policy, warnings and partial-success aggregation remain owned by the Git use case/Application Engine.
+The [Git domain scope and orchestration contracts](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_7-domain-contract-model) supply synchronization coordination above this primitive.
+
 
 ---
 
 ## 21. Clone Primitive
 
+<a id="dd-repo-075"></a>
+
 ### DD-REPO-075 — Explicit source and destination
 
 Clone shall require an explicit remote/source repository identity and bounded destination supplied by the owning use case.
+
+<a id="dd-repo-076"></a>
 
 ### DD-REPO-076 — Destination safety remains upstream plus technical validation
 
 Repository Capability shall technically reject impossible/conflicting destinations, but managed-project ownership and safe creation authority remain higher-level concerns.
 
+<a id="dd-repo-077"></a>
+
 ### DD-REPO-077 — Clone options are bounded
 
 Branch/ref, depth and related clone options shall be explicit where material rather than taken from uncontrolled ambient defaults.
 
+<a id="dd-repo-078"></a>
+
 ### DD-REPO-078 — Clone does not establish managed ownership
 
-Successful clone produces repository/resource evidence. It does not automatically add the repository to Managed Project topology or authorize follow-on mutation.
+Clone results enter [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) as repository/resource evidence for any later topology decision.
+
 
 ---
 
@@ -675,33 +823,48 @@ Successful clone produces repository/resource evidence. It does not automaticall
 
 Repository relationships include mechanisms such as Git submodules or equivalent provider-supported links between repositories.
 
+<a id="dd-repo-079"></a>
+
 ### DD-REPO-079 — Relationship primitive consumes resolved identities
 
 A relationship-add/update/remove request shall consume source/parent and related repository identities/paths already resolved by the owning Git/Managed Project semantics.
+
+<a id="dd-repo-080"></a>
 
 ### DD-REPO-080 — Relationship mechanism is explicit
 
 The request shall identify the supported relationship mechanism rather than assuming every managed repository relation is a Git submodule.
 
+<a id="dd-repo-081"></a>
+
 ### DD-REPO-081 — Relationship eligibility remains upstream
 
-Repository Capability does not decide that a Nuxt layer should become an independent repository or submodule. It executes the bounded repository relationship operation selected by the owning use case.
+Use the [Nuxt relationship contract](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#_8-7-layer-integration) for layer intent; this capability receives an explicit repository relationship request.
+
+<a id="dd-repo-082"></a>
 
 ### DD-REPO-082 — Existing relationship detection
 
 The capability shall be able to distinguish newly created, already represented, conflicting and failed relationship states.
 
+<a id="dd-repo-083"></a>
+
 ### DD-REPO-083 — Tracked-content conflict evidence
 
 Where a relationship operation conflicts with existing tracked content or ownership, the capability shall expose the conflict rather than silently removing/replacing that content.
+
+<a id="dd-repo-084"></a>
 
 ### DD-REPO-084 — Relationship effects are explicit
 
 Repository relationship operations may modify repository metadata/configuration and working-tree resources. Known effects shall be represented through DD-1.2-compatible effect evidence where practical.
 
+<a id="dd-repo-085"></a>
+
 ### DD-REPO-085 — Relationship does not equal Nuxt integration
 
-Creating a repository relationship does not establish Nuxt layer registration or application-layer integration unless a separate Nuxt/application use case performs those semantics.
+Interpret repository relationship evidence against the separate [Nuxt integration postcondition](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-038).
+
 
 ---
 
@@ -723,17 +886,25 @@ Potential normalized facts include:
 - authenticated principal evidence where safe and necessary;
 - provider capability availability.
 
+<a id="dd-repo-086"></a>
+
 ### DD-REPO-086 — Provider identity remains explicit
 
 A remote-host request shall identify the intended provider/host and exact repository identity sufficiently to prevent guessed provider targets.
 
+<a id="dd-repo-087"></a>
+
 ### DD-REPO-087 — Credentials remain provider-bounded
 
-Authentication material shall remain below the application-facing repository contract except for safe availability/authorization evidence. Raw tokens/headers shall not be exposed through normal results.
+Remote authentication material follows [DD-REPO-119](#dd-repo-119) and [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction); expose only safe availability/authorization evidence.
+
+<a id="dd-repo-088"></a>
 
 ### DD-REPO-088 — Provider APIs do not define application semantics
 
-HTTP status codes, SDK objects, GitHub-specific repository JSON or provider exception classes shall be normalized before reaching application interpretation.
+Remote HTTP/SDK result representations use [DD-1.2 normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
+<a id="dd-repo-089"></a>
 
 ### DD-REPO-089 — Remote-host abstraction is not universal hosting platform
 
@@ -745,21 +916,30 @@ Version 1 need only expose the remote-host primitives required by approved AppMa
 
 Where an approved App/Nuxt/Git use case requires remote repository creation, the capability may expose a bounded provisioning primitive.
 
+<a id="dd-repo-090"></a>
+
 ### DD-REPO-090 — Exact owner/target identity
 
 Provisioning shall consume an explicit provider owner/account/organization and repository identity rather than guessing a personal default.
+
+<a id="dd-repo-091"></a>
 
 ### DD-REPO-091 — Provisioning options are supplied
 
 Visibility, description, initialization and related provider settings shall come from the owning use case/effective configuration as explicit bounded inputs.
 
+<a id="dd-repo-092"></a>
+
 ### DD-REPO-092 — Remote creation is distinct from local initialization
 
 Remote-host repository creation, local Git initialization, remote registration and initial push are separate effects even when one application workflow coordinates them.
 
+<a id="dd-repo-093"></a>
+
 ### DD-REPO-093 — Partial provisioning evidence
 
-If a composed higher-level workflow creates a remote repository but fails to initialize/link/push locally, the remote creation remains a completed effect and shall not be hidden.
+Record remote creation followed by local initialization/link/push failure through [DD-1.2 effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) and [partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
 
 ---
 
@@ -767,17 +947,25 @@ If a composed higher-level workflow creates a remote repository but fails to ini
 
 Remote deletion is a provider primitive with exceptional consequences. Application authorization remains entirely above the capability.
 
+<a id="dd-repo-094"></a>
+
 ### DD-REPO-094 — Exact remote identity required
 
-The primitive shall require exact provider owner/account/organization and repository identity.
+Remote deletion applies the exact-target contract [DD-REPO-086](#dd-repo-086), including provider owner/account/organization identity.
+
+<a id="dd-repo-095"></a>
 
 ### DD-REPO-095 — Authorization evidence is consumed, not invented
 
 Repository Capability may require an authorization/approval token or execution permission supplied by the Engine/use case contract, but it shall not define the user-facing destructive confirmation policy itself.
 
+<a id="dd-repo-096"></a>
+
 ### DD-REPO-096 — No inferred cascade
 
 Deleting a remote repository shall not automatically delete local repositories, remotes, managed-project relationships or related repositories.
+
+<a id="dd-repo-097"></a>
 
 ### DD-REPO-097 — Remote deletion result
 
@@ -791,6 +979,8 @@ The normalized result shall distinguish at least:
 - provider execution failure;
 - indeterminate outcome where the provider response does not establish completion safely.
 
+<a id="dd-repo-098"></a>
+
 ### DD-REPO-098 — Timeout/uncertainty does not imply not deleted
 
 If network/provider failure occurs after a deletion request may have reached the provider, the capability shall preserve uncertainty rather than automatically reporting the repository as definitely retained.
@@ -800,6 +990,8 @@ If network/provider failure occurs after a deletion request may have reached the
 ## 26. Stale-State and Preconditions
 
 Repository operations are highly susceptible to state changes between inspection and execution.
+
+<a id="dd-repo-099"></a>
 
 ### DD-REPO-099 — Expected-state preconditions
 
@@ -813,13 +1005,19 @@ Mutation/transfer requests shall support caller-supplied expected-state evidence
 - expected relationship absence/presence;
 - expected remote-host repository identity/state.
 
+<a id="dd-repo-100"></a>
+
 ### DD-REPO-100 — Stale state is explicit
 
 If observed state no longer satisfies a material precondition, Repository Capability shall return stale/conflict evidence rather than blindly applying the operation.
 
+<a id="dd-repo-101"></a>
+
 ### DD-REPO-101 — Revalidation does not broaden authority
 
 Technical revalidation may refresh repository facts, but it shall not independently broaden operation scope or choose a different target repository.
+
+<a id="dd-repo-102"></a>
 
 ### DD-REPO-102 — Provider atomic checks preferred where available
 
@@ -831,17 +1029,25 @@ Where provider primitives can enforce compare-and-set/lease-like expectations at
 
 Repository operations may be local, networked or delegated through Process Execution.
 
+<a id="dd-repo-103"></a>
+
 ### DD-REPO-103 — Cancellation propagation
 
-Where supported, Repository Capability shall consume DD-1 cancellation intent and propagate it to active providers/processes according to their capabilities.
+Propagate repository cancellation to supported providers/processes under [DD-1.2 cancellation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
+
+<a id="dd-repo-104"></a>
 
 ### DD-REPO-104 — Cancellation is not rollback
 
-Cancellation does not imply reversal of completed staging, commits, fetch updates, pushes, relationship changes or remote-host effects.
+Staging, commit, fetch, push, relationship and host effects follow [DD-1.2 cancellation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) after completion.
+
+<a id="dd-repo-105"></a>
 
 ### DD-REPO-105 — Cancellation uncertainty
 
-If a provider operation's completion cannot be determined after cancellation, the result shall preserve that uncertainty rather than guessing.
+Uncertain repository completion after cancellation uses [DD-1.2 effect evidence](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
+<a id="dd-repo-106"></a>
 
 ### DD-REPO-106 — Repository progress events
 
@@ -856,9 +1062,12 @@ Long-running operations may emit normalized events such as:
 - cancellation requested/observed;
 - repository operation completed.
 
+<a id="dd-repo-107"></a>
+
 ### DD-REPO-107 — Provider progress is not acceptance
 
-Progress events or provider completion notifications do not establish final AppManager success.
+Repository progress uses [DD-1.2 event semantics](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_16-progress-events) rather than final acceptance.
+
 
 ---
 
@@ -894,37 +1103,53 @@ Useful capability-level categories include:
 - indeterminate remote effect;
 - unknown provider failure.
 
+<a id="dd-repo-108"></a>
+
 ### DD-REPO-108 — Raw provider errors are subordinate
 
-Provider-native errors may be retained as bounded diagnostic detail but shall not be the only machine-readable representation.
+Repository errors use [DD-1.2 normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) with bounded provider detail.
+
+<a id="dd-repo-109"></a>
 
 ### DD-REPO-109 — Repository identity in diagnostics
 
 Diagnostics shall identify the affected repository/reference/remote sufficiently to avoid root/layer/multi-repository ambiguity where applicable.
 
+<a id="dd-repo-110"></a>
+
 ### DD-REPO-110 — Sensitive diagnostic minimization
 
-Credentials, embedded tokens, private URLs and sensitive diff/config content shall be minimized or redacted while retaining useful repository-level meaning.
+Apply [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to repository credentials, private URLs, diffs and configuration evidence.
+
 
 ---
 
 ## 29. Retry, Fallback and Continuation
 
+<a id="dd-repo-111"></a>
+
 ### DD-REPO-111 — No implicit consequential retry
 
 Repository Capability shall not silently repeat commit, push, relationship, remote creation/deletion or other consequential operations merely because a provider error appears transient.
 
+<a id="dd-repo-112"></a>
+
 ### DD-REPO-112 — Retryability is evidence
 
-Provider normalization may classify evidence as transient/retryable where safely known, but the owning use case determines whether another attempt is permitted.
+Classify safe repository transience/retryability evidence under [DD-1.2 retry evidence](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_22-retryability-and-repetition-evidence).
+
+<a id="dd-repo-113"></a>
 
 ### DD-REPO-113 — No implicit provider fallback
 
 The capability shall not silently switch from one repository mechanism/provider to another if doing so changes semantics or credentials.
 
+<a id="dd-repo-114"></a>
+
 ### DD-REPO-114 — No multi-repository continuation policy
 
-Whether an all-repositories operation continues after one repository fails belongs to the Git use case/Application Engine, not Repository Capability.
+Use the [Git continuation contract](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_12-failure-cancellation-and-partial-effects) for all-repository failure handling.
+
 
 ---
 
@@ -932,45 +1157,65 @@ Whether an all-repositories operation continues after one repository fails belon
 
 Repository Capability primitives are repository-scoped. The capability may support efficient batch inspection, but it shall not acquire application-level multi-repository workflow authority.
 
+<a id="dd-repo-115"></a>
+
 ### DD-REPO-115 — Per-repository evidence
 
-If a batch capability is used for technical efficiency, each repository's evidence/status/diagnostics shall remain independently attributable.
+A technical batch retains repository identity on each [DD-1.2 subordinate result](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion).
+
+<a id="dd-repo-116"></a>
 
 ### DD-REPO-116 — No hidden scope expansion
 
-A request for one repository shall never expand to root + layers or other discovered repositories automatically.
+Apply the bounded request in [DD-REPO-001](#dd-repo-001) and single-repository synchronization restriction [DD-REPO-072](#dd-repo-072) to discovered siblings.
+
+<a id="dd-repo-117"></a>
 
 ### DD-REPO-117 — Multi-repository sequencing remains upstream
 
-Ordering, parallelism, stop/continue policy, dependency ordering, partial-success aggregation and warnings about cross-repository drift remain with the owning use case/Engine.
+Repository ordering/dependencies/continuation are supplied by the [Git domain operation model](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_7-domain-contract-model); the capability reports its bounded results.
+
+<a id="dd-repo-118"></a>
 
 ### DD-REPO-118 — No false transactionality
 
-Repository Capability shall not imply transactional atomicity across repositories unless a later explicit design actually provides and verifies it.
+Cross-repository guarantees use [DD-1.2 effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects); this capability promises no transaction across repositories.
+
 
 ---
 
 ## 31. Security and Credential Boundaries
 
+<a id="dd-repo-119"></a>
+
 ### DD-REPO-119 — Credentials are not repository facts
 
 Authentication credentials may be consumed by a provider through approved configuration/credential mechanisms, but they shall not be exposed as ordinary repository metadata.
+
+<a id="dd-repo-120"></a>
 
 ### DD-REPO-120 — Remote URLs may be sensitive
 
 Remote endpoints containing embedded credentials or sensitive query data shall be sanitized before general logging/diagnostics.
 
+<a id="dd-repo-121"></a>
+
 ### DD-REPO-121 — Environment/config credentials remain bounded
 
 A CLI-based provider using DD-2.2 shall receive only the credential/environment context authorized for the operation.
+
+<a id="dd-repo-122"></a>
 
 ### DD-REPO-122 — Provider credential helpers are implementation details
 
 SSH agents, credential helpers, OS keychains and provider SDK auth mechanisms belong below the capability boundary unless their availability/status must be represented as normalized evidence.
 
+<a id="dd-repo-123"></a>
+
 ### DD-REPO-123 — No destructive authority from credentials
 
-Possession of credentials capable of deleting or force-updating a remote repository does not itself authorize AppManager to perform those effects.
+Apply [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) when provider credentials technically permit deletion or history rewriting.
+
 
 ---
 
@@ -991,13 +1236,19 @@ A normalized repository result may contribute:
 - provider availability evidence;
 - uncertainty/indeterminate state.
 
+<a id="dd-repo-124"></a>
+
 ### DD-REPO-124 — Repository result is capability evidence
 
-A repository-provider/capability result shall remain distinguishable from the final Git-domain/AppManager outcome.
+Repository evidence composes [DD-1.2 status layers](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model) below Git/application interpretation.
+
+<a id="dd-repo-125"></a>
 
 ### DD-REPO-125 — No Boolean collapse
 
 Repository results shall not be reduced to a Boolean where branch/ref/status/conflict/remote/effect distinctions are needed for correct interpretation.
+
+<a id="dd-repo-126"></a>
 
 ### DD-REPO-126 — Effects are precise
 
@@ -1023,23 +1274,18 @@ Git application use case
     -> Application Engine final acceptance
 ```
 
+<a id="dd-repo-127"></a>
+
 ### DD-REPO-127 — Git domain owns use-case semantics
 
-The Git domain remains responsible for:
+Git application intent, eligibility, policy and orchestration are defined by [DD-3.2](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_7-domain-contract-model). This capability consumes its repository-specific requests.
 
-- root/selected/set/all scope;
-- repository eligibility;
-- commit workflow policy;
-- remote selection policy;
-- synchronization workflow semantics;
-- multi-repository sequencing;
-- continuation policy;
-- destructive-operation authorization;
-- user-facing result interpretation.
+<a id="dd-repo-128"></a>
 
 ### DD-REPO-128 — Repository Capability owns primitives
 
-Repository Capability owns reusable repository mechanics and normalized repository facts/results needed by those use cases.
+The bounded repository reference and primitive contracts in [§6 onward](#_6-repository-reference-contract) define the mechanics and facts supplied to Git consumers.
+
 
 ---
 
@@ -1057,9 +1303,12 @@ Nuxt-layer creation may request local/remote repository setup and a repository r
 
 Nuxt owns layer creation and Nuxt integration. Git/Repository responsibilities own repository semantics.
 
+<a id="dd-repo-129"></a>
+
 ### DD-REPO-129 — Nuxt relationship distinction
 
-A Nuxt layer relationship and a repository relationship shall remain distinct even when created in the same composed workflow.
+Repository/Nuxt relationship distinction follows [DD-NUXT-038](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-038); a composed operation retains each result.
+
 
 ---
 
@@ -1067,13 +1316,18 @@ A Nuxt layer relationship and a repository relationship shall remain distinct ev
 
 AI-assisted commit-message generation may consume bounded repository change evidence.
 
+<a id="dd-repo-130"></a>
+
 ### DD-REPO-130 — Repository evidence is bounded before AI
 
-Repository Capability supplies requested diff/change evidence; the AI capability/use case determines context minimization, prompt construction, provider selection and output validation.
+The [bounded diff contract](#dd-repo-034) supplies change evidence to [AI Capability](dd-2-7-ai-capability-detailed-design-v01.md), whose context/request/output contracts govern AI execution.
+
+<a id="dd-repo-131"></a>
 
 ### DD-REPO-131 — AI cannot invoke repository mutation by implication
 
-An AI-generated commit message or repository recommendation does not authorize staging, commit, push or other mutation. The owning Git use case must explicitly proceed under application policy.
+AI-assisted repository proposals apply [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) through the owning Git workflow.
+
 
 ---
 
@@ -1097,21 +1351,30 @@ Remote-host operations may use:
 - a CLI through DD-2.2;
 - another bounded provider.
 
+<a id="dd-repo-132"></a>
+
 ### DD-REPO-132 — Provider selection does not change semantics
 
-The provider chosen for an operation shall not silently redefine repository semantics promised by the capability contract.
+Repository providers conform to [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and the specific primitive guarantees here.
+
+<a id="dd-repo-133"></a>
 
 ### DD-REPO-133 — Mixed providers remain coherent
 
 If local Git operations use one provider and remote-host operations another, normalized identities/results shall preserve coherent correlation between the local remote reference and exact remote-host repository target.
 
+<a id="dd-repo-134"></a>
+
 ### DD-REPO-134 — Provider limitations are explicit
 
 Unsupported operations or weaker guarantees shall be reported rather than emulated with unsafe or semantically different behavior.
 
+<a id="dd-repo-135"></a>
+
 ### DD-REPO-135 — No speculative cross-runtime protocol
 
-Provider neutrality does not require a separate process, RPC protocol or language-neutral transport in Version 1.
+Repository implementation topology follows the [Documentation Guide Level 4 boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); no separate process, RPC or language-neutral transport is required.
+
 
 ---
 
@@ -1153,9 +1416,12 @@ The following current/historical details are **not** promoted automatically into
 - GitHub as the only possible remote host;
 - direct exception strings as the canonical diagnostic model.
 
+<a id="dd-repo-136"></a>
+
 ### DD-REPO-136 — Implementation migration follows approved contract
 
-Future Implementation Specifications shall reconcile current code with this Detailed Design rather than preserving accidental service boundaries or method semantics as architecture.
+Reconcile concrete repository code under the [Documentation Guide implementation boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification), without deriving architecture from incidental service shapes.
+
 
 ---
 
@@ -1163,13 +1429,19 @@ Future Implementation Specifications shall reconcile current code with this Deta
 
 Repository Capability shall be testable independently of full Git-domain/application orchestration.
 
+<a id="dd-repo-137"></a>
+
 ### DD-REPO-137 — Provider substitution
 
 Tests shall be able to substitute local and remote repository providers sufficiently to validate normalization, preconditions, failure categories and effect evidence without relying on live GitHub or a developer's global Git configuration.
 
+<a id="dd-repo-138"></a>
+
 ### DD-REPO-138 — Repository fixtures
 
 Tests may use temporary repositories/fixtures for integration-level behavior, but unit-level contract tests shall not require network access or user credentials.
+
+<a id="dd-repo-139"></a>
 
 ### DD-REPO-139 — Deterministic state scenarios
 
@@ -1198,6 +1470,8 @@ The contract shall support deterministic testing of at least:
 - sensitive-value redaction;
 - provider-native error normalization.
 
+<a id="dd-repo-140"></a>
+
 ### DD-REPO-140 — Use-case acceptance remains above
 
 Capability tests verify repository facts/primitives. Tests for root/layer/all scope, continuation policy, destructive confirmation and final Git-domain success belong to the owning Git/Application Engine layers.
@@ -1206,37 +1480,7 @@ Capability tests verify repository facts/primitives. Tests for root/layer/all sc
 
 ## 39. Conformance Invariants
 
-Every conforming Repository Capability implementation shall preserve these invariants:
-
-1. repository recognition is evidence, not mutation authority;
-2. Managed Project remains authoritative for managed repository topology;
-3. operation repository scope is supplied by the owning use case, not inferred from provider discovery;
-4. Repository Capability is not the Git domain;
-5. Repository Capability is not a CI/CD engine;
-6. repository-provider success is not final AppManager success;
-7. provider-native Git/SDK/process objects remain below the capability boundary;
-8. local repository state is represented with enough dimensions to avoid unsafe Boolean collapse;
-9. current working directory is not repository application authority;
-10. multiple remotes remain first-class and ambiguous remote selection is not silently guessed;
-11. staging scope is explicit and shall not silently become stage-all;
-12. commit-message approval and AI assistance remain above the repository primitive;
-13. initialization does not imply remote creation/push/relationship creation;
-14. fetch does not imply integration;
-15. pull/integration strategy shall not depend on an uncontrolled provider default when material;
-16. conflicts/local changes are not silently discarded;
-17. ordinary push never silently becomes force push;
-18. push is not deployment;
-19. single-repository synchronization does not own multi-repository workflow scope;
-20. repository relationship mechanics do not define Nuxt/project relationship semantics;
-21. remote-host operations require exact provider/target identity;
-22. credentials do not grant destructive application authority;
-23. cancellation/retry do not imply rollback of completed repository/remote effects;
-24. stale-state preconditions are explicit where correctness requires them;
-25. multi-repository sequencing/continuation/aggregation remain above the capability;
-26. normalized repository evidence remains distinct from final application outcomes;
-27. the capability boundary does not require one class, package, Git library, CLI, remote host or runtime topology.
-
----
+Conformance follows the reference/recognition/status contracts, each named primitive's preconditions and effects, remote-target/security constraints, and the provider tests in §38. In particular, the staging, commit, fetch, integration, push, relationship and remote-host sections retain distinct effect guarantees; they are not interchangeable operations. This index introduces no repeated normative checklist.
 
 ## 40. Traceability
 
@@ -1289,29 +1533,4 @@ App/Nuxt designs shall delegate repository concerns rather than embedding indepe
 
 ## 42. Final Design Position
 
-Repository Capability is the shared technical-semantic boundary for bounded repository facts and repository primitives in AppManager Version 1.
-
-Its permanent responsibility is to answer questions such as:
-
-- what repository state exists at a supplied repository reference;
-- what branches, refs, remotes, upstreams and revisions are observed;
-- what staged/unstaged/conflicted changes are present;
-- what bounded repository primitive was attempted;
-- what local or remote repository effect technically occurred;
-- what provider/authentication/network/conflict/stale-state evidence resulted.
-
-It does **not** answer the application-level questions:
-
-- which managed repositories should this invocation operate on;
-- whether AppManager should stage all changes;
-- whether a commit message should be accepted;
-- whether a repository should be synchronized, pushed or force-updated;
-- whether execution should continue to another repository after failure;
-- whether remote deletion is authorized;
-- whether a Git operation makes the overall AppManager invocation successful.
-
-Those remain responsibilities of Managed Project, the Git/application use case and the Application Engine under DD-1.
-
-The central boundary is therefore:
-
-> **Repository Capability owns bounded repository facts and primitives; Git-domain and AppManager application authority remain above it.**
+The repository reference and state models lead into bounded primitives and normalized evidence. [DD-3.2](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) composes those primitives into Git workflows; the [testability section](#_38-testability) validates the capability's distinct local and remote guarantees.

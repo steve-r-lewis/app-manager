@@ -151,15 +151,21 @@ A provider's success, failure, warning, default, discovered resource, exit code 
 
 The Application Engine is decomposed into logical responsibilities. These are not requirements for one implementation object per responsibility.
 
+<a id="dd-eng-001"></a>
+
 ### DD-ENG-001 — Command/use-case catalogue integration
 
 The Engine shall consume the canonical command catalogue defined by the Application Invocation Detailed Design and associate each executable command identity with exactly one owning application use-case definition.
 
 Registration shall not permit two independent semantic owners for the same canonical command identity.
 
+<a id="dd-eng-002"></a>
+
 ### DD-ENG-002 — Dispatcher
 
 The dispatcher shall route a validated, recognized invocation to its owning use case without deriving semantics from presentation labels, adapter routes, menu positions, provider operations or implementation filenames.
+
+<a id="dd-eng-003"></a>
 
 ### DD-ENG-003 — Execution-context coordinator
 
@@ -178,9 +184,13 @@ The Engine shall establish an invocation-scoped execution context containing the
 - capability access constrained to the use case;
 - execution/effect evidence accumulated during the workflow.
 
+<a id="dd-eng-004"></a>
+
 ### DD-ENG-004 — Policy and safety evaluator
 
 Application policy and safety constraints shall be evaluated at defined semantic checkpoints before consequential effects and re-evaluated when a material change invalidates prior assumptions.
+
+<a id="dd-eng-005"></a>
 
 ### DD-ENG-005 — Use-case orchestrator responsibility
 
@@ -188,21 +198,31 @@ Each application use case shall own its permanent workflow semantics: prerequisi
 
 The responsibility may be implemented by one or more collaborators but remains subordinate to the Application Engine authority model.
 
+<a id="dd-eng-006"></a>
+
 ### DD-ENG-006 — Capability broker responsibility
 
 The Engine shall provide or coordinate access to approved specialist capabilities through AppManager-oriented contracts. Capability acquisition shall not expose arbitrary provider operations as application commands.
+
+<a id="dd-eng-007"></a>
 
 ### DD-ENG-007 — Result interpreter
 
 The Engine/use-case authority shall interpret normalized execution evidence against invocation intent, managed scope, configuration, policy, safety constraints and domain acceptance criteria before determining the final application status.
 
+<a id="dd-eng-008"></a>
+
 ### DD-ENG-008 — Outcome publisher
 
 The Engine shall produce the canonical final outcome through the shared DD-1.2 outcome contract. Presentation adapters may project that outcome but shall not recalculate it.
 
+<a id="dd-eng-009"></a>
+
 ### DD-ENG-009 — Cancellation coordinator
 
 The Engine shall propagate cancellation intent to active orchestration/capabilities and determine the application-level terminal meaning from observed completion and known effects.
+
+<a id="dd-eng-010"></a>
 
 ### DD-ENG-010 — Application concurrency coordinator
 
@@ -212,25 +232,37 @@ Where concurrent or stale operations can change application semantics, the Engin
 
 ## 6. Command and Use-Case Ownership
 
+<a id="dd-eng-011"></a>
+
 ### DD-ENG-011 — Canonical command identity
 
 Dispatch shall use the canonical command identity from DD-1.1. Presentation aliases, shortcuts and host-specific actions must normalize before Engine dispatch.
+
+<a id="dd-eng-012"></a>
 
 ### DD-ENG-012 — Single semantic owner
 
 Every executable canonical command shall have one identifiable semantic owner. The owner defines what constitutes valid execution, required context, required policy, acceptable results and final application success.
 
+<a id="dd-eng-013"></a>
+
 ### DD-ENG-013 — Domain grouping is not execution authority
 
 The approved domains (`app`, `docs`, `git`, `ai`, `nuxt`, `quality`, `maintenance`, `settings`) organize product behaviour. A domain name does not imply an autonomous engine, service boundary, process or provider.
+
+<a id="dd-eng-014"></a>
 
 ### DD-ENG-014 — Commands are not provider methods
 
 Provider operations shall not become AppManager commands solely because a provider exposes them. A command exists only when approved application behaviour defines the corresponding use case.
 
+<a id="dd-eng-015"></a>
+
 ### DD-ENG-015 — Compatibility aliases
 
 Legacy or compatibility command surfaces may map to a canonical use case, but shall remain thin and shall not preserve an independent workflow implementation.
+
+<a id="dd-eng-016"></a>
 
 ### DD-ENG-016 — Unknown and unavailable remain distinct
 
@@ -240,9 +272,13 @@ The Engine shall preserve the DD-1.1 distinction between an unknown command and 
 
 ## 7. Execution Context
 
+<a id="dd-eng-017"></a>
+
 ### DD-ENG-017 — Invocation-scoped context
 
 Each significant invocation shall receive its own execution context. Mutable invocation state shall not leak into unrelated invocations.
+
+<a id="dd-eng-018"></a>
 
 ### DD-ENG-018 — Explicit versus resolved information
 
@@ -258,25 +294,37 @@ presented confirmation != accepted authorization state
 preview request != applied effects
 ```
 
+<a id="dd-eng-019"></a>
+
 ### DD-ENG-019 — Managed-project dependency
 
 When a use case depends on project semantics, the Engine shall obtain sufficient managed-project context through DD-1.3 before treating project-derived facts as authoritative. Where project resolution itself depends upon configuration, only configuration valid for the bootstrap stage defined by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) may contribute before managed-project identity exists.
+
+<a id="dd-eng-020"></a>
 
 ### DD-ENG-020 — Managed-scope dependency
 
 Consequential operations shall operate against an operation-specific managed scope. Discovery or recognition alone shall not be substituted for targetability or mutation authority. Where scope resolution depends upon project- or scope-aware configuration, the required operation-effective configuration shall be resolved before finalizing that scope.
 
+<a id="dd-eng-021"></a>
+
 ### DD-ENG-021 — Configuration dependency
 
 When configuration is required, the Engine shall consume governed effective configuration from DD-1.4 rather than permitting the use case or provider to independently select raw configuration sources. The Engine shall distinguish bootstrap-effective configuration used during project resolution from the later operation-effective configuration snapshot; a bootstrap value is not automatically the complete operation snapshot.
+
+<a id="dd-eng-022"></a>
 
 ### DD-ENG-022 — Configuration snapshot stability
 
 A use case shall normally execute against an immutable effective-configuration snapshot established for the relevant execution phase. Dynamic re-resolution requires explicit workflow semantics. A material difference between bootstrap assumptions and the later operation-effective snapshot shall trigger revalidation of dependent project, scope, policy, safety or authorization decisions.
 
+<a id="dd-eng-023"></a>
+
 ### DD-ENG-023 — Context completeness
 
 The Engine shall resolve only the context required to make the current use case semantically safe and deterministic. It shall not require exhaustive project discovery when the operation does not need it.
+
+<a id="dd-eng-024"></a>
 
 ### DD-ENG-024 — Context revalidation
 
@@ -329,21 +377,31 @@ Finalize managed scope only after the operation-effective values required by its
 
 The lifecycle specifies semantic dependencies, not a class graph, process topology or number of resolver instances. Irrelevant configuration stages can be omitted. Bootstrap eligibility belongs to [DD-1.4 §8](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context), and project conflict reporting to [DD-1.3 §29](dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution).
 
+<a id="dd-eng-025"></a>
+
 ### DD-ENG-025 — Effects require prerequisite satisfaction
 
 No consequential stage may begin while a required prerequisite on which that effect depends remains unresolved, invalid, ambiguous or unauthorized.
+
+<a id="dd-eng-026"></a>
 
 ### DD-ENG-026 — Stage-specific validation
 
 Validation may occur at multiple stages. Early structural validation does not replace later context-, scope-, plan- or effect-sensitive validation.
 
+<a id="dd-eng-027"></a>
+
 ### DD-ENG-027 — Material plan change
 
 If execution planning materially changes target, scope, destructive character, required capability or consequential effects, affected policy and authorization decisions shall be re-evaluated before execution.
 
+<a id="dd-eng-028"></a>
+
 ### DD-ENG-028 — Evidence accumulation
 
 The orchestration context shall preserve material normalized evidence and effects required to determine final status and recovery information.
+
+<a id="dd-eng-029"></a>
 
 ### DD-ENG-029 — No success by reaching end of handler
 
@@ -355,15 +413,21 @@ Completing an implementation path without an exception is insufficient to establ
 
 Later domain Detailed Designs shall define domain-specific use-case orchestration beneath this Engine contract.
 
+<a id="dd-eng-030"></a>
+
 ### DD-ENG-030 — Domain orchestration responsibility
 
 A domain orchestrator may coordinate multiple shared capabilities and domain policies for an approved use case.
 
 For example, a future App lifecycle operation may coordinate project resolution, configuration, process execution, quality checks and Git capability without transferring ownership of those specialist semantics into the App domain.
 
+<a id="dd-eng-031"></a>
+
 ### DD-ENG-031 — Shared semantics not duplicated
 
 Domain designs shall consume DD-1 invocation, outcome, project and configuration contracts rather than defining domain-local equivalents.
+
+<a id="dd-eng-032"></a>
 
 ### DD-ENG-032 — Cross-domain composition
 
@@ -380,6 +444,8 @@ app.create
 
 The App use case owns the composed application outcome, not the internal semantics of Git or Nuxt.
 
+<a id="dd-eng-033"></a>
+
 ### DD-ENG-033 — No circular authority
 
 A subordinate capability or nested use case shall not call upward into presentation or redefine the parent use case's final acceptance policy.
@@ -388,29 +454,43 @@ A subordinate capability or nested use case shall not call upward into presentat
 
 ## 10. Capability Delegation
 
+<a id="dd-eng-034"></a>
+
 ### DD-ENG-034 — AppManager-oriented capability contracts
 
 Capabilities shall expose bounded technical responsibilities meaningful to AppManager rather than leaking arbitrary provider APIs into the Engine.
+
+<a id="dd-eng-035"></a>
 
 ### DD-ENG-035 — Delegation request
 
 A delegation request shall carry only the context, target, configuration and policy-derived constraints needed by the capability.
 
+<a id="dd-eng-036"></a>
+
 ### DD-ENG-036 — Least semantic authority
 
 A capability shall receive the least application authority necessary to perform its bounded task. It shall not infer broader target or mutation scope from accessible resources.
+
+<a id="dd-eng-037"></a>
 
 ### DD-ENG-037 — Capability evidence
 
 Capabilities shall return normalized technical evidence, structured findings, proposed plans, applied effects or bounded result payloads suitable for DD-1.2 interpretation.
 
+<a id="dd-eng-038"></a>
+
 ### DD-ENG-038 — Provider normalization
 
 Provider-specific exceptions, exit codes, SDK objects and raw responses shall be normalized at the capability boundary before they participate in final application interpretation.
 
+<a id="dd-eng-039"></a>
+
 ### DD-ENG-039 — Provider fallback
 
 Provider fallback is permitted only where the owning capability/use case semantics allow it and the fallback does not silently change application intent, scope, safety or acceptance criteria.
+
+<a id="dd-eng-040"></a>
 
 ### DD-ENG-040 — Capability unavailability
 
@@ -422,17 +502,23 @@ Capability unavailability shall be represented explicitly and interpreted by the
 
 This section fixes their position in the architecture without prematurely prescribing concrete implementations.
 
+<a id="dd-eng-041"></a>
+
 ### DD-ENG-041 — Scanners and recognizers
 
 Scanners, recognizers, parsers and structural analyzers are evidence-producing responsibilities. They may identify structure, facts, candidates or findings but do not acquire mutation or application-policy authority.
 
 > **Recognition is not mutation authority.**
 
+<a id="dd-eng-042"></a>
+
 ### DD-ENG-042 — Resolvers
 
 Resolvers determine a governed answer within a bounded semantic concern, such as managed-project identity, managed scope, configuration value, provider selection or strategy selection.
 
 Resolving a value does not grant authority over the use case consuming it.
+
+<a id="dd-eng-043"></a>
 
 ### DD-ENG-043 — Strategies
 
@@ -451,15 +537,21 @@ recognition / inspection
     -> application-level acceptance
 ```
 
+<a id="dd-eng-044"></a>
+
 ### DD-ENG-044 — Responders and normalizers
 
 A provider-response normalizer may convert provider-native output into AppManager-oriented evidence. A presentation responder/projector may render canonical outcomes. Neither shall redefine the final outcome.
 
 The generic term `Responder` should be avoided in normative Detailed Design where a more precise responsibility name is available.
 
+<a id="dd-eng-045"></a>
+
 ### DD-ENG-045 — Orchestrators
 
 Orchestrators own sequencing within the bounded use case or domain responsibility assigned to them. They coordinate scanners, resolvers, strategies and capabilities but remain subject to the Engine authority model.
+
+<a id="dd-eng-046"></a>
 
 ### DD-ENG-046 — No universal pattern framework
 
@@ -469,25 +561,37 @@ The existence of these responsibility patterns does not mandate generic Scanner,
 
 ## 12. Policy and Safety
 
+<a id="dd-eng-047"></a>
+
 ### DD-ENG-047 — Policy evaluation belongs above mechanism
 
 Application policy shall be evaluated before delegating a consequential operation when the decision depends on application intent, managed scope, safety or authorization.
+
+<a id="dd-eng-048"></a>
 
 ### DD-ENG-048 — Capability-local safety
 
 A capability may enforce stricter technical invariants within its own contract, such as rejecting malformed targets or unsafe technical operations. Such rejection supplements rather than replaces application policy.
 
+<a id="dd-eng-049"></a>
+
 ### DD-ENG-049 — Non-destructive constraints
 
 Where a use case is specified as non-destructive or bounded, delegated capabilities shall receive constraints sufficient to prevent them from broadening the operation beyond the approved semantics.
+
+<a id="dd-eng-050"></a>
 
 ### DD-ENG-050 — Authorization evidence
 
 Interaction adapters may acquire authorization/confirmation evidence. The Engine/use case determines whether the evidence satisfies the required application authorization.
 
+<a id="dd-eng-051"></a>
+
 ### DD-ENG-051 — No inferred authorization
 
 Headless mode, automation, provider configuration, environment variables, filesystem permissions or successful authentication shall not be treated as implicit authorization for an application operation unless the owning semantics explicitly define them as valid evidence.
+
+<a id="dd-eng-052"></a>
 
 ### DD-ENG-052 — Authorization invalidation
 
@@ -497,17 +601,25 @@ Authorization shall be reconsidered if the material target, scope, destructive c
 
 ## 13. Preview and Planning
 
+<a id="dd-eng-053"></a>
+
 ### DD-ENG-053 — Preview is a use-case semantic
 
 DD-1.1 carries preview intent; the owning use case defines what meaningful preview means.
+
+<a id="dd-eng-054"></a>
 
 ### DD-ENG-054 — Proposed versus applied effects
 
 Preview/planning output shall use DD-1.2 proposed-effect semantics and shall never be represented as applied state.
 
+<a id="dd-eng-055"></a>
+
 ### DD-ENG-055 — Planning does not authorize execution
 
 A successfully generated plan does not itself grant authorization to apply it.
+
+<a id="dd-eng-056"></a>
 
 ### DD-ENG-056 — Plan validation
 
@@ -517,29 +629,43 @@ A plan that depends on source intelligence, repository state, configuration or e
 
 ## 14. Application Acceptance and Outcomes
 
+<a id="dd-eng-057"></a>
+
 ### DD-ENG-057 — Technical completion is evidence
 
 Technical completion reported by a capability is evidence, not final AppManager success.
+
+<a id="dd-eng-058"></a>
 
 ### DD-ENG-058 — Application acceptance
 
 The owning use case shall evaluate whether the requested application intent was satisfied under applicable policy, scope and acceptance criteria.
 
+<a id="dd-eng-059"></a>
+
 ### DD-ENG-059 — Final outcome ownership
 
 The Engine shall publish one canonical final outcome for the invocation using DD-1.2. Domain payloads may extend the outcome by composition but shall not redefine shared terminal status semantics.
+
+<a id="dd-eng-060"></a>
 
 ### DD-ENG-060 — Partial success
 
 Partial success shall be selected only where the use case's semantics permit meaningful partial satisfaction and DD-1.2 evidence identifies the completed and incomplete portions.
 
+<a id="dd-eng-061"></a>
+
 ### DD-ENG-061 — No-op and already satisfied
 
 A no-op or already-satisfied result may contribute to application success where the use case defines the requested state as already achieved. It shall remain distinguishable in subordinate result/effect information where meaningful.
 
+<a id="dd-eng-062"></a>
+
 ### DD-ENG-062 — Failure preserves effects
 
 Failure shall not discard known consequential effects that occurred before rejection or failure.
+
+<a id="dd-eng-063"></a>
 
 ### DD-ENG-063 — Presentation projection
 
@@ -549,21 +675,31 @@ Exit codes, terminal formatting, GUI notifications, IDE messages and automation 
 
 ## 15. Cancellation
 
+<a id="dd-eng-064"></a>
+
 ### DD-ENG-064 — Cooperative cancellation
 
 Cancellation is cooperative unless a capability explicitly guarantees stronger semantics.
+
+<a id="dd-eng-065"></a>
 
 ### DD-ENG-065 — Propagation
 
 The Engine shall propagate cancellation intent to active orchestration and delegated capabilities that support cancellation.
 
+<a id="dd-eng-066"></a>
+
 ### DD-ENG-066 — Cancellation request is not terminal state
 
 A cancellation request shall not be published as a cancelled outcome until the workflow has established the resulting known state sufficiently to terminate.
 
+<a id="dd-eng-067"></a>
+
 ### DD-ENG-067 — Cancellation does not imply rollback
 
 The Engine shall preserve effects completed before cancellation and shall not claim rollback unless the use case/capability explicitly guarantees and verifies it.
+
+<a id="dd-eng-068"></a>
 
 ### DD-ENG-068 — Late cancellation
 
@@ -573,25 +709,37 @@ If cancellation arrives after the consequential work has irreversibly completed 
 
 ## 16. Retry, Resume, Fallback and Compensation
 
+<a id="dd-eng-069"></a>
+
 ### DD-ENG-069 — No generic application retry
 
 The Engine shall not apply a universal retry policy to arbitrary use cases.
+
+<a id="dd-eng-070"></a>
 
 ### DD-ENG-070 — Provider-local retry
 
 A capability may perform provider-local retry only when its contract establishes that retry does not alter application semantics and can be performed safely within the delegated task.
 
+<a id="dd-eng-071"></a>
+
 ### DD-ENG-071 — Use-case retry authority
 
 Retry or resume of a use case is an application decision and may require fresh project resolution, configuration, state validation, scope resolution and authorization.
+
+<a id="dd-eng-072"></a>
 
 ### DD-ENG-072 — Retryability evidence
 
 DD-1.2 retryability/transience evidence may inform an Engine decision but shall not itself authorize retry.
 
+<a id="dd-eng-073"></a>
+
 ### DD-ENG-073 — Compensation
 
 Compensation is a separate use-case/capability action. It shall not be inferred from failure and shall be represented explicitly in effects/outcomes.
+
+<a id="dd-eng-074"></a>
 
 ### DD-ENG-074 — Fallback semantics
 
@@ -601,25 +749,37 @@ Fallback to alternate strategies/providers/capabilities must preserve the approv
 
 ## 17. Concurrency, Staleness and Isolation
 
+<a id="dd-eng-075"></a>
+
 ### DD-ENG-075 — Invocation isolation
 
 Execution state, configuration snapshots, cancellation and accumulated evidence shall be invocation-scoped unless a shared resource contract explicitly defines otherwise.
+
+<a id="dd-eng-076"></a>
 
 ### DD-ENG-076 — Shared resource conflicts
 
 Where multiple invocations can affect the same project resource, repository, configuration concern or generated artifact, the owning use case/capability shall expose sufficient conflict evidence for safe application coordination.
 
+<a id="dd-eng-077"></a>
+
 ### DD-ENG-077 — Stale project context
 
 The Engine shall not assume that a previously resolved managed-project context remains valid indefinitely across consequential stages.
+
+<a id="dd-eng-078"></a>
 
 ### DD-ENG-078 — Stale configuration
 
 An established operation snapshot remains semantically stable, but a workflow that explicitly re-resolves configuration shall treat changed provenance/value as a new decision input.
 
+<a id="dd-eng-079"></a>
+
 ### DD-ENG-079 — No global serialization requirement
 
 This design does not require all AppManager operations to execute serially. Concurrency restrictions shall be scoped to actual semantic/resource conflicts.
+
+<a id="dd-eng-080"></a>
 
 ### DD-ENG-080 — Deterministic conflict outcome
 
@@ -629,21 +789,31 @@ Unresolvable application-level conflicts shall fail or defer deterministically r
 
 ## 18. Nested and Composite Use Cases
 
+<a id="dd-eng-081"></a>
+
 ### DD-ENG-081 — Composition without authority collapse
 
 A parent use case may invoke a subordinate approved use case or capability while retaining authority for the parent application's composite intent.
+
+<a id="dd-eng-082"></a>
 
 ### DD-ENG-082 — Parent/child correlation
 
 Nested execution shall preserve parent/child correlation so diagnostics, effects and outcomes can be attributed without flattening all work into one opaque result.
 
+<a id="dd-eng-083"></a>
+
 ### DD-ENG-083 — Sub-use-case outcome interpretation
 
 A child outcome is evidence to the parent. The parent shall interpret it according to the composite use case rather than blindly copying its status.
 
+<a id="dd-eng-084"></a>
+
 ### DD-ENG-084 — No recursive public invocation requirement
 
 Internal composition does not require a domain orchestrator to re-enter AppManager through a public/transport invocation surface. It may use the appropriate internal use-case/capability contract.
+
+<a id="dd-eng-085"></a>
 
 ### DD-ENG-085 — Independent authorization remains possible
 
@@ -653,17 +823,25 @@ A nested operation with materially different authorization requirements may requ
 
 ## 19. Headless and Interaction-Mode Equivalence
 
+<a id="dd-eng-086"></a>
+
 ### DD-ENG-086 — Shared Engine semantics
 
 TUI, Headless, GUI, IDE, CI, automation and future supported adapters shall converge on the same Engine/use-case semantics after normalization.
+
+<a id="dd-eng-087"></a>
 
 ### DD-ENG-087 — Headless determinism
 
 Headless execution shall not depend on hidden prompt order, presentation state or interactive-only defaults.
 
+<a id="dd-eng-088"></a>
+
 ### DD-ENG-088 — Interaction capability declaration
 
 Adapters may declare whether they can obtain interactive input, authorization or present progress. The Engine shall use those capabilities only as acquisition/projection mechanisms, not as semantic authority.
+
+<a id="dd-eng-089"></a>
 
 ### DD-ENG-089 — Interaction-required outcome
 
@@ -696,17 +874,25 @@ DD-1.2 normalized evidence/outcomes
 
 The representation is conceptual. DD-1.3 and DD-1.4 collaborate through the staged bootstrap contract rather than forming unrestricted circular authority; DD-1 contracts may mutually reference shared types/responsibilities without requiring cyclic implementation modules.
 
+<a id="dd-eng-090"></a>
+
 ### DD-ENG-090 — No upward presentation dependency
 
 Application/domain/capability logic shall not depend on TUI/GUI/IDE presentation implementations.
+
+<a id="dd-eng-091"></a>
 
 ### DD-ENG-091 — No provider-to-domain inversion
 
 Provider implementations shall conform to capability contracts; domains shall not be shaped around provider SDK object models.
 
+<a id="dd-eng-092"></a>
+
 ### DD-ENG-092 — No raw resource authority
 
 Filesystem, repository, process, environment, AI and framework access mechanisms shall not bypass managed scope, configuration or application policy merely because they can technically perform an action.
+
+<a id="dd-eng-093"></a>
 
 ### DD-ENG-093 — Contract-oriented replaceability
 
@@ -718,21 +904,31 @@ This supports ADR-0001 without requiring speculative language-neutral serializat
 
 ## 21. Extensibility
 
+<a id="dd-eng-094"></a>
+
 ### DD-ENG-094 — New command/use case
 
 A new command must define a canonical identity, owning domain/use case, context prerequisites, availability conditions, scope semantics, configuration concerns, authorization/policy requirements, capability dependencies and acceptance/outcome rules.
+
+<a id="dd-eng-095"></a>
 
 ### DD-ENG-095 — New capability implementation
 
 A new capability provider may be substituted behind an approved capability boundary when it preserves the AppManager-oriented contract and does not redefine application semantics.
 
+<a id="dd-eng-096"></a>
+
 ### DD-ENG-096 — Declarative resources
 
 Templates, licences, profiles and other declarative resources may extend supported behavior through their owning registry/resource contracts without becoming arbitrary executable plugins.
 
+<a id="dd-eng-097"></a>
+
 ### DD-ENG-097 — No executable plugin framework implied
 
 This design does not establish a general arbitrary executable plugin framework. Such a framework would require deliberate trust, permissions, lifecycle, compatibility, isolation, security and failure design and may require an ADR.
+
+<a id="dd-eng-098"></a>
 
 ### DD-ENG-098 — New application surface
 
@@ -742,17 +938,25 @@ A new interaction/integration surface shall implement the shared invocation and 
 
 ## 22. Failure and Internal Invariants
 
+<a id="dd-eng-099"></a>
+
 ### DD-ENG-099 — Expected rejection is structured
 
 Unknown/unavailable commands, invalid invocation, unresolved project/configuration, authorization failure, scope conflict and expected capability failures shall use structured diagnostics/outcomes rather than depend solely on thrown implementation exceptions.
+
+<a id="dd-eng-100"></a>
 
 ### DD-ENG-100 — Internal invariant failure
 
 Violation of an Engine invariant shall fail safely, preserve known effects/evidence where possible and produce an internal diagnostic without exposing sensitive implementation detail.
 
+<a id="dd-eng-101"></a>
+
 ### DD-ENG-101 — No silent semantic fallback
 
 The Engine shall not silently reinterpret an invocation as another command, broaden scope, weaken safety, invent configuration or substitute an unauthorized provider merely to complete execution.
+
+<a id="dd-eng-102"></a>
 
 ### DD-ENG-102 — Sensitive minimization
 

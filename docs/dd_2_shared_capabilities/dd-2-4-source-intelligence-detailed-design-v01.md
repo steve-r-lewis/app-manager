@@ -137,15 +137,21 @@ bounded source reference / snapshot
 
 Resource Access owns bounded resource acquisition and resource-level snapshots. Source Intelligence consumes source content and revision evidence supplied through an approved resource path.
 
-**DD-SINT-001 — Analysis does not imply resource authority**  
-The ability to read or analyze a resource shall not be interpreted as authority to mutate it.
+<a id="dd-sint-001"></a>
+
+**DD-SINT-001 — Analysis does not imply resource authority**
+
+Read/analyze ability applies [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
 ### 4.2 Relationship to Source Transformation
 
 Source Intelligence supplies facts. Source Transformation consumes those facts to derive or validate bounded transformation work under its own Detailed Design.
 
-**DD-SINT-002 — Recognition/transformation separation**  
-No Source Intelligence operation shall apply an edit merely because it can identify where an edit could occur.
+<a id="dd-sint-002"></a>
+
+**DD-SINT-002 — Recognition/transformation separation**
+
+Analysis side effects follows [FR-XFORM-005](../functional/source-transformation-functional-specification-v01.md#fr-xform-005).
 
 ### 4.3 Relationship to the Application Engine
 
@@ -189,14 +195,22 @@ A bounded Source Intelligence request shall be capable of carrying, where releva
 - correlation/invocation identity;
 - sensitivity classification where applicable.
 
+<a id="dd-sint-003"></a>
+
 **DD-SINT-003 — Bounded analytical purpose**  
 A request shall identify sufficient analytical purpose to avoid unnecessary broad analysis where a narrower fact request is adequate.
+
+<a id="dd-sint-004"></a>
 
 **DD-SINT-004 — Hints are not unquestionable truth**  
 Filename extensions, caller hints, MIME-like labels or conventional paths may contribute recognition evidence but shall not silently override materially contradictory source evidence where correctness or safety depends on the distinction.
 
-**DD-SINT-005 — Read-only request**  
-The Source Intelligence request contract shall contain no implicit authority to write the analyzed resource.
+<a id="dd-sint-005"></a>
+
+**DD-SINT-005 — Read-only request**
+
+Analysis-request write authority follows [FR-XFORM-005](../functional/source-transformation-functional-specification-v01.md#fr-xform-005).
+
 
 ---
 
@@ -212,12 +226,16 @@ It may refer to a whole resource or an explicitly bounded embedded region.
 
 Analysis facts describe a particular observed source state.
 
+<a id="dd-sint-006"></a>
+
 **DD-SINT-006 — Facts are snapshot-bound**  
 Where downstream correctness depends on source stability, Source Intelligence shall associate facts with revision, digest, version or equivalent evidence sufficient to detect material source change before consequential use.
 
 ### 7.3 Content ownership
 
 Source Intelligence does not own source persistence. It consumes source content through Resource Access or another explicitly governed source provider.
+
+<a id="dd-sint-007"></a>
 
 **DD-SINT-007 — No hidden reread authority**  
 An analysis provider shall not silently bypass governed Resource Access and reread arbitrary project files merely for convenience when doing so could alter scope, freshness or security semantics.
@@ -260,19 +278,30 @@ A normalized recognition result should be capable of representing:
 - provenance/evidence;
 - diagnostics.
 
+<a id="dd-sint-008"></a>
+
 **DD-SINT-008 — Recognition is explicit evidence**  
 Recognition shall produce a distinguishable result rather than hiding source-kind assumptions inside a later parser call.
 
-**DD-SINT-009 — Extension is not universal truth**  
-File extension alone shall not be treated as sufficient authority where the requested analysis requires stronger structural certainty.
+<a id="dd-sint-009"></a>
+
+**DD-SINT-009 — Extension is not universal truth**
+
+Extension evidence where stronger structural certainty is required follows [DD-SINT-004](#dd-sint-004).
+
+<a id="dd-sint-010"></a>
 
 **DD-SINT-010 — Unsupported is first-class**  
 A source kind for which AppManager lacks the required analytical capability shall be represented as unsupported rather than coerced through an unrelated provider.
 
 ### 8.3 Ambiguous recognition
 
-**DD-SINT-011 — Ambiguity is preserved**  
-When multiple materially different interpretations remain plausible and choosing one could affect downstream correctness, the result shall remain ambiguous or require permitted disambiguation rather than selecting according to incidental provider order.
+<a id="dd-sint-011"></a>
+
+**DD-SINT-011 — Ambiguity is preserved**
+
+Recognition ambiguity follows [FR-XFORM-009](../functional/source-transformation-functional-specification-v01.md#fr-xform-009).
+
 
 ---
 
@@ -280,11 +309,17 @@ When multiple materially different interpretations remain plausible and choosing
 
 Version 1 must support the source kinds required by approved functional use cases. Existing implementation evidence includes TypeScript, JavaScript, Vue, CSS, HTML and JSON-family analysis, but the exact implementation set does not by itself define permanent architecture.
 
+<a id="dd-sint-012"></a>
+
 **DD-SINT-012 — Capability-driven support**  
 Supported source kinds shall be discoverable through the Source Intelligence capability contract rather than hard-coded independently by each consuming domain.
 
+<a id="dd-sint-013"></a>
+
 **DD-SINT-013 — Support is fact-class specific**  
 A provider may support some analytical facts for a source kind without supporting every possible fact. For example, metadata recognition may be available even when declaration extraction is not.
+
+<a id="dd-sint-014"></a>
 
 **DD-SINT-014 — No false completeness**  
 A source shall not be described as fully supported merely because one narrow inspection operation succeeds.
@@ -313,12 +348,16 @@ A fact should be capable of carrying, where useful:
 
 ### 10.2 Facts versus provider objects
 
+<a id="dd-sint-015"></a>
+
 **DD-SINT-015 — Provider-model isolation**  
 AST nodes, CST nodes, compiler symbols, scanner tokens, parser cursors, regex match objects and language-service SDK objects shall not become the general Source Intelligence contract.
 
 A provider-specific representation may remain available behind the capability boundary for a tightly coupled provider operation, but shared consumers shall depend on normalized facts.
 
 ### 10.3 Fact granularity
+
+<a id="dd-sint-016"></a>
 
 **DD-SINT-016 — Least sufficient structural detail**  
 Source Intelligence should expose the least structural detail sufficient for AppManager consumers rather than universalizing a complete language model for every supported source kind.
@@ -342,11 +381,17 @@ Regions may include:
 
 A location/range model should support offsets and, where useful, human-readable line/column positions.
 
+<a id="dd-sint-017"></a>
+
 **DD-SINT-017 — Stable range semantics**  
 Range endpoints and inclusion/exclusion semantics shall be defined consistently so downstream planning does not depend on provider-specific cursor conventions.
 
-**DD-SINT-018 — Location is not edit authority**  
-A recognized source range identifies where a fact was observed; it does not authorize replacement of that range.
+<a id="dd-sint-018"></a>
+
+**DD-SINT-018 — Location is not edit authority**
+
+Observed source ranges applies [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
+
 
 ---
 
@@ -365,8 +410,13 @@ Normalized declaration/block facts may include:
 - bounded signature/descriptor facts where required;
 - provider certainty.
 
-**DD-SINT-019 — Declaration identity is structural evidence**  
-A recognized declaration name or block does not by itself define a transformation target; the owning transformation/use case must establish target intent and eligibility.
+<a id="dd-sint-019"></a>
+
+**DD-SINT-019 — Declaration identity is structural evidence**
+
+Declaration/block facts used in transformation planning applies [Design](../appmanager-design-specification-v01.md#_7-5-strategies-and-transformation-plans).
+
+<a id="dd-sint-020"></a>
 
 **DD-SINT-020 — Empty block set can be valid**  
 A supported source kind may legitimately expose no documentable block concept. An empty result shall be distinguishable from failed or unsupported analysis where that distinction matters.
@@ -388,11 +438,17 @@ Normalized metadata facts may include:
 - schema ambiguity;
 - source revision.
 
+<a id="dd-sint-021"></a>
+
 **DD-SINT-021 — Metadata recognition is schema-aware**  
 The existence of a field or object with a familiar name shall not automatically establish that it follows an unrelated recognized schema.
 
-**DD-SINT-022 — No metadata injection**  
-Source Intelligence shall not insert, repair or normalize a header while recognizing it. Such change belongs to Source Transformation or generation capability as applicable.
+<a id="dd-sint-022"></a>
+
+**DD-SINT-022 — No metadata injection**
+
+Header recognition follows [FR-XFORM-005](../functional/source-transformation-functional-specification-v01.md#fr-xform-005).
+
 
 ---
 
@@ -407,6 +463,8 @@ Documentation presence should be capable of distinguishing, where required:
 - association ambiguous;
 - unsupported association analysis;
 - malformed documentation region.
+
+<a id="dd-sint-023"></a>
 
 **DD-SINT-023 — Presence is not quality**  
 The fact that documentation exists does not imply that it is complete, correct, current or application-accepted unless a higher-level capability explicitly evaluates those properties.
@@ -427,8 +485,13 @@ Facts may include:
 - schema/kind evidence;
 - structural ranges.
 
-**DD-SINT-024 — Configuration structure is not effective configuration**  
-Recognizing a setting in a source file does not determine its effective AppManager value or precedence. DD-1.4 Configuration Resolution retains that authority.
+<a id="dd-sint-024"></a>
+
+**DD-SINT-024 — Configuration structure is not effective configuration**
+
+Recognized settings are structural inputs to [DD-1.4 resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result).
+
+<a id="dd-sint-025"></a>
 
 **DD-SINT-025 — Schema distinction**  
 Different configuration schemas that happen to use similar field names shall remain distinguishable when their semantics differ.
@@ -447,8 +510,12 @@ Source Intelligence may represent:
 - parent-child relationships;
 - region-local structural facts mapped to whole-resource coordinates.
 
+<a id="dd-sint-026"></a>
+
 **DD-SINT-026 — Composite source preserves containment**  
 Facts derived from an embedded region shall preserve sufficient containment and coordinate information to identify their location in the original source resource.
+
+<a id="dd-sint-027"></a>
 
 **DD-SINT-027 — Embedded analysis is bounded**  
 Recognition of an embedded region shall not imply permission to inspect arbitrary external dependencies referenced by that region.
@@ -459,11 +526,18 @@ Recognition of an embedded region shall not imply permission to inspect arbitrar
 
 Existing AppManager implementation includes hand-written token scanners for several source kinds. Tokens can be useful provider-level evidence, but tokenization is not itself the permanent shared Source Intelligence abstraction.
 
-**DD-SINT-028 — Tokens remain provider-level unless required**  
-A normalized consumer contract shall not require all providers to expose the current scanner token model merely because one implementation uses it.
+<a id="dd-sint-028"></a>
+
+**DD-SINT-028 — Tokens remain provider-level unless required**
+
+Scanner-token implementation representations follows [DD-SINT-015](#dd-sint-015).
+
+<a id="dd-sint-029"></a>
 
 **DD-SINT-029 — Token location correctness is provider conformance**  
 Where a provider uses tokens to derive structural facts, token range/location correctness is part of provider correctness and must be testable independently.
+
+<a id="dd-sint-030"></a>
 
 **DD-SINT-030 — Scanner availability does not imply semantic completeness**  
 Successful lexical tokenization shall not be treated as proof that higher-level structural facts are available or correct.
@@ -483,11 +557,18 @@ Source Intelligence may be implemented by one or more mechanisms, including:
 - structured-data parser;
 - composite/orchestrating recognizer.
 
+<a id="dd-sint-031"></a>
+
 **DD-SINT-031 — Provider choice follows required semantics**  
 Provider selection shall be based on the fact class and source kind required, not on a universal preference for scanner, regex, AST or compiler technology.
 
-**DD-SINT-032 — Provider sophistication is not authority**  
-A more sophisticated parser/compiler provider does not acquire application or transformation authority merely because it has richer semantic knowledge.
+<a id="dd-sint-032"></a>
+
+**DD-SINT-032 — Provider sophistication is not authority**
+
+Richer parser/compiler evidence applies [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+
+<a id="dd-sint-033"></a>
 
 **DD-SINT-033 — Bounded regex use is permissible**  
 Regular-expression recognition is not prohibited where it can safely and deterministically establish the requested fact. It shall not be represented as stronger structural certainty than it actually provides.
@@ -508,8 +589,12 @@ These states shall remain distinguishable:
 - **provider failure** — eligible provider failed technically;
 - **cancelled** — analysis stopped under cancellation semantics.
 
+<a id="dd-sint-034"></a>
+
 **DD-SINT-034 — Absence is not failure**  
 A supported analysis that proves a declaration, metadata field or documentation region absent shall not be collapsed into provider failure.
+
+<a id="dd-sint-035"></a>
 
 **DD-SINT-035 — Partial truth is preserved**  
 Where reliable facts can be returned despite another requested fact failing, the result may preserve those facts with explicit partial diagnostics rather than discarding all evidence.
@@ -527,8 +612,13 @@ Material ambiguity may arise from:
 - provider disagreement;
 - malformed source that admits more than one recovery interpretation.
 
-**DD-SINT-036 — No arbitrary first-match authority**  
-Incidental provider order, filesystem order, regex match order or registry insertion order shall not silently resolve material ambiguity where the choice could affect consequential downstream behavior.
+<a id="dd-sint-036"></a>
+
+**DD-SINT-036 — No arbitrary first-match authority**
+
+Material choices based on incidental provider, filesystem, match or registry order follows [FR-XFORM-009](../functional/source-transformation-functional-specification-v01.md#fr-xform-009).
+
+<a id="dd-sint-037"></a>
 
 **DD-SINT-037 — Conflict provenance**  
 Where provider interpretations conflict materially, diagnostics should preserve enough provenance to explain the competing interpretations without leaking provider-native object graphs.
@@ -554,18 +644,29 @@ Normalized diagnostics should distinguish, where useful:
 
 Diagnostics may include source ranges where safe and meaningful.
 
-**DD-SINT-038 — Diagnostics are evidence**  
-Recognition diagnostics shall not independently determine final AppManager outcome.
+<a id="dd-sint-038"></a>
 
-**DD-SINT-039 — Provider detail is subordinate**  
-Raw parser exceptions, stack traces, compiler objects and SDK-specific diagnostics shall be normalized or bounded before crossing the capability boundary.
+**DD-SINT-038 — Diagnostics are evidence**
+
+Recognition diagnostics follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation).
+
+<a id="dd-sint-039"></a>
+
+**DD-SINT-039 — Provider detail is subordinate**
+
+Parser/compiler exceptions and object graphs follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization).
+
 
 ---
 
 ## 22. Determinism
 
+<a id="dd-sint-040"></a>
+
 **DD-SINT-040 — Equivalent-source determinism**  
 Given materially equivalent source content, analysis request, effective configuration and provider capability, Source Intelligence should produce materially equivalent normalized facts independent of TUI, Headless or host adapter.
+
+<a id="dd-sint-041"></a>
 
 **DD-SINT-041 — No presentation-dependent recognition**  
 Recognition shall not depend on an interactive prompt or terminal-only choice. If disambiguation requires caller input, the ambiguity must be representable through the invocation/application model.
@@ -576,14 +677,23 @@ Recognition shall not depend on an interactive prompt or terminal-only choice. I
 
 Source Intelligence may cache analysis results for performance, but cache identity must preserve correctness.
 
+<a id="dd-sint-042"></a>
+
 **DD-SINT-042 — Cache is revision-bound**  
 Cached facts shall only be reused when the implementation can establish that the relevant source state and analysis inputs remain materially equivalent.
 
-**DD-SINT-043 — Cache is not authority**  
-Cached recognition does not override stronger current evidence that the source changed.
+<a id="dd-sint-043"></a>
 
-**DD-SINT-044 — Cache invisibility**  
-Use of a cache shall not change application semantics or cause different facts to be reported solely because one interaction mode has warmed a cache.
+**DD-SINT-043 — Cache is not authority**
+
+Cache reuse when current evidence shows changed source follows [DD-SINT-042](#dd-sint-042).
+
+<a id="dd-sint-044"></a>
+
+**DD-SINT-044 — Cache invisibility**
+
+Facts after mode-specific cache warming follows [DD-SINT-040](#dd-sint-040).
+
 
 ---
 
@@ -591,8 +701,13 @@ Use of a cache shall not change application semantics or cause different facts t
 
 Most Version 1 source inspection may be local and short-lived, but the capability contract shall not preclude expensive parser/language-service operations.
 
-**DD-SINT-045 — Cancellation propagation**  
-Where analysis is cancellable, Source Intelligence shall observe the DD-1 cancellation context and propagate cancellation to providers that support it.
+<a id="dd-sint-045"></a>
+
+**DD-SINT-045 — Cancellation propagation**
+
+Cancellable analysis propagates the [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) context to supported providers.
+
+<a id="dd-sint-046"></a>
 
 **DD-SINT-046 — Cancellation does not fabricate facts**  
 Facts not reliably established before cancellation shall not be reported as complete merely to provide a terminal result.
@@ -603,14 +718,24 @@ Facts not reliably established before cancellation shall not be reported as comp
 
 Project source is input data and may be malformed, adversarial or sensitive.
 
+<a id="dd-sint-047"></a>
+
 **DD-SINT-047 — Analysis does not execute source**  
 Ordinary Source Intelligence shall not execute analyzed project code merely to understand its structure unless a separately governed capability explicitly requires execution.
 
-**DD-SINT-048 — No implicit dependency loading**  
-A provider shall not automatically import/execute project modules or arbitrary plugins as part of read-only recognition where a non-executing analysis path is required by the contract.
+<a id="dd-sint-048"></a>
 
-**DD-SINT-049 — Sensitive fact minimization**  
-Normalized results and diagnostics shall avoid unnecessarily copying secrets or large sensitive source fragments when structural identity/range evidence is sufficient.
+**DD-SINT-048 — No implicit dependency loading**
+
+Provider import/execution of project modules or plugins follows [DD-SINT-047](#dd-sint-047).
+
+<a id="dd-sint-049"></a>
+
+**DD-SINT-049 — Sensitive fact minimization**
+
+Source fragments in evidence; identity/ranges suffice where content is unnecessary follows [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
+
+<a id="dd-sint-050"></a>
 
 **DD-SINT-050 — Untrusted provider input**  
 Provider implementations shall treat project-authored source as untrusted input and bound recursion, resource use or other parser risks where materially applicable.
@@ -621,8 +746,13 @@ Provider implementations shall treat project-authored source as untrusted input 
 
 Managed Project may consume Source Intelligence evidence during project understanding, and Source Intelligence may consume managed context to constrain requested analysis. Neither relationship transfers authority.
 
-**DD-SINT-051 — Recognition does not establish managed scope**  
-Finding a Nuxt configuration declaration, layer-like source structure or project metadata marker may contribute evidence to project resolution but does not itself establish managed-project identity or mutation scope.
+<a id="dd-sint-051"></a>
+
+**DD-SINT-051 — Recognition does not establish managed scope**
+
+Nuxt declarations, layer-like structure and metadata markers applies [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
+
+<a id="dd-sint-052"></a>
 
 **DD-SINT-052 — Scope constrains analysis where required**  
 When the owning use case supplies a bounded source scope, Source Intelligence shall not silently broaden analysis to unrelated project resources.
@@ -639,10 +769,12 @@ Effective configuration may determine:
 - limits;
 - optional recognition behavior.
 
-**DD-SINT-053 — No private configuration precedence**  
-Source Intelligence shall consume governed effective configuration rather than independently rereading arbitrary settings/environment sources to establish competing policy.
+<a id="dd-sint-053"></a>
 
-Recognized configuration source remains structural evidence and is not itself the operation's effective configuration.
+**DD-SINT-053 — No private configuration precedence**
+
+Analysis consumes [DD-1.4 effective values](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_15-resolution-result); recognized configuration remains a separate structural input.
+
 
 ---
 
@@ -662,8 +794,13 @@ A result should be capable of representing:
 - timing where useful;
 - cancellation evidence.
 
-**DD-SINT-054 — Analysis success is not application success**  
-Successful structural analysis shall not by itself establish that the owning AppManager use case succeeded.
+<a id="dd-sint-054"></a>
+
+**DD-SINT-054 — Analysis success is not application success**
+
+Structural-analysis completion applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
+
+<a id="dd-sint-055"></a>
 
 **DD-SINT-055 — No Boolean collapse**  
 Unsupported, absent, ambiguous, malformed, partial and provider-failed states shall not be collapsed into one Boolean where the distinction affects downstream behavior.
@@ -687,8 +824,13 @@ Resource Access snapshot
         -> application acceptance
 ```
 
-**DD-SINT-056 — Facts may inform plans, not authorize them**  
-Source Intelligence may identify a declaration, metadata region or configuration path suitable for a requested change, but Source Transformation and the owning use case establish the plan and authority to change it.
+<a id="dd-sint-056"></a>
+
+**DD-SINT-056 — Facts may inform plans, not authorize them**
+
+Source-fact handoff to transformation intent/planning applies [Design](../appmanager-design-specification-v01.md#_7-5-strategies-and-transformation-plans).
+
+<a id="dd-sint-057"></a>
 
 **DD-SINT-057 — Reanalysis may validate source state**  
 Source Transformation may request Source Intelligence again after mutation to establish source-level structural facts. That validation remains distinct from final application acceptance.
@@ -705,8 +847,12 @@ Documentation Capability may consume:
 - source ranges;
 - source-kind recognition.
 
-**DD-SINT-058 — Documentation semantics remain downstream**  
-Source Intelligence identifies documentation-relevant structures; it does not decide what documentation should be generated, whether existing documentation is adequate, or whether generated documentation is accepted.
+<a id="dd-sint-058"></a>
+
+**DD-SINT-058 — Documentation semantics remain downstream**
+
+Documentation-relevant structures feed [Documentation Capability](dd-2-9-documentation-capability-detailed-design-v01.md); its model and the Docs workflow determine documentation adequacy and acceptance.
+
 
 ---
 
@@ -714,8 +860,12 @@ Source Intelligence identifies documentation-relevant structures; it does not de
 
 Nuxt Capability may consume Source Intelligence for Nuxt/Vue/configuration recognition.
 
-**DD-SINT-059 — Generic source facts do not replace Nuxt semantics**  
-Recognizing a Vue region, TypeScript declaration or configuration property does not by itself establish Nuxt-layer identity, Nuxt configuration semantics or Nuxt-domain workflow acceptance.
+<a id="dd-sint-059"></a>
+
+**DD-SINT-059 — Generic source facts do not replace Nuxt semantics**
+
+Vue/TypeScript/configuration facts feed [Nuxt Capability](dd-2-10-nuxt-capability-detailed-design-v01.md) for Nuxt meaning and [Managed Project](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md) for layer identity.
+
 
 ---
 
@@ -723,8 +873,12 @@ Recognizing a Vue region, TypeScript declaration or configuration property does 
 
 Quality may consume source facts for discovery or contextual diagnostics.
 
-**DD-SINT-060 — Inspection is not quality acceptance**  
-Source Intelligence may report malformed source or structural facts but shall not become the owner of lint, typecheck, test or quality-gate acceptance.
+<a id="dd-sint-060"></a>
+
+**DD-SINT-060 — Inspection is not quality acceptance**
+
+Malformed-source facts are inputs to the [Quality Domain](../dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) when a quality use case consumes them.
+
 
 ---
 
@@ -732,8 +886,12 @@ Source Intelligence may report malformed source or structural facts but shall no
 
 AI workflows may consume bounded structural facts or source excerpts selected under AI policy.
 
-**DD-SINT-061 — Intelligence output is not automatic AI context**  
-The existence of a Source Intelligence fact or source range does not automatically authorize sending its underlying source content to an AI provider. AI context construction and sensitive-data policy remain under the AI capability/application authority.
+<a id="dd-sint-061"></a>
+
+**DD-SINT-061 — Intelligence output is not automatic AI context**
+
+Disclosure of source underlying a fact/range uses [AI Capability context policy](dd-2-7-ai-capability-detailed-design-v01.md); recognition alone is not a disclosure request.
+
 
 ---
 
@@ -741,8 +899,13 @@ The existence of a Source Intelligence fact or source range does not automatical
 
 Source Intelligence should support capability discovery sufficient to answer whether a requested source kind/fact class can be analyzed.
 
-**DD-SINT-062 — Availability is fact-specific**  
-Provider availability for one language or fact class shall not imply availability for all source analysis.
+<a id="dd-sint-062"></a>
+
+**DD-SINT-062 — Availability is fact-specific**
+
+Fact-class/source-kind provider availability follows [DD-SINT-013](#dd-sint-013).
+
+<a id="dd-sint-063"></a>
 
 **DD-SINT-063 — No silent provider fallback with weaker semantics**  
 A provider may only be substituted when it satisfies the required Source Intelligence contract. Falling from structural parsing to a materially weaker heuristic shall be explicit in evidence where certainty changes.
@@ -753,11 +916,17 @@ A provider may only be substituted when it satisfies the required Source Intelli
 
 Version 1 may use TypeScript/Node-native implementations, hand-written scanners, regular expressions and `jsonc-parser`. These are implementation choices, not permanent architecture unless explicitly elevated.
 
+<a id="dd-sint-064"></a>
+
 **DD-SINT-064 — Semantic provider boundary**  
 A replacement provider shall preserve the normalized fact semantics promised by this design or explicitly report unsupported/partial capability.
 
-**DD-SINT-065 — No speculative transport abstraction**  
-Provider replaceability does not require a separate worker process, RPC protocol, language-neutral schema or plugin runtime in Version 1 unless a concrete architectural requirement later justifies one.
+<a id="dd-sint-065"></a>
+
+**DD-SINT-065 — No speculative transport abstraction**
+
+Source analysis topology follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification); no worker, RPC, language-neutral schema or plugin runtime is required.
+
 
 ---
 
@@ -802,12 +971,17 @@ The following are not automatically permanent architecture:
 
 Historical documentation confirms that the current strategies generally analyze raw text directly rather than consuming the existing token scanners. This implementation fact must not force the permanent architecture either to preserve two parallel layers or to merge them prematurely.
 
-**DD-SINT-066 — Implementation reconciliation occurs later**  
-Implementation Specification shall decide how current scanners, strategies and services are adapted to this approved capability contract.
+<a id="dd-sint-066"></a>
+
+**DD-SINT-066 — Implementation reconciliation occurs later**
+
+Current scanner/strategy/service adaptation belongs to [Implementation Specification](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).
 
 ### 36.4 Known scanner defect
 
 Historical scanner review identified an HTML quoted-attribute cursor over-consumption defect. That finding is implementation/provider evidence, not a reason to encode the defective cursor behavior into the Source Intelligence contract.
+
+<a id="dd-sint-067"></a>
 
 **DD-SINT-067 — Known provider defects remain provider defects**  
 A known implementation defect shall be corrected and regression-tested during implementation work; normative Detailed Design shall specify the required correct semantics rather than preserve the defect.
@@ -838,6 +1012,8 @@ Source Intelligence shall permit deterministic provider substitution or fixtures
 - provider normalization.
 
 Provider-specific lexical/parser correctness shall be tested below the capability contract. Application acceptance remains tested above it.
+
+<a id="dd-sint-068"></a>
 
 **DD-SINT-068 — No real project mutation required for analysis tests**  
 Core Source Intelligence conformance tests should operate against immutable source fixtures/snapshots and shall not require consequential project mutation.

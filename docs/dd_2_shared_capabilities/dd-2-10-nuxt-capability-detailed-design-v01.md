@@ -89,8 +89,12 @@ Nuxt Capability shall not own:
 - AI-provider selection or AI acceptance;
 - final AppManager success, failure, partial-success or cancellation acceptance outside the bounded Nuxt result contract.
 
+<a id="dd-nuxtcap-001"></a>
+
 **DD-NUXTCAP-001 — Delegated execution remains subordinate**  
 Nuxt Capability executes or evaluates bounded Nuxt-specific work selected by an authoritative caller and shall not invent application intent, managed scope, authorization or unrelated workflow continuation.
+
+<a id="dd-nuxtcap-002"></a>
 
 **DD-NUXTCAP-002 — Nuxt technical success is not application success**  
 Parser success, generated files, package-tool completion, repository completion or syntactically valid Nuxt configuration shall not by themselves establish successful completion of the owning AppManager use case.
@@ -131,8 +135,12 @@ Application Engine / owning Nuxt use case
                  (Resource Access / Git / Process)
 ```
 
+<a id="dd-nuxtcap-003"></a>
+
 **DD-NUXTCAP-003 — No alternate orchestration authority**  
 Nuxt Capability shall not become a second Application Engine or a generic project workflow orchestrator merely because Nuxt use cases compose multiple capabilities.
+
+<a id="dd-nuxtcap-004"></a>
 
 **DD-NUXTCAP-004 — Shared capability versus Nuxt domain**  
 Nuxt Capability supplies technical Nuxt semantics. The Nuxt functional domain owns Nuxt application intent and may orchestrate the capability with other domains/capabilities.
@@ -151,14 +159,22 @@ A Nuxt target may represent:
 - explicitly supported Nuxt configuration target;
 - prospective layer-creation target prior to managed-project incorporation.
 
+<a id="dd-nuxtcap-005"></a>
+
 **DD-NUXTCAP-005 — Root and layer identities remain distinct**  
 The capability shall not collapse the managed root application and managed layers into one undifferentiated Nuxt project identity.
+
+<a id="dd-nuxtcap-006"></a>
 
 **DD-NUXTCAP-006 — Filesystem presence is insufficient**  
 A directory or `nuxt.config`-like file does not by itself establish managed Nuxt identity.
 
+<a id="dd-nuxtcap-007"></a>
+
 **DD-NUXTCAP-007 — Host-relative relationships**  
 Layer integration state shall be interpretable relative to a resolved host/root identity because one layer may be integrated into one root and not another.
+
+<a id="dd-nuxtcap-008"></a>
 
 **DD-NUXTCAP-008 — Repository identity remains separate**  
 Nuxt identity and Nuxt integration shall not be inferred solely from repository topology, submodule presence or remote metadata.
@@ -181,14 +197,22 @@ Recognized facts may include:
 - unsupported/ambiguous structure diagnostics;
 - source/revision provenance.
 
+<a id="dd-nuxtcap-009"></a>
+
 **DD-NUXTCAP-009 — Recognition consumes bounded evidence**  
 Nuxt recognition should consume Managed Project, Source Intelligence and Resource Access evidence rather than independently crawling arbitrary filesystem scope.
+
+<a id="dd-nuxtcap-010"></a>
 
 **DD-NUXTCAP-010 — Recognition is not mutation authority**  
 Recognition of a Nuxt target, config entry or layer relationship shall not authorize source changes, file creation, repository changes or process execution.
 
+<a id="dd-nuxtcap-011"></a>
+
 **DD-NUXTCAP-011 — Unsupported structure fails safely**  
 A recognized-but-unsupported or ambiguous Nuxt structure shall produce explicit unsupported/ambiguous evidence rather than guessed semantics.
+
+<a id="dd-nuxtcap-012"></a>
 
 **DD-NUXTCAP-012 — Nuxt facts retain provenance**  
 Facts derived from source, configuration or provider tooling shall retain sufficient provenance to distinguish observed structure from inferred or generated state where material.
@@ -213,11 +237,17 @@ These concerns do not imply one capability method per application command. Reuse
 
 A Nuxt project may contain more than one configuration-bearing resource. The capability therefore requires semantic target resolution before management operations.
 
+<a id="dd-nuxtcap-013"></a>
+
 **DD-NUXTCAP-013 — Explicit configuration target**  
 A configuration inspection or mutation request shall resolve the Nuxt target and configuration resource unambiguously before consequential work.
 
+<a id="dd-nuxtcap-014"></a>
+
 **DD-NUXTCAP-014 — Root and layer config are independent**  
 Root configuration and a layer's own configuration remain separately addressable where both exist.
+
+<a id="dd-nuxtcap-015"></a>
 
 **DD-NUXTCAP-015 — Current working directory is not identity**  
 Working directory may contribute execution context but shall not be the canonical Nuxt configuration selector.
@@ -240,14 +270,22 @@ A supported configuration entry should be able to represent:
 - sensitivity classification where material;
 - diagnostics/limitations.
 
+<a id="dd-nuxtcap-016"></a>
+
 **DD-NUXTCAP-016 — Semantic representation is provider-independent**  
 Provider/parser-native AST/CST/node objects shall remain below the shared Nuxt contract.
+
+<a id="dd-nuxtcap-017"></a>
 
 **DD-NUXTCAP-017 — Manageability is explicit**  
 The capability shall distinguish configuration it can safely manage from configuration it can only observe.
 
+<a id="dd-nuxtcap-018"></a>
+
 **DD-NUXTCAP-018 — Unsupported content remains preserved evidence**  
 Unsupported configuration shall not be discarded merely because the capability cannot manage it; where safe it should remain represented as opaque/unsupported context sufficient to protect preservation during transformation.
+
+<a id="dd-nuxtcap-019"></a>
 
 **DD-NUXTCAP-019 — Sensitive values are minimized**  
 Secret-bearing runtime values or protected configuration shall not be exposed through ordinary Nuxt inspection merely to make the semantic view complete.
@@ -256,11 +294,17 @@ Secret-bearing runtime values or protected configuration shall not be exposed th
 
 ## 9. Configuration Listing
 
+<a id="dd-nuxtcap-020"></a>
+
 **DD-NUXTCAP-020 — Listing is non-mutating**  
 Listing supported configuration entries shall not produce source changes or provider execution with consequential effects.
 
+<a id="dd-nuxtcap-021"></a>
+
 **DD-NUXTCAP-021 — Entry identity supports follow-on intent**  
 Listed manageable entries shall expose enough identity/context for a subsequent explicit add/remove/update request to target the intended semantic entry without parsing presentation text.
+
+<a id="dd-nuxtcap-022"></a>
 
 **DD-NUXTCAP-022 — Equivalent values in distinct contexts stay distinct**  
 The same textual value appearing in materially different Nuxt contexts shall not be collapsed into one entry when location/context affects semantics.
@@ -279,11 +323,17 @@ A semantic configuration change intent may include:
 - integrate layer by adding/changing a Nuxt relationship;
 - detach layer by removing a Nuxt relationship.
 
+<a id="dd-nuxtcap-023"></a>
+
 **DD-NUXTCAP-023 — Nuxt intent precedes transformation**  
 A transformation request shall be derived from an approved Nuxt semantic change rather than from arbitrary text-edit instructions.
 
+<a id="dd-nuxtcap-024"></a>
+
 **DD-NUXTCAP-024 — Transformation remains DD-2.5**  
 Nuxt Capability shall not write config source directly in order to bypass Source Transformation preservation, stale-state, preview or validation contracts.
+
+<a id="dd-nuxtcap-025"></a>
 
 **DD-NUXTCAP-025 — Narrowest practical change**  
 The semantic change contract shall identify the smallest Nuxt structure necessary to satisfy the requested intent so unrelated config can be preserved.
@@ -292,14 +342,22 @@ The semantic change contract shall identify the smallest Nuxt structure necessar
 
 ## 11. Add Configuration Semantics
 
+<a id="dd-nuxtcap-026"></a>
+
 **DD-NUXTCAP-026 — Supported-class gate**  
 Only configuration classes with defined recognition, transformation and validation semantics may be added through the managed Nuxt contract.
+
+<a id="dd-nuxtcap-027"></a>
 
 **DD-NUXTCAP-027 — Equivalent existing entry**  
 If an equivalent supported entry already exists, the capability shall report already-satisfied evidence rather than request duplicate insertion.
 
+<a id="dd-nuxtcap-028"></a>
+
 **DD-NUXTCAP-028 — Conflict is not duplicate**  
 A conflicting existing entry shall remain distinguishable from an equivalent entry and shall require an explicit supported update/migration path or rejection.
+
+<a id="dd-nuxtcap-029"></a>
 
 **DD-NUXTCAP-029 — Add postcondition**  
 The Nuxt-specific postcondition shall describe the intended semantic entry after transformation, independent of exact source formatting.
@@ -308,14 +366,22 @@ The Nuxt-specific postcondition shall describe the intended semantic entry after
 
 ## 12. Remove Configuration Semantics
 
+<a id="dd-nuxtcap-030"></a>
+
 **DD-NUXTCAP-030 — Exact removal target**  
 Removal shall resolve one supported semantic entry or explicitly bounded set before transformation.
+
+<a id="dd-nuxtcap-031"></a>
 
 **DD-NUXTCAP-031 — Already absent is distinct**  
 A supported requested entry already absent may be represented as already-satisfied/no-op evidence rather than transformation failure.
 
+<a id="dd-nuxtcap-032"></a>
+
 **DD-NUXTCAP-032 — Removal consequence evidence**  
 Known Nuxt-specific consequences of removing an entry or relationship shall be surfaced to the owning use case before authorization where material.
+
+<a id="dd-nuxtcap-033"></a>
 
 **DD-NUXTCAP-033 — Remove postcondition**  
 The postcondition shall describe absence of the selected semantic entry while preserving unrelated entries/content.
@@ -335,11 +401,17 @@ Validation may establish, where supported:
 - root/layer relationship is semantically present/absent;
 - target remains recognizable as the intended Nuxt kind.
 
+<a id="dd-nuxtcap-034"></a>
+
 **DD-NUXTCAP-034 — Source-valid is insufficient**  
 Successful Source Transformation validation does not by itself establish Nuxt semantic validity.
 
+<a id="dd-nuxtcap-035"></a>
+
 **DD-NUXTCAP-035 — Nuxt validation does not absorb Quality**  
 Nuxt-specific validity shall not become general test/lint/typecheck/build authority.
+
+<a id="dd-nuxtcap-036"></a>
 
 **DD-NUXTCAP-036 — Validation result is evidence**  
 Nuxt validity contributes to the owning use case outcome but does not override Application Engine policy, scope or final acceptance.
@@ -362,11 +434,17 @@ Layer evidence may include:
 - supported lifecycle facts;
 - diagnostics/unsupported state.
 
+<a id="dd-nuxtcap-037"></a>
+
 **DD-NUXTCAP-037 — Standalone is valid state**  
 A supported layer may be valid while unintegrated into a particular host.
 
+<a id="dd-nuxtcap-038"></a>
+
 **DD-NUXTCAP-038 — Integration is host-relative**  
 The capability shall not expose one global integrated Boolean when integration is specific to a host/root relationship.
+
+<a id="dd-nuxtcap-039"></a>
 
 **DD-NUXTCAP-039 — Repository-linked is separate state**  
 Repository linkage may coexist with integrated/unintegrated Nuxt states and shall not be used as a synonym for Nuxt composition.
@@ -391,14 +469,22 @@ A profile may define classes such as:
 
 For each class, the profile may specify that the artefact is required/optional for the selected Nuxt baseline and provide Nuxt-specific binding inputs. Where another domain/capability owns the artefact's internal semantics, Nuxt Capability consumes that contract rather than recreating it.
 
+<a id="dd-nuxtcap-040"></a>
+
 **DD-NUXTCAP-040 — Profile identity is semantic**  
 Profiles shall be identified by documented capability intent rather than incidental template ordering or implementation filenames.
+
+<a id="dd-nuxtcap-041"></a>
 
 **DD-NUXTCAP-041 — Profile does not grant file or semantic authority**  
 A profile specifies expected generated classes but does not authorize overwrite of existing resources and does not grant Nuxt Capability independent semantic ownership of cross-owned documentation, licence, settings, quality or repository concerns.
 
+<a id="dd-nuxtcap-042"></a>
+
 **DD-NUXTCAP-042 — Effective configuration supplies values**  
 Author, licence, naming, repository and similar configurable creation inputs shall consume explicit invocation values/effective configuration instead of hard-coded implementation defaults that compete with DD-1.4. Where Settings or another functional contract owns the user-facing meaning of a value, Nuxt receives the resolved choice as input rather than establishing a private alternative.
+
+<a id="dd-nuxtcap-043"></a>
 
 **DD-NUXTCAP-043 — No fabricated secrets**  
 Required secret-bearing values shall be represented as absent, references or explicit placeholders according to policy; Nuxt Capability shall not invent real credentials.
@@ -433,14 +519,22 @@ For a README/introduction consisting only of an approved bounded declarative tem
 
 Licence selection comes from explicit invocation/effective configuration. Settings owns licence management and coupled project metadata semantics; DD-2.6 supplies curated-resource provenance and rendering. Nuxt consumes that choice and coordinates the profile contribution. It does not establish a competing licence policy or depend on provider internals.
 
+<a id="dd-nuxtcap-044"></a>
+
 **DD-NUXTCAP-044 — Templates remain subordinate**  
 Template availability or rendering does not determine Nuxt use-case intent, artefact semantic ownership, target scope, overwrite policy or final acceptance.
+
+<a id="dd-nuxtcap-045"></a>
 
 **DD-NUXTCAP-045 — Generated content is proposed content**  
 Rendering a layer artefact does not itself persist the artefact. Content produced by a cross-owned semantic capability remains proposed content until the authorized persistence path completes.
 
+<a id="dd-nuxtcap-046"></a>
+
 **DD-NUXTCAP-046 — Existing target changes path**  
 If a target artefact already exists, the owning use case shall apply explicit collision/update policy and route bounded modification through Source Transformation where applicable.
+
+<a id="dd-nuxtcap-047"></a>
 
 **DD-NUXTCAP-047 — No generic generator or semantic authority**  
 The fact that template infrastructure can render arbitrary resources, or that Nuxt layer creation can request several artefact classes, shall not cause Nuxt Capability to own arbitrary project-file generation or the independent semantics of those artefact classes.
@@ -464,11 +558,17 @@ Possible stages include:
 - optional remote repository coordination;
 - optional documentation/AI enrichment.
 
+<a id="dd-nuxtcap-048"></a>
+
 **DD-NUXTCAP-048 — Created layer state is preserved on follow-on failure**  
 If the layer scaffold is successfully created but an optional Git/remote/documentation follow-on fails, the result shall retain the created-layer fact and report the later failure separately.
 
+<a id="dd-nuxtcap-049"></a>
+
 **DD-NUXTCAP-049 — No universal atomicity claim**  
 Nuxt Capability shall not imply transactional rollback across filesystem, transformation, documentation, settings/licence, Git and remote-provider effects unless lower-level contracts explicitly guarantee it.
+
+<a id="dd-nuxtcap-050"></a>
 
 **DD-NUXTCAP-050 — Partial creation is structured**  
 Creation results shall identify completed stages, failed/skipped stages, created resources and recommended remaining actions where material. Evidence from cross-owned artefact semantics shall remain distinguishable from Nuxt baseline validation and final application acceptance.
@@ -479,11 +579,17 @@ Creation results shall identify completed stages, failed/skipped stages, created
 
 AI may assist descriptive/generated content but cannot define the layer baseline or Nuxt truth.
 
+<a id="dd-nuxtcap-051"></a>
+
 **DD-NUXTCAP-051 — AI is optional where deterministic baseline exists**  
 A valid supported layer profile shall not require AI merely for descriptive enrichment if the deterministic baseline can be produced without it.
 
+<a id="dd-nuxtcap-052"></a>
+
 **DD-NUXTCAP-052 — AI output remains proposal**  
 AI-generated README/description/other content shall pass the same scope, generation, semantic-owner, validation and acceptance boundaries as deterministic generated content.
+
+<a id="dd-nuxtcap-053"></a>
 
 **DD-NUXTCAP-053 — Nuxt facts outrank generated claims**  
 AI content shall not replace reliably recognized Nuxt/project facts with contradictory generated assertions.
@@ -494,11 +600,17 @@ AI content shall not replace reliably recognized Nuxt/project facts with contrad
 
 Nuxt use cases may coordinate Git-domain operations but shall not reimplement repository semantics.
 
+<a id="dd-nuxtcap-054"></a>
+
 **DD-NUXTCAP-054 — Repository creation remains Git-owned**  
 Local repository initialization, remote creation/association, commit and push are coordinated through the appropriate Git-domain/application use cases or Repository Capability contracts.
 
+<a id="dd-nuxtcap-055"></a>
+
 **DD-NUXTCAP-055 — Repository result remains separate evidence**  
 Nuxt results shall preserve repository follow-on status separately from Nuxt scaffold/integration state where both are relevant.
+
+<a id="dd-nuxtcap-056"></a>
 
 **DD-NUXTCAP-056 — Git success does not prove Nuxt success**  
 Successful repository/submodule coordination shall not establish a Nuxt integration relationship unless the Nuxt-specific postconditions are also satisfied.
@@ -520,17 +632,27 @@ Required evidence includes:
 - optional repository coordination state;
 - post-integration validation.
 
+<a id="dd-nuxtcap-057"></a>
+
 **DD-NUXTCAP-057 — Integration requires existing layer**  
 Integration shall not silently create a missing layer.
+
+<a id="dd-nuxtcap-058"></a>
 
 **DD-NUXTCAP-058 — Host identity is explicit**  
 The root application receiving the relationship shall be resolved before integration planning.
 
+<a id="dd-nuxtcap-059"></a>
+
 **DD-NUXTCAP-059 — Eligibility precedes mutation**  
 The candidate shall satisfy supported Nuxt-layer eligibility conditions before an integration source change is requested.
 
+<a id="dd-nuxtcap-060"></a>
+
 **DD-NUXTCAP-060 — Existing equivalent integration is no-op**  
 An already equivalent integration shall be represented as already satisfied rather than duplicated.
+
+<a id="dd-nuxtcap-061"></a>
 
 **DD-NUXTCAP-061 — Conflicting integration requires explicit path**  
 Conflicting/ambiguous existing relationships shall not be silently supplemented with another extends/integration entry.
@@ -539,11 +661,17 @@ Conflicting/ambiguous existing relationships shall not be silently supplemented 
 
 ## 21. Integration and Repository Relationship Composition
 
+<a id="dd-nuxtcap-062"></a>
+
 **DD-NUXTCAP-062 — Nuxt and Git relationships remain orthogonal**  
 A composed integration workflow shall model Nuxt relationship state and repository relationship state separately.
 
+<a id="dd-nuxtcap-063"></a>
+
 **DD-NUXTCAP-063 — Order is owned by use-case orchestration**  
 Whether repository coordination precedes/follows the Nuxt source change is an owning-use-case workflow decision and shall not be hidden inside a provider.
+
+<a id="dd-nuxtcap-064"></a>
 
 **DD-NUXTCAP-064 — Partial relationship state is explicit**  
 If one relationship succeeds and another fails, the result shall report the actual pair of states and corrective action rather than collapse to one Boolean.
@@ -554,14 +682,22 @@ If one relationship succeeds and another fails, the result shall report the actu
 
 Nuxt detachment removes a host-relative Nuxt composition relationship without implying deletion of the layer or repository relationship.
 
+<a id="dd-nuxtcap-065"></a>
+
 **DD-NUXTCAP-065 — Detachment targets one relationship**  
 The exact host/layer relationship shall be resolved before transformation.
+
+<a id="dd-nuxtcap-066"></a>
 
 **DD-NUXTCAP-066 — Detachment does not delete layer resources**  
 Removing the Nuxt relationship shall not implicitly delete the layer project, local repository, remote repository or unrelated Git relationship.
 
+<a id="dd-nuxtcap-067"></a>
+
 **DD-NUXTCAP-067 — Git cleanup is separate intent**  
 Repository/submodule cleanup, if requested, shall be a separately authorized Git operation.
+
+<a id="dd-nuxtcap-068"></a>
 
 **DD-NUXTCAP-068 — Detachment consequence evidence**  
 Known host-level consequences shall be surfaced for confirmation/policy where material before applying the change.
@@ -581,8 +717,12 @@ Supported descriptive states may include:
 - unsupported/invalid;
 - ambiguous/stale.
 
+<a id="dd-nuxtcap-069"></a>
+
 **DD-NUXTCAP-069 — Lifecycle facts are descriptive**  
 Reported state shall not itself authorize integration, deletion, repository changes or application lifecycle operations.
+
+<a id="dd-nuxtcap-070"></a>
 
 **DD-NUXTCAP-070 — App lifecycle remains App-owned**  
 Nuxt-generated state observations support the bounded cleanup evidence in §6.1; they do not create App Clean/Reset/Prepare semantics within this capability.
@@ -591,11 +731,17 @@ Nuxt-generated state observations support the bounded cleanup evidence in §6.1;
 
 ## 24. Generic File Generation Boundary
 
+<a id="dd-nuxtcap-071"></a>
+
 **DD-NUXTCAP-071 — Nuxt-specific semantic purpose required**  
 Nuxt Capability may request generation of resources only where the resource class participates in a defined Nuxt use case/profile. Participation establishes Nuxt orchestration/baseline purpose, not necessarily permanent artefact semantics.
 
+<a id="dd-nuxtcap-072"></a>
+
 **DD-NUXTCAP-072 — Deployment/provider files are not Nuxt by default**  
 A hosting/deployment provider artefact does not become Nuxt-owned merely because it is used by a Nuxt application.
+
+<a id="dd-nuxtcap-073"></a>
 
 **DD-NUXTCAP-073 — Generator capability does not define domain ownership**  
 Technical ability to render/create a file does not determine that Nuxt owns the application intent or the artefact's internal semantic contract.
@@ -604,11 +750,17 @@ Technical ability to render/create a file does not determine that Nuxt owns the 
 
 ## 25. Documentation Boundary
 
+<a id="dd-nuxtcap-074"></a>
+
 **DD-NUXTCAP-074 — Nuxt may supply facts to Docs**  
 Nuxt-specific facts may be consumed by DD-2.9 Documentation Capability without transferring Nuxt semantic authority.
 
+<a id="dd-nuxtcap-075"></a>
+
 **DD-NUXTCAP-075 — Documentation semantics remain Docs-owned**  
 When the primary intent is generate/extract/update documentation, the Docs domain/capability owns documentation intent and semantics even when Nuxt facts are central inputs. When README/introduction documentation is a subordinate required artefact of a Nuxt layer profile, Nuxt retains profile-completeness/orchestration authority while delegating documentation-specific modeling/generation semantics to DD-2.9 where those semantics are required.
+
+<a id="dd-nuxtcap-076"></a>
 
 **DD-NUXTCAP-076 — No duplicate Nuxt documentation subsystem**  
 Nuxt Capability shall not establish a parallel documentation generator for use cases already owned by Documentation Capability or replicate Documentation Capability semantics merely to satisfy a scaffold profile.
@@ -617,8 +769,12 @@ Nuxt Capability shall not establish a parallel documentation generator for use c
 
 ## 26. Quality Boundary
 
+<a id="dd-nuxtcap-077"></a>
+
 **DD-NUXTCAP-077 — Nuxt validation is not quality execution**  
 Nuxt-specific postconditions may confirm Nuxt semantics, but tests, lint, type checking, coverage and quality gates remain DD-2.8/Quality-domain responsibilities.
+
+<a id="dd-nuxtcap-078"></a>
 
 **DD-NUXTCAP-078 — Quality evidence may contribute to higher workflows**  
 An owning Nuxt use case may consume Quality evidence where explicitly required, but Quality result interpretation remains governed by DD-2.8 and application policy.
@@ -629,11 +785,17 @@ An owning Nuxt use case may consume Quality evidence where explicitly required, 
 
 Nuxt providers may require package tooling or CLI execution for bounded technical work.
 
+<a id="dd-nuxtcap-079"></a>
+
 **DD-NUXTCAP-079 — Process completion is technical evidence**  
 A Nuxt CLI/package-manager process completing successfully shall not alone establish Nuxt acceptance.
 
+<a id="dd-nuxtcap-080"></a>
+
 **DD-NUXTCAP-080 — No arbitrary command surface**  
 Nuxt Capability shall not expose general process execution merely because some Nuxt tasks are implemented by commands.
+
+<a id="dd-nuxtcap-081"></a>
 
 **DD-NUXTCAP-081 — Executable/argument/shell boundaries remain DD-2.2**  
 Provider execution shall preserve Process Execution safety and shall not construct unchecked shell fragments from project names, paths or profile inputs.
@@ -653,14 +815,22 @@ A Nuxt provider may own technical mechanics including:
 - optional Nuxt CLI interrogation;
 - supported layer baseline checks.
 
+<a id="dd-nuxtcap-082"></a>
+
 **DD-NUXTCAP-082 — Provider normalization**  
 Provider-native ASTs, parser nodes, CLI output and exceptions shall be normalized into the shared Nuxt contracts before application interpretation.
+
+<a id="dd-nuxtcap-083"></a>
 
 **DD-NUXTCAP-083 — Provider limitation is explicit**  
 A provider unable to safely interpret or mutate a requested structure shall return unsupported/ambiguous evidence rather than guess.
 
+<a id="dd-nuxtcap-084"></a>
+
 **DD-NUXTCAP-084 — Provider replaceability**  
 Callers shall not require one parser library, Nuxt CLI, AST shape or source format to consume shared Nuxt facts/results.
+
+<a id="dd-nuxtcap-085"></a>
 
 **DD-NUXTCAP-085 — No speculative universal plugin framework**  
 Provider replaceability does not require an executable plugin system, common base class or cross-runtime transport in Version 1.
@@ -686,11 +856,17 @@ The capability shall protect against at least:
 - cross-owned scaffold artefacts transferring semantic authority into Nuxt by implication;
 - provider-native structures escaping as application contracts.
 
+<a id="dd-nuxtcap-086"></a>
+
 **DD-NUXTCAP-086 — Non-empty target safety**  
 Layer creation shall refuse or require an explicitly defined safe mode when the creation target contains existing content that could be overwritten or conflated with a new layer baseline.
 
+<a id="dd-nuxtcap-087"></a>
+
 **DD-NUXTCAP-087 — Source preservation**  
 Nuxt semantic changes shall request bounded transformations that preserve unrelated user source/comments/ordering/formatting where practical.
+
+<a id="dd-nuxtcap-088"></a>
 
 **DD-NUXTCAP-088 — Stale source is deliberate**  
 Where relevant source changed after inspection/planning, the transformation/use case shall revalidate, replan or fail rather than blindly apply stale intent.
@@ -699,14 +875,22 @@ Where relevant source changed after inspection/planning, the transformation/use 
 
 ## 30. Cancellation, Progress and Partial State
 
+<a id="dd-nuxtcap-089"></a>
+
 **DD-NUXTCAP-089 — Cancellation propagates to delegated work**  
 Cancellation shall stop future Nuxt stages and propagate to active delegated provider/process work where supported.
+
+<a id="dd-nuxtcap-090"></a>
 
 **DD-NUXTCAP-090 — Completed effects remain truthful**  
 Cancellation/failure shall not erase already created resources, applied transformations, documentation/settings-generated content, repository effects or remote effects from the result.
 
+<a id="dd-nuxtcap-091"></a>
+
 **DD-NUXTCAP-091 — Progress identifies semantic stage**  
 Long/composed Nuxt operations should expose stage/target progress where useful without making one UI/event transport normative.
+
+<a id="dd-nuxtcap-092"></a>
 
 **DD-NUXTCAP-092 — Partial state is not rollback**  
 Partial Nuxt/cross-owned-semantic/resource/Git effects shall be represented as actual consequential state unless rollback is explicitly guaranteed by lower-level contracts.
@@ -715,11 +899,17 @@ Partial Nuxt/cross-owned-semantic/resource/Git effects shall be represented as a
 
 ## 31. Interaction-Mode and Headless Semantics
 
+<a id="dd-nuxtcap-093"></a>
+
 **DD-NUXTCAP-093 — Presentation independence**  
 Equivalent Nuxt intents expressed through TUI, Headless, IDE or future adapters shall reach equivalent capability semantics.
 
+<a id="dd-nuxtcap-094"></a>
+
 **DD-NUXTCAP-094 — Headless ambiguity fails**  
 Headless execution shall not prompt for unresolved target/profile/config/integration identity and shall return structured ambiguity/unresolved-input diagnostics.
+
+<a id="dd-nuxtcap-095"></a>
 
 **DD-NUXTCAP-095 — Human labels are not canonical identity**  
 Presentation labels for layers/profiles/config entries shall not substitute for stable semantic identity where automation requires it.
@@ -728,11 +918,17 @@ Presentation labels for layers/profiles/config entries shall not substitute for 
 
 ## 32. Relationship to DD-1 Outcomes
 
+<a id="dd-nuxtcap-096"></a>
+
 **DD-NUXTCAP-096 — Capability evidence feeds application outcome**  
 Nuxt recognition/validation/generation/integration results shall be supplied to the owning use case/Application Engine for final interpretation under DD-1.2.
 
+<a id="dd-nuxtcap-097"></a>
+
 **DD-NUXTCAP-097 — Mixed outcomes stay mixed**  
 Composed operations shall preserve generated/modified resources, cross-owned artefact-semantic stages, Nuxt relationship state, Git relationship state and failed/unattempted stages rather than collapsing prematurely.
+
+<a id="dd-nuxtcap-098"></a>
 
 **DD-NUXTCAP-098 — No Boolean collapse**  
 Recognition, semantic delegation, rendering, persistence/transformation, Nuxt validation, repository coordination and final application acceptance shall remain distinguishable where workflow decisions depend on them.
@@ -766,6 +962,8 @@ The following are not promoted into permanent architecture merely because curren
 - direct filesystem writes from a Nuxt-oriented command/service;
 - direct Git/AI/provider calls from Nuxt code;
 - one TypeScript module/package topology.
+
+<a id="dd-nuxtcap-099"></a>
 
 **DD-NUXTCAP-099 — Implementation must converge on approved contracts**  
 Future Implementation Specifications shall adapt existing Nuxt templates/strategies/services to this Detailed Design rather than weakening the design to preserve incidental implementation topology.
@@ -806,8 +1004,12 @@ Deterministic tests should cover at least:
 - Headless ambiguity;
 - provider substitution behind the same normalized contract.
 
+<a id="dd-nuxtcap-100"></a>
+
 **DD-NUXTCAP-100 — Fake-provider conformance**  
 Core contracts shall be verifiable with deterministic fake Nuxt providers and fake lower-level capability evidence without requiring one real parser, Nuxt CLI, Git host or AI provider.
+
+<a id="dd-nuxtcap-101"></a>
 
 **DD-NUXTCAP-101 — Concrete-provider tests remain adapter-specific**  
 Integration tests for actual Nuxt source forms, parser libraries, package tooling or Nuxt CLI behavior may verify provider mechanics but shall not define the application contract.

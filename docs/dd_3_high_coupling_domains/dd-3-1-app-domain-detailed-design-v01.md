@@ -238,9 +238,13 @@ Capability consumption does not transfer semantic ownership. Technical completio
 
 The following are conceptual App-domain contracts. They define semantic information, not concrete TypeScript interfaces or source modules.
 
+<a id="dd-app-001"></a>
+
 ### DD-APP-001 — Lifecycle Action Identity
 
 `LifecycleActionIdentity` binds exactly the eight commands in the [App Functional catalogue](../functional/app-functional-specification-v01.md): create, prepare, develop, build, preview, generate, clean and reset. Their identities are independent of provider syntax. Post-install and declared-script identities describe subordinate work, not additional commands; aliases do not extend the catalogue.
+
+<a id="dd-app-002"></a>
 
 ### DD-APP-002 — Lifecycle Applicability
 
@@ -255,6 +259,8 @@ diagnostics
 ```
 
 `unavailable` is distinct from an unknown invocation. `already_satisfied` may be used only where the use case has meaningful idempotent satisfaction semantics.
+
+<a id="dd-app-003"></a>
 
 ### DD-APP-003 — Lifecycle Stage
 
@@ -274,6 +280,8 @@ stage acceptance condition
 
 A stage description is an orchestration contract, not a requirement for one implementation object.
 
+<a id="dd-app-004"></a>
+
 ### DD-APP-004 — Lifecycle Stage Result
 
 A `LifecycleStageResult` shall preserve enough information to distinguish:
@@ -289,6 +297,8 @@ recovery relevance
 ```
 
 The stage result does not create a second generic outcome taxonomy.
+
+<a id="dd-app-005"></a>
 
 ### DD-APP-005 — App Lifecycle Result Payload
 
@@ -307,11 +317,15 @@ An App lifecycle result payload shall be capable of carrying, as applicable:
 
 The payload is embedded within or associated with the canonical DD-1.2 outcome; it is not an alternate outcome envelope.
 
+<a id="dd-app-006"></a>
+
 ### DD-APP-006 — Creation Profile Selection
 
 A `CreationProfileSelection` shall identify a supported root-application creation profile and its approved capability choices without embedding template/provider implementation details.
 
 A profile selection shall be validated for internal coherence before consequential creation begins.
+
+<a id="dd-app-007"></a>
 
 ### DD-APP-007 — Creation Plan
 
@@ -331,6 +345,8 @@ validation/postcondition expectations
 
 Rendered template output or provider-native scaffold output is evidence used by this plan; neither is the plan's semantic authority.
 
+<a id="dd-app-008"></a>
+
 ### DD-APP-008 — Regenerable Resource Classification
 
 Clean and Reset shall operate on App-domain resource classes rather than acquiring deletion authority from arbitrary discovered paths.
@@ -345,9 +361,13 @@ The classification shall distinguish at least:
 
 Concrete filesystem paths belong to later implementation design/provider evidence.
 
+<a id="dd-app-009"></a>
+
 ### DD-APP-009 — Declared Script Selection
 
 The bounded supporting collaborator accepts project-declared identity/evidence and delegates actual execution to Process Execution. Discovery does not add command identities. A declared-script execution request shall identify a script proven to exist in recognised managed-root package metadata. Arbitrary caller-supplied shell text shall not satisfy this contract.
+
+<a id="dd-app-010"></a>
 
 ### DD-APP-010 — App Recovery Position
 
@@ -370,11 +390,15 @@ The sections include public lifecycle operations and explicitly identified suppo
 
 ### 8.1 General orchestration rules
 
+<a id="dd-app-011"></a>
+
 ### DD-APP-011 — Authoritative context first
 
 Existing-project App use cases shall begin from an Engine-established execution context containing a resolved managed root application, operation-specific scope and effective configuration sufficient for the use case.
 
 The App domain shall not substitute current working directory, adapter selection, discovered files or provider defaults for authoritative context.
+
+<a id="dd-app-012"></a>
 
 ### DD-APP-012 — Applicability before consequential execution
 
@@ -382,13 +406,19 @@ Before consequential effects, the App domain shall determine whether the request
 
 A recognised but unsupported or unsatisfied action shall produce structured unavailability/precondition evidence rather than degrade into an opaque provider failure where the condition can be established beforehand.
 
+<a id="dd-app-013"></a>
+
 ### DD-APP-013 — Domain stages precede provider operations
 
 Composed App workflows shall be defined in lifecycle stages and delegated intents. Provider commands are selected below the domain boundary.
 
+<a id="dd-app-014"></a>
+
 ### DD-APP-014 — Stage acceptance
 
 A stage is accepted only when its domain-specific postcondition is satisfied. Successful technical execution alone is insufficient where additional evidence or validation is required.
+
+<a id="dd-app-015"></a>
 
 ### DD-APP-015 — Dependency-aware continuation
 
@@ -423,13 +453,19 @@ reassess required readiness/postconditions
 App preparation interpretation
 ```
 
+<a id="dd-app-016"></a>
+
 ### DD-APP-016 — Existing-project protection
 
 Preparation shall treat the target as an existing managed application. It shall not invoke root-application scaffold semantics over that project.
 
+<a id="dd-app-017"></a>
+
 ### DD-APP-017 — Readiness-derived stage selection
 
 Preparation shall select only lifecycle preparation stages required or explicitly requested for the resolved project/profile. Already-satisfied stages should not be destructively repeated where their semantics permit safe recognition.
+
+<a id="dd-app-018"></a>
 
 ### DD-APP-018 — Environment-definition delegation
 
@@ -437,13 +473,19 @@ Where environment-definition readiness requires creation of a missing persisted 
 
 App shall not implement an alternate direct-copy path that bypasses Settings protection semantics.
 
+<a id="dd-app-019"></a>
+
 ### DD-APP-019 — No secret-completeness fiction
 
 App preparation shall distinguish successful creation/management of an environment definition from full environment readiness. Missing required sensitive values shall remain explicit remaining action and shall not be fabricated.
 
+<a id="dd-app-020"></a>
+
 ### DD-APP-020 — Repository readiness delegation
 
 Where repository relationships must be prepared for development readiness, App shall coordinate the relevant Git-domain use case. Repository mechanics or Git-domain policy shall not be recreated as App lifecycle stages.
+
+<a id="dd-app-021"></a>
 
 ### DD-APP-021 — Preparation acceptance
 
@@ -453,9 +495,13 @@ Preparation acceptance shall be based on required lifecycle preparation postcond
 
 This is subordinate stage behavior where a lifecycle requires it; it is not a public App use case.
 
+<a id="dd-app-022"></a>
+
 ### DD-APP-022 — Declaration-derived action
 
 Post-installation execution shall require recognised project evidence that identifies the applicable project-declared lifecycle action. The App domain shall not assume one universal script identity.
+
+<a id="dd-app-023"></a>
 
 ### DD-APP-023 — Post-install acceptance
 
@@ -463,9 +509,13 @@ The App domain shall interpret normalized process/lifecycle evidence and any req
 
 ### 8.4 Local development execution
 
+<a id="dd-app-024"></a>
+
 ### DD-APP-024 — Long-running lifecycle operation
 
 Development execution shall be modelled as a potentially long-running App lifecycle stage with progress/event forwarding and cancellation linkage through DD-1/DD-2 contracts.
+
+<a id="dd-app-025"></a>
 
 ### DD-APP-025 — Termination interpretation
 
@@ -473,13 +523,19 @@ Termination shall be interpreted using invocation cancellation state, process te
 
 ### 8.5 Build
 
+<a id="dd-app-026"></a>
+
 ### DD-APP-026 — Project-supported build intent
 
 Build shall require recognised project/configuration evidence that the managed root supports an applicable build lifecycle action. The App domain shall not prescribe a universal build command or output directory.
 
+<a id="dd-app-027"></a>
+
 ### DD-APP-027 — Build acceptance
 
 Build acceptance shall require successful delegated execution plus any App-owned postcondition explicitly required by the resolved project/profile. Quality gates are not implicitly part of Build unless an approved App use case or configuration explicitly composes them.
+
+<a id="dd-app-028"></a>
 
 ### DD-APP-028 — No incidental source-mutation authority
 
@@ -487,11 +543,15 @@ Build does not authorize AppManager-controlled mutation of unrelated existing so
 
 ### 8.6 Preview
 
+<a id="dd-app-029"></a>
+
 ### DD-APP-029 — Preview prerequisite policy
 
 The App domain shall deterministically define, from governed project/profile/configuration semantics, whether preview requires a validated prior build state, an App-composed build stage, or delegation to a project lifecycle action that establishes its own prerequisite failure.
 
 The selected policy shall not be inferred ad hoc from presentation mode.
+
+<a id="dd-app-030"></a>
 
 ### DD-APP-030 — Long-running preview interpretation
 
@@ -499,13 +559,19 @@ Long-running preview shall use the same DD-1/DD-2 cancellation and process-evide
 
 ### 8.7 Clean
 
+<a id="dd-app-031"></a>
+
 ### DD-APP-031 — Clean plan
 
 Before mutation, Clean shall establish a bounded effect plan containing only resource classes classified as safely regenerable for Clean within the authoritative root scope.
 
+<a id="dd-app-032"></a>
+
 ### DD-APP-032 — Already-clean semantics
 
 An absent approved Clean target may be accepted as already satisfied. Absence of an expected target shall become a failure only where it contradicts a required project invariant.
+
+<a id="dd-app-033"></a>
 
 ### DD-APP-033 — Clean exclusion
 
@@ -513,17 +579,25 @@ Installed dependency state, lock state, durable user source, project metadata, r
 
 ### 8.8 Reset / Empty
 
+<a id="dd-app-034"></a>
+
 ### DD-APP-034 — Reset plan
 
 Reset shall establish a bounded effect plan distinct from Clean. It may include approved regenerable dependency-installation and build state, but shall exclude durable source/configuration and unrelated resources by default.
+
+<a id="dd-app-035"></a>
 
 ### DD-APP-035 — Lock-state policy
 
 Lock-state treatment shall be an explicit App-domain policy input derived from approved effective configuration/profile semantics. In the absence of an explicit policy permitting removal, lock state shall be retained.
 
+<a id="dd-app-036"></a>
+
 ### DD-APP-036 — Consequential authorization
 
 The material Reset effect classes shall be known before the authorization checkpoint. The App domain shall require the Engine/invocation authorization state appropriate to those effects before delegating mutation.
+
+<a id="dd-app-037"></a>
 
 ### DD-APP-037 — Reset partial effects
 
@@ -539,17 +613,25 @@ authorized reset -> reset accepted -> prepare -> preparation accepted
                                                    -> composed result
 ```
 
+<a id="dd-app-038"></a>
+
 ### DD-APP-038 — Reuse, not reimplementation
 
 The Engine composes the existing Reset and Prepare intents and, where selected, Build. Each stage retains its own policy and acceptance contract.
+
+<a id="dd-app-039"></a>
 
 ### DD-APP-039 — Authorization before reset
 
 Authorization covering the Reset effect plan shall be obtained before the first consequential reset effect. Later non-destructive stages do not retroactively authorize Reset.
 
+<a id="dd-app-040"></a>
+
 ### DD-APP-040 — Stage dependency stop
 
 Failure or cancellation of Reset stops dependent Prepare and any selected Build. Failure or cancellation of Prepare stops a selected Build whose preparation prerequisites remain unsatisfied.
+
+<a id="dd-app-041"></a>
 
 ### DD-APP-041 — Reset-and-prepare result composition
 
@@ -593,19 +675,27 @@ App creation interpretation + next actions
 
 Creation includes the initial establishment stages required by its selected profile. It does not require the caller to invoke public Prepare separately to complete those creation postconditions. Optional Git/dependency follow-ons remain distinguishable in the creation result.
 
+<a id="dd-app-042"></a>
+
 ### DD-APP-042 — Creation target safety
 
 Before consequential creation, the App domain shall establish the intended target identity/location and obtain Resource Access/Managed Project evidence sufficient to classify the target as safe, unsafe or ambiguous for the selected creation mode.
 
 An existing recognised project shall not be silently scaffolded over. Ambiguous non-empty targets shall fail safe or require an explicitly approved safe mode.
 
+<a id="dd-app-043"></a>
+
 ### DD-APP-043 — Profile-driven artefact selection
 
 The selected creation profile shall determine approved artefact classes and optional setup choices through declarative project/profile semantics rather than hidden template implementation switches.
 
+<a id="dd-app-044"></a>
+
 ### DD-APP-044 — Generation versus transformation
 
 Creating a previously absent artefact in an approved creation target uses generation/resource-creation semantics. Modifying or replacing an existing artefact crosses into Source Transformation and applicable authorization/preservation semantics.
+
+<a id="dd-app-045"></a>
 
 ### DD-APP-045 — Artefact semantic ownership
 
@@ -618,17 +708,25 @@ Examples:
 - registry/template rendering remains DD-2-owned;
 - persistence remains Resource Access-owned.
 
+<a id="dd-app-046"></a>
+
 ### DD-APP-046 — No implicit Nuxt-layer creation
 
 Root creation may prepare a layers container or relationship-ready structure but shall not claim or perform Nuxt-layer creation unless a distinct Nuxt-domain use case is explicitly invoked.
+
+<a id="dd-app-047"></a>
 
 ### DD-APP-047 — Optional Git follow-on isolation
 
 Optional repository initialisation shall be a coordinated Git-domain follow-on. If it fails after scaffold acceptance, the created scaffold remains an actual completed effect and the result shall report the repository failure separately.
 
+<a id="dd-app-048"></a>
+
 ### DD-APP-048 — Optional dependency-install isolation
 
 Dependency installation may follow successful scaffold creation when requested. Scaffold success shall not be retroactively erased by installation failure; the overall App result may be partial according to canonical outcome semantics.
+
+<a id="dd-app-049"></a>
 
 ### DD-APP-049 — Creation acceptance
 
@@ -636,21 +734,31 @@ Creation acceptance shall establish that the required artefact classes for the s
 
 ### 8.11 Declared project-package-script execution
 
+<a id="dd-app-050"></a>
+
 ### DD-APP-050 — Script discovery evidence
 
 Eligible script identities shall come from recognised managed-root package metadata or another approved project declaration source. Script discovery is read-only evidence and does not authorize arbitrary command execution.
+
+<a id="dd-app-051"></a>
 
 ### DD-APP-051 — Script validation
 
 The requested script identity shall match an eligible declared script before Process Execution is delegated.
 
+<a id="dd-app-052"></a>
+
 ### DD-APP-052 — Named lifecycle preference
 
 Where the selected script corresponds to an App-owned named lifecycle intent such as Build, Preview or Develop, the canonical named lifecycle use case remains the richer semantic route. Generic declared-script execution shall not silently acquire the named lifecycle's additional stages or policies.
 
+<a id="dd-app-053"></a>
+
 ### DD-APP-053 — Bounded execution intent
 
 After validation, the App domain shall construct a bounded project-script execution intent from project/profile semantics. Arbitrary caller-supplied shell fragments shall not be appended merely because the process provider supports shell execution.
+
+<a id="dd-app-054"></a>
 
 ### DD-APP-054 — Script result
 
@@ -667,6 +775,8 @@ The App-specific result shall identify the selected declared script and interpre
 The App domain does not require a new persistent global lifecycle state machine in Version 1. Durable project state remains represented by managed resources, project metadata and specialist domain state.
 
 App does require invocation-scoped workflow state for composed operations.
+
+<a id="dd-app-055"></a>
 
 ### DD-APP-055 — Invocation-scoped lifecycle state
 
@@ -685,9 +795,13 @@ completed
 
 These labels describe orchestration position and shall not replace canonical DD-1.2 outcome states.
 
+<a id="dd-app-056"></a>
+
 ### DD-APP-056 — Evidence-backed transitions
 
 Transitions between lifecycle stages shall be based on accepted stage evidence and authoritative cancellation/policy state rather than presentation events or provider-local state alone.
+
+<a id="dd-app-057"></a>
 
 ### DD-APP-057 — No persisted workflow fiction
 
@@ -696,6 +810,8 @@ Unless a later approved requirement introduces resumable persisted workflows, Ap
 ---
 
 ## 10. Domain Policy and Decision Rules
+
+<a id="dd-app-058"></a>
 
 ### DD-APP-058 — Lifecycle action classification
 
@@ -710,21 +826,31 @@ App shall classify lifecycle actions by material effect sufficiently to distingu
 
 This classification drives App policy and authorization checkpoints without replacing DD-1 authorization semantics.
 
+<a id="dd-app-059"></a>
+
 ### DD-APP-059 — Root-only default
 
 Existing-project App lifecycle effects target the managed root application by default. Managed layers do not inherit equivalent clean/reset/install/build effects merely because they are related to the root.
+
+<a id="dd-app-060"></a>
 
 ### DD-APP-060 — Project declaration over universal command assumptions
 
 Where a lifecycle action is project-declared, App policy shall use recognised project/profile/configuration evidence to identify it. Provider defaults shall not silently establish App lifecycle semantics.
 
+<a id="dd-app-061"></a>
+
 ### DD-APP-061 — Durable-resource preservation
 
 Clean, Reset, Prepare and Reset-and-prepare shall preserve durable user-authored source, user-managed project configuration and unrelated project resources unless the invoked use case has explicit approved authority over a particular resource.
 
+<a id="dd-app-062"></a>
+
 ### DD-APP-062 — Optional-stage semantics
 
 An optional stage shall be explicitly identified as optional by profile, effective configuration or invocation intent. Failure of an optional consequential follow-on may produce partial success rather than pretending either complete success or total non-effect.
+
+<a id="dd-app-063"></a>
 
 ### DD-APP-063 — No implicit cross-domain expansion
 
@@ -747,25 +873,37 @@ recognition
     != final application success
 ```
 
+<a id="dd-app-064"></a>
+
 ### DD-APP-064 — Mutation plan before consequential effect
 
 Clean, Reset, root creation and any App workflow that deliberately changes existing resources shall establish the bounded intended effect set or effect classes before the relevant consequential mutation begins.
+
+<a id="dd-app-065"></a>
 
 ### DD-APP-065 — Scope containment
 
 Every App-controlled resource mutation shall remain within authoritative operation scope. A path/resource discovered outside scope shall be excluded regardless of name similarity.
 
+<a id="dd-app-066"></a>
+
 ### DD-APP-066 — Ambiguity fails safe
 
 Where the App domain cannot establish that a candidate consequential target belongs to the authorized effect set and scope, it shall refuse that effect or require approved disambiguation rather than infer authority from accessibility.
+
+<a id="dd-app-067"></a>
 
 ### DD-APP-067 — Authorization coverage
 
 Authorization evidence shall cover the material effect class actually planned. Material expansion of the effect set after authorization requires re-evaluation and, where required by DD-1 policy, renewed authorization before the additional effect.
 
+<a id="dd-app-068"></a>
+
 ### DD-APP-068 — Specialist mutation boundaries
 
 App shall delegate mutation mechanics to the applicable DD-2 capability or subordinate domain. It shall not bypass Source Transformation for deliberate existing-source modification, Settings for environment-definition persistence, or Git for repository-policy operations.
+
+<a id="dd-app-069"></a>
 
 ### DD-APP-069 — Completed effects are facts
 
@@ -775,25 +913,37 @@ After mutation completes, App shall preserve effect evidence even if a later sta
 
 ## 12. Failure, Cancellation and Partial Effects
 
+<a id="dd-app-070"></a>
+
 ### DD-APP-070 — Cancellation before effect
 
 When cancellation is accepted before a planned consequential effect begins, the App workflow shall not intentionally start that effect.
+
+<a id="dd-app-071"></a>
 
 ### DD-APP-071 — Cancellation during delegated work
 
 Cancellation shall propagate through the applicable DD-1/DD-2 contract. App shall interpret the returned termination/effect evidence rather than assume that cancellation restored pre-operation state.
 
+<a id="dd-app-072"></a>
+
 ### DD-APP-072 — Failure blocks dependent stages
 
 A failed or cancelled stage shall block every later stage whose preconditions depend on its acceptance.
+
+<a id="dd-app-073"></a>
 
 ### DD-APP-073 — Partial-effect reporting
 
 Where completed effects coexist with failed, cancelled or unattempted stages, the App result shall retain enough structured stage/effect evidence for DD-1.2 to represent the actual partial outcome.
 
+<a id="dd-app-074"></a>
+
 ### DD-APP-074 — Retry requires revalidation
 
 Retry, continuation or repair after failure shall revalidate relevant managed-project, configuration, resource/revision and lifecycle applicability evidence. Prior stage success shall not be assumed durable where underlying state may have changed.
+
+<a id="dd-app-075"></a>
 
 ### DD-APP-075 — No universal rollback
 
@@ -803,13 +953,19 @@ No App lifecycle use case implies universal rollback unless a later approved des
 
 ## 13. Headless and Interaction Independence
 
+<a id="dd-app-076"></a>
+
 ### DD-APP-076 — Structured lifecycle intent
 
 All supported App lifecycle use cases shall be expressible through the Application Invocation Contract without embedding business logic in TUI menus, GUI flows or IDE actions.
 
+<a id="dd-app-077"></a>
+
 ### DD-APP-077 — Structured decision requirements
 
 Where App requires a profile choice, target disambiguation, authorization or other caller decision, the requirement shall be represented as structured invocation/policy information. Interactive adapters may collect that information, but the domain shall not depend on prompting.
+
+<a id="dd-app-078"></a>
 
 ### DD-APP-078 — Equivalent acceptance semantics
 
@@ -819,27 +975,39 @@ The same authoritative scope, configuration, policy, stage acceptance and outcom
 
 ## 14. Concurrency, Idempotency and Conflict Behaviour
 
+<a id="dd-app-079"></a>
+
 ### DD-APP-079 — Conflicting lifecycle operations
 
 The App domain shall treat concurrent operations as conflicting where their planned effects or required stable state overlap materially, including where one operation may invalidate another's project/resource assumptions.
 
 Application-level conflict coordination remains under DD-1 Application Engine authority; capability-level stale-state evidence remains subordinate input.
 
+<a id="dd-app-080"></a>
+
 ### DD-APP-080 — Stale-plan invalidation
 
 A creation, Clean, Reset or other mutation plan shall be revalidated before application when material target/resource evidence has changed since planning.
+
+<a id="dd-app-081"></a>
 
 ### DD-APP-081 — Prepare idempotence
 
 Prepare should treat valid already-satisfied preparation stages as satisfied rather than destructively recreating them. This does not permit stale evidence to bypass validation.
 
+<a id="dd-app-082"></a>
+
 ### DD-APP-082 — Clean idempotence
 
 Repeated Clean over already-absent approved regenerable targets may complete as already satisfied/no-op under DD-1.2 semantics.
 
+<a id="dd-app-083"></a>
+
 ### DD-APP-083 — Reset repeatability
 
 Repeated Reset may encounter already-absent regenerable state. Absence alone is not failure, but lock-state policy, scope and durable-resource exclusions shall be re-evaluated each time.
+
+<a id="dd-app-084"></a>
 
 ### DD-APP-084 — Creation is not generally idempotent
 
@@ -849,17 +1017,25 @@ Root creation shall not treat an already-created or newly non-empty target as eq
 
 ## 15. Security and Sensitive Information
 
+<a id="dd-app-085"></a>
+
 ### DD-APP-085 — Environment sensitivity
 
 App preparation shall not expose or fabricate sensitive environment values. Settings and Configuration sensitive-value contracts remain authoritative for persisted definitions and effective configuration respectively.
+
+<a id="dd-app-086"></a>
 
 ### DD-APP-086 — Process environment minimization
 
 When App delegates lifecycle execution, only the environment/context required by the bounded execution intent should be supplied according to Process Execution and Configuration contracts. Ambient host secrets shall not be treated as implicit App lifecycle inputs.
 
+<a id="dd-app-087"></a>
+
 ### DD-APP-087 — Creation secret exclusion
 
 Shared generated project artefacts shall not receive secret values merely because effective configuration contains them. Template/render inputs shall be purpose-bounded and respect sensitive-value classification.
+
+<a id="dd-app-088"></a>
 
 ### DD-APP-088 — Diagnostic minimization
 
@@ -869,17 +1045,25 @@ App-specific diagnostics and recovery information shall identify failed lifecycl
 
 ## 16. Extensibility and Replaceability
 
+<a id="dd-app-089"></a>
+
 ### DD-APP-089 — Lifecycle-provider replaceability
 
 Replacement of package-manager/process/resource/template/Nuxt/repository providers shall not alter canonical App lifecycle identities, policy or acceptance semantics.
+
+<a id="dd-app-090"></a>
 
 ### DD-APP-090 — New lifecycle actions
 
 A future App lifecycle action may be added only where it represents coherent root-application lifecycle intent with a clear Functional owner. Availability of a new provider operation alone is insufficient justification.
 
+<a id="dd-app-091"></a>
+
 ### DD-APP-091 — Creation-profile extensibility
 
 Additional creation profiles or approved profile choices may extend the declarative profile model without requiring App to hard-code provider/template identities into lifecycle semantics.
+
+<a id="dd-app-092"></a>
 
 ### DD-APP-092 — No generic orchestration framework requirement
 
@@ -939,61 +1123,91 @@ ADR-0001 permits Version 1 implementation using Node.js/TypeScript but does not 
 
 A conforming App-domain design and implementation shall preserve all of the following.
 
+<a id="dd-app-ci-001"></a>
+
 ### DD-APP-CI-001 — Lifecycle intent remains App-owned
 
 Root-application lifecycle semantics shall not be derived from provider commands, presentation routes or implementation filenames.
+
+<a id="dd-app-ci-002"></a>
 
 ### DD-APP-CI-002 — Application authority remains above domain execution
 
 App-domain interpretation shall remain subject to DD-1 Application Engine final acceptance and DD-1.2 canonical outcome semantics.
 
+<a id="dd-app-ci-003"></a>
+
 ### DD-APP-CI-003 — Scope remains governed
 
 App shall not derive mutation authority from filesystem accessibility, discovery, repository membership or path-name similarity.
+
+<a id="dd-app-ci-004"></a>
 
 ### DD-APP-CI-004 — Configuration precedence is not recreated
 
 App shall consume effective configuration rather than reconstructing competing precedence from raw sources.
 
+<a id="dd-app-ci-005"></a>
+
 ### DD-APP-CI-005 — Settings owns environment persistence
 
 App preparation shall use the Settings-owned environment-definition operation and shall not create a competing persistence path.
+
+<a id="dd-app-ci-006"></a>
 
 ### DD-APP-CI-006 — Clean and Reset remain distinct
 
 Clean shall remain limited to safely regenerable cache/build state; Reset may be broader only under explicit policy and authorization while preserving durable resources by default.
 
+<a id="dd-app-ci-007"></a>
+
 ### DD-APP-CI-007 — Reset-and-prepare composes existing lifecycle semantics
 
 Reset-and-prepare shall not become an independent alternate implementation of Reset, Prepare or Build.
+
+<a id="dd-app-ci-008"></a>
 
 ### DD-APP-CI-008 — Root creation is not layer creation
 
 Root-application creation shall not absorb Nuxt-layer creation semantics.
 
+<a id="dd-app-ci-009"></a>
+
 ### DD-APP-CI-009 — Generation is not silent replacement
 
 Creation of absent artefacts shall remain distinct from modification/replacement of existing resources, which requires the applicable transformation/safety boundary.
+
+<a id="dd-app-ci-010"></a>
 
 ### DD-APP-CI-010 — Repository semantics remain Git-owned
 
 Optional repository initialisation/readiness work shall not create App-owned Git policy or provider semantics.
 
+<a id="dd-app-ci-011"></a>
+
 ### DD-APP-CI-011 — Declared-script execution is bounded
 
 The supporting script collaborator uses DD-APP-009 and DD-APP-050 through DD-APP-054; it does not extend the App command catalogue.
+
+<a id="dd-app-ci-012"></a>
 
 ### DD-APP-CI-012 — Provider completion is evidence
 
 Process, resource, template, repository, Nuxt or other provider success shall not independently establish App lifecycle success.
 
+<a id="dd-app-ci-013"></a>
+
 ### DD-APP-CI-013 — Partial effects remain observable
 
 Completed effects shall remain represented when later stages fail or are cancelled; no false atomicity or universal rollback shall be implied.
 
+<a id="dd-app-ci-014"></a>
+
 ### DD-APP-CI-014 — Interaction modes share semantics
 
 TUI, Headless, GUI, IDE, CI and automation shall not acquire independent App lifecycle policy.
+
+<a id="dd-app-ci-015"></a>
 
 ### DD-APP-CI-015 — Implementation topology remains open
 

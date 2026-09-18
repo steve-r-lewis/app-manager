@@ -97,11 +97,17 @@ The AI Functional Specification defines the project-environment requirements `PB
 | Safety/privacy/trust | `FR-AI-088`–`096` | disclosure, untrusted content, path safety and existing content protection |
 | Results/failures | `FR-AI-097`–`105` | application-level interpretation, warnings and ambiguity |
 
+<a id="dd-ai-001"></a>
+
 **DD-AI-001 — Primary-intent ownership is preserved**  
 DD-4.3 shall own only use cases whose primary application intent is AI-specific project-resource management or AI instruction-document management.
 
+<a id="dd-ai-002"></a>
+
 **DD-AI-002 — DD-2.7 remains the shared AI execution authority**  
 Provider/model capability discovery, bounded context handling, request construction, provider delegation, response normalization and structured-output validation remain owned by DD-2.7.
+
+<a id="dd-ai-003"></a>
 
 **DD-AI-003 — Application authority remains above the AI domain**  
 The AI domain shall interpret subordinate capability/resource evidence but shall not replace DD-1.5 final application acceptance or DD-1.2 canonical outcome semantics.
@@ -164,8 +170,12 @@ Application Engine -> DD-1.2 outcome
 
 This expresses semantic authority, not mandatory runtime topology.
 
+<a id="dd-ai-004"></a>
+
 **DD-AI-004 — Delegated AI does not transfer use-case ownership**  
 A Git, Docs, Nuxt, Quality, Settings or future domain use case remains owned by that domain when it consumes DD-2.7 merely for AI assistance.
+
+<a id="dd-ai-005"></a>
 
 **DD-AI-005 — AI-document management is not provider management**  
 Managing a provider-associated instruction document shall not imply that the corresponding provider is configured, available, authenticated or selected for AppManager execution.
@@ -174,17 +184,27 @@ Managing a provider-associated instruction document shall not imply that the cor
 
 ## 5. Consumed DD-1 Application Core Contracts
 
+<a id="dd-ai-006"></a>
+
 **DD-AI-006 — Invocation binding**  
 AI-domain operations shall consume normalized intent, interaction mode and cancellation context from DD-1.1 rather than deriving semantics from presentation flows.
+
+<a id="dd-ai-007"></a>
 
 **DD-AI-007 — Outcome binding**  
 AI-domain results shall extend DD-1.2 with domain evidence and shall not define a competing generic outcome envelope.
 
+<a id="dd-ai-008"></a>
+
 **DD-AI-008 — Managed-project binding**  
 Project-scoped listing, creation, replacement and deletion shall consume DD-1.3 managed-project identity and approved scope.
 
+<a id="dd-ai-009"></a>
+
 **DD-AI-009 — Configuration binding**  
 Provider/model, enrichment, disclosure, timeout, fallback and other applicable AI policy shall consume DD-1.4 effective configuration rather than directly resolving competing sources.
+
+<a id="dd-ai-010"></a>
 
 **DD-AI-010 — Application Engine binding**  
 Final acceptance of AI-domain results and authorization of consequential effects remain coordinated by DD-1.5.
@@ -193,20 +213,32 @@ Final acceptance of AI-domain results and authorization of consequential effects
 
 ## 6. Consumed DD-2 Shared Capabilities
 
+<a id="dd-ai-011"></a>
+
 **DD-AI-011 — Resource Access composition**  
 Creation and deletion of AI instruction documents may use DD-2.1 bounded resource mechanics; those mechanics shall not decide document semantics or domain acceptance.
+
+<a id="dd-ai-012"></a>
 
 **DD-AI-012 — Source Intelligence composition**  
 Recognition of existing AI-oriented documents may consume DD-2.4 facts. Recognition alone shall not authorize replacement or deletion.
 
+<a id="dd-ai-013"></a>
+
 **DD-AI-013 — Source Transformation composition**  
 Replacing or updating an existing AI instruction document shall use DD-2.5 under explicit AI-domain transformation intent and managed scope.
+
+<a id="dd-ai-014"></a>
 
 **DD-AI-014 — Registry and Template composition**  
 Supported AI document definitions/templates may use DD-2.6 for declarative identity, validation, provenance and rendering; template success shall not itself authorize a write.
 
+<a id="dd-ai-015"></a>
+
 **DD-AI-015 — AI Capability composition**  
 Live enrichment shall delegate provider/model resolution, bounded context, external disclosure checks, request execution and normalized provider evidence to DD-2.7.
+
+<a id="dd-ai-016"></a>
 
 **DD-AI-016 — Capability composition does not merge responsibilities**  
 The AI domain shall not recreate provider mechanics, generic transformation planning or registry infrastructure merely because one use case composes them.
@@ -218,6 +250,8 @@ The AI domain shall not recreate provider mechanics, generic transformation plan
 ### 7.1 AI-domain operation identity
 
 Operation identity binds the [twenty-two AI Functional commands](../functional/ai-functional-specification-v01.md). Optional enrichment is supporting behavior, not another public command. `ai.instruction.update` owns update intent; targeted transformation or whole-resource replacement is an effect selected by its DD-2.5 plan. There is no `ai.prompt.run` or generic AI execution command.
+
+<a id="dd-ai-017"></a>
 
 **DD-AI-017 — Operation identity is semantic**  
 An AI-domain operation shall be identified by application intent and semantic AI-resource target, not by one filename, provider, command, parser or SDK method.
@@ -237,11 +271,17 @@ A domain-level document type shall be capable of representing:
 - replacement/deletion policy where applicable;
 - sensitivity/disclosure constraints relevant to generation.
 
+<a id="dd-ai-018"></a>
+
 **DD-AI-018 — Document type is not filename identity**  
 A filename may participate in target resolution but shall not replace stable semantic document-type identity.
 
+<a id="dd-ai-019"></a>
+
 **DD-AI-019 — Provider association is descriptive metadata**  
 Provider/tool association shall not imply provider availability, authentication or runtime selection.
+
+<a id="dd-ai-020"></a>
 
 **DD-AI-020 — Examples remain non-exclusive**  
 `CLAUDE.md`, `GEMINI.md`, `AGENTS.md` and similar examples shall not constrain the architecture to a closed hard-coded provider set.
@@ -249,6 +289,8 @@ Provider/tool association shall not imply provider availability, authentication 
 ### 7.3 AI-domain result payload
 
 An AI-domain result carries the applicable semantic resource identity, resolved representation and target, scope/applicability, graph references, provider/tool association, presence, support/partial-representation state, revision evidence and policy state. For content workflows it distinguishes deterministic baseline, enrichment requested/performed/skipped/failed, and proposed versus accepted content provenance. It composes capability warnings, persistence/transformation effects, stale/conflict and no-op evidence, and recovery guidance beneath the [DD-1.2 outcome](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
+
+<a id="dd-ai-021"></a>
 
 **DD-AI-021 — Provider detail remains subordinate**  
 Provider/model metadata may support provenance and diagnostics but shall not become the domain success contract.
@@ -286,67 +328,105 @@ resolve normalized invocation
  -> return evidence for Application Engine acceptance
 ```
 
+<a id="dd-ai-022"></a>
+
 **DD-AI-022 — Target identity precedes consequential work**  
 Consequential resource operations resolve the eligible semantic resource and bounded project target before mutation. Instruction creation/update/deletion retains the document-type specialization below.
 
 ### 8.2 Instruction-resource listing
 
+<a id="dd-ai-023"></a>
+
 **DD-AI-023 — Listing is non-mutating**  
 Listing supported or observed AI instruction documents shall not create, normalize, rewrite or delete project resources.
+
+<a id="dd-ai-024"></a>
 
 **DD-AI-024 — Supported types and project presence are distinct facts**  
 A supported document type may be absent, and an observed AI-looking document may be unregistered; these states shall not be collapsed.
 
+<a id="dd-ai-025"></a>
+
 **DD-AI-025 — Unregistered observation is conservative**  
 Likely AI-oriented unregistered documents may be reported informationally, but uncertain classification shall not be elevated to recognized document identity without sufficient evidence.
+
+<a id="dd-ai-026"></a>
 
 **DD-AI-026 — Discovery grants no deletion authority**  
 An unregistered or heuristically observed document shall not become deletable merely because it appears in a listing result.
 
 ### 8.3 Creation and deterministic baseline
 
+<a id="dd-ai-027"></a>
+
 **DD-AI-027 — Baseline path is explicit**  
 Where a document type supports deterministic baseline generation, the AI domain shall be able to generate a valid baseline without requiring live DD-2.7 execution.
+
+<a id="dd-ai-028"></a>
 
 **DD-AI-028 — Project facts are authoritative inputs**  
 Project-specific facts inserted into a baseline shall derive from approved managed-project/source/settings/domain evidence and shall not be guessed from generated text.
 
+<a id="dd-ai-029"></a>
+
 **DD-AI-029 — Baseline rendering is not persistence**  
 Successful DD-2.6 rendering establishes proposed document content only; creation remains a separately authorized resource effect.
 
+<a id="dd-ai-030"></a>
+
 **DD-AI-030 — Existing target is protected**  
 Create shall not silently overwrite a pre-existing target.
+
+<a id="dd-ai-031"></a>
 
 **DD-AI-031 — Replacement is a separate consequential intent**  
 If replacement/update is supported, it shall be explicit and shall enter DD-2.5 with applicable authorization and preservation/conflict semantics.
 
 ### 8.4 Optional enrichment
 
+<a id="dd-ai-032"></a>
+
 **DD-AI-032 — Enrichment is subordinate to baseline semantics**  
 Optional AI enrichment shall not erase the distinction between deterministic baseline creation and provider-assisted enhancement.
+
+<a id="dd-ai-033"></a>
 
 **DD-AI-033 — Optional provider unavailability need not fail baseline creation**  
 Where the requested use case permits baseline-only completion, unavailable/failed optional DD-2.7 enrichment shall preserve a valid baseline and be interpreted as warning or partial result according to policy.
 
+<a id="dd-ai-034"></a>
+
 **DD-AI-034 — Required AI assistance fails explicitly**  
 Where a document type/use case explicitly requires live AI capability, unsupported or unavailable DD-2.7 capability shall prevent ordinary complete acceptance rather than silently degrade to a materially different operation.
+
+<a id="dd-ai-035"></a>
 
 **DD-AI-035 — Context selection is domain-intent bounded**  
 The AI domain shall choose only project facts/content reasonably necessary for the requested document enrichment and then delegate disclosure/minimization enforcement to DD-2.7.
 
+<a id="dd-ai-036"></a>
+
 **DD-AI-036 — Generated claims cannot override reliable facts**  
 The AI domain shall reject or correct known contradictions between generated enrichment and authoritative project facts where material to document correctness.
+
+<a id="dd-ai-037"></a>
 
 **DD-AI-037 — Provider response requires domain acceptance**  
 For instruction enrichment, apply [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow): validate suitability for the selected document contract under the acceptance policy resolved before the proposal. The authorized policy may require human review or deterministic automatic acceptance; the provider cannot select it.
 
 ### 8.5 Deletion
 
+<a id="dd-ai-038"></a>
+
 **DD-AI-038 — Deletion eligibility is explicit**  
 Deletion shall apply only to a resolved, present and eligible AI instruction document under the selected operation.
 
+<a id="dd-ai-039"></a>
+
 **DD-AI-039 — Exact target deletion**  
 Deletion shall affect only the selected document and shall not cascade to templates, other instruction documents, provider configuration or unrelated resources.
+
+<a id="dd-ai-040"></a>
 
 **DD-AI-040 — Already absent may be unchanged**  
 A selected document that is already absent may be reported as no-op/already satisfied without fabricating a destructive effect.
@@ -379,14 +459,22 @@ context-resolved
  -> accepted | unchanged | partial | rejected | cancelled | indeterminate
 ```
 
+<a id="dd-ai-041"></a>
+
 **DD-AI-041 — Provider state and domain state remain distinct**  
 Provider request success, failure, timeout or cancellation shall not be treated as equivalent to AI-domain operation state.
+
+<a id="dd-ai-042"></a>
 
 **DD-AI-042 — Baseline and enrichment state remain independently visible**  
 Where both stages exist, the result shall retain whether baseline generation succeeded independently of enrichment outcome.
 
+<a id="dd-ai-043"></a>
+
 **DD-AI-043 — Completed local effects remain historical facts**  
 Cancellation or later provider failure shall not erase a completed document creation/deletion effect from the result.
+
+<a id="dd-ai-044"></a>
 
 **DD-AI-044 — Indeterminate effect is first-class**  
 If a local effect may have occurred but cannot be verified reliably, the domain shall represent indeterminate state rather than guess.
@@ -395,23 +483,37 @@ If a local effect may have occurred but cannot be verified reliably, the domain 
 
 ## 10. Domain Policy and Decision Rules
 
+<a id="dd-ai-045"></a>
+
 **DD-AI-045 — Primary intent decides domain ownership**  
 The presence of an AI provider/model in a workflow shall not determine domain ownership; the primary application intent shall.
+
+<a id="dd-ai-046"></a>
 
 **DD-AI-046 — Provider choice is consumed policy**  
 The AI domain may supply operation-specific constraints but shall not independently invent provider precedence or selection order outside DD-1.4/DD-2.7.
 
+<a id="dd-ai-047"></a>
+
 **DD-AI-047 — Optional versus required enrichment is explicit policy**  
 Whether enrichment is optional, required or prohibited shall be established before provider execution where it affects acceptance.
+
+<a id="dd-ai-048"></a>
 
 **DD-AI-048 — External disclosure is not an invisible side effect**  
 An AI-domain operation that sends project content to an external provider shall do so only under applicable effective disclosure policy and explicit operation semantics.
 
+<a id="dd-ai-049"></a>
+
 **DD-AI-049 — Unsupported and unavailable remain distinct**  
 Unknown document type, unsupported capability and temporarily unavailable provider/model shall not be collapsed into one generic failure state.
 
+<a id="dd-ai-050"></a>
+
 **DD-AI-050 — Provider fallback is governed**  
 The AI domain may request retry/fallback only where allowed by effective/invocation policy and shall not manufacture hidden fallback behavior around DD-2.7.
+
+<a id="dd-ai-051"></a>
 
 **DD-AI-051 — Generated action suggestions are inert**  
 Commands, tool calls, file edits or other consequential actions mentioned by generated instruction content shall not execute merely because the AI-domain workflow produced them.
@@ -434,23 +536,37 @@ recognition
     != application success
 ```
 
+<a id="dd-ai-052"></a>
+
 **DD-AI-052 — Recognition does not grant mutation authority**  
 A discovered or recognized document shall not be replaced or deleted without explicit consequential intent and authorization.
+
+<a id="dd-ai-053"></a>
 
 **DD-AI-053 — AI output does not grant write authority**  
 Generated content shall not be written merely because DD-2.7 produced it successfully.
 
+<a id="dd-ai-054"></a>
+
 **DD-AI-054 — New-resource creation is bounded**  
 Accepted generated content for a new document shall be persisted only to the approved resolved target through the applicable resource path.
+
+<a id="dd-ai-055"></a>
 
 **DD-AI-055 — Existing-resource mutation routes through DD-2.5**  
 Replacement/update of existing content shall not bypass transformation preconditions, stale-state checks or source-validity evidence.
 
+<a id="dd-ai-056"></a>
+
 **DD-AI-056 — Existing authored content is protected**  
 The AI domain shall not silently overwrite existing user-authored instruction content.
 
+<a id="dd-ai-057"></a>
+
 **DD-AI-057 — Path safety is authoritative**  
 Provider/template-suggested paths shall not expand target scope beyond the document type and DD-1.3 managed scope.
+
+<a id="dd-ai-058"></a>
 
 **DD-AI-058 — Consequential authorization is mode-independent**  
 Interactive confirmation and Headless explicit authorization may differ in presentation but shall satisfy equivalent consequential-operation policy.
@@ -459,23 +575,37 @@ Interactive confirmation and Headless explicit authorization may differ in prese
 
 ## 12. Failure, Cancellation, and Partial Effects
 
+<a id="dd-ai-059"></a>
+
 **DD-AI-059 — Failure is stage-attributable**  
 Failures shall distinguish target/type resolution, managed-scope validation, baseline generation, template/rendering, provider delegation, provider-output validation, authorization, persistence/transformation and AI-domain acceptance where material.
+
+<a id="dd-ai-060"></a>
 
 **DD-AI-060 — Optional enrichment failure may yield baseline success**  
 Where policy allows, a valid created baseline plus failed optional enrichment shall be represented truthfully as baseline completion with warning/partial enrichment rather than total provider-defined failure.
 
+<a id="dd-ai-061"></a>
+
 **DD-AI-061 — Required enrichment failure prevents complete acceptance**  
 Where enrichment is required by the selected operation, failed or invalid enrichment shall not be silently accepted as complete success.
+
+<a id="dd-ai-062"></a>
 
 **DD-AI-062 — No false rollback**  
 Provider requests and completed local resource effects shall not be described as rolled back unless an actual rollback guarantee completed.
 
+<a id="dd-ai-063"></a>
+
 **DD-AI-063 — Cancellation stops future work**  
 Cancellation shall prevent not-yet-started enrichment/effects as soon as safely practical and propagate to DD-2.7/DD-2.5/DD-2.1 where supported.
 
+<a id="dd-ai-064"></a>
+
 **DD-AI-064 — Cancellation preserves completed work**  
 Completed baseline generation, provider calls and local effects remain represented after cancellation.
+
+<a id="dd-ai-065"></a>
 
 **DD-AI-065 — Provider uncertainty remains subordinate evidence**  
 Indeterminate provider completion after timeout/network/cancellation shall be preserved as DD-2.7 evidence and interpreted by the AI domain according to whether a local accepted effect depended on it.
@@ -484,14 +614,22 @@ Indeterminate provider completion after timeout/network/cancellation shall be pr
 
 ## 13. Headless and Interaction Independence
 
+<a id="dd-ai-066"></a>
+
 **DD-AI-066 — One semantic contract across adapters**  
 TUI, Headless and future adapters shall express equivalent AI-domain operation identity, document type, provider policy, authorization and acceptance semantics.
+
+<a id="dd-ai-067"></a>
 
 **DD-AI-067 — Interactive selection is presentation**  
 Menus for document types, existing candidates or optional enrichment shall not create semantics unavailable to Headless callers.
 
+<a id="dd-ai-068"></a>
+
 **DD-AI-068 — Headless ambiguity fails safely**  
 Ambiguous document type, project target, provider choice, replacement intent or delete target shall produce structured failure rather than prompts or guesses.
+
+<a id="dd-ai-069"></a>
 
 **DD-AI-069 — Machine-consumable listing and outcomes**  
 Headless callers shall receive stable document identities, presence states, selected targets and outcome/effect data without parsing provider text or terminal presentation.
@@ -500,17 +638,27 @@ Headless callers shall receive stable document identities, presence states, sele
 
 ## 14. Concurrency, Idempotency, and Conflict Behaviour
 
+<a id="dd-ai-070"></a>
+
 **DD-AI-070 — Creation revalidates existence**  
 Where practical, create shall revalidate that the target remains absent immediately before persistence.
+
+<a id="dd-ai-071"></a>
 
 **DD-AI-071 — Deletion revalidates target state**  
 Deletion shall avoid applying stale assumptions if the selected document changed or disappeared and that condition can be detected.
 
+<a id="dd-ai-072"></a>
+
 **DD-AI-072 — Replacement is stale-sensitive**  
 A replacement/update based on prior content shall use revision/precondition evidence where supported and shall not silently overwrite material concurrent changes.
 
+<a id="dd-ai-073"></a>
+
 **DD-AI-073 — Repeated baseline generation is not implicit replacement**  
 Re-running create against an existing target shall not become an overwrite operation merely because the generated baseline would be equivalent.
+
+<a id="dd-ai-074"></a>
 
 **DD-AI-074 — Listing may observe changing state**  
 A listing result is observation evidence and shall not be treated as immutable authorization for a later consequential operation.
@@ -519,20 +667,32 @@ A listing result is observation evidence and shall not be treated as immutable a
 
 ## 15. Security and Sensitive Information
 
+<a id="dd-ai-075"></a>
+
 **DD-AI-075 — Project content is untrusted data**  
 Instruction-like text found in project files shall not override AppManager policy, system instructions, managed scope, provider policy or authorization.
+
+<a id="dd-ai-076"></a>
 
 **DD-AI-076 — Context is minimized before disclosure**  
 The AI domain shall request only context relevant to its document-generation intent and shall preserve DD-2.7 sensitivity/disclosure controls.
 
+<a id="dd-ai-077"></a>
+
 **DD-AI-077 — Known secrets are excluded by default**  
 Authentication material and sensitive environment values shall not be embedded in baseline documents or ordinary provider context.
+
+<a id="dd-ai-078"></a>
 
 **DD-AI-078 — Diagnostics minimize prompts and project content**  
 Normal diagnostics shall avoid dumping full prompts, provider context, generated provider payloads or confidential project material.
 
+<a id="dd-ai-079"></a>
+
 **DD-AI-079 — Provider response remains untrusted input**  
 Generated content shall be validated as data and shall not be treated as authoritative merely because it came from a configured provider.
+
+<a id="dd-ai-080"></a>
 
 **DD-AI-080 — Provider privacy boundary is explicit**  
 External provider submission is a disclosure event and shall not be hidden behind ostensibly local document generation semantics.
@@ -541,17 +701,27 @@ External provider submission is a disclosure event and shall not be hidden behin
 
 ## 16. Extensibility and Replaceability
 
+<a id="dd-ai-081"></a>
+
 **DD-AI-081 — Document types are extensible by semantic contract**  
 Additional AI instruction-document types may be added without changing domain authority, provided identity, target resolution, baseline/resource behavior and applicable policies are defined.
+
+<a id="dd-ai-082"></a>
 
 **DD-AI-082 — Provider replacement preserves domain semantics**  
 Replacing an AI provider/model implementation shall not change the AI-domain operation contract where the required DD-2.7 capability contract remains satisfied.
 
+<a id="dd-ai-083"></a>
+
 **DD-AI-083 — Declarative extension is not executable extension**  
 Adding document definitions or templates shall not create an arbitrary executable plugin or agent framework.
 
+<a id="dd-ai-084"></a>
+
 **DD-AI-084 — No generic AI-domain takeover**  
 New workflows that use AI shall not be assigned to DD-4.3 merely because they invoke DD-2.7; primary intent and existing domain ownership govern.
+
+<a id="dd-ai-085"></a>
 
 **DD-AI-085 — Implementation topology remains open**  
 This design shall not require one AI-domain service/class/package/process, one provider runtime, one registry file or a fixed TypeScript source layout.
@@ -585,11 +755,17 @@ Tests shall cover at least:
 - provider substitution behind DD-2.7;
 - cross-domain AI use remaining owned by Git/Docs/Nuxt/Quality/Settings as applicable.
 
+<a id="dd-ai-086"></a>
+
 **DD-AI-086 — Domain policy is provider-independent testable**  
 Core DD-4.3 orchestration and acceptance shall be testable with fake DD-2.7 evidence and shall not require live credentials or external provider access.
 
+<a id="dd-ai-087"></a>
+
 **DD-AI-087 — Provider integration tests do not define domain semantics**  
 Concrete provider tests may verify DD-2.7 adapters below the boundary but shall not redefine AI-domain ownership, acceptance or mutation rules.
+
+<a id="dd-ai-088"></a>
 
 **DD-AI-088 — Ownership-boundary tests are mandatory design evidence**  
 Conformance shall verify both directions of the boundary: DD-4.3 does not absorb shared provider mechanics, and other domains do not surrender primary intent merely because they consume AI Capability.

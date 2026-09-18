@@ -196,10 +196,14 @@ An explicit target is strong caller intent, but remains input to AppManager proj
 
 The resolver shall verify that the target can be reconciled with a supported managed-project model.
 
+<a id="dd-proj-001"></a>
+
 **DD-PROJ-001 — Explicit target validation**  
 Explicit project targets shall be validated against AppManager project semantics before becoming authoritative managed-project identity.
 
 ### 6.3 No silent substitution
+
+<a id="dd-proj-002"></a>
 
 **DD-PROJ-002 — No hidden target replacement**  
 When a supplied target and stronger project evidence identify materially different projects, resolution shall produce conflict or ambiguity rather than silently substituting another target.
@@ -235,6 +239,8 @@ Each evidence item should represent:
 - whether it was caller-supplied or discovered;
 - diagnostics associated with acquisition.
 
+<a id="dd-proj-003"></a>
+
 **DD-PROJ-003 — Evidence/authority separation**  
 No individual evidence provider shall acquire authority to define AppManager project identity, scope, ownership, or mutability merely by producing a match.
 
@@ -269,6 +275,8 @@ A candidate should be capable of identifying:
 
 ### 8.2 Deterministic candidate derivation
 
+<a id="dd-proj-004"></a>
+
 **DD-PROJ-004 — Deterministic candidate resolution**  
 Materially equivalent project evidence and materially equivalent applicable bootstrap configuration shall produce materially equivalent candidate sets and selection decisions.
 
@@ -293,6 +301,8 @@ The exact weighting or algorithm belongs to Implementation Specification unless 
 
 Ambiguity exists when more than one materially different candidate remains plausible and selection would affect project identity, scope, safety, or consequential effects.
 
+<a id="dd-proj-005"></a>
+
 **DD-PROJ-005 — Ambiguity is explicit state**  
 Ambiguous project resolution shall be represented explicitly rather than collapsed to an arbitrary candidate.
 
@@ -314,6 +324,8 @@ Conflicts shall be surfaced through structured diagnostics and either resolved u
 ### 9.1 Logical root
 
 The project root is the logical root of the managed AppManager project, not automatically the caller's current working directory.
+
+<a id="dd-proj-006"></a>
 
 **DD-PROJ-006 — Logical root semantics**  
 Project-root resolution shall derive the root from coherent project evidence and project semantics rather than treating the invocation directory as authoritative by default.
@@ -373,6 +385,8 @@ A conforming context shall be capable of representing, where relevant:
 
 ### 10.3 Immutable consumption
 
+<a id="dd-proj-007"></a>
+
 **DD-PROJ-007 — Read-only context consumption**  
 Commands and capabilities should consume Managed Project Context through read-only or immutable views such that inspecting context cannot itself mutate project state or redefine resolved relationships.
 
@@ -383,6 +397,8 @@ The implementation need not use a particular immutable data structure, but share
 Within one operation, participating components shall consume one coherent interpretation of project identity and relationships.
 
 Capabilities may inspect additional technical facts, but they shall not independently substitute a conflicting project model.
+
+<a id="dd-proj-008"></a>
 
 **DD-PROJ-008 — One operation, one project interpretation**  
 A single application operation shall not contain competing authoritative managed-project contexts for the same target unless the operation explicitly models multiple independent projects.
@@ -415,6 +431,8 @@ A project requirement may include:
 - managed-scope resolution;
 - mutability eligibility.
 
+<a id="dd-proj-009"></a>
+
 **DD-PROJ-009 — Minimal sufficient context**  
 Context resolution shall establish the facts required by the requested operation without forcing discovery of unrelated project facts merely because they could be obtained.
 
@@ -437,6 +455,8 @@ A Root Application entity may represent:
 - source/config/docs/tests/resource references;
 - lifecycle-relevant facts;
 - support status.
+
+<a id="dd-proj-010"></a>
 
 **DD-PROJ-010 — Root application distinct from project root**  
 The root application shall not be conflated with the project-root directory merely because they often coincide physically.
@@ -473,6 +493,8 @@ Layers may differ from the root application in:
 - versioning;
 - release lifecycle.
 
+<a id="dd-proj-011"></a>
+
 **DD-PROJ-011 — No root/layer lifecycle collapse**  
 The context model shall not assume every managed layer shares the root application's repository or management lifecycle.
 
@@ -504,6 +526,8 @@ The project topology shall be capable of representing:
 - managed entities with no repository;
 - one repository associated with multiple managed entities;
 - unsupported or ambiguous repository relationships.
+
+<a id="dd-proj-012"></a>
 
 **DD-PROJ-012 — Repository topology remains subordinate**  
 Repository boundaries shall not replace project identity, root/layer semantics, or managed-scope policy.
@@ -549,6 +573,8 @@ Relationships may include:
 
 ### 15.2 Physical containment is evidence only
 
+<a id="dd-proj-013"></a>
+
 **DD-PROJ-013 — Semantic relationships over path assumptions**  
 Filesystem containment may support topology resolution but shall not be the sole mechanism for relationships that are semantically stronger than directory nesting.
 
@@ -571,6 +597,8 @@ The context shall distinguish these from:
 - resources whose ownership is unknown.
 
 ### 16.2 Ownership does not propagate by adjacency
+
+<a id="dd-proj-014"></a>
 
 **DD-PROJ-014 — Ownership is resource-specific**  
 AppManager ownership of one resource shall not imply ownership of sibling, parent, child, adjacent, or repository-coincident resources without explicit project semantics.
@@ -613,6 +641,8 @@ The request must be resolved against:
 
 Where scope depends on project/scope-aware configuration, DD-1.4 resolves that configuration after sufficient Managed Project Context exists and before the affected Managed Scope decision is finalized. This staged use of effective configuration does not transfer scope authority to Configuration Resolution.
 
+<a id="dd-proj-015"></a>
+
 **DD-PROJ-015 — Scope requires application resolution**  
 A caller-supplied scope selector shall not directly become the final target set without validation and policy evaluation.
 
@@ -636,6 +666,8 @@ A resolved Managed Scope should be capable of representing:
 
 ### 18.2 Scope before consequential effects
 
+<a id="dd-proj-016"></a>
+
 **DD-PROJ-016 — Consequential scope gate**  
 No consequential effect shall begin until the Application Engine has a sufficiently complete resolved scope for the requested operation.
 
@@ -647,12 +679,16 @@ A caller or command may narrow an otherwise valid broader scope where the use ca
 
 Narrowing shall be monotonic with respect to target inclusion: removing targets from one scope dimension shall not silently broaden another dimension.
 
+<a id="dd-proj-017"></a>
+
 **DD-PROJ-017 — No compensating expansion**  
 Narrowing a scope shall never implicitly add unrelated targets merely to preserve the approximate size or shape of the original scope.
 
 ### 18.4 No implicit expansion from discovery
 
 Newly discovered related entities remain context facts until explicitly included by scope semantics.
+
+<a id="dd-proj-018"></a>
 
 **DD-PROJ-018 — Discovery does not expand scope**  
 Discovering an additional layer, repository, file, or related project entity after scope resolution shall not silently broaden the operation's target set.
@@ -685,8 +721,12 @@ mutable for this requested effect
 
 Each transition may reject an entity.
 
+<a id="dd-proj-019"></a>
+
 **DD-PROJ-019 — Recognition is weakest state**  
 Recognition alone grants no consequential permission.
+
+<a id="dd-proj-020"></a>
 
 **DD-PROJ-020 — Scope is not mutation authority**  
 Inclusion in Managed Scope shall not by itself authorize mutation where ownership, command semantics, policy, or safety prohibit the requested effect.
@@ -737,6 +777,8 @@ Exclusions may derive from:
 
 An excluded entity remains excluded even if discoverable and related to included entities unless the owning use case explicitly authorizes a governed override.
 
+<a id="dd-proj-021"></a>
+
 **DD-PROJ-021 — Discovery cannot override exclusion**  
 Project discovery, topology expansion, or provider recognition shall not silently re-include an excluded resource.
 
@@ -753,6 +795,8 @@ A requested scope may contain some resolvable and some unresolved entities.
 This state shall be represented explicitly rather than silently reducing the request.
 
 ### 22.2 Default fail-safe rule
+
+<a id="dd-proj-022"></a>
 
 **DD-PROJ-022 — Partial resolution does not imply partial authorization**  
 If part of a consequential requested scope cannot be resolved, AppManager shall not execute against the resolvable subset unless the owning Functional Specification explicitly permits partial-scope execution.
@@ -774,6 +818,8 @@ Where partial-scope execution is explicitly allowed:
 Headless operation shall never depend on interactive project browsing or selection when all required information can be supplied or resolved deterministically.
 
 If ambiguity remains material, Headless shall fail with structured diagnostics.
+
+<a id="dd-proj-023"></a>
 
 **DD-PROJ-023 — No Headless guess mode**  
 Headless resolution shall not choose an arbitrary project candidate merely because no human is available to disambiguate.
@@ -806,6 +852,8 @@ Host integrations may provide context such as:
 
 This information becomes Project Evidence or explicit scope input.
 
+<a id="dd-proj-024"></a>
+
 **DD-PROJ-024 — Host context remains contextual**  
 A host selection shall not bypass Managed Project validation, exclusions, targetability checks, or application safety policy.
 
@@ -833,6 +881,8 @@ This need not imply one global project hash.
 ### 25.3 Revalidation
 
 Consequential operations whose correctness depends on project facts should revalidate materially significant assumptions before applying effects when those assumptions may have changed.
+
+<a id="dd-proj-025"></a>
 
 **DD-PROJ-025 — Stale context fails safe**  
 If project-context staleness creates a credible risk of acting on the wrong project entity or outside intended scope, execution shall refresh/revalidate or fail rather than proceed using known-stale authority assumptions.
