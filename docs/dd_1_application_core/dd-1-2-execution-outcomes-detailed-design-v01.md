@@ -20,27 +20,9 @@
 
 ## 1. Purpose
 
-This specification defines the shared internal contracts by which AppManager represents technical execution evidence and converts it into coherent application-level outcomes.
+This design gives capabilities, use cases and the Application Engine a shared vocabulary for execution evidence, diagnostic interpretation, effects and final outcomes. Its models keep the facts reported by a delegated mechanism available while the owning workflow evaluates its intent under [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
-It establishes one permanent canonical semantic result model for the Application Engine, domain use cases, shared capabilities, invocation boundary, adapters, and future integrations to consume rather than allowing each domain, capability, provider, or invocation surface to invent incompatible success flags, error shapes, diagnostic taxonomies, warning conventions, cancellation representations, effect models, or partial-success semantics.
-
-The central design rule is:
-
-> **A provider result is evidence about execution; an AppManager outcome is an application decision.**
-
-A second governing rule is:
-
-> **Technical completion, application acceptance, and presentation are distinct stages and must remain distinguishable.**
-
-A third governing rule is:
-
-> **Failure or cancellation must describe known consequential state; neither implies rollback unless rollback is explicitly guaranteed by the owning use case.**
-
-A fourth ownership rule follows:
-
-> **DD-1.2 owns shared outcome and diagnostic semantics once; consuming designs project, compose, map, or refine them but do not recreate competing base contracts.**
-
-DD-1.1 Application Invocation owns the caller-facing invocation/control and projection boundary. It consumes this canonical model and may define invocation-specific codes or projection details only by mapping them to the semantics defined here.
+The status, diagnostic, effect and child-result structures below support partial work and uncertainty without discarding the evidence needed for recovery. [DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md#_22-invocation-outcome-projection-contract) carries the accepted result to callers; this document supplies the meanings that projection consumes.
 
 ## 2. Scope
 
@@ -271,13 +253,11 @@ Execution evidence shall be:
 
 ### 8.3 Provider-native data
 
-Provider-native response objects, exceptions, stack traces, stdout/stderr blobs, API payloads, or SDK-specific result objects must not escape directly as the canonical AppManager outcome.
-
-They may be retained as bounded evidence or debugging detail when safe and appropriate.
+Native response objects, exceptions, stacks, streams and API/SDK payloads follow [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and [§18 normalization](#_18-provider-result-normalization). They may be retained as bounded evidence or debugging detail when safe and appropriate.
 
 ### 8.4 Evidence lifecycle
 
-Evidence may be produced incrementally during execution, but only the owning Application Engine/use case may determine the final application outcome.
+Evidence may be produced incrementally; terminal acceptance follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
 
 ## 9. Diagnostic Model
 
@@ -361,21 +341,7 @@ A capability-specific failure code, provider classification, or domain finding i
 
 ## 10. Warnings
 
-Warnings are diagnostics that do not by themselves require final failure.
-
-A warning shall remain structurally distinguishable from an error.
-
-Examples include:
-
-- deprecated resource usage;
-- recoverable provider fallback;
-- optional metadata omission;
-- partial information availability;
-- non-critical unsupported artefact;
-- safe skip behavior;
-- policy-relevant but non-blocking condition.
-
-A use case may define particular warnings as acceptance blockers, but that rule belongs to the owning use case rather than the warning infrastructure.
+Warnings use the diagnostic model in [§9](#_9-diagnostic-model) under [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039). Examples include deprecated resources, provider fallback, omitted optional metadata, partial information, unsupported non-critical artefacts and policy-approved skips. These examples help interpret the category; the owning use case supplies any acceptance-blocking rule.
 
 ## 11. Human-Presentable Messages
 
@@ -429,11 +395,7 @@ Domain designs may refine these categories.
 
 ### 12.4 No false rollback
 
-An operation that fails after recording effects shall preserve those effects in the final outcome where material.
-
-A compensation attempt shall be reported separately from the original effect.
-
-Rollback may be claimed only where the owning design guarantees and verifies it.
+Failure-effect preservation follows [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) and rollback claims follow [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046). A compensation attempt shall be recorded separately from the original effect. Claimed rollback additionally requires verification that the guaranteed rollback completed.
 
 ## 13. Proposed Effects and Preview
 
@@ -453,9 +415,7 @@ A proposed effect must never be represented as an applied effect merely because 
 
 ### 14.1 Purpose
 
-Partial completion is a first-class state, not an error-message convention.
-
-It applies when a multi-stage or multi-target operation performs meaningful consequential work but does not fully satisfy the requested intent.
+The child-result model below refines [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036) for multi-stage and multi-target work.
 
 ### 14.2 Child result model
 
@@ -471,15 +431,7 @@ Each child result should preserve its own:
 
 ### 14.3 Aggregation rule
 
-Outcome aggregation must not use naive rules such as "any success means success" or "first failure discards later state".
-
-The owning use case shall define acceptance rules, while the shared aggregator preserves all child evidence and supports determination of:
-
-- full success;
-- partial success;
-- full failure;
-- cancellation with prior effects;
-- no-op/already-satisfied completion where semantically allowed.
+The shared aggregator in [§20](#_20-outcome-aggregation) preserves child evidence for the owning use case’s acceptance rules. “Any success means success” and “first failure discards later state” cannot satisfy that model. The resulting parent uses [§6 statuses](#_6-core-status-model), [§17 cancellation](#_17-cancellation-model) and [§15 no-op states](#_15-no-op-already-satisfied-skipped-and-not-attempted-states).
 
 ### 14.4 Ordering
 
@@ -537,9 +489,7 @@ Common event classes may include:
 
 ### 16.4 Progress is not success
 
-No progress event, including a final provider completion event, may by itself establish AppManager application success.
-
-Only the terminal AppManager outcome carries final acceptance status.
+Progress-event interpretation follows [FR-INV-028](../functional/application-invocation-functional-specification-v01.md#fr-inv-028). Terminal acceptance is delivered through [§7](#_7-outcome-contract).
 
 ### 16.5 Event loss
 
@@ -567,27 +517,21 @@ A cancellation request is not proof that execution has stopped.
 
 ### 17.3 Effects before cancellation
 
-The terminal cancelled outcome shall preserve known effects completed before cancellation.
-
-If execution cannot determine whether an in-flight external operation completed, that uncertainty shall be represented explicitly rather than guessed.
+Cancelled outcomes apply [FR-INV-031](../functional/application-invocation-functional-specification-v01.md#fr-inv-031) to known prior effects. If an in-flight external operation’s completion cannot be established, the outcome shall retain that uncertainty.
 
 ### 17.4 Cancellation versus failure
 
-Cancellation shall remain distinguishable from ordinary failure.
-
-If a cancellation attempt itself fails and execution continues or terminates for another reason, the owning use case shall determine the final status while preserving the cancellation diagnostics/evidence.
+Cancellation/failure distinction follows [FR-INV-031](../functional/application-invocation-functional-specification-v01.md#fr-inv-031). If cancellation itself fails and execution continues or ends for another reason, the owning use case determines status while preserving the cancellation evidence/diagnostics.
 
 ### 17.5 Rollback
 
-Cancellation does not imply rollback.
-
-Compensation or rollback, where supported, is a separate operation/stage and shall have its own evidence and effect reporting.
+Cancellation rollback claims follow [FR-INV-032](../functional/application-invocation-functional-specification-v01.md#fr-inv-032). Supported compensation/rollback is a separate operation or stage with its own evidence, recorded under [§12.4](#_12-4-no-false-rollback).
 
 ## 18. Provider Result Normalization
 
 ### 18.1 Boundary
 
-Every shared capability provider shall expose results through an AppManager-oriented capability contract before those results reach domain/application outcome interpretation.
+Provider results cross the [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) seam through the normalized evidence contract below before application interpretation.
 
 ### 18.2 Normalization responsibilities
 
@@ -632,17 +576,7 @@ A provider normalizer may classify evidence but must not decide whether AppManag
 
 ### 19.1 Authority
 
-The Application Engine/use-case layer owns interpretation of normalized execution evidence.
-
-Interpretation determines whether technical evidence satisfies:
-
-- requested intent;
-- managed scope;
-- application policy;
-- safety rules;
-- validation requirements;
-- domain acceptance criteria;
-- workflow sequencing requirements.
+Interpretation applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) to normalized evidence; [§6](#_6-core-status-model) distinguishes its status from technical execution and caller projection.
 
 ### 19.2 Technical success can be application failure
 
@@ -687,16 +621,7 @@ Aggregation may consume:
 
 ### 20.3 Aggregation invariants
 
-Aggregation must:
-
-- preserve material failures;
-- preserve material effects;
-- preserve cancellation state;
-- not convert partial completion into unconditional success;
-- not discard skipped/not-attempted targets where relevant;
-- not infer rollback from failure;
-- not infer application success from provider success count;
-- remain deterministic for equivalent ordered inputs and policy.
+Aggregation applies [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036), [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045) and [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) using the [child model](#_14-2-child-result-model), [cancellation model](#_17-cancellation-model) and [subordinate-state distinctions](#_15-no-op-already-satisfied-skipped-and-not-attempted-states). Material failures, effects and relevant skipped/not-attempted targets remain represented. Equivalent ordered evidence and acceptance policy shall produce a deterministic aggregate interpretation.
 
 ## 21. Recovery Guidance
 
@@ -717,17 +642,9 @@ Guidance must not imply that a retry is safe unless the owning use case permits 
 
 ## 22. Retryability and Repetition Evidence
 
-The result model may expose evidence such as:
+The result may carry retryability evidence such as suspected transience, provider retry-after, known not-started state, possible partial completion or unknown repetition safety.
 
-- transient failure suspected;
-- provider explicitly indicates retry-after;
-- operation known not to have started;
-- operation may have partially completed;
-- safe repetition unknown.
-
-This evidence does not grant retry authority.
-
-The Application Engine/use case determines whether retry, resume, fallback, or repetition is allowed.
+That evidence is consumed under [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) and [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049); it is an input to the owning decision, not the decision itself.
 
 ## 23. Concurrency and Stale-State Diagnostics
 
@@ -773,7 +690,7 @@ Redaction is not merely a presentation concern when structured output may be con
 
 ### 25.1 Invocation correlation
 
-All significant outcomes, diagnostics, effects, and events shall be correlatable to the invocation that produced them.
+The outcome, diagnostic, effect and event models bind to [DD-1.1 invocation identity](dd-1-1-application-invocation-detailed-design-v01.md#_7-invocation-identity-and-correlation).
 
 ### 25.2 Stage/target correlation
 
@@ -805,32 +722,11 @@ A successful preview does not imply successful future execution.
 
 ### 27.1 Structured projection
 
-DD-1.1 Application Invocation consumes the canonical AppManager outcome defined here and projects it to the caller.
-
-Invocation/adapters may:
-
-- render concise prose;
-- show tables/trees;
-- map severity to UI affordances;
-- stream progress;
-- select appropriate exit codes at implementation level;
-- serialize machine-readable representations;
-- omit non-required implementation detail where doing so does not hide material application state.
+Caller views consume [DD-OUTCLAR-002](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002). Examples include prose, tables, graphical severity indicators, streamed progress, machine serialization and implementation-level exit-code projection.
 
 ### 27.2 Prohibited projection behavior
 
-DD-1.1/adapters shall not:
-
-- define a second shared outcome envelope or diagnostic taxonomy;
-- reinterpret provider success as application success;
-- suppress material partial effects;
-- convert cancellation to success;
-- treat warnings as failures unless the application outcome says so;
-- infer retries;
-- expose secrets from bounded provider evidence;
-- create adapter-specific final status semantics.
-
-The mapping/projection relationship is further defined by [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
+Projection preserves [DD-OUTCLAR-002](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002) and [DD-OUTCLAR-003](dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-003), with diagnostic refinement under [DD-OUTCLAR-006](#dd-outclar-006). Sensitive detail follows [§24](#_24-sensitive-information-and-redaction), warnings follow [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) and retry decisions follow [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049).
 
 ## 28. Compatibility and Evolution
 
@@ -897,9 +793,7 @@ The result model supports this authority; it does not replace it.
 
 ### 31.1 DD-1.1 Application Invocation
 
-DD-1.1 owns invocation requests, discovery, interaction capability, authorization-evidence transport, event/cancellation control, and caller-facing projection/delivery.
-
-It shall consume the canonical outcome/diagnostic model defined here rather than maintain a separate final-outcome envelope or shared diagnostic taxonomy.
+[DD-1.1](dd-1-1-application-invocation-detailed-design-v01.md) provides invocation requests, discovery, interaction and control channels. The accepted models here reach callers through its [projection contract](dd-1-1-application-invocation-detailed-design-v01.md#_22-invocation-outcome-projection-contract).
 
 ### 31.2 Managed Project Detailed Design
 
@@ -936,40 +830,11 @@ None of those capabilities defines the final AppManager application outcome for 
 
 ## 33. Domain Design Rules
 
-All DD-3 and DD-4 domain designs shall:
-
-- consume the canonical shared outcome envelope;
-- define domain-specific result payloads only where necessary;
-- define domain acceptance rules explicitly;
-- map capability evidence to application outcomes;
-- map domain-specific diagnostic codes/findings to the canonical broad taxonomy where they become application-facing diagnostics;
-- preserve partial effects;
-- preserve cancellation semantics;
-- preserve diagnostics structurally;
-- avoid domain-specific duplicate base error/result envelopes;
-- avoid provider-native result leakage;
-- define no-op/already-satisfied behavior where relevant;
-- state retry/repetition safety where relevant.
+Domain result payloads compose [§7.2](#_7-2-result-payload); application-facing diagnostic refinements map through [DD-OUTCLAR-006](#dd-outclar-006). Acceptance follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance), no-op interpretation uses [§15](#_15-no-op-already-satisfied-skipped-and-not-attempted-states), and retry/repetition policy follows [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048). The shared models preserve the resulting evidence and effects.
 
 ## 34. Security and Safety Invariants
 
-The following invariants are mandatory:
-
-1. final success is determined by AppManager application acceptance, not a provider Boolean;
-2. material effects are not hidden by failure or cancellation;
-3. rollback is never implied without explicit verified semantics;
-4. warnings remain distinguishable from errors;
-5. provider-native secrets/payloads are not exposed by default;
-6. raw provider exceptions are not the application error contract;
-7. partial completion is not collapsed into unconditional success;
-8. cancellation request is not equivalent to cancellation completion;
-9. preview/proposed changes are not represented as applied changes;
-10. retryability evidence does not confer retry authority;
-11. adapters do not reinterpret final semantics;
-12. unknown/ambiguous terminal states fail safe rather than defaulting to success;
-13. there is one canonical shared AppManager outcome envelope semantic model;
-14. there is one canonical broad AppManager diagnostic taxonomy;
-15. local capability/domain/invocation vocabularies refine or map to the canonical model rather than compete with it.
+The operative contracts are the outcome/evidence/diagnostic models (§§6–9), effects and partial results (§§12–15), cancellation (§17), normalization/interpretation (§§18–19), aggregation (§20), recovery/retry evidence (§§21–22), sensitivity (§24) and compatibility (§28). This index does not restate their invariants.
 
 ## 35. Traceability to Functional Requirements
 
@@ -1010,24 +875,7 @@ The Detailed Design therefore deliberately avoids making `Error`, `AbortSignal`,
 
 ## 37. Conformance Criteria
 
-An AppManager component conforms to this Detailed Design only if:
-
-1. it distinguishes provider/capability evidence from final AppManager outcomes;
-2. it uses the canonical shared final status/outcome model rather than an incompatible private success/error envelope;
-3. it preserves diagnostics structurally and maps application-facing categories/codes to the canonical taxonomy;
-4. it preserves warnings separately from failures;
-5. it preserves known consequential effects after failure, partial success, or cancellation;
-6. it distinguishes proposed effects from applied effects;
-7. it represents partial completion explicitly where the Functional layer requires it;
-8. it does not imply rollback without a verified guarantee;
-9. it does not expose provider-native failures as the canonical application error contract;
-10. it supports application-level interpretation before final success/failure determination;
-11. it keeps cancellation distinguishable from failure and from mere cancellation request;
-12. it supports invocation/stage/target correlation where needed;
-13. it protects sensitive information in structured outputs as well as presentation;
-14. it does not grant retry authority merely because a provider marks a failure transient;
-15. DD-1.1/adapters can project its results without needing to reinvent application semantics;
-16. invocation/domain/capability/provider-specific vocabularies do not become competing shared diagnostic taxonomies.
+Conformance is evaluated against the local models indexed in §34, their canonical references and §29 test obligations. No separate acceptance checklist is introduced here.
 
 ## 38. Downstream Implementation Requirements
 
@@ -1051,10 +899,4 @@ Implementation work must preserve the distinction among provider evidence, appli
 
 ## 39. Version 1 Detailed Design Baseline
 
-This document establishes the Version 1 permanent and canonical Detailed Design baseline for shared execution outcomes and diagnostics.
-
-The enduring architectural rule is:
-
-> **Execution mechanisms report facts; AppManager decides what those facts mean.**
-
-This specification is the single semantic owner of the shared result, diagnostic, warning, effect, cancellation, and subordinate-result model that DD-1.1, DD-1.3 through DD-1.5, all DD-2 capability designs, and all domain Detailed Designs shall consume rather than reproduce.
+This baseline supplies shared execution and outcome models to the invocation, Application Core, capabilities and domains through the collaborations in §§30–33. Concrete representations follow [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification).

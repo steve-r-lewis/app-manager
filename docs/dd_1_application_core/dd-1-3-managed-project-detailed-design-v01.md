@@ -16,25 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, resolution stages, state models, and safety boundaries used to determine:
+Managed Project turns caller hints and specialist observations into a coherent project view, then resolves the targets and eligibility required by an operation. The evidence, candidate, context, scope and targetability models below explain how those decisions collaborate under [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) and [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
-1. which project AppManager is managing;
-2. which project entities belong to the resolved managed-project context;
-3. how those entities relate to one another;
-4. which subset of those entities is within the managed scope of a particular operation; and
-5. which of those scoped entities are eligible targets for consequential effects.
-
-The governing distinction is:
-
-> **Discovery or recognition establishes knowledge. Managed scope establishes operation targeting. Neither discovery nor inclusion in context alone grants mutation authority.**
-
-A second governing rule is:
-
-> **Project evidence informs AppManager; it does not independently define AppManager project semantics.**
-
-This Detailed Design therefore separates project evidence acquisition, candidate resolution, project-context construction, operation-specific scope resolution, targetability evaluation, and final application authority.
-
-Where project resolution consumes configuration, the staged dependency rules in [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) apply: pre-project configuration evidence is limited to bootstrap-effective configuration whose applicability does not depend on the unresolved project, while project/scope-dependent configuration is resolved only after sufficient managed-project context exists.
+Configuration participates through the [DD-1.4 stage-eligibility contract](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context), coordinated by [DD-1.5](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle). This document supplies the project-side input and conflict handling in [§29](#_29-relationship-to-configuration-resolution).
 
 ## 2. Scope
 
@@ -94,7 +78,7 @@ The design defines enduring responsibility and contract boundaries, not one impl
 
 ## 4. Architectural Position
 
-Managed Project sits between invocation intent and domain/capability execution. Where configuration contributes to project resolution, the staged collaboration defined by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) applies.
+Managed Project connects invocation intent to domain/capability execution through the following illustrative dependency view:
 
 ```text
 caller / host / automation
@@ -141,19 +125,9 @@ Application Engine
                                                       shared capabilities
 ```
 
-The diagram is a semantic dependency view, not a required call-stack or physical pipeline. Bootstrap effective configuration may contribute project-resolution evidence only when its applicability does not itself depend on the unresolved managed project. Project/scope-aware configuration becomes eligible after sufficient managed-project context exists and may then participate in managed-scope and targetability decisions without acquiring project authority.
+The authoritative staging contract is [DD-1.5 §8](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle), including conditional scope prerequisites. [DD-1.4 §8](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context) determines configuration eligibility. The diagram does not prescribe a call stack or universal physical pipeline.
 
-Managed Project is a permanent application-level interpretation boundary. It is not equivalent to:
-
-- current working directory;
-- one Git repository;
-- one Nuxt configuration file;
-- one workspace file;
-- one filesystem tree;
-- one IDE workspace;
-- one layer directory.
-
-Those may provide evidence, but they do not independently define the managed project.
+Current directories, repositories, Nuxt/workspace files and host selections contribute the evidence model in §7 under [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
 ## 5. Responsibility Model
 
@@ -194,19 +168,21 @@ It may contain:
 
 An explicit target is strong caller intent, but remains input to AppManager project resolution.
 
-The resolver shall verify that the target can be reconciled with a supported managed-project model.
+The candidate/root contracts below perform that reconciliation.
 
 <a id="dd-proj-001"></a>
 
-**DD-PROJ-001 — Explicit target validation**  
-Explicit project targets shall be validated against AppManager project semantics before becoming authoritative managed-project identity.
+**DD-PROJ-001 — Explicit target validation**
+
+Explicit target validation follows [FR-PROJ-004](../functional/managed-project-functional-specification-v01.md#fr-proj-004) through the candidate/root contracts below.
 
 ### 6.3 No silent substitution
 
 <a id="dd-proj-002"></a>
 
-**DD-PROJ-002 — No hidden target replacement**  
-When a supplied target and stronger project evidence identify materially different projects, resolution shall produce conflict or ambiguity rather than silently substituting another target.
+**DD-PROJ-002 — No hidden target replacement**
+
+Conflicting target selection follows [FR-PROJ-007](../functional/managed-project-functional-specification-v01.md#fr-proj-007).
 
 ## 7. Project Evidence Model
 
@@ -224,7 +200,7 @@ Project resolution may consume bounded evidence from:
 - project-associated resource recognition;
 - previously resolved context evidence that is still valid.
 
-Before managed-project identity exists, configuration evidence in this list means only the bootstrap subset defined by [Application Core Bootstrap Resolution](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle): concerns and sources whose applicability and effective value do not depend on the unresolved managed project, topology or managed scope. Later project/scope-aware configuration may refine downstream scope, policy or interpretation only after sufficient Managed Project Context exists.
+Configuration evidence is stage-eligible under [DD-1.4 §8](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context); the project-side binding is [DD-CORE-BOOT-004](#dd-core-boot-004).
 
 ### 7.2 Evidence is factual, not authoritative
 
@@ -241,8 +217,9 @@ Each evidence item should represent:
 
 <a id="dd-proj-003"></a>
 
-**DD-PROJ-003 — Evidence/authority separation**  
-No individual evidence provider shall acquire authority to define AppManager project identity, scope, ownership, or mutability merely by producing a match.
+**DD-PROJ-003 — Evidence/authority separation**
+
+Evidence items bind [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) and [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) to the §7.2 model.
 
 ### 7.3 Evidence provenance
 
@@ -277,8 +254,9 @@ A candidate should be capable of identifying:
 
 <a id="dd-proj-004"></a>
 
-**DD-PROJ-004 — Deterministic candidate resolution**  
-Materially equivalent project evidence and materially equivalent applicable bootstrap configuration shall produce materially equivalent candidate sets and selection decisions.
+**DD-PROJ-004 — Deterministic candidate resolution**
+
+Candidate derivation applies [FR-PROJ-030](../functional/managed-project-functional-specification-v01.md#fr-proj-030) to stage-eligible [bootstrap inputs](dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context).
 
 ### 8.3 Candidate ranking and selection
 
@@ -303,8 +281,9 @@ Ambiguity exists when more than one materially different candidate remains plaus
 
 <a id="dd-proj-005"></a>
 
-**DD-PROJ-005 — Ambiguity is explicit state**  
-Ambiguous project resolution shall be represented explicitly rather than collapsed to an arbitrary candidate.
+**DD-PROJ-005 — Ambiguity is explicit state**
+
+The candidate model represents ambiguity under [FR-PROJ-033](../functional/managed-project-functional-specification-v01.md#fr-proj-033).
 
 ### 8.5 Conflict
 
@@ -327,19 +306,13 @@ The project root is the logical root of the managed AppManager project, not auto
 
 <a id="dd-proj-006"></a>
 
-**DD-PROJ-006 — Logical root semantics**  
-Project-root resolution shall derive the root from coherent project evidence and project semantics rather than treating the invocation directory as authoritative by default.
+**DD-PROJ-006 — Logical root semantics**
+
+Logical root resolution follows [FR-PROJ-008](../functional/managed-project-functional-specification-v01.md#fr-proj-008) and [FR-PROJ-005](../functional/managed-project-functional-specification-v01.md#fr-proj-005).
 
 ### 9.2 Nested invocation
 
-Resolution shall support invocation from:
-
-- root application subdirectories;
-- layer directories;
-- files inside managed layers;
-- repository subtrees;
-- test/docs/source directories;
-- supported host-selected resources.
+Nested caller locations and supported host selections follow [FR-PROJ-009](../functional/managed-project-functional-specification-v01.md#fr-proj-009) and [FR-PROJ-006](../functional/managed-project-functional-specification-v01.md#fr-proj-006) through the target request.
 
 ### 9.3 Root validation
 
@@ -394,9 +367,7 @@ The implementation need not use a particular immutable data structure, but share
 
 ### 10.4 Context coherence
 
-Within one operation, participating components shall consume one coherent interpretation of project identity and relationships.
-
-Capabilities may inspect additional technical facts, but they shall not independently substitute a conflicting project model.
+The shared context supports the operation-local coherence rule below; additional capability facts are reconciled through that context.
 
 <a id="dd-proj-008"></a>
 
@@ -407,14 +378,7 @@ A single application operation shall not contain competing authoritative managed
 
 ### 11.1 Completeness is use-case relative
 
-Managed Project resolution shall not require all possible project facts for every operation.
-
-Examples:
-
-- displaying project identity may require only root resolution;
-- pushing one selected layer requires repository association for that layer;
-- project-wide quality checks may require root and layer topology but no mutation ownership;
-- deleting or overwriting a resource requires stronger scope and targetability evidence.
+Use-case-relative completeness follows [FR-PROJ-014](../functional/managed-project-functional-specification-v01.md#fr-proj-014). For example, displaying identity may need only the root, pushing a layer needs its repository association, and deleting a resource needs scope and targetability evidence.
 
 ### 11.2 Required fact declaration
 
@@ -433,18 +397,17 @@ A project requirement may include:
 
 <a id="dd-proj-009"></a>
 
-**DD-PROJ-009 — Minimal sufficient context**  
-Context resolution shall establish the facts required by the requested operation without forcing discovery of unrelated project facts merely because they could be obtained.
+**DD-PROJ-009 — Minimal sufficient context**
+
+Required-fact resolution follows [FR-PROJ-014](../functional/managed-project-functional-specification-v01.md#fr-proj-014) using the §11.2 declaration.
 
 ### 11.3 Incomplete required context
 
-If a required fact remains unresolved, the operation shall not proceed into consequential execution that depends on that fact.
-
-Optional unresolved facts may remain represented as unknown/absent when safe.
+Unresolved required facts follow [FR-PROJ-035](../functional/managed-project-functional-specification-v01.md#fr-proj-035) and [FR-INV-011](../functional/application-invocation-functional-specification-v01.md#fr-inv-011). Optional facts may remain unknown/absent where safe.
 
 ## 12. Root Application Model
 
-The root application shall have a distinct project-entity identity separate from the project root path itself.
+The root application entity carries the identity distinguished by DD-PROJ-010.
 
 A Root Application entity may represent:
 
@@ -495,26 +458,19 @@ Layers may differ from the root application in:
 
 <a id="dd-proj-011"></a>
 
-**DD-PROJ-011 — No root/layer lifecycle collapse**  
-The context model shall not assume every managed layer shares the root application's repository or management lifecycle.
+**DD-PROJ-011 — No root/layer lifecycle collapse**
+
+The layer model binds [Design](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers) to repository and lifecycle facts.
 
 ### 13.3 Layer selection
 
-Scope requests shall select layers by stable identity or another validated AppManager-oriented selector, not merely by incidental enumeration index.
+Layer selectors bind [FR-PROJ-018](../functional/managed-project-functional-specification-v01.md#fr-proj-018) to the scope request model.
 
 ## 14. Repository Relationship Model
 
 ### 14.1 Repository facts are project facts, not project authority
 
-Repository recognition contributes technical facts such as:
-
-- repository identity;
-- working-tree/root relationship;
-- association with root application or layer;
-- parent/nested relation where relevant;
-- remote identity evidence where relevant.
-
-Repository facts do not by themselves define the managed project.
+Repository observations contribute identity, working-tree/root relationship, root/layer association, nesting and relevant remote identity evidence through [DD-2.3](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md). Interpretation follows [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution).
 
 ### 14.2 Repository association
 
@@ -529,14 +485,13 @@ The project topology shall be capable of representing:
 
 <a id="dd-proj-012"></a>
 
-**DD-PROJ-012 — Repository topology remains subordinate**  
-Repository boundaries shall not replace project identity, root/layer semantics, or managed-scope policy.
+**DD-PROJ-012 — Repository topology remains subordinate**
+
+Repository evidence binds [Design](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers) and [Design](../appmanager-design-specification-v01.md#_9-5-repository-relationships) to the association model.
 
 ### 14.3 Ambiguous association
 
-A consequential repository operation shall not proceed when the relevant project entity cannot be mapped to the intended repository with sufficient confidence.
-
-This ambiguity becomes a project/scope diagnostic before Git capability execution.
+Association ambiguity follows [FR-PROJ-028](../functional/managed-project-functional-specification-v01.md#fr-proj-028) and is returned as a project/scope diagnostic before consequential Git execution.
 
 ## 15. Project Topology Model
 
@@ -575,12 +530,13 @@ Relationships may include:
 
 <a id="dd-proj-013"></a>
 
-**DD-PROJ-013 — Semantic relationships over path assumptions**  
-Filesystem containment may support topology resolution but shall not be the sole mechanism for relationships that are semantically stronger than directory nesting.
+**DD-PROJ-013 — Semantic relationships over path assumptions**
+
+Topology representation follows [Design](../appmanager-design-specification-v01.md#_9-4-project-topology-and-resource-relationships).
 
 ### 15.3 Uniform-tree assumption prohibited
 
-The topology shall support project entities that span multiple directories or repositories where AppManager supports those arrangements.
+The topology graph binds [Design](../appmanager-design-specification-v01.md#_9-1-managed-project-model) to supported entities spanning directories or repositories.
 
 ## 16. AppManager-Owned Management Resources
 
@@ -600,14 +556,13 @@ The context shall distinguish these from:
 
 <a id="dd-proj-014"></a>
 
-**DD-PROJ-014 — Ownership is resource-specific**  
-AppManager ownership of one resource shall not imply ownership of sibling, parent, child, adjacent, or repository-coincident resources without explicit project semantics.
+**DD-PROJ-014 — Ownership is resource-specific**
+
+Resource ownership binds [Design](../appmanager-design-specification-v01.md#_9-8-appmanager-owned-management-area-and-project-coexistence) to the §16.1 classification.
 
 ### 16.3 Metadata is not project reality override
 
-AppManager metadata may strengthen project resolution but must be reconciled with observed project reality.
-
-If metadata contradicts current project structure materially, the resolver shall surface stale/conflicting state rather than silently rewriting project interpretation.
+Management metadata follows [FR-PROJ-052](../functional/managed-project-functional-specification-v01.md#fr-proj-052). Material disagreement with observed structure is represented by the conflict/staleness models in §§8 and 25.
 
 ## 17. Managed Scope Request Contract
 
@@ -643,8 +598,9 @@ Where scope depends on project/scope-aware configuration, DD-1.4 resolves that c
 
 <a id="dd-proj-015"></a>
 
-**DD-PROJ-015 — Scope requires application resolution**  
-A caller-supplied scope selector shall not directly become the final target set without validation and policy evaluation.
+**DD-PROJ-015 — Scope requires application resolution**
+
+The scope selector is resolved under [FR-PROJ-038](../functional/managed-project-functional-specification-v01.md#fr-proj-038) using the §18 model.
 
 ## 18. Managed Scope Resolution
 
@@ -668,21 +624,19 @@ A resolved Managed Scope should be capable of representing:
 
 <a id="dd-proj-016"></a>
 
-**DD-PROJ-016 — Consequential scope gate**  
-No consequential effect shall begin until the Application Engine has a sufficiently complete resolved scope for the requested operation.
+**DD-PROJ-016 — Consequential scope gate**
 
-This includes mutation, deletion, overwrite, remote changes, history-changing actions, generated-resource replacement, or any other materially consequential operation.
+The scope gate applies [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) and [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) before consequential effects.
 
 ### 18.3 Scope narrowing
 
-A caller or command may narrow an otherwise valid broader scope where the use case permits it.
-
-Narrowing shall be monotonic with respect to target inclusion: removing targets from one scope dimension shall not silently broaden another dimension.
+The resolved scope records support caller/use-case narrowing under the rule below.
 
 <a id="dd-proj-017"></a>
 
-**DD-PROJ-017 — No compensating expansion**  
-Narrowing a scope shall never implicitly add unrelated targets merely to preserve the approximate size or shape of the original scope.
+**DD-PROJ-017 — No compensating expansion**
+
+Scope narrowing applies [FR-PROJ-041](../functional/managed-project-functional-specification-v01.md#fr-proj-041).
 
 ### 18.4 No implicit expansion from discovery
 
@@ -690,10 +644,9 @@ Newly discovered related entities remain context facts until explicitly included
 
 <a id="dd-proj-018"></a>
 
-**DD-PROJ-018 — Discovery does not expand scope**  
-Discovering an additional layer, repository, file, or related project entity after scope resolution shall not silently broaden the operation's target set.
+**DD-PROJ-018 — Discovery does not expand scope**
 
-If the new discovery invalidates scope assumptions, execution shall revalidate, suspend, or fail according to owning use-case semantics.
+Discovery after resolution applies [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042). If it invalidates scope assumptions, the owning use case revalidates, suspends or fails.
 
 ## 19. Recognition, Scope, Targetability, and Mutability
 
@@ -723,13 +676,15 @@ Each transition may reject an entity.
 
 <a id="dd-proj-019"></a>
 
-**DD-PROJ-019 — Recognition is weakest state**  
-Recognition alone grants no consequential permission.
+**DD-PROJ-019 — Recognition is weakest state**
+
+Recognition binds [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) to the first state above.
 
 <a id="dd-proj-020"></a>
 
-**DD-PROJ-020 — Scope is not mutation authority**  
-Inclusion in Managed Scope shall not by itself authorize mutation where ownership, command semantics, policy, or safety prohibit the requested effect.
+**DD-PROJ-020 — Scope is not mutation authority**
+
+The in-scope state binds [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) to the remaining targetability/mutability decisions.
 
 ## 20. Targetability Evaluation
 
@@ -775,68 +730,55 @@ Exclusions may derive from:
 
 ### 21.2 Exclusion strength
 
-An excluded entity remains excluded even if discoverable and related to included entities unless the owning use case explicitly authorizes a governed override.
+The scope model retains exclusions and their reasons. Any override requires explicit authority from the owning use case.
 
 <a id="dd-proj-021"></a>
 
-**DD-PROJ-021 — Discovery cannot override exclusion**  
-Project discovery, topology expansion, or provider recognition shall not silently re-include an excluded resource.
+**DD-PROJ-021 — Discovery cannot override exclusion**
+
+Discovery and topology expansion preserve [FR-PROJ-047](../functional/managed-project-functional-specification-v01.md#fr-proj-047).
 
 ### 21.3 Unmanaged-resource protection
 
-Resources outside resolved Managed Scope remain non-targets even when accessible from the project root, workspace, repository, or host environment.
+Accessible out-of-scope resources follow [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content).
 
 ## 22. Partial Scope Resolution
 
 ### 22.1 Partial resolution is explicit
 
-A requested scope may contain some resolvable and some unresolved entities.
-
-This state shall be represented explicitly rather than silently reducing the request.
+The §18 scope model retains both resolved and unresolved requested entities under [FR-PROJ-060](../functional/managed-project-functional-specification-v01.md#fr-proj-060).
 
 ### 22.2 Default fail-safe rule
 
 <a id="dd-proj-022"></a>
 
-**DD-PROJ-022 — Partial resolution does not imply partial authorization**  
-If part of a consequential requested scope cannot be resolved, AppManager shall not execute against the resolvable subset unless the owning Functional Specification explicitly permits partial-scope execution.
+**DD-PROJ-022 — Partial resolution does not imply partial authorization**
+
+Partial scope execution follows [FR-PROJ-060](../functional/managed-project-functional-specification-v01.md#fr-proj-060).
 
 ### 22.3 Permitted partial scope
 
-Where partial-scope execution is explicitly allowed:
-
-- the resolved subset must remain explicit;
-- unresolved targets must remain explicit;
-- the Application Engine must determine that partial execution is acceptable;
-- DD-1.2 must report partial completion appropriately;
-- adapters must not present the result as unconditional full success.
+When permitted by [FR-PROJ-060](../functional/managed-project-functional-specification-v01.md#fr-proj-060), partial execution uses the explicit resolved/unresolved subsets in §18. The Engine interprets the resulting [DD-1.2 child results](dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion); callers receive its canonical projection.
 
 ## 23. Headless and Interactive Resolution
 
 ### 23.1 Headless
 
-Headless operation shall never depend on interactive project browsing or selection when all required information can be supplied or resolved deterministically.
-
-If ambiguity remains material, Headless shall fail with structured diagnostics.
+Headless candidate selection uses the same request and evidence models; unresolved selection follows the binding below.
 
 <a id="dd-proj-023"></a>
 
-**DD-PROJ-023 — No Headless guess mode**  
-Headless resolution shall not choose an arbitrary project candidate merely because no human is available to disambiguate.
+**DD-PROJ-023 — No Headless guess mode**
+
+Candidate ambiguity in Headless resolution applies [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020).
 
 ### 23.2 Interactive assistance
 
-Interactive adapters may present valid candidates and collect a user selection.
-
-The selected candidate then re-enters the same project-validation path as any explicit target.
-
-The adapter does not become project authority.
+Candidate choice acquisition follows [FR-PROJ-032](../functional/managed-project-functional-specification-v01.md#fr-proj-032) and returns the selection to the explicit-target validation path.
 
 ### 23.3 Cross-mode equivalence
 
-TUI, Headless, GUI, IDE, CI, automation, and future adapters shall resolve equivalent target/context/scope semantics from materially equivalent input.
-
-Presentation differences are allowed; project semantics are not.
+Project/context/scope projections follow [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 ## 24. Host Integration Contract
 
@@ -854,8 +796,9 @@ This information becomes Project Evidence or explicit scope input.
 
 <a id="dd-proj-024"></a>
 
-**DD-PROJ-024 — Host context remains contextual**  
-A host selection shall not bypass Managed Project validation, exclusions, targetability checks, or application safety policy.
+**DD-PROJ-024 — Host context remains contextual**
+
+Host selections apply [FR-PROJ-006](../functional/managed-project-functional-specification-v01.md#fr-proj-006), [FR-PROJ-044](../functional/managed-project-functional-specification-v01.md#fr-proj-044) and [FR-PROJ-047](../functional/managed-project-functional-specification-v01.md#fr-proj-047).
 
 ## 25. Context Freshness and Stale-State Boundaries
 
@@ -884,8 +827,9 @@ Consequential operations whose correctness depends on project facts should reval
 
 <a id="dd-proj-025"></a>
 
-**DD-PROJ-025 — Stale context fails safe**  
-If project-context staleness creates a credible risk of acting on the wrong project entity or outside intended scope, execution shall refresh/revalidate or fail rather than proceed using known-stale authority assumptions.
+**DD-PROJ-025 — Stale context fails safe**
+
+Stale project authority follows [FR-PROJ-061](../functional/managed-project-functional-specification-v01.md#fr-proj-061). Refresh/revalidation may restore valid targeting; known-stale assumptions that risk the wrong entity or scope shall not remain execution authority.
 
 ## 26. Concurrency Boundary
 
@@ -905,7 +849,7 @@ The Application Engine remains responsible for deciding whether to serialize, re
 
 All project-resolution failures, warnings, ambiguity states, and scope failures shall integrate with DD-1.2.
 
-Recommended machine-readable diagnostic categories include concepts such as:
+Project-local diagnostic refinements map through [DD-OUTCLAR-006](dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006). Recommended local distinctions include:
 
 - target-project-not-found;
 - invalid-explicit-target;
@@ -938,15 +882,7 @@ Diagnostics should identify, where safe:
 
 ## 28. Sensitive Information and Path Exposure
 
-Managed-project diagnostics and context projections shall minimize unnecessary disclosure of:
-
-- absolute paths where not needed;
-- private repository locations;
-- credentials embedded in remote identities;
-- secret-bearing configuration values;
-- unrelated host-workspace resources.
-
-Internal resolution may require paths and identifiers, but caller-visible projections should expose only the detail required for understanding and automation.
+Project-context diagnostics and projections bind [DD-1.2 sensitivity handling](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to paths, private repository locations, credential-bearing remotes, configuration and host resources. Internal path/identity evidence may be needed for resolution; caller views select the detail needed for understanding and automation.
 
 ## 29. Relationship to Configuration Resolution
 
@@ -979,67 +915,33 @@ Invocation does not resolve project semantics itself.
 
 ## 31. Relationship to Execution Outcomes
 
-DD-1.2 owns normalized outcome and diagnostic semantics.
-
-Managed Project contributes structured evidence describing:
-
-- resolution success/failure;
-- ambiguity/conflict;
-- unsupported context;
-- scope inclusion/exclusion;
-- unresolved requested targets;
-- stale-state findings;
-- targetability rejection.
-
-Project-resolution technical success is not final application success; the owning use case and Application Engine interpret it in context.
+Project resolution contributes ambiguity/conflict, support, inclusion/exclusion, unresolved-target, stale-state and targetability evidence through [DD-1.2 diagnostics](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model). Acceptance follows [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance).
 
 ## 32. Relationship to Application Engine
 
-DD-1.5 shall consume this design as the authoritative project/scope contract and the bootstrap clarification as the staged DD-1.3/DD-1.4 coordination contract where configuration contributes to project resolution.
-
-The Application Engine shall remain responsible for:
-
-- deciding when project context is required;
-- supplying use-case requirements;
-- accepting or rejecting resolution results;
-- interpreting partial-scope permissibility;
-- enforcing scope-before-effect gates;
-- coordinating bootstrap configuration, project resolution, project/scope-aware configuration and managed-scope resolution in the required dependency order;
-- enforcing targetability before consequential capability calls;
-- conflict coordination;
-- final AppManager outcome semantics.
-
-Managed Project resolvers provide authoritative application components, but they do not independently execute domain workflows.
+[DD-1.5 orchestration](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) requests the use-case facts in §11, coordinates bootstrap/project-aware configuration, evaluates scope/targetability and accepts the result. Conflict coordination consumes §26. Project resolvers supply the models here under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority).
 
 ## 33. Relationship to Shared Capabilities
 
 ### 33.1 Resource Access
 
-Resource Access may inspect filesystem/resources and report facts.
-
-It shall not decide managed scope or ownership simply because a resource is accessible.
+[DD-2.1](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md) supplies bounded resource observations for the §7 evidence model.
 
 ### 33.2 Repository Capability
 
-Repository Capability may discover repository facts and associations.
-
-It shall not define project identity, project scope, or mutation authority.
+[DD-2.3](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) supplies repository facts for the §14 association model.
 
 ### 33.3 Nuxt Capability
 
-Nuxt Capability may recognize applications, layers, and Nuxt-specific structural facts.
-
-It shall not decide which recognized structures are managed or mutable without AppManager project semantics.
+[DD-2.10](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) supplies Nuxt application/layer facts for §§12–13.
 
 ### 33.4 Source Intelligence
 
-Source Intelligence may recognize files and structural facts.
-
-Recognition feeds context/scope decisions but does not grant targeting authority.
+[DD-2.4](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md) supplies file/structural recognition evidence. All §33 contributors are interpreted through the §7 project-evidence contract.
 
 ## 34. Resolver Pattern
 
-The Managed Project design is the first Detailed Design in which the **resolver** responsibility pattern becomes explicit.
+This local resolver decomposition refines [Design §6.7](../appmanager-design-specification-v01.md#_6-7-resolvers).
 
 A resolver:
 
@@ -1063,24 +965,7 @@ These roles may share implementation infrastructure, but no generic resolver fra
 
 ## 35. Invariants
 
-The following invariants are mandatory:
-
-1. **Discovery is not mutation authority.**
-2. **Recognized does not imply in scope.**
-3. **In scope does not imply targetable.**
-4. **Targetable does not automatically imply mutable for every effect.**
-5. **Current working directory is evidence, not project identity.**
-6. **Git repository identity is not managed-project identity.**
-7. **Nuxt recognition is evidence, not AppManager management authority.**
-8. **AppManager metadata cannot silently override contradictory project reality.**
-9. **Explicit scope is never silently broadened by discovery.**
-10. **Exclusions survive discovery.**
-11. **Consequential effects require sufficiently complete scope first.**
-12. **Partial scope failure does not imply partial authorization.**
-13. **Headless resolution fails on material ambiguity rather than guessing.**
-14. **Capabilities consume AppManager-oriented project facts rather than reconstructing independent project semantics.**
-15. **Known stale context cannot remain mutation authority where it risks targeting the wrong resource.**
-16. **Project-resolution configuration evidence is bootstrap-scoped until sufficient Managed Project Context exists; project-dependent configuration shall not bootstrap the identity on which its own applicability depends.**
+The canonical local models are evidence/candidates (§§7–8), context/coherence (§10), root/layer/repository/topology (§§12–15), scope (§§17–18), targetability (§§19–20), partial resolution (§22), freshness (§25) and staged configuration collaboration (§29). Their direct upstream bindings govern inherited rules; this index adds no duplicate invariant list.
 
 ## 36. Extensibility Rules
 
@@ -1155,88 +1040,20 @@ Tests should not require a real TUI or presentation layer to establish project c
 
 ## 39. Downstream Detailed Design Requirements
 
-The following downstream documents shall consume this design without redefining its authority boundaries:
-
-### DD-1.4 — Configuration Resolution
-
-Shall use Managed Project Context for project/scope-aware applicability while preserving configuration resolution as a distinct responsibility, and shall use only context-independent/bootstrap configuration before authoritative project identity exists.
-
-### DD-1.5 — Application Engine
-
-Shall define how context and scope requirements are requested, accepted, cached/reused where appropriate, revalidated, and enforced before capability delegation, including coordination of the staged bootstrap/project/configuration sequence where required.
-
-### DD-2 Resource Access
-
-Shall provide bounded technical resource inspection without inferring managed scope from accessibility.
-
-### DD-2 Repository Capability
-
-Shall provide repository facts without elevating repository identity into project authority.
-
-### DD-2 Source Intelligence
-
-Shall provide read-only recognition/scanning facts that may contribute to context and scope but never grant mutation authority.
-
-### DD-2 Source Transformation
-
-Shall require approved target scope and mutation authority before applying transformations.
-
-### DD-2 Nuxt Capability
-
-Shall provide Nuxt-specific recognition facts for root/layer topology while leaving AppManager project interpretation here.
-
-### Domain Detailed Designs
-
-Shall declare the project facts and scope forms each use case requires rather than implementing private project resolvers.
+Consuming designs use the collaboration map in §§29–33. Domain operations provide the required project facts and supported scope forms described in §11; shared capabilities supply technical evidence through §7. [DD-1.5](dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) coordinates eligibility, revalidation and staged configuration rather than delegating project authority to those providers.
 
 ## 40. Conformance Criteria
 
-A Managed Project implementation conforms to this Detailed Design only if:
-
-1. it resolves project identity from structured evidence under common AppManager semantics;
-2. explicit targets are validated and never silently substituted with unrelated projects;
-3. current working directory, Git repository, Nuxt markers, host selections, and metadata remain evidence rather than independent project authority;
-4. one coherent Managed Project Context is consumed within an operation;
-5. root application, managed layers, repositories, management resources, and relevant project entities are represented distinctly where required;
-6. repository topology does not replace project identity;
-7. Managed Scope is resolved per operation before consequential effects;
-8. scope narrowing cannot cause implicit expansion elsewhere;
-9. discovery cannot silently expand scope;
-10. recognized, in-scope, targetable, and mutable states remain distinct;
-11. exclusions and unmanaged-resource protections are enforced;
-12. AppManager ownership does not propagate by filesystem adjacency;
-13. partial scope failure does not become partial authorization unless explicitly permitted;
-14. Headless resolution is deterministic and fails safely on material ambiguity;
-15. host context is validated under the same semantics as other project evidence;
-16. stale context is not used for unsafe consequential targeting;
-17. project/scope failures integrate with DD-1.2 structured diagnostics and outcomes;
-18. capabilities receive AppManager-oriented project information instead of reconstructing competing project semantics;
-19. no scanner, resolver, repository provider, framework recognizer, or interaction adapter independently acquires mutation authority;
-20. configuration used to establish project identity does not depend on that unresolved project identity for its own applicability or effective value;
-21. project/scope-aware effective configuration is resolved only after sufficient Managed Project Context exists and does not acquire project/scope authority.
+Conformance is assessed against the local models indexed in §35, their canonical references and the test obligations in §37. This section adds no second acceptance checklist.
 
 ## 41. Summary Design Rule
 
-The Managed Project subsystem exists to answer three increasingly restrictive questions:
+The local models answer three increasingly restrictive questions:
 
 ```text
-What does AppManager know belongs to this project?
-                    |
-                    v
-What is this operation intended to target?
-                    |
-                    v
-What is this operation actually permitted to affect?
+What belongs to this project?       -> Managed Project Context
+What is this operation targeting?   -> Managed Scope
+What effect is permitted here?      -> Targetability / mutability
 ```
 
-These questions correspond respectively to:
-
-```text
-Managed Project Context
-        -> Managed Scope
-        -> Targetability / mutation authority
-```
-
-The permanent architectural rule is therefore:
-
-> **Knowledge, targeting, and authority are separate states. AppManager may discover broadly, but it must scope deliberately and mutate only through explicit application authority.**
+The state distinctions are defined in [§19](#_19-recognition-scope-targetability-and-mutability).

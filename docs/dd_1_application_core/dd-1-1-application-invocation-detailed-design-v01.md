@@ -18,19 +18,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal contracts, responsibilities, state transitions, and collaboration model used to convert caller intent into an authoritative AppManager command execution and structured invocation-facing projection of the canonical application outcome.
+The invocation boundary turns caller intent into a normalized request, carries interaction and authorization evidence, coordinates entry to the Application Engine, and delivers its accepted result. Its request, catalogue, control-channel and projection contracts let adapters collaborate with the same application model under [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
-It is the Detailed Design authority for the Application Invocation boundary. It defines how interaction adapters and host integrations enter the Application Engine without becoming independent owners of command semantics, application policy, safety, scope, diagnostic taxonomy, or final outcome semantics.
-
-The central design rule is:
-
-> **Invocation transports intent into the Application Engine; it does not own the meaning of that intent.**
-
-A second governing rule is:
-
-> **Interaction-specific mechanisms may acquire or render information, but application validation, availability, policy, scope, execution acceptance, canonical diagnostics, and final outcome semantics remain behind the shared invocation boundary.**
-
-DD-1.2 Execution Outcomes and Diagnostics is the single semantic owner of the shared AppManager outcome, diagnostic, warning, effect, cancellation, and subordinate-result model. This document owns how that canonical model crosses the invocation boundary without semantic reinterpretation.
+The local lifecycle connects caller choices to context-dependent validation and execution. [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) supplies outcome meanings; the projection in §22 preserves them for the caller. The workflow and responsibility map below explain where each hand-off occurs.
 
 ## 2. Scope
 
@@ -132,9 +122,7 @@ These are responsibility boundaries, not a mandatory one-class-per-item implemen
 
 ### 6.1 Purpose
 
-The invocation request is the canonical internal representation of a caller's requested AppManager operation.
-
-It must contain sufficient structured information for the Application Engine to identify the requested use case, distinguish explicit caller choices from resolved context, and execute deterministically without depending on presentation artifacts.
+The request refines [FR-INV-007](../functional/application-invocation-functional-specification-v01.md#fr-inv-007) into the logical field families below, separating explicit caller choices from subsequently resolved context.
 
 ### 6.2 Logical request model
 
@@ -175,9 +163,7 @@ This distinction is required for deterministic behavior, diagnostics, safety rev
 
 ### 6.4 No presentation semantics
 
-The request shall not encode application meaning through menu positions, terminal strings, GUI widget identifiers, localized labels, or host-specific action names.
-
-Adapters may map those representations to the canonical command identity and structured input model before invocation.
+Adapters map menu positions, labels, widget identifiers and host action names to the command identity and inputs under [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 ### 6.5 Invocation-local immutability of intent
 
@@ -214,9 +200,7 @@ A caller may supply separate correlation metadata for its own workflow. Caller c
 
 ### 8.1 Canonical command identity
 
-Each invocable AppManager use case shall expose a stable canonical command identity independent of adapter presentation.
-
-The identity shall be sufficient to distinguish commands without relying on display labels or positional routing.
+Catalogue identities bind [FR-INV-003](../functional/application-invocation-functional-specification-v01.md#fr-inv-003) to deterministic lookup.
 
 ### 8.2 Command identity model
 
@@ -231,7 +215,7 @@ At Detailed Design level, the identity contract must support:
 - deterministic lookup;
 - future extension without requiring adapter-specific identity schemes.
 
-The exact string format is left to Implementation Specification unless compatibility requirements later make it architectural.
+The owning domain Functional catalogues establish the canonical command identities. Implementation Specifications choose their concrete representation without changing those identities.
 
 ### 8.3 Command catalogue
 
@@ -250,7 +234,7 @@ A descriptor shall be capable of representing:
 
 ### 8.4 Catalogue authority
 
-Interaction adapters may filter or present catalogue entries, but they shall not define a competing catalogue that becomes the authority for whether a command exists.
+Catalogue ownership follows [Design](../appmanager-design-specification-v01.md#_5-4-command-discovery); adapters consume the descriptors in §8.3.
 
 ### 8.5 Unknown versus unavailable
 
@@ -274,9 +258,7 @@ An unavailable command remains recognized.
 
 ### 9.1 Discovery query
 
-The invocation layer shall expose a discovery operation capable of returning the authoritative command surface for a relevant application context.
-
-Discovery may be context-free or context-sensitive depending on the metadata requested.
+The discovery query binds [Design](../appmanager-design-specification-v01.md#_5-4-command-discovery) to the descriptor model in §8.3. Queries may be context-free or context-sensitive according to the requested metadata.
 
 ### 9.2 Discovery result
 
@@ -348,11 +330,7 @@ The contract may represent whether the caller can:
 
 ### 11.3 Capability not authority
 
-Declaring that an adapter can prompt does not authorize it to approve an operation itself.
-
-Declaring that an adapter cannot prompt does not weaken required authorization.
-
-The capability contract describes interaction possibilities, not application policy.
+Interaction capabilities describe acquisition/delivery possibilities under [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence). Authorization sufficiency follows [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) and [FR-INV-024](../functional/application-invocation-functional-specification-v01.md#fr-inv-024), independently of whether an adapter can prompt.
 
 ## 12. Shared Validation Coordination
 
@@ -460,9 +438,7 @@ Read-only inspection needed to establish availability is permitted if it respect
 
 ### 14.1 Separation of request and evidence acquisition
 
-The Application Engine determines when explicit confirmation/authorization is required.
-
-Interaction adapters may acquire the evidence but do not decide whether the evidence is required or sufficient.
+Authorization acquisition follows [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) and [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023). The adapter returns the evidence model below to the Application Engine.
 
 ### 14.2 Authorization evidence model
 
@@ -489,9 +465,7 @@ The adapter shall not bypass the Application Engine by directly continuing a con
 
 ### 14.5 Headless authorization
 
-Headless callers must supply valid authorization evidence in the initial or resumed invocation where required.
-
-If the evidence is absent or insufficient, the invocation fails/rejects deterministically rather than blocking for input.
+Headless initial or resumed requests supply the §14.2 evidence under [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) and [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022).
 
 ## 15. Preview and Dry-Run Intent
 
@@ -507,7 +481,7 @@ The owning use case determines what preview means and which proposed effects/res
 
 ### 15.3 Applied versus preview outcome
 
-In accordance with DD-1.2, the canonical outcome distinguishes proposed/preview state from applied effects. The invocation boundary shall preserve that distinction when projecting the outcome to callers and must never represent preview as though consequential effects were applied.
+Invocation projects [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview) using [the caller projection](#dd-outclar-003).
 
 ## 16. Invocation Coordinator
 
@@ -553,9 +527,7 @@ structured invocation-facing outcome
 
 ### 16.3 Application Engine authority
 
-The coordinator enters the Application Engine; it is not a peer authority competing with it.
-
-Whether implemented as a distinct component or as part of the Application Engine implementation, its design must preserve the rule that use-case semantics and final acceptance remain Application Engine responsibilities.
+The coordinator is the entry component under [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority). It may be implemented within the Engine or as a distinct component.
 
 ## 17. Execution State Model
 
@@ -594,14 +566,7 @@ Not every invocation must expose every state externally.
 
 ### 17.2 Terminal states
 
-The canonical DD-1.2 final application outcome classes are projected through this state model as:
-
-- success;
-- failure;
-- partial success/partial completion;
-- cancelled.
-
-Preview completion remains an execution characteristic/proposed-effect distinction under DD-1.2 rather than an independent invocation terminal taxonomy.
+Terminal states project [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model) through [DD-OUTCLAR-002](#dd-outclar-002). Preview and pre-execution rejection characteristics use [DD-OUTCLAR-003](#dd-outclar-003).
 
 ### 17.3 Rejection before execution
 
@@ -615,28 +580,15 @@ The event contract provides structured observation of invocation lifecycle witho
 
 ### 18.2 Event families
 
-The event model shall be capable of representing:
-
-- lifecycle/state transitions;
-- progress information;
-- non-fatal warnings;
-- diagnostics requiring attention;
-- authorization-required requests where an interactive continuation is supported;
-- significant stage completion where useful;
-- cancellation acknowledgement;
-- other command-specific structured events explicitly exposed by the owning use case.
+The channel carries the event classes in [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_16-progress-events). Invocation additionally carries authorization-required requests where interactive continuation is supported and command-specific structured events explicitly exposed by the owning use case.
 
 ### 18.3 Event envelope
 
-Each event shall carry enough metadata to associate it with the invocation and identify its event family/type.
-
-Events may additionally include stage or target identity where required for multi-target operations.
+Channel envelopes use [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_16-progress-events) for invocation/event-family and optional stage/target association.
 
 ### 18.4 Events are not final outcomes
 
-No event, including `100%` progress or provider completion, is by itself the final AppManager outcome.
-
-The final outcome is produced only after application-level interpretation and acceptance using DD-1.2 semantics.
+Event interpretation follows [FR-INV-028](../functional/application-invocation-functional-specification-v01.md#fr-inv-028). The coordinator delivers final acceptance through §22.
 
 ### 18.5 Ordering
 
@@ -648,7 +600,7 @@ This does not require a globally ordered event stream across unrelated concurren
 
 ### 19.1 Semantic progress
 
-Progress should represent meaningful application stages, target completion, or bounded quantitative progress where the owning use case can provide it reliably.
+Stage, target and reliable bounded quantitative progress bind [FR-INV-027](../functional/application-invocation-functional-specification-v01.md#fr-inv-027) to the channel in §18.
 
 ### 19.2 No fabricated percentages
 
@@ -689,7 +641,7 @@ canonical DD-1.2 cancelled / partial outcome
 
 ### 20.3 Cancellation semantics
 
-In accordance with DD-1.2, cancellation is cooperative, preserves known completed effects, remains distinguishable from ordinary failure, and does not imply rollback. This invocation contract adds only cancellation-request transport and invocation-local coordination; it does not redefine canonical cancellation outcome semantics.
+This boundary transports cancellation requests and coordinates their invocation-local path. Outcome interpretation uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model).
 
 ### 20.4 Late cancellation
 
@@ -701,34 +653,25 @@ If the request races with completion, the coordinator must resolve one final app
 
 ### 21.1 Ownership and purpose
 
-DD-1.2 owns the canonical AppManager diagnostic structure, severity model, broad category taxonomy, warning semantics, recovery information, and provider-evidence relationship. The invocation boundary consumes those diagnostics and projects the caller-relevant information without creating a second diagnostic taxonomy.
-
-Invocation-specific conditions such as malformed invocation structure, unknown command, unavailable command, unresolved invocation context, missing authorization, or interaction-capability mismatch shall be represented using the canonical DD-1.2 diagnostic model and mapped to its broad categories/codes.
+The boundary projects [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model). Its malformed-request, unknown/unavailable-command, unresolved-context, missing-authorization and interaction-capability-mismatch conditions map to that owner’s categories/codes.
 
 ### 21.2 Invocation-specific refinement
 
-Where the invocation boundary requires narrower machine-readable distinctions, it may define invocation-specific diagnostic codes or subcategories provided that they:
-
-- map to a canonical DD-1.2 category;
-- do not redefine canonical category meaning;
-- do not require callers to choose between two competing shared taxonomies;
-- remain AppManager-oriented rather than provider-native.
+Narrow invocation codes/subcategories apply [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006) and [canonical code semantics](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-5-diagnostic-codes).
 
 ### 21.3 Warning projection
 
-Warnings crossing the invocation boundary retain DD-1.2 warning semantics. Presentation or transport shall not promote or demote their application meaning.
+Caller warning projection applies [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) through [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model).
 
 ### 21.4 Sensitive-data minimization
 
-Diagnostic projection shall preserve DD-1.2 sensitivity/redaction semantics and may further omit information not required by the caller.
-
-Provider exceptions, prompts, configuration values, paths, file excerpts, and external responses shall not be surfaced verbatim by default when they may contain secrets or unnecessary private project content.
+Projection applies [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) to exceptions, prompts, configuration, paths, excerpts and external responses. It may further omit information not required by the caller.
 
 ## 22. Invocation Outcome Projection Contract
 
 ### 22.1 Purpose
 
-The canonical final AppManager outcome is defined by DD-1.2. The Invocation Outcome Projection Contract exposes that accepted application result to a caller without creating a second semantic outcome envelope.
+This contract delivers the accepted [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) to a caller; the two projection refinements below define its local obligations.
 
 ### 22.2 Projection obligations
 
@@ -742,79 +685,59 @@ The projection may expose preview or pre-execution rejection characteristics. Wh
 
 ### 22.3 Result payload ownership
 
-DD-1.2 owns the shared outcome envelope semantics. The owning command/domain owns the semantic shape of its application result payload within that envelope. Invocation only projects the accepted payload and shared outcome semantics to the caller.
+The boundary projects the accepted payload under [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-2-result-payload).
 
 ### 22.4 Provider data containment
 
-Raw provider result objects shall not escape as the final AppManager result contract. Any provider detail crossing the invocation boundary must already be normalized into DD-1.2 evidence/diagnostic semantics and be safe for the caller.
+Provider detail reaches the caller only through [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) and [sensitive-information handling](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction).
 
 ## 23. Partial Completion Projection
 
-DD-1.2 owns partial-success and subordinate-result semantics. Where those states are material to the caller, invocation shall preserve the canonical child/target/stage results and known effects rather than flatten them into success/failure or inventing a separate aggregate rule.
-
-The Application Engine/owning use case determines the canonical aggregate outcome; invocation projects it.
+The [caller projection](#dd-outclar-002) carries material [DD-1.2 child/stage/target results](dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion). The aggregate arrives already interpreted by the owning use case/Application Engine.
 
 ## 24. Consequential Effect Projection
 
-DD-1.2 owns applied-effect, proposed-effect, uncertainty, and compensation/rollback semantics. Invocation shall preserve material canonical effect information required for safe caller understanding and recovery.
-
-Invocation shall never infer rollback, compensation, or successful application merely from the absence of an exposed provider step.
+The [caller projection](#dd-outclar-002) carries [DD-1.2 effect information](dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects), including uncertainty and compensation evidence. Absence of an exposed provider step is not additional effect evidence.
 
 ## 25. Delegated Result Interpretation Boundary
 
 ### 25.1 Capability result
 
-Capability providers return technical results through their own shared capability contracts.
-
-Those results may contain provider-neutral technical success/failure information, data, diagnostics, and effect facts.
+Capabilities supply [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract) through their bounded technical contracts.
 
 ### 25.2 Application interpretation
 
-The owning use case interprets capability results against:
-
-- requested intent;
-- managed scope;
-- configuration;
-- application policy;
-- safety constraints;
-- acceptance criteria;
-- workflow state.
-
-Only after this interpretation is a canonical DD-1.2 final outcome produced and made available for invocation projection.
+The owning use case applies [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) before the coordinator receives the canonical outcome.
 
 ### 25.3 Authority invariant
 
+The distinct hand-offs are illustrated by:
+
 ```text
-provider technical result
-        !=
-AppManager application outcome
-        !=
-invocation transport/presentation representation
+provider evidence -> application interpretation -> caller projection
 ```
 
-A technically successful provider call can yield application failure; a bounded provider failure can yield a recoverable/partial application outcome where the use case permits it. Invocation does not re-interpret that decision.
+The interpretation examples are in [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation); projection follows [DD-OUTCLAR-002](#dd-outclar-002).
 
 ## 26. Retry and Repetition Boundary
 
 ### 26.1 No generic invocation retry
 
-The Invocation Coordinator shall not automatically retry a complete consequential AppManager invocation merely because a lower-level failure appears transient.
+Coordinator retry decisions apply [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049). A transient lower-level failure does not supply a complete-invocation retry policy.
 
 ### 26.2 Provider-local retry
 
-A capability provider may perform bounded provider-local retry only where its capability contract permits the retry without changing AppManager-visible semantics.
+Bounded provider-local retry consumes [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) and the relevant capability contract.
 
 ### 26.3 Use-case retry
 
-Resumption, retry, or repetition of an application use case is controlled by owning use-case semantics and may require fresh validation, current-state inspection, or renewed authorization.
+Application retry/resume/repetition follows [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048). Owning semantics may require fresh validation, state inspection or authorization.
 
 ## 27. Concurrency and Conflict Boundary
 
 ### 27.1 Invocation independence
 
-Each invocation has isolated intent, explicit inputs, requested scope, authorization evidence, events, cancellation state, and final outcome projection.
-
-Mutable invocation-local state shall not leak across unrelated invocations.
+Invocation-local state applies [FR-INV-050](../functional/application-invocation-functional-specification-v01.md#fr-inv-050) to intent and inputs, and also isolates authorization evidence, events, cancellation and final-outcome projection.
 
 ### 27.2 Conflict evaluation hand-off
 
@@ -838,31 +761,11 @@ This design does not require all AppManager invocations to execute serially. Ind
 
 ### 28.1 Adapter responsibilities
 
-An interaction adapter may:
-
-- discover commands;
-- map adapter actions to canonical command identity;
-- gather explicit inputs;
-- provide host context hints;
-- declare interaction capabilities;
-- acquire explicit authorization when requested;
-- consume/render events;
-- request cancellation;
-- render or serialize the invocation-facing projection of the canonical outcome.
+Under [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence), an adapter consumes the catalogue (§8), supplies request and capability information (§§6, 11), acquires authorization (§14), observes events (§18), requests cancellation (§20) and receives the projection (§22).
 
 ### 28.2 Adapter prohibitions
 
-An adapter shall not independently:
-
-- implement domain workflow semantics;
-- decide managed scope;
-- decide configuration precedence;
-- declare provider success to be AppManager success;
-- reinterpret canonical DD-1.2 diagnostic or outcome semantics;
-- infer authorization;
-- weaken safety requirements;
-- choose fallback commands for unknown command identities;
-- mutate project state outside an authorized AppManager use case merely to “help” invocation succeed.
+Adapter behavior follows [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence). Unknown-command handling follows [FR-INV-006](../functional/application-invocation-functional-specification-v01.md#fr-inv-006), and outcome projection follows [DD-OUTCLAR-002](#dd-outclar-002). Convenience behavior uses §28.3 rather than an independent mutation path.
 
 ### 28.3 Adapter-specific convenience
 
@@ -872,19 +775,15 @@ Adapters may provide convenience behavior such as remembered UI selections, comm
 
 ### 29.1 Deterministic request
 
-A Headless caller shall submit a complete request or a request whose missing information can be deterministically resolved under approved context/configuration rules.
+Headless request completeness follows [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) using the §6 request model.
 
 ### 29.2 No interactive continuation dependency
 
-The coordinator shall not enter an indefinite `awaiting authorization/input` state for Headless invocation.
-
-If interaction is unavailable and required information/evidence cannot be resolved, the invocation terminates with the canonical structured rejection/failure outcome projected through this boundary.
+The coordinator applies [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) and [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) to the `awaiting authorization/input` state; unresolved required information produces the structured projection in §22.
 
 ### 29.3 Structured output
 
-Headless callers consume the same canonical DD-1.2 outcome semantics and compatible event semantics as other adapters, without depending on terminal rendering.
-
-Transport/serialization remain implementation choices.
+Headless delivery binds [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021) to [DD-OUTCLAR-002](#dd-outclar-002) and §18 events. Transport/serialization are implementation choices.
 
 ## 30. Application Engine Integration Contract
 
@@ -903,77 +802,33 @@ The invocation boundary shall hand the Application Engine a validated execution 
 
 ### 30.2 Execution return
 
-The Application Engine determines and returns the canonical DD-1.2 application outcome. The invocation boundary projects that outcome to the caller; it does not convert it into a separately owned application-result model.
-
-The canonical outcome may contain command-specific result data, final application status, diagnostics/warnings, effects/proposed effects, target/sub-result summaries, cancellation information, evidence references, recovery guidance, and correlation/timing metadata as defined by DD-1.2.
+The Engine returns [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) for the [§22 caller projection](#_22-invocation-outcome-projection-contract).
 
 ### 30.3 No provider bypass
 
-Interaction adapters shall not invoke specialist providers directly as an alternative execution path for an AppManager command.
-
-Provider access used to realize a command must occur through the Application Engine and approved capability boundaries.
+Provider access for an invoked command follows [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
 
 ## 31. Relationship to Managed Project
 
-The invocation design carries target/context hints and requested scope, but Managed Project Detailed Design owns authoritative project-context resolution and managed-scope representation.
-
-The invocation layer therefore depends on Managed Project to convert caller hints into governed application context.
-
-It must preserve the distinction:
-
-```text
-caller target hint
-    !=
-resolved managed project
-    !=
-authorized mutation scope
-```
+Request hints and scope selectors flow to [DD-1.3 context resolution](dd-1-3-managed-project-detailed-design-v01.md#_10-managed-project-context-contract) and [scope resolution](dd-1-3-managed-project-detailed-design-v01.md#_18-managed-scope-resolution). The collaboration distinguishes a caller hint, resolved project and authorized mutation scope.
 
 ## 32. Relationship to Configuration
 
-Invocation-scoped overrides are candidate configuration inputs only.
-
-Configuration Detailed Design owns:
-
-- source classification;
-- precedence;
-- validation;
-- applicability;
-- provenance;
-- effective configuration production.
-
-The invocation layer shall not independently merge or prioritize configuration sources.
+Invocation overrides enter [DD-1.4 candidate resolution](dd-1-4-configuration-resolution-detailed-design-v01.md#_9-candidate-model). The resulting [effective snapshot](dd-1-4-configuration-resolution-detailed-design-v01.md#_16-effective-configuration-snapshot) joins execution context through its owner.
 
 ## 33. Relationship to Source Transformation
 
-Preview intent, authorization evidence, and cancellation request transport are shared invocation concerns; canonical effect, partial-result, cancellation-outcome, and final-outcome semantics are owned by DD-1.2.
-
-For operations modifying existing source, Source Transformation Detailed Design owns transformation planning, structure-aware application, stale-source detection, validation, and application-acceptance integration.
-
-The invocation layer must not treat “preview” as authority to build or apply its own generic source patch model.
+Source-changing invocations carry preview intent, authorization and cancellation through §§14–20. [DD-2.5](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md) supplies the source plan and execution contract under [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033); the invocation marker does not supply a generic patch model.
 
 ## 34. Relationship to Domain Orchestration
 
-Domain Detailed Designs define command/use-case orchestration and domain-specific input/result payload models.
-
-They shall use this shared invocation design for request/discovery/interaction concerns and DD-1.2 for canonical outcome/diagnostic semantics rather than creating domain-specific substitutes for:
-
-- request identity;
-- command lookup;
-- availability semantics;
-- authorization evidence;
-- progress/event envelopes;
-- cancellation request transport;
-- canonical diagnostics;
-- canonical final outcome status classes.
-
-Domain designs may add domain-specific payloads, codes, and diagnostic refinements only by composition/mapping to the canonical DD-1.2 model.
+Domains bind their local inputs and accepted result payloads to §§6, 8–14, 18 and 20. Shared outcome composition and diagnostic refinement use [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-2-result-payload) and [DD-OUTCLAR-006](dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006).
 
 ## 35. Error and Fault Boundary
 
 ### 35.1 Expected application rejection
 
-Unknown command, invalid input, unavailable command, missing authorization, managed-scope rejection, capability unavailability, and other expected operational failures shall be represented using canonical DD-1.2 application outcomes/diagnostics and projected through invocation.
+Expected rejection conditions use [FR-INV-012](../functional/application-invocation-functional-specification-v01.md#fr-inv-012) and [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) before projection through §22.
 
 ### 35.2 Unexpected internal fault
 
@@ -983,7 +838,7 @@ The boundary shall ensure they are mapped to a safe canonical DD-1.2 failure bef
 
 ### 35.3 No raw exception contract
 
-Thrown language exceptions, process exit codes, provider error classes, and stack traces are implementation evidence, not the caller-facing invocation contract.
+Language exceptions, process exits and provider error classes enter [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) as evidence.
 
 ## 36. Security and Sensitive Information
 
@@ -1001,7 +856,7 @@ IDE/host adapters shall not send arbitrary host/project state merely because it 
 
 ### 36.4 Provider detail
 
-Provider-specific diagnostic detail crossing the invocation boundary shall be normalized under DD-1.2 and sanitized before exposure.
+Provider detail uses [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) and [redaction](dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) before crossing this boundary.
 
 ## 37. Extensibility
 
@@ -1050,24 +905,7 @@ Concrete test frameworks and source locations belong to Implementation Specifica
 
 ## 39. Design Invariants
 
-The following are normative Detailed Design invariants:
-
-1. There is one authoritative command identity model.
-2. Command existence and command availability are separate concepts.
-3. Interaction adapters do not own use-case semantics.
-4. Explicit caller intent remains distinguishable from resolved context/configuration.
-5. Authorization is explicit evidence, never inferred from inability to prompt.
-6. Preview intent is distinguishable from applied execution, using DD-1.2 effect/outcome semantics.
-7. Progress/events do not define final success.
-8. Cancellation request transport does not redefine DD-1.2 cancellation or rollback semantics.
-9. Provider technical results do not define final AppManager outcomes.
-10. The Application Engine determines application-level acceptance.
-11. DD-1.2 is the single semantic owner of shared outcome, diagnostic, warning, effect, cancellation, and subordinate-result semantics.
-12. Invocation projects canonical DD-1.2 outcomes and diagnostics; it does not define a competing envelope or taxonomy.
-13. Expected operational rejection is represented structurally rather than only as exceptions/prose.
-14. Invocation-local state and intent do not leak between unrelated invocations.
-15. Sensitive data is minimized at the invocation boundary.
-16. Transport and concrete runtime topology remain replaceable implementation choices.
+The canonical local contracts are the request/provenance model (§6), catalogue and discovery (§§8–9), validation/availability (§§12–13), authorization evidence (§14), coordinator/state/channel model (§§16–20), projection (§§21–24) and isolation (§27). Their upstream and sibling bindings are direct references in those sections; this index adds no second invariant statement.
 
 ## 40. Traceability to Functional Requirements
 
@@ -1096,11 +934,7 @@ This design establishes invocation contracts that other Detailed Design Specific
 
 ### 41.1 DD-1.2 — Execution Outcomes and Diagnostics
 
-DD-1.2 is the canonical semantic owner of the shared AppManager outcome, diagnostic, warning, effect, cancellation, provider-evidence, aggregation, and subordinate-result model.
-
-This document owns only the invocation-facing request/event/cancellation-control boundary and the projection/delivery of the accepted DD-1.2 outcome. Any invocation-specific diagnostic code or projection field must map to DD-1.2 rather than redefine its shared meanings.
-
-The relationship is further clarified by [Application Outcome and Diagnostic Ownership](dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract).
+[DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md) supplies the outcome, diagnostic, event, effect and cancellation meanings projected here. The local projection refinements are [DD-OUTCLAR-002](#dd-outclar-002) and [DD-OUTCLAR-003](#dd-outclar-003).
 
 ### 41.2 DD-1.3 — Managed Project
 
@@ -1116,7 +950,7 @@ Application Engine defines command registration/dispatch ownership, use-case exe
 
 ### 41.5 DD-2 capability designs
 
-Capability designs define provider-neutral technical evidence. They shall map local failure/diagnostic vocabularies to DD-1.2 and shall not rely on this invocation document as an alternative outcome taxonomy.
+DD-2 technical evidence reaches the caller through [DD-1.2](dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) and [diagnostic refinement](dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006).
 
 ## 42. Implementation Specification Obligations
 
@@ -1139,28 +973,8 @@ Implementation Specifications may choose efficient concrete structures but must 
 
 ## 43. Conformance Criteria
 
-A Version 1 implementation conforms to this Detailed Design only if:
-
-1. all supported adapters enter AppManager through the same canonical application invocation semantics;
-2. commands use stable canonical identities and an authoritative catalogue;
-3. unknown commands and unavailable commands are represented distinctly;
-4. explicit input, host context, resolved context, and effective configuration remain distinguishable;
-5. validation is completed before consequential effects depend upon unvalidated prerequisites;
-6. authorization requirements are evaluated by application semantics and represented as explicit evidence;
-7. Headless invocation terminates deterministically when required interaction cannot be satisfied;
-8. preview projections cannot be confused with applied operations;
-9. progress/events remain observational and do not determine final success;
-10. cancellation request coordination does not falsely guarantee rollback or define a competing terminal model;
-11. final caller-visible outcomes are projections of canonical DD-1.2 AppManager-level acceptance rather than provider exit status or an invocation-owned result taxonomy;
-12. failure, cancellation, partial completion, diagnostics, warnings, and known consequential effects remain structurally representable without redefining DD-1.2;
-13. one invocation cannot silently inherit mutable intent or authorization from another;
-14. sensitive information is minimized before crossing the invocation boundary;
-15. no adapter, provider, transport, or host integration becomes a parallel application authority or a parallel outcome/diagnostic authority.
+Conformance is assessed against the local contracts indexed in §39, their canonical references and the test obligations in §38. This section introduces no duplicate acceptance checklist.
 
 ## 44. Version 1 Detailed Design Baseline
 
-This document establishes the Version 1 Detailed Design baseline for Application Invocation.
-
-It deliberately fixes the permanent invocation, interaction, control, and projection seams while leaving canonical shared outcome/diagnostic semantics to DD-1.2 and concrete Node.js/TypeScript types, modules, serialization, process topology, transport, libraries, and wiring to Implementation Specifications.
-
-The resulting boundary is intended to remain valid if AppManager later adds new interaction adapters, new transports, new providers, or replaces parts of the implementation runtime, provided the approved Design, Functional, Detailed Design, clarification, and ADR authorities remain unchanged.
+This baseline defines the invocation request, interaction, control and caller-projection seams. [The Project Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) governs their concrete implementation mapping.

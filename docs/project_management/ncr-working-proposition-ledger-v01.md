@@ -1339,6 +1339,28 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-UTIL-101` | [Design](../appmanager-design-specification-v01.md#_10-9-maintenance-domain); [DD-UTIL-066](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md#dd-util-066) |
 | `DD-UTIL-102` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-UTIL-105` | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| `DD-PROJ-001` | [FR-PROJ-004](../functional/managed-project-functional-specification-v01.md#fr-proj-004) |
+| `DD-PROJ-002` | [FR-PROJ-007](../functional/managed-project-functional-specification-v01.md#fr-proj-007) |
+| `DD-PROJ-003` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-PROJ-004` | [FR-PROJ-030](../functional/managed-project-functional-specification-v01.md#fr-proj-030); [bootstrap inputs](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context) |
+| `DD-PROJ-005` | [FR-PROJ-033](../functional/managed-project-functional-specification-v01.md#fr-proj-033) |
+| `DD-PROJ-006` | [FR-PROJ-008](../functional/managed-project-functional-specification-v01.md#fr-proj-008); [FR-PROJ-005](../functional/managed-project-functional-specification-v01.md#fr-proj-005) |
+| `DD-PROJ-009` | [FR-PROJ-014](../functional/managed-project-functional-specification-v01.md#fr-proj-014) |
+| `DD-PROJ-011` | [Design](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers) |
+| `DD-PROJ-012` | [Design](../appmanager-design-specification-v01.md#_9-3-root-application-and-managed-layers); [Design](../appmanager-design-specification-v01.md#_9-5-repository-relationships) |
+| `DD-PROJ-013` | [Design](../appmanager-design-specification-v01.md#_9-4-project-topology-and-resource-relationships) |
+| `DD-PROJ-014` | [Design](../appmanager-design-specification-v01.md#_9-8-appmanager-owned-management-area-and-project-coexistence) |
+| `DD-PROJ-015` | [FR-PROJ-038](../functional/managed-project-functional-specification-v01.md#fr-proj-038) |
+| `DD-PROJ-016` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
+| `DD-PROJ-017` | [FR-PROJ-041](../functional/managed-project-functional-specification-v01.md#fr-proj-041) |
+| `DD-PROJ-018` | [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042) |
+| `DD-PROJ-019` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-PROJ-020` | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| `DD-PROJ-021` | [FR-PROJ-047](../functional/managed-project-functional-specification-v01.md#fr-proj-047) |
+| `DD-PROJ-022` | [FR-PROJ-060](../functional/managed-project-functional-specification-v01.md#fr-proj-060) |
+| `DD-PROJ-023` | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| `DD-PROJ-024` | [FR-PROJ-006](../functional/managed-project-functional-specification-v01.md#fr-proj-006); [FR-PROJ-044](../functional/managed-project-functional-specification-v01.md#fr-proj-044); [FR-PROJ-047](../functional/managed-project-functional-specification-v01.md#fr-proj-047) |
+| `DD-PROJ-025` | [FR-PROJ-061](../functional/managed-project-functional-specification-v01.md#fr-proj-061) |
 
 Checkpoint C interim: 179 reviewed requirement bodies reduced across DD-2.1 through DD-2.5, plus duplicate purpose/conformance summaries in the first three. All 1,915 definitions remain, now with stable direct anchors. New links checked, one synchronization anchor corrected, and `git diff --check` passes after EOF normalization. The rest of the primary corpus and final horizontal review remain outstanding; this is not checkpoint C completion.
 
@@ -1349,3 +1371,113 @@ The next domain checkpoint reviews App, Git and Nuxt numbered clauses against th
 The Docs/Quality/Settings checkpoint brings the ongoing C pass to 842 distinct reduced requirement bodies. Docs retains the profile-relative coverage model, per-artefact plan, prior AI criteria, ownership-sensitive replacement delta, indeterminate persistence and dependency-aware continuation. Quality retains operation-policy immutability, eligibility versus gate interpretation, non-pass policy exceptions, provider-content constraints, concurrency handling, deterministic gate evaluation and boundary tests; a measurement, finding and gate decision are distinct contracts. Settings retains class-specific scope/identity, coupled-effect planning, observation/mutation revisions, unsupported-versus-absent state, secret-reveal boundary, sensitivity propagation and external-acquisition constraints. Operator identity, contributor identity and provider/resource identity remain distinct despite similar fields. These passes leave AI, Maintenance, DD-1, unnumbered occurrences and the final full-corpus horizontal verification open. No completion claim is made.
 
 The AI/Maintenance checkpoint brings the ongoing C pass to 1007 distinct reduced requirement bodies. AI retains the integrated project resource graph, family lifecycle, provider association versus availability distinction, required-enrichment policy, stale-sensitive creation/deletion, local-effect uncertainty and secret exclusion from baseline documents. Maintenance retains the stronger-owner gate before acceptance/planning, current per-resource revision/history evidence, coordinated eligibility/plan, cancellation before each new effect, policy/dependency continuation, non-idempotent source-version evidence and bounded positive cleanup classification. Existing optional AI paths remain optional and no coordinated operation acquires an AI dependency. DD-1, unnumbered occurrences, direct-reference flattening and final complete-corpus horizontal/semantic preservation verification remain open.
+
+### 10.2 Unnumbered occurrence decisions
+
+These section decisions remove duplicate normative bodies and retain explanatory `REFERENCE`/`LOCAL_BINDING` plus any identified `LOCAL_DELTA`. Models and workflows left in place remain subject to the final horizontal review. Numbered section headings remain stable for inbound references.
+
+| Occurrence | Direct owner references after reduction |
+|---|---|
+| DD-1-1 §1 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) |
+| DD-1-1 §6.1 | [FR-INV-007](../functional/application-invocation-functional-specification-v01.md#fr-inv-007) |
+| DD-1-1 §6.4 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| DD-1-1 §8.1 | [FR-INV-003](../functional/application-invocation-functional-specification-v01.md#fr-inv-003) |
+| DD-1-1 §8.4 | [Design](../appmanager-design-specification-v01.md#_5-4-command-discovery) |
+| DD-1-1 §9.1 | [Design](../appmanager-design-specification-v01.md#_5-4-command-discovery) |
+| DD-1-1 §11.3 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence); [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022); [FR-INV-024](../functional/application-invocation-functional-specification-v01.md#fr-inv-024) |
+| DD-1-1 §14.1 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence); [FR-INV-023](../functional/application-invocation-functional-specification-v01.md#fr-inv-023) |
+| DD-1-1 §14.5 | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020); [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) |
+| DD-1-1 §15.3 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_13-proposed-effects-and-preview); [the caller projection](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-003) |
+| DD-1-1 §16.3 | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| DD-1-1 §17.2 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model); [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002); [DD-OUTCLAR-003](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-003) |
+| DD-1-1 §18.2 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_16-progress-events) |
+| DD-1-1 §18.3 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_16-progress-events) |
+| DD-1-1 §18.4 | [FR-INV-028](../functional/application-invocation-functional-specification-v01.md#fr-inv-028) |
+| DD-1-1 §19.1 | [FR-INV-027](../functional/application-invocation-functional-specification-v01.md#fr-inv-027) |
+| DD-1-1 §20.3 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model) |
+| DD-1-1 §21.1 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) |
+| DD-1-1 §21.2 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006); [canonical code semantics](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-5-diagnostic-codes) |
+| DD-1-1 §21.3 | [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) |
+| DD-1-1 §21.4 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| DD-1-1 §22.1 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) |
+| DD-1-1 §22.3 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-2-result-payload) |
+| DD-1-1 §22.4 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization); [sensitive-information handling](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| DD-1-1 §23 | [caller projection](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002); [DD-1.2 child/stage/target results](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| DD-1-1 §24 | [caller projection](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002); [DD-1.2 effect information](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| DD-1-1 §25.1 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_8-execution-evidence-contract) |
+| DD-1-1 §25.2 | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| DD-1-1 §25.3 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation); [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002) |
+| DD-1-1 §26.1 | [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) |
+| DD-1-1 §26.2 | [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) |
+| DD-1-1 §26.3 | [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) |
+| DD-1-1 §27.1 | [FR-INV-050](../functional/application-invocation-functional-specification-v01.md#fr-inv-050) |
+| DD-1-1 §28.1 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| DD-1-1 §28.2 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence); [FR-INV-006](../functional/application-invocation-functional-specification-v01.md#fr-inv-006); [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002) |
+| DD-1-1 §29.1 | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020) |
+| DD-1-1 §29.2 | [FR-INV-020](../functional/application-invocation-functional-specification-v01.md#fr-inv-020); [FR-INV-022](../functional/application-invocation-functional-specification-v01.md#fr-inv-022) |
+| DD-1-1 §29.3 | [FR-INV-021](../functional/application-invocation-functional-specification-v01.md#fr-inv-021); [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002) |
+| DD-1-1 §30.2 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract); [§22 caller projection](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#_22-invocation-outcome-projection-contract) |
+| DD-1-1 §30.3 | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-1-1 §31 | [DD-1.3 context resolution](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md#_10-managed-project-context-contract); [scope resolution](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md#_18-managed-scope-resolution) |
+| DD-1-1 §32 | [DD-1.4 candidate resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_9-candidate-model); [effective snapshot](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_16-effective-configuration-snapshot) |
+| DD-1-1 §33 | [DD-2.5](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md); [FR-XFORM-033](../functional/source-transformation-functional-specification-v01.md#fr-xform-033) |
+| DD-1-1 §34 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-2-result-payload); [DD-OUTCLAR-006](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006) |
+| DD-1-1 §35.1 | [FR-INV-012](../functional/application-invocation-functional-specification-v01.md#fr-inv-012); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model) |
+| DD-1-1 §35.3 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| DD-1-1 §36.4 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization); [redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| DD-1-1 §39 | Local explanatory binding; see primary |
+| DD-1-1 §41.1 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md); [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002); [DD-OUTCLAR-003](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-003) |
+| DD-1-1 §41.5 | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization); [diagnostic refinement](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006) |
+| DD-1-1 §43 | Local explanatory binding; see primary |
+| DD-1-1 §44 | [The Project Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| DD-1-2 §1 | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance); [DD-1.1](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#_22-invocation-outcome-projection-contract) |
+| DD-1-2 §8.3 | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); [§18 normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| DD-1-2 §8.4 | [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| DD-1-2 §10 | [§9](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model); [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039) |
+| DD-1-2 §12.4 | [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046) |
+| DD-1-2 §14.1 | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036) |
+| DD-1-2 §14.3 | [§20](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_20-outcome-aggregation); [§6 statuses](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model); [§17 cancellation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model); [§15 no-op states](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_15-no-op-already-satisfied-skipped-and-not-attempted-states) |
+| DD-1-2 §16.4 | [FR-INV-028](../functional/application-invocation-functional-specification-v01.md#fr-inv-028); [§7](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-outcome-contract) |
+| DD-1-2 §17.3 | [FR-INV-031](../functional/application-invocation-functional-specification-v01.md#fr-inv-031) |
+| DD-1-2 §17.4 | [FR-INV-031](../functional/application-invocation-functional-specification-v01.md#fr-inv-031) |
+| DD-1-2 §17.5 | [FR-INV-032](../functional/application-invocation-functional-specification-v01.md#fr-inv-032); [§12.4](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-4-no-false-rollback) |
+| DD-1-2 §18.1 | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-1-2 §19.1 | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance); [§6](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model) |
+| DD-1-2 §20.3 | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036); [FR-INV-045](../functional/application-invocation-functional-specification-v01.md#fr-inv-045); [FR-INV-046](../functional/application-invocation-functional-specification-v01.md#fr-inv-046); [child model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-2-child-result-model); [cancellation model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_17-cancellation-model); [subordinate-state distinctions](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_15-no-op-already-satisfied-skipped-and-not-attempted-states) |
+| DD-1-2 §22 | [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048); [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) |
+| DD-1-2 §25.1 | [DD-1.1 invocation identity](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#_7-invocation-identity-and-correlation) |
+| DD-1-2 §27.1 | [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002) |
+| DD-1-2 §27.2 | [DD-OUTCLAR-002](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-002); [DD-OUTCLAR-003](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#dd-outclar-003); [DD-OUTCLAR-006](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006); [§24](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction); [FR-INV-039](../functional/application-invocation-functional-specification-v01.md#fr-inv-039); [FR-INV-049](../functional/application-invocation-functional-specification-v01.md#fr-inv-049) |
+| DD-1-2 §31.1 | [DD-1.1](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md); [projection contract](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#_22-invocation-outcome-projection-contract) |
+| DD-1-2 §33 | [§7.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_7-2-result-payload); [DD-OUTCLAR-006](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006); [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance); [§15](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_15-no-op-already-satisfied-skipped-and-not-attempted-states); [FR-INV-048](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) |
+| DD-1-2 §34 | Local explanatory binding; see primary |
+| DD-1-2 §37 | Local explanatory binding; see primary |
+| DD-1-2 §39 | [the Implementation Specification boundary](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| DD-1-3 §1 | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution); [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content); [DD-1.4 stage-eligibility contract](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context); [DD-1.5](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle); [§29](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md#_29-relationship-to-configuration-resolution) |
+| DD-1-3 §4 | [DD-1.5 §8](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle); [DD-1.4 §8](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_8-resolution-context); [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| DD-1-3 §9.2 | [FR-PROJ-009](../functional/managed-project-functional-specification-v01.md#fr-proj-009); [FR-PROJ-006](../functional/managed-project-functional-specification-v01.md#fr-proj-006) |
+| DD-1-3 §11.1 | [FR-PROJ-014](../functional/managed-project-functional-specification-v01.md#fr-proj-014) |
+| DD-1-3 §11.3 | [FR-PROJ-035](../functional/managed-project-functional-specification-v01.md#fr-proj-035); [FR-INV-011](../functional/application-invocation-functional-specification-v01.md#fr-inv-011) |
+| DD-1-3 §13.3 | [FR-PROJ-018](../functional/managed-project-functional-specification-v01.md#fr-proj-018) |
+| DD-1-3 §14.1 | [DD-2.3](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md); [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
+| DD-1-3 §14.3 | [FR-PROJ-028](../functional/managed-project-functional-specification-v01.md#fr-proj-028) |
+| DD-1-3 §15.3 | [Design](../appmanager-design-specification-v01.md#_9-1-managed-project-model) |
+| DD-1-3 §16.3 | [FR-PROJ-052](../functional/managed-project-functional-specification-v01.md#fr-proj-052) |
+| DD-1-3 §21.3 | [Design](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content) |
+| DD-1-3 §22.1 | [FR-PROJ-060](../functional/managed-project-functional-specification-v01.md#fr-proj-060) |
+| DD-1-3 §22.3 | [FR-PROJ-060](../functional/managed-project-functional-specification-v01.md#fr-proj-060); [DD-1.2 child results](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
+| DD-1-3 §23.2 | [FR-PROJ-032](../functional/managed-project-functional-specification-v01.md#fr-proj-032) |
+| DD-1-3 §23.3 | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| DD-1-3 §28 | [DD-1.2 sensitivity handling](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| DD-1-3 §31 | [DD-1.2 diagnostics](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model); [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
+| DD-1-3 §32 | [DD-1.5 orchestration](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle); [Design](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) |
+| DD-1-3 §33.1 | [DD-2.1](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md) |
+| DD-1-3 §33.2 | [DD-2.3](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) |
+| DD-1-3 §33.3 | [DD-2.10](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) |
+| DD-1-3 §33.4 | [DD-2.4](../dd_2_shared_capabilities/dd-2-4-source-intelligence-detailed-design-v01.md) |
+| DD-1-3 §35 | Local explanatory binding; see primary |
+| DD-1-3 §39 | [DD-1.5](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) |
+| DD-1-3 §40 | Local explanatory binding; see primary |
+| DD-1-3 §41 | [§19](../dd_1_application_core/dd-1-3-managed-project-detailed-design-v01.md#_19-recognition-scope-targetability-and-mutability) |
+
+The Application Core checkpoint covers DD-1.1, DD-1.2 and DD-1.3: 1029 distinct numbered requirement bodies and 101 unnumbered sections are recorded in the ongoing C pass. Invocation retains intent immutability, request/provenance fields, command descriptors, structural validation, authorization-to-plan binding, channel ordering, late-cancellation resolution and invocation isolation. Outcomes retains status layers, canonical field families, diagnostic taxonomy, effect/child models, uncertainty, cancellation phases, local evidence normalization, deterministic aggregation, redaction and compatibility. Managed Project retains evidence/candidate/context/scope/targetability models, read-only coherent context, explicit multi-project exception, root-entity/path distinction, partial-scope gating, project-local diagnostics and bootstrap conflict handling. The command identity representation note now explicitly binds the settled Functional catalogues, leaving only concrete representation below DD. DD-1.4/DD-1.5 and the final unnumbered/horizontal review remain open.
