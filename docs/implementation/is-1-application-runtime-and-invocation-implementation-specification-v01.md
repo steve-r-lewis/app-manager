@@ -317,6 +317,8 @@ Additional capabilities may be added when a real use case requires them.
 
 `mode: 'interactive' | 'headless'` is insufficient as the application contract because future GUI, IDE, CI and agent hosts may expose different combinations of capabilities.
 
+This is the canonical, transport-neutral application-boundary contract. IS-22 declares a separate adapter-local `AdapterCapabilities` type describing presentation/host capabilities and is responsible for projecting it onto this contract; the two are related but distinct interfaces and shall not share a name.
+
 Capabilities do not grant authority. `canAcquireAuthorization: true` means the adapter can ask and return evidence; it does not mean the adapter may approve an action itself.
 
 ---
