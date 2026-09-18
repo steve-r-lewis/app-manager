@@ -547,6 +547,20 @@ A generic delegation diagram is explanatory unless a requirement makes a represe
 
 Historical implementation observations in Detailed Designs are non-normative provenance unless a separate Detailed Design requirement establishes the permanent constraint. Concrete implementation disposition belongs to the corresponding Implementation Specification, subject to upstream conformance; a historical observation cannot override that specification or become a source of product architecture. This does not make Implementation Specifications authority over Detailed Design.
 
+### 7.11 The Module Contract {#module-contract}
+
+A Detailed Design Specification and its primary Implementation Specification form one **module** — the unit a reader or an AI coding agent should be able to use on its own, alongside the shared primer below, without reading the rest of the corpus.
+
+**Shared primer.** Every module may assume the reader has read the Design Specification's architecture sections ([§4](../appmanager-design-specification-v01.md#_4-operating-context-and-interaction-modes)–[§9](../appmanager-design-specification-v01.md#_9-managed-project-and-project-context-model)) and the whole of DD-1 (Application Core) in full. A module must not restate an invariant already canonical there — [Application Engine authority](../appmanager-design-specification-v01.md#_6-2-application-engine-authority), the [capability boundary](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers), the outcome/diagnostic model in DD-1.2, or the managed-project/configuration model in DD-1.3/DD-1.4. A single citation into the owning document is sufficient; a paragraph restating what the citation already says is not.
+
+**Declared dependencies.** A module may additionally assume the reader has read the specific DD-2 capability documents and their Implementation Specification pairs named in its own header metadata (`Shared implementations`, `Related Detailed Design authorities`, or equivalent). It must not assume familiarity with a sibling domain module that is not so declared, and its header dependency list must stay accurate as the module changes.
+
+**One-hop citations.** A citation must be sufficient in the document that receives it. If understanding a cited rule requires following that citation to a second document, and then a third, the citing module has not stated enough locally — either the citation target is wrong, or the module needs a short local statement of the specific obligation rather than a bare pointer.
+
+**Required local content.** Regardless of what the primer and declared dependencies cover, a module must state, in its own text: its scope and non-ownership boundary; for an Implementation Specification, concrete types/interfaces sufficient to implement against without inventing the shape; its position in any staged lifecycle it participates in; and at least one worked example tracing its primary flow end-to-end with concrete values, not just field-name lists.
+
+**Conformance.** A module that requires the reader to hold the whole corpus in mind to be usable does not conform to this contract, regardless of how accurate its individual cross-references are.
+
 ## 8. Level 4 - Implementation Specification
 
 ### 8.1 Purpose
@@ -604,6 +618,10 @@ Where a migration is required, Implementation Specifications may define the impl
 Implementation Specifications should distinguish permanent implementation requirements from temporary migration mechanics where that distinction affects maintenance or traceability.
 
 Project-management documentation remains the appropriate location for execution order, workstream coordination, milestone planning, progress tracking, handoff state, and other transient management information associated with the migration.
+
+### 8.5 Module Pairing
+
+Each primary Implementation Specification and the Detailed Design Specification it reduces to practice form one module under [Section 7.11](#module-contract), which governs what that pair may assume from the shared primer and what it must state locally.
 
 ---
 
@@ -1679,6 +1697,7 @@ The AppManager documentation system is governed by the following core rules:
 39. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
 40. A clarification document is reserved for a genuinely unresolved open question; an ordinary correction is a direct edit to the primary document, in one reviewed change.
 41. A correction, review, or verification activity does not require a named programme, dedicated ledger, or audit trail beyond its own reviewed change record.
+42. A Detailed Design Specification and its primary Implementation Specification form one module usable with only the shared primer and its own declared dependencies; it must not restate a primer invariant or require a second-hop citation to be understood.
 
 ---
 
