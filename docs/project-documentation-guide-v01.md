@@ -843,7 +843,7 @@ The use of separate concise Detailed Design family directories is deliberate. Th
 
 The active normative Detailed Design set should therefore migrate away from an undifferentiated `docs/detailed_design/` directory. The migration must preserve content, stable Detailed Design identifiers, history where practical, and all active cross-references.
 
-The `project_management/` directory contains project planning, coordination, migration planning and sequencing, migration status, rationalisation, status, handoff, release-planning, architecture investigations and reviews, decision governance, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification.
+The `project_management/` directory contains project planning, coordination, migration planning and sequencing, migration status, rationalisation, status, handoff, release-planning, architecture investigations and reviews, decision governance, and similar management artefacts. It is outside the normative Design → Functional → Detailed Design → Implementation specification hierarchy. Material recorded there may report on, coordinate, investigate, or reference specification work, but it must not establish product requirements or design authority unless that information is deliberately approved and incorporated into the appropriate authoritative specification. Section 16.2 governs how much of this directory a given activity may justify creating.
 
 The `project_management/decisions/` directory contains Architecture Decision Record governance, the ADR template, and durable ADRs. ADRs remain governed decision-provenance records rather than project-management status records; their placement beneath `project_management/` reflects governance and repository organisation, not reduced architectural significance and not inclusion in the normative four-level specification hierarchy.
 
@@ -1137,6 +1137,22 @@ Architecture reviews and ADRs should follow the same principle. A review may con
 
 Where the referenced document is part of the same repository, use a repository-relative Markdown link as defined in Section 7.9 rather than duplicating content or relying on an unlinked bare filename.
 
+### 16.1 Clarification Documents Are Not the Default Correction Mechanism
+
+A clarification, reconciliation, or similar supporting document exists only for a genuinely unresolved open question — one requiring investigation, evidence, or a decision not yet available. It is not the default mechanism for correcting a primary specification.
+
+An ordinary correction — a defect, an inconsistency, a naming fix, folding in an already-accepted delta — is a direct edit to the primary document that owns the affected responsibility, made in one reviewed change. It does not first pass through a temporary parallel document.
+
+A clarification, once its open question is resolved, must be folded into its primary owner and retired in the same change that resolves it, following Section 18's retirement procedure. It must not be left as an active parallel restatement once the answer is known.
+
+This rule applies with equal force to work performed by an AI system under Section 19.
+
+### 16.2 Project-Management Process Proportionality
+
+A correction, review, or verification activity does not require a named programme, a dedicated ledger, or an audit trail beyond its own reviewed change record. A named programme with its own control document and ledger is justified only when a lighter direct-edit approach has already been tried for the same class of work and demonstrably could not track it — not as the default starting point.
+
+Project-management documentation under Section 12 exists to coordinate work, not to accumulate self-verifying evidence about the corpus. An audit, reconciliation, or review document is retained only while it records a finding not yet corrected; once corrected, the finding's record is the diff, and the audit document is superseded per Section 18.
+
 ---
 
 ## 17. Conflict Resolution
@@ -1403,7 +1419,8 @@ When consolidating, archiving, retiring, or converting material into ADRs and sp
 - move information to the correct specification or governance level;
 - preserve decision rationale in an ADR where required rather than discarding the alternatives and reasoning after updating a specification;
 - use archiving to remove non-authoritative material from the live tree while migration remains incomplete;
-- retire obsolete or superseded material only after its continuing value has been fully accounted for.
+- retire obsolete or superseded material only after its continuing value has been fully accounted for;
+- prefer the direct edit in Section 16.1 over creating a new clarification, and the proportionality rule in Section 16.2 over creating a new named programme, ledger, or audit trail.
 
 ### 19.4 AI Must Not Become the Source of Authority
 
@@ -1660,6 +1677,8 @@ The AppManager documentation system is governed by the following core rules:
 37. Active specifications should not rely upon archived or retired documents as normative authority.
 38. AI-assisted work must respect specification authority, decision status, abstraction level, evidence quality, target-system permanence, stable Detailed Design identity, navigability, and the archive/retirement lifecycle.
 39. Normative documentation should remain stable enough to guide implementation rather than merely describe it.
+40. A clarification document is reserved for a genuinely unresolved open question; an ordinary correction is a direct edit to the primary document, in one reviewed change.
+41. A correction, review, or verification activity does not require a named programme, dedicated ledger, or audit trail beyond its own reviewed change record.
 
 ---
 
