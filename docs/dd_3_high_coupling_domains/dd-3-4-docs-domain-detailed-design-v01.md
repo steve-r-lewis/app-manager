@@ -16,23 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal Docs-domain design for documentation-oriented application intent across AppManager managed projects.
+This specification refines [Docs Functional contracts](../functional/docs-functional-specification-v01.md) for documentation intent. Its profile, coverage and per-artefact plan models connect source/domain evidence, authored documentation and proposed explanatory prose to generation, update and tooling workflows. Provenance-sensitive interpretation follows [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037) and [FR-DOCS-079](../functional/docs-functional-specification-v01.md#fr-docs-079).
 
-The Docs domain composes authoritative Application Core context with DD-2.9 Documentation Capability and other bounded specialist capabilities to document complete managed applications, application source, managed layers, tests and selected files; to generate or update documentation artefacts; to aggregate documentation from approved facts; and to operate supported documentation development, build and preview workflows.
-
-The governing rule is:
-
-> **The Docs domain owns documentation application intent, target/profile policy, orchestration and domain acceptance; DD-2.9 Documentation Capability owns bounded documentation inspection, modeling, aggregation, rendering, tooling and validation semantics; the Application Engine retains final application authority.**
-
-A second rule is:
-
-> **Documentation intent does not transfer source, Nuxt, Quality, AI, process, template, persistence or managed-project authority into the Docs domain merely because those concerns contribute evidence or execution.**
-
-A third rule is:
-
-> **Documentation truth is provenance-sensitive: reliably recognized structural or domain facts, existing authored documentation and generated explanatory prose shall not be collapsed into one undifferentiated authority source.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 

@@ -16,21 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent domain-level composition by which AppManager performs genuine cross-cutting maintenance operations that have no stronger approved domain owner.
+This specification refines [Maintenance Functional contracts](../functional/utils-functional-specification-v01.md) for bounded cross-cutting maintenance. Its header inspection, repair, source-file version and cleanup plans begin at the [stronger-owner gate](#dd-util-066). Documentation and contributor compatibility paths lead to their owning domains. The per-resource plan and lifecycle retain the information needed to report coordinated effects truthfully.
 
-The governing rules are:
-
-> **Maintenance owns only bounded maintenance intent that is genuinely cross-cutting and otherwise unowned; it is not a residual namespace for behavior whose stronger owner is already known.**
-
-> **Maintenance interprets source, repository, AI and resource evidence for Maintenance-owned maintenance intent; delegated specialist execution does not transfer Maintenance application authority to those capabilities.**
-
-> **Inspection does not authorize repair, discovery does not authorize deletion, and a technically successful source write does not establish Maintenance-domain acceptance.**
-
-> **The Application Engine retains final application authority.**
-
-Version 1 Maintenance therefore owns source-header inspection/validation/repair, source-file header-version maintenance, and narrowly bounded temporary/test/log artefact cleanup. Documentation generation and contributor management remain delegated compatibility surfaces, not independent Maintenance authorities.
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
@@ -1060,21 +1048,4 @@ Conformance testing shall include negative cases proving that Docs automation, c
 
 ## 19. Conformance Invariants
 
-A conforming DD-4.4 implementation shall preserve all of the following:
-
-1. **Maintenance is not a catch-all.** A stronger approved domain owner always prevails over namespace or implementation convenience.
-2. **Application authority remains DD-1-owned.** Maintenance does not own managed-project scope, effective-configuration resolution, canonical outcomes or final Application Engine acceptance.
-3. **Recognition is not repair authority.** Source/header facts remain evidence until explicit Maintenance maintenance intent and authorization establish a bounded transformation.
-4. **Source mutation remains DD-2.5-owned mechanically.** Maintenance owns maintenance intent/postconditions, not generic edit planning/execution internals.
-5. **Repository evidence does not transfer Git authority.** Changed-file/diff facts may inform maintenance without granting commit, synchronization, push or remote semantics.
-6. **AI remains advisory.** AI classification or generated notes/names are proposals; provider success does not establish Maintenance success or mutation authority.
-7. **Source-file version is not application/release version.** The two semantic scopes shall not be collapsed.
-8. **Cleanup is bounded and narrower than App clean/reset.** Discovery does not authorize deletion and configurable patterns cannot escape managed scope.
-9. **Compatibility delegation preserves the stronger owner.** Docs automation and contributor management do not become independent Maintenance semantics.
-10. **Partial and stale effects are truthful.** Completed effects, conflicts, cancellation and indeterminate state are not hidden behind false rollback or aggregate success.
-11. **Interactive and Headless semantics are equivalent.** Headless ambiguity or missing authorization fails safely rather than guessing.
-12. **Provider and implementation topology remain replaceable.** Current scanners, strategies, services, regexes, file APIs, Git/AI providers and TypeScript layout do not define permanent architecture.
-
-The central conformance rule is:
-
-> **A utility exists because its maintenance intent is genuinely cross-cutting and otherwise unowned—not because no stronger owner was consulted. Inspection does not authorize repair, discovery does not authorize deletion, and delegated intelligence does not authorize application effects.**
+Conformance review follows the stronger-owner gate, per-resource classification and coordinated plan in §7 and the inspection, repair, versioning and bounded cleanup in §8. The policy, lifecycle, failure/recovery and security clauses in §§9–16 supply their local acceptance and uncertainty conditions. §18 identifies the upstream contracts; this index adds no independent invariant set.

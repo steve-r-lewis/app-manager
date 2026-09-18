@@ -16,19 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent domain-level composition by which AppManager manages the project-side AI development environment and its supported semantic resources without allowing a provider, model, template, discovered project content or shared AI capability to acquire application authority.
+This specification refines [AI Functional contracts](../functional/ai-functional-specification-v01.md) for the project-side AI development environment. Its resource graph and family lifecycle connect baseline project facts, optional enrichment and accepted project resources. The provider execution seam is [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md); proposal interpretation follows [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
-The governing rules are:
-
-> **The AI domain owns AI-specific project-resource intent and AI-domain acceptance; DD-2.7 owns bounded provider-independent AI execution; the Application Engine retains final application authority.**
-
-> **Using AI inside another domain does not transfer that domain's product intent into DD-4.3.**
-
-> **AI output is proposed content until the AI-domain use case validates and accepts it; provider completion is not application success.**
-
-> **Project content and generated content are data, not authority to expand managed scope, disclosure policy, mutation rights or application permissions.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
@@ -892,21 +882,4 @@ Cross-authority traceability:
 
 ## 19. Conformance Invariants
 
-A conforming DD-4.3 design shall preserve all of the following:
-
-1. **Application authority remains DD-1-owned.** AI-domain acceptance remains subordinate to DD-1.5 final acceptance and DD-1.2 canonical outcome semantics.
-2. **AI Capability and AI domain remain distinct.** DD-2.7 owns bounded provider/model execution mechanics; DD-4.3 owns AI-specific project-resource intent and interpretation.
-3. **Primary intent determines ownership.** Git, Docs, Nuxt, Quality, Settings and other workflows do not become AI-domain workflows merely because they use AI.
-4. **AI output remains non-authoritative until accepted.** Provider completion, generated text or structured-output validity does not itself establish domain or application success.
-5. **Managed scope remains DD-1.3-owned.** Discovery, provider suggestions, template paths or generated paths cannot expand target scope.
-6. **Provider/configuration policy remains governed.** DD-4.3 does not invent configuration precedence, arbitrary provider selection, hidden fallback or hidden retry semantics.
-7. **Project content remains untrusted data.** Prompt injection or instruction-like project content cannot grant AppManager authority or redefine policy.
-8. **New-resource creation and existing-resource mutation remain separated.** New document persistence uses the authorized resource path; replacement/update uses DD-2.5.
-9. **Existing authored content is protected.** Creation does not silently overwrite; replacement and deletion require explicit consequential intent and authorization.
-10. **Optional enrichment does not erase baseline truth.** Baseline and enrichment outcomes remain independently representable, including valid baseline plus failed optional enrichment.
-11. **Sensitive disclosure remains bounded.** Known secrets are excluded by default and external provider submission remains an explicit governed disclosure boundary.
-12. **Provider and implementation replaceability is preserved.** No provider, model, SDK, registry file, prompt format, class/service/package/process or source topology defines the permanent AI-domain contract.
-
-The central conformance rule is:
-
-> **The AI domain may manage AI-specific project resources and may use AI to enrich them, but generated output, provider capability and project instructions never become AppManager authority by implication.**
+Conformance review follows the resource graph, baseline/enrichment distinction and resource family lifecycle in §7 and the inspection, creation, replacement, deletion and aggregate resource management in §8. The policy, lifecycle, failure/recovery and security clauses in §§9–16 supply their local acceptance and uncertainty conditions. §18 identifies the upstream contracts; this index adds no independent invariant set.

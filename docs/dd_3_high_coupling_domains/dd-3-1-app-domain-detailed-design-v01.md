@@ -16,19 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal App-domain design for root-application lifecycle intent and root-application creation.
+This specification refines [App Functional contracts](../functional/app-functional-specification-v01.md) for root-application lifecycle and creation. Its lifecycle plans connect readiness, preparation, build and cleanup stages. Root creation and declared-script execution have separate local models in §7 and workflows in §8.
 
-The App domain composes authoritative Application Core context and shared specialist capabilities into coherent lifecycle use cases. It owns the domain-specific sequencing, applicability, policy, acceptance and recovery meaning of those use cases without becoming a second owner of managed scope, effective configuration, process mechanics, repository semantics, Nuxt semantics, Settings persistence, template rendering, source transformation or canonical application outcomes.
-
-The governing rule is:
-
-> **The App domain owns root-application lifecycle composition; the capabilities it coordinates own their bounded specialist semantics, and the Application Engine retains final application authority.**
-
-A second rule is:
-
-> **An App use case is defined by lifecycle intent and postconditions, not by a particular package-manager command, process invocation, source path, template implementation or provider.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 

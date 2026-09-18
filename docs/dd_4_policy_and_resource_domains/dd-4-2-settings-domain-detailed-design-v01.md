@@ -16,19 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent domain-level composition by which AppManager inspects and manages supported settings, metadata and declarative resources without allowing persistence mechanisms, configuration sources, registries, parsers or neighbouring domains to acquire Settings application authority.
+This specification refines [Settings Functional contracts](../functional/settings-functional-specification-v01.md) for settings, metadata and declarative-resource management. Its class-specific scope, identity and mutation plans distinguish operator identity, project metadata and managed resources. Persisted values connect to [Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md); managing a resource is distinct from its consuming domain applying it.
 
-The governing rules are:
-
-> **Settings owns explicit settings and metadata-management intent, semantic setting/resource scope, operation-specific validation and Settings-domain acceptance; Configuration Resolution owns how configuration candidates become effective values; the Application Engine retains final application authority.**
-
-> **Persistence is not precedence: changing a durable value does not redefine configuration applicability, precedence, provenance or already-resolved runtime behaviour.**
-
-> **Resource management is not resource execution: registering, adding or deleting a declarative resource does not transfer the domain semantics of applying that resource into Settings.**
-
-> **AppManager operator identity, managed-project metadata and managed resources are distinct semantic scopes even where their records contain similarly named fields.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
@@ -695,8 +685,9 @@ Coupled licence-resource/metadata intent in [DD-SET-036](#dd-set-036) applies [F
 
 <a id="dd-set-073"></a>
 
-**DD-SET-073 — Sensitivity follows data, not storage format**  
-Sensitive classification shall survive normalization, parsing, result projection and diagnostics regardless of whether the value came from a settings store, environment definition or other approved source.
+**DD-SET-073 — Sensitivity follows data, not storage format**
+
+Settings applies [sensitivity propagation](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_22-4-sensitivity-propagation) across parsing, normalization, result projection and diagnostics for settings-store values, environment definitions and other approved sources.
 
 <a id="dd-set-074"></a>
 
@@ -831,21 +822,4 @@ Cross-authority traceability:
 
 ## 19. Conformance Invariants
 
-A conforming DD-4.2 design shall preserve all of the following:
-
-1. **Application authority remains DD-1-owned.** Settings-domain acceptance is subordinate to final Application Engine acceptance and canonical DD-1.2 outcomes.
-2. **Settings does not own configuration resolution.** Persistence, source presence or Settings validation does not redefine DD-1.4 precedence, applicability, provenance or effective values.
-3. **Managed scope remains DD-1.3-owned.** Resource visibility, current working directory or registry discovery does not establish Settings mutation scope.
-4. **Operator identity and project metadata remain distinct.** Similar field names do not authorize cross-scope writes or synthesized equivalence.
-5. **Persisted environment CRUD has one semantic owner.** Settings owns it; App may compose it for lifecycle initialization without duplicating it.
-6. **Recognition and rendering do not authorize mutation.** DD-2.4/DD-2.6 evidence remains subordinate to explicit Settings intent, scope and authorization.
-7. **Existing-resource mutation remains DD-2.5-owned mechanically.** Settings supplies intent/policy; Source Transformation supplies bounded mutation and source-validity evidence.
-8. **Metadata is not operational authority.** Repository metadata does not grant Git authority; version metadata does not grant automatic versioning authority; template management does not grant consuming-domain execution authority.
-9. **Sensitive-value management does not imply disclosure authority.** Secret presence and mutation may be represented without plaintext exposure.
-10. **Partial effects remain truthful.** Coupled licence/resource/metadata operations shall not claim transactionality, rollback or complete success when only part completed.
-11. **Provider and representation independence is preserved.** No concrete storage format, parser, registry, licence source, class/service or source topology is part of the permanent domain contract unless separately approved.
-12. **Interactive and Headless semantics remain equivalent.** Presentation may differ; Settings intent, scope, policy, authorization and outcomes shall not.
-
-The central conformance rule is:
-
-> **Settings may manage durable values, metadata and declarative resources, but neither persistence nor resource ownership transfers configuration precedence, neighbouring-domain operational authority, or final application authority into Settings.**
+Conformance review follows the class-specific identity, setting/resource scope and mutation plans in §7 and the persistence, environment definitions, contributor/metadata management and declarative resources in §8. The policy, lifecycle, failure/recovery and security clauses in §§9–16 supply their local acceptance and uncertainty conditions. §18 identifies the upstream contracts; this index adds no independent invariant set.

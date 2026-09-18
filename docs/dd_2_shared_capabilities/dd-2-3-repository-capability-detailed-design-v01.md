@@ -130,9 +130,7 @@ Application Engine / owning use case
 
 ### 4.1 Shared capability, not second Git domain
 
-The Repository Capability exists so multiple AppManager use cases can consume coherent repository mechanics without duplicating provider handling.
-
-It shall not become an alternate application layer containing its own multi-repository menus, root/layer scope defaults, deployment workflows, commit-message approval policy or destructive confirmation rules.
+Repository Capability provides a common technical seam for consumers with different repository intent. The [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) supplies repository policy and coordinated workflows under [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); the models below describe the delegated primitive inputs and evidence.
 
 ### 4.2 Relationship to Managed Project
 
@@ -863,7 +861,7 @@ Repository relationship operations may modify repository metadata/configuration 
 
 ### DD-REPO-085 — Relationship does not equal Nuxt integration
 
-Interpret repository relationship evidence against the separate [Nuxt integration postcondition](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-038).
+Repository relationship evidence is interpreted under [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017) when a Nuxt use case evaluates integration.
 
 
 ---
@@ -1307,7 +1305,7 @@ Nuxt owns layer creation and Nuxt integration. Git/Repository responsibilities o
 
 ### DD-REPO-129 — Nuxt relationship distinction
 
-Repository/Nuxt relationship distinction follows [DD-NUXT-038](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-038); a composed operation retains each result.
+A composed repository/Nuxt operation retains each result under [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017).
 
 
 ---
@@ -1512,24 +1510,11 @@ A caller composing repository evidence with source analysis uses [DD-2.4's optio
 
 ### 41.2 DD-3 Git Domain Detailed Design
 
-The Git-domain design shall consume this capability and define:
-
-- application-level Git use cases;
-- repository-scope resolution over Managed Project topology;
-- commit workflow semantics;
-- push/synchronization workflows;
-- multi-repository sequencing and aggregation;
-- repository-relationship use cases;
-- destructive remote-deletion authorization;
-- application acceptance criteria.
-
-It shall not reintroduce provider-native repository objects as application contracts.
+The [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) composes these primitives into commit, push, synchronization, relationship and remote-deletion workflows over managed repository scope. Its plans supply operation-specific policy; its per-repository results support aggregate acceptance.
 
 ### 41.3 App/Nuxt Domain Detailed Designs
 
-App/Nuxt designs shall delegate repository concerns rather than embedding independent Git provider logic.
-
----
+[App](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md) and [Nuxt](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) compose repository follow-ons through the Git/Repository seams described in their workflow contracts.
 
 ## 42. Final Design Position
 

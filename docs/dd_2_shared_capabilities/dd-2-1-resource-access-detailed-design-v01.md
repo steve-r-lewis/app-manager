@@ -115,9 +115,7 @@ The caller supplies application-derived constraints. Resource Access enforces th
 
 ### 4.1 Capability boundary
 
-The Resource Access boundary exists even when Version 1 uses Node.js/TypeScript in one process.
-
-Provider-native path objects, filesystem exceptions, directory-entry types, file descriptors, streams, SDK objects or platform-specific error shapes shall not become the general AppManager resource model merely because they are convenient to expose in TypeScript.
+The Resource Access seam applies [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to native paths, directory entries, file descriptors, streams and filesystem errors. The normalized resource/request models below are the consumer-facing contract.
 
 ### 4.2 Relationship to Managed Project
 
@@ -542,11 +540,7 @@ When a mutation is rejected because a technical precondition failed, Resource Ac
 
 ### 16.1 Resource-level responsibility
 
-Resource Access owns technical detection of stale assumptions when the request supplies sufficient revision/precondition evidence.
-
-The Application Engine or owning use case owns the decision to retry, refresh, re-plan, request renewed authorization or fail.
-
-<a id="dd-res-030"></a>
+Resource Access detects technical staleness from the revision/preconditions in [§15](#_15-mutation-preconditions). Consumer recovery uses the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) and [invocation retry contract](../functional/application-invocation-functional-specification-v01.md#fr-inv-048).
 
 ### DD-RES-030 — Compare before consequential mutation
 
@@ -1172,9 +1166,7 @@ Primary traceability includes:
 
 ### 35.3 Downstream traceability
 
-Implementation Specifications shall map these `DD-RES-*` requirements to concrete TypeScript modules, provider implementations, tests, path handling, filesystem APIs, staging mechanics and migration from current source.
-
-Consumers of Resource Access shall consume this contract rather than redefine generic file/resource access semantics.
+Implementation mapping follows the [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification), covering the resource/provider seam, path handling, filesystem operations, staging and migration. Consumer collaborations are indexed in §36.
 
 ## 36. Contract Consumers and Implementation Dependencies {#_36-conformance-rules-for-later-dd-2-designs}
 

@@ -1099,9 +1099,7 @@ Review target/fact/configuration contracts, supported add/remove semantics, Nuxt
 
 ### 37.1 Domain Detailed Designs
 
-The Nuxt-domain Detailed Design shall define concrete Nuxt application use cases and orchestration using DD-2.10 rather than duplicating recognition, config semantics, layer models or provider contracts.
-
-App, Git, Docs, Settings, Quality and other domain Detailed Designs may participate in or consume Nuxt workflows while retaining their own semantic/workflow authority. The Nuxt domain may coordinate those contracts for a layer-creation result but shall not absorb their internal semantics.
+The [Nuxt domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) composes the recognition, configuration, layer and operation-evidence contracts here. Its scaffold workflow binds cross-owned contributions through [§16](#_16-layer-scaffolding-and-resource-registry), while App, Git, Docs, Settings and Quality participate through their respective contracts.
 
 ### 37.2 Implementation Specification
 

@@ -16,23 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal Nuxt-domain design for Nuxt-specific application intent across AppManager managed projects.
+This specification refines [Nuxt Functional contracts](../functional/nuxt-functional-specification-v01.md) for Nuxt-specific application intent. Its target, applicability, creation and relationship models support the thirteen workflows in §8. Scaffolding composes specialist contributions, and integration/detachment interpret Nuxt relationships separately from Git relationships.
 
-The Nuxt domain composes authoritative Application Core context with DD-2.10 Nuxt Capability and other bounded specialist capabilities to realise Nuxt project inspection, supported Nuxt configuration inspection/listing, supported configuration addition/removal, Nuxt layer creation, layer integration, layer detachment and Nuxt-specific lifecycle-state interpretation.
-
-The governing rule is:
-
-> **The Nuxt domain owns Nuxt application intent, target/applicability policy and composed use-case acceptance; DD-2.10 Nuxt Capability owns bounded Nuxt-specific technical semantics; the Application Engine retains final application authority.**
-
-A second rule is:
-
-> **Nuxt orchestration ownership does not transfer the permanent semantic ownership of source transformation, Git operations, documentation, licence material, templates, persistence, quality or AI into the Nuxt domain.**
-
-A third rule is:
-
-> **A Nuxt-domain use case is defined by Nuxt intent and required postconditions, not by one parser, AST, source form, template, package command, Git operation, file path, provider or implementation topology.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 

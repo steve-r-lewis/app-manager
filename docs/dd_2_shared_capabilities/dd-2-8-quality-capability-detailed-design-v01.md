@@ -904,7 +904,7 @@ The capability shall protect against at least:
 
 **DD-QUALCAP-093 — Provider/report content is untrusted evidence**
 
-Policy/command/configuration assertions in provider reports follows [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers).
+Provider output and report content are untrusted evidence: they shall not redefine AppManager policy, scope, commands or configuration.
 
 <a id="dd-qualcap-094"></a>
 
@@ -987,7 +987,7 @@ Review check identity/recognition (§§5–6), execution/results (§§7–11), t
 
 ### 34.1 DD-2.9 Documentation Capability
 
-Documentation Capability may consume Quality Capability for bounded documentation validation or higher-level quality evidence where Docs remains authoritative for documentation semantics. Quality shall not absorb documentation generation, documentation scope or documentation-specific acceptance.
+[Documentation Capability](dd-2-9-documentation-capability-detailed-design-v01.md) can consume bounded Quality checks as evidence for its documentation-oriented validation; the two validation models meet at that evidence boundary.
 
 ### 34.2 DD-2.10 Nuxt Capability
 
@@ -995,7 +995,7 @@ Nuxt Capability may consume bounded Quality evidence, but Nuxt-specific validati
 
 ### 34.3 Domain Detailed Designs
 
-The Quality-domain Detailed Design shall define Quality application use cases and orchestration using DD-2.8 rather than duplicating provider execution/result/gate contracts. App, Git, Docs, Nuxt and other domain designs may consume Quality evidence while retaining their own workflow authority.
+The [Quality domain](../dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) supplies operation policy and composes checks/gates using the contracts here. Other domain consumers interpret Quality evidence in their enclosing workflows under [Design §10.11](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows).
 
 ### 34.4 Implementation Specification
 

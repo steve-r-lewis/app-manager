@@ -1029,13 +1029,11 @@ Request/snapshot/recognition contracts (§§6–9), structural and embedded fact
 
 ### 40.1 DD-2.5 Source Transformation
 
-DD-2.5 shall consume this design's normalized source facts, source ranges, support/ambiguity states and revision evidence while defining transformation intent, strategy selection, plans, edits, validation and application acceptance boundaries separately.
-
-It shall not redefine recognition as mutation authority.
+[Source Transformation](dd-2-5-source-transformation-detailed-design-v01.md) consumes the normalized facts, source ranges, support/ambiguity states and revision evidence defined here when constructing its plans. Recognition feeds the [Design §7.9](../appmanager-design-specification-v01.md#_7-9-inspection-and-mutation-separation) boundary.
 
 ### 40.2 Consumers
 
-Documentation, Nuxt, Quality and AI capability designs may consume Source Intelligence where appropriate but shall retain their own capability semantics and authority boundaries.
+[Documentation](dd-2-9-documentation-capability-detailed-design-v01.md), [Nuxt](dd-2-10-nuxt-capability-detailed-design-v01.md), [Quality](dd-2-8-quality-capability-detailed-design-v01.md) and [AI](dd-2-7-ai-capability-detailed-design-v01.md) interpret relevant source evidence through their respective specialist models.
 
 ### 40.3 Implementation Specification
 

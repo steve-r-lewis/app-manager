@@ -405,7 +405,7 @@ Project resources may contain natural-language instructions directed at AI syste
 
 **DD-AICAP-028 — Untrusted project content remains data**
 
-Project-supplied text affecting policy, scope or intent follows [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+Project-supplied text applies [FR-AI-090](../functional/ai-functional-specification-v01.md#fr-ai-090) to AI context. This includes instruction-like attempts to change provider selection, disclosure policy or the requested use-case semantics.
 
 <a id="dd-aicap-029"></a>
 
@@ -831,7 +831,7 @@ AI Capability may consume validated/rendered declarative AI request templates fr
 
 ### 23.2 Resource Access
 
-AI Capability shall not acquire generic filesystem authority. Context content should be supplied by the owning use case or obtained through explicitly bounded collaboration that preserves DD-2.1 scope constraints.
+Context resources arrive from the owning use case or through the [Resource Access bounded request](dd-2-1-resource-access-detailed-design-v01.md#_9-bounded-resource-request-contract), binding [DD-ENG-035](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035) to AI input acquisition.
 
 ### 23.3 Source Intelligence
 
@@ -843,11 +843,11 @@ AI-generated proposals do not bypass transformation planning, approval, stale-st
 
 ### 23.5 Process Execution
 
-A local/provider adapter may use Process Execution where appropriate, but provider process completion remains technical evidence and does not become AI/application acceptance.
+Local CLI adapters may consume [Process Execution](dd-2-2-process-execution-detailed-design-v01.md); completion evidence feeds the response validation and acceptance path in this design.
 
 ### 23.6 Configuration Resolution
 
-Provider/model policy, timeout, disclosure and other AppManager-level AI configuration shall consume effective configuration rather than direct environment reads or registry defaults that compete with DD-1.4.
+AI provider/model policy, timeout and disclosure parameters consume [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020) through [DD-1.4](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md).
 
 <a id="dd-aicap-080"></a>
 
@@ -1095,7 +1095,7 @@ Review request/task availability, provider selection, context/provenance/minimiz
 
 ### 31.1 DD-2.8 Quality Capability
 
-Quality Capability may consume AI Capability in future explanatory/triage flows, but AI output shall remain supplementary evidence and shall not define test/lint/typecheck/gate outcomes.
+Quality explanatory/triage flows use the [Quality AI interpretation contract](dd-2-8-quality-capability-detailed-design-v01.md#_26-relationship-to-ai-capability).
 
 ### 31.2 DD-2.9 Documentation Capability
 
@@ -1107,9 +1107,7 @@ Nuxt Capability may use AI for bounded explanatory or generative proposals. Nuxt
 
 ### 31.4 Domain Detailed Designs
 
-Git, Docs, Nuxt, Quality, Settings, AI and Maintenance domain designs shall consume DD-2.7 rather than defining separate provider-selection, context-safety or response-normalization mechanisms.
-
-The AI-domain Detailed Design shall define AI-instruction-document application use cases and shall not duplicate this shared provider capability.
+Git, Docs, Nuxt, Quality, Settings, AI and Maintenance workflows consume the request, bounded context and response contracts here when they need AI assistance. The [AI domain](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md#resource-graph) defines project-side resource intent; shared AI use follows [Design §10.6](../appmanager-design-specification-v01.md#_10-6-ai-domain).
 
 ### 31.5 Implementation Specification
 

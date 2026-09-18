@@ -341,9 +341,14 @@ The Application Core checkpoint covers DD-1.1, DD-1.2 and DD-1.3: 1029 distinct 
 
 Configuration/Engine checkpoint: 1109 distinct numbered bodies and 173 unnumbered sections are recorded so far. Configuration retains candidate applicability, staged bootstrap, resolution/snapshot/provenance models, sensitivity propagation, fallback/conflict and cache invalidation. Engine retains registration, execution context, policy checkpoints, least-context delegation, bounded bootstrap, nested authorization and provider fallback constraints. Historical audit text is explicitly non-normative; AI primary-use-case routing is bound to Design authority without suggesting an exception for provider output. Full unnumbered and horizontal review remains open; no zero-duplicate or NCR-2 completion claim is made.
 
+
+Horizontal preservation correction: DD-QUALCAP-093 retains the complete local untrusted-report condition; DD-QUAL-072 now binds it directly. Design §6.6 alone was too broad a replacement. AI project-input handling now points directly to FR-AI-090 with its provider/disclosure/intent binding. Repository/Nuxt relationship references now point directly to FR-NUXT-017. Settings sensitivity propagation binds DD-1.4 §22.4 across its local representations. These corrections are semantic review results, not evidence from similarity scanning.
+
+Horizontal collaboration checkpoint: 1110 distinct numbered replacement decisions and 218 unnumbered decisions are recorded. All ten DD-2 consumer maps now bind sibling owners directly where edited; domain purpose narratives retain their local models/workflows with direct upstream context. The Settings, AI and Maintenance repeated closing invariant lists were removed. The complete active DD/IS navigation scan checks existing as well as new inbound links. Final semantic/cardinality review remains open.
+
 ### 10.1 Physical occurrence decisions
 
-Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`, with retained local delta where applicable. Direct destinations identify the retained canonical clauses. Unlisted clauses remain `CANONICAL`/`LOCAL_DELTA` subject to final horizontal review. Stable identities remain defined once.
+Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`, retaining identified `LOCAL_DELTA`. Canonical clauses restored during preservation review are excluded from this deletion table. Unlisted local clauses remain subject to final horizontal review.
 
 | Occurrence | Direct owner references after reduction |
 |---|---|
@@ -414,7 +419,7 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-REPO-074` | [Git domain scope and orchestration contracts](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_7-domain-contract-model) |
 | `DD-REPO-078` | [Design](../appmanager-design-specification-v01.md#_9-6-project-discovery-and-context-resolution) |
 | `DD-REPO-081` | [Nuxt relationship contract](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#_8-7-layer-integration) |
-| `DD-REPO-085` | [Nuxt integration postcondition](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-038) |
+| `DD-REPO-085` | [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017) |
 | `DD-REPO-087` | [DD-REPO-119](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md#dd-repo-119); [DD-1.2 redaction](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
 | `DD-REPO-088` | [DD-1.2 normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
 | `DD-REPO-093` | [DD-1.2 effects](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects); [partial completion](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
@@ -435,7 +440,7 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-REPO-124` | [DD-1.2 status layers](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_6-core-status-model) |
 | `DD-REPO-127` | [DD-3.2](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#_7-domain-contract-model) |
 | `DD-REPO-128` | [§6 onward](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md#_6-repository-reference-contract) |
-| `DD-REPO-129` | [DD-NUXT-038](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md#dd-nuxt-038) |
+| `DD-REPO-129` | [FR-NUXT-017](../functional/nuxt-functional-specification-v01.md#fr-nuxt-017) |
 | `DD-REPO-130` | [bounded diff contract](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md#dd-repo-034); [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
 | `DD-REPO-131` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | `DD-REPO-132` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
@@ -577,7 +582,7 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-AICAP-017` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | `DD-AICAP-019` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | `DD-AICAP-020` | [Design](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) |
-| `DD-AICAP-028` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-AICAP-028` | [FR-AI-090](../functional/ai-functional-specification-v01.md#fr-ai-090) |
 | `DD-AICAP-030` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | `DD-AICAP-041` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | `DD-AICAP-047` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
@@ -619,7 +624,6 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-QUALCAP-082` | [Design](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
 | `DD-QUALCAP-084` | [Design](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
 | `DD-QUALCAP-089` | [Design](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance) |
-| `DD-QUALCAP-093` | [Design](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
 | `DD-QUALCAP-002` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
 | `DD-QUALCAP-028` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
 | `DD-QUALCAP-063` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_14-partial-completion) |
@@ -1456,10 +1460,12 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-ENG-099` | [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_9-diagnostic-model); [DD-1.1](../dd_1_application_core/dd-1-1-application-invocation-detailed-design-v01.md#_35-error-and-fault-boundary) |
 | `DD-ENG-101` | [FR-INV-006](../functional/application-invocation-functional-specification-v01.md#fr-inv-006); [FR-PROJ-042](../functional/managed-project-functional-specification-v01.md#fr-proj-042); [FR-CONFIG-029](../functional/configuration-functional-specification-v01.md#fr-config-029); [DD-ENG-039](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-039) |
 | `DD-ENG-102` | [Design](../appmanager-design-specification-v01.md#_8-7-sensitive-configuration); [DD-1.2](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_24-sensitive-information-and-redaction) |
+| `DD-QUAL-072` | [Quality Capability untrusted-evidence boundary](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-093) |
+| `DD-SET-073` | [sensitivity propagation](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md#_22-4-sensitivity-propagation) |
 
 ### 10.2 Unnumbered occurrence decisions
 
-Section decisions remove duplicate normative bodies while retaining explanatory bindings and local delta. Models and workflows remain subject to final horizontal review.
+Section decisions remove duplicate normative bodies while retaining contextual narrative and local delta. Models and workflows remain subject to final horizontal review.
 
 | Occurrence | Direct owner references after reduction |
 |---|---|
@@ -1636,3 +1642,48 @@ Section decisions remove duplicate normative bodies while retaining explanatory 
 | DD-1-5 §25 | [DD-ENG-005](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-005); [execution context](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-003); [command extension contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-094); [Maintenance stronger-owner gate](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md#dd-util-066) |
 | DD-1-5 §27 | [execution context](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-003); [use-case workflow](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-005); [bounded delegation](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024); [extension contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-094); [documentation reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions) |
 | DD-1-5 §29 | [§23](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_23-application-engine-conformance-invariants); [§28](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_28-implementation-specification-boundary) |
+| DD-3-1 §1 | [App Functional contracts](../functional/app-functional-specification-v01.md); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-3-2 §1 | [Git Functional contracts](../functional/git-functional-specification-v01.md); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-3-3 §1 | [Nuxt Functional contracts](../functional/nuxt-functional-specification-v01.md); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-3-4 §1 | [Docs Functional contracts](../functional/docs-functional-specification-v01.md); [FR-DOCS-037](../functional/docs-functional-specification-v01.md#fr-docs-037); [FR-DOCS-079](../functional/docs-functional-specification-v01.md#fr-docs-079); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-4-1 §1 | [Quality Functional contracts](../functional/quality-functional-specification-v01.md); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-4-2 §1 | [Settings Functional contracts](../functional/settings-functional-specification-v01.md); [Configuration Resolution](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-4-3 §1 | [AI Functional contracts](../functional/ai-functional-specification-v01.md); [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-4-4 §1 | [Maintenance Functional contracts](../functional/utils-functional-specification-v01.md); [stronger-owner gate](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md#dd-util-066); [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority); [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-4-2 §19 | Local explanatory binding; see primary |
+| DD-4-3 §19 | Local explanatory binding; see primary |
+| DD-4-4 §19 | Local explanatory binding; see primary |
+| DD-2-1 Â§4.1 | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-2-1 Â§16.1 | [§15](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#_15-mutation-preconditions); [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024); [invocation retry contract](../functional/application-invocation-functional-specification-v01.md#fr-inv-048) |
+| DD-2-1 Â§35.3 | [Documentation Guide](../project-documentation-guide-v01.md#_8-level-4-implementation-specification) |
+| DD-2-2 Â§4.1 | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-2-2 Â§4.3 | [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
+| DD-2-2 Â§34.1 | [Repository Capability](../dd_2_shared_capabilities/dd-2-3-repository-capability-detailed-design-v01.md) |
+| DD-2-2 Â§34.2 | [Quality Capability](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md) |
+| DD-2-2 Â§34.3 | [Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md) |
+| DD-2-2 Â§34.4 | [Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) |
+| DD-2-2 Â§34.5 | [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| DD-2-2 §26 introduction | [technical completion model](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_15-1-technical-completion-model); [events](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_21-output-and-progress-events); [local diagnostics](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md#_22-diagnostics); [DD-1.2 evidence normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization) |
+| DD-2-2 §34 introduction | [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions) |
+| DD-2-3 Â§4.1 | [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md); [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) |
+| DD-2-3 Â§41.2 | [Git domain](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md) |
+| DD-2-3 Â§41.3 | [App](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md); [Nuxt](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md) |
+| DD-2-4 Â§40.1 | [Source Transformation](../dd_2_shared_capabilities/dd-2-5-source-transformation-detailed-design-v01.md); [Design §7.9](../appmanager-design-specification-v01.md#_7-9-inspection-and-mutation-separation) |
+| DD-2-4 Â§40.2 | [Documentation](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md); [Nuxt](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md); [Quality](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md); [AI](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md) |
+| DD-2-5 Â§4.3 | [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035); [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation) |
+| DD-2-5 Â§46.4 | [Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md); [Maintenance](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md); [AI proposals](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| DD-2-6 Â§28.4 | [AI domain resource workflows](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md#resource-family-lifecycle); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| DD-2-6 Â§43.1 | [AI Capability](../dd_2_shared_capabilities/dd-2-7-ai-capability-detailed-design-v01.md); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| DD-2-7 §23.2 introduction | [Resource Access bounded request](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#_9-bounded-resource-request-contract); [DD-ENG-035](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035) |
+| DD-2-7 §23.5 introduction | [Process Execution](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md) |
+| DD-2-7 §23.6 introduction | [FR-CONFIG-020](../functional/configuration-functional-specification-v01.md#fr-config-020); [DD-1.4](../dd_1_application_core/dd-1-4-configuration-resolution-detailed-design-v01.md) |
+| DD-2-7 §31.1 introduction | [Quality AI interpretation contract](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#_26-relationship-to-ai-capability) |
+| DD-2-7 §31.4 introduction | [AI domain](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md#resource-graph); [Design §10.6](../appmanager-design-specification-v01.md#_10-6-ai-domain) |
+| DD-2-8 §34.1 introduction | [Documentation Capability](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md) |
+| DD-2-8 §34.3 introduction | [Quality domain](../dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md); [Design §10.11](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) |
+| DD-2-9 §27.1 introduction | [Resource Access bounded request](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#_9-bounded-resource-request-contract) |
+| DD-2-9 §27.6 introduction | [Process Execution](../dd_2_shared_capabilities/dd-2-2-process-execution-detailed-design-v01.md) |
+| DD-2-9 §27.7 introduction | [Quality criterion and gate contracts](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md) |
+| DD-2-9 §35.1 introduction | [Nuxt Capability](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md) |
+| DD-2-9 §35.2 introduction | [Docs domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md); [Design §10.11](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows) |
+| DD-2-10 §37.1 introduction | [Nuxt domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md); [§16](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |

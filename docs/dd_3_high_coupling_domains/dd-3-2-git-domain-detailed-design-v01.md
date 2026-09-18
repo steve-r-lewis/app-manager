@@ -16,23 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal Git-domain design for repository-management intent across AppManager managed projects.
+This specification refines [Git Functional contracts](../functional/git-functional-specification-v01.md) for repository-management intent. Its repository scope, eligibility, operation plan and per-repository results distinguish recognition, selection, authorization and acceptance. The workflows in §8 compose bounded repository primitives into coordinated operations.
 
-The Git domain composes authoritative Application Core context with bounded repository and supporting capabilities to realise repository inspection, repository initialisation, commit creation, push, synchronisation, managed repository relationships, managed-layer repository initialisation and deliberately authorised remote-repository deletion.
-
-The governing rule is:
-
-> **The Git domain owns repository-management intent, operation-specific repository policy and multi-repository orchestration; DD-2.3 Repository Capability owns repository facts and bounded repository primitives; the Application Engine retains final application authority.**
-
-A second rule is:
-
-> **Repository recognition, repository membership, operation selection, eligibility, authorization, technical execution, Git-domain acceptance and final AppManager acceptance are distinct semantic stages.**
-
-A third rule is:
-
-> **A Git-domain use case is defined by repository intent and required postconditions, not by a Git command, library API, hosting-provider operation, current working directory, source path or implementation topology.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 

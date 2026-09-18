@@ -931,7 +931,7 @@ Docs may consume documentation templates. Docs owns documentation intent, source
 
 ### 28.4 AI
 
-AI may consume AI instruction-document templates or use rendered material as bounded context. AI owns AI-specific use-case semantics; AI-generated enrichment remains non-authoritative until accepted through its normal control path.
+The [AI domain resource workflows](../dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md#resource-family-lifecycle) may consume templates or rendered bounded context. Enrichment follows [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 ### 28.5 Settings
 
@@ -1360,7 +1360,7 @@ The root Design Specification additionally establishes reusable templates as gen
 
 ### 43.1 DD-2.7 AI Capability
 
-AI Capability may consume declarative AI-document templates or rendered bounded context, but registry/template resources remain data and AI output remains proposal/evidence until accepted.
+[AI Capability](dd-2-7-ai-capability-detailed-design-v01.md) may consume rendered material as bounded context through its request/context contracts; proposal interpretation follows [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
 
 ### 43.2 DD-2.8 Quality Capability
 

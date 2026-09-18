@@ -120,9 +120,7 @@ Application Engine / owning use case
 
 ### 4.1 Capability boundary
 
-The Process Execution boundary exists even when Version 1 uses Node.js/TypeScript in one process.
-
-Provider-native child-process objects, event emitters, platform-specific status codes, raw exceptions, shell syntax and library-specific result objects shall not become the general AppManager process model merely because the current runtime exposes them conveniently.
+The Process Execution seam applies [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to native child-process objects, event emitters, platform status codes, exceptions and library result objects. The request and lifecycle models below provide its consumer-facing representation.
 
 ### 4.2 Relationship to Resource Access
 
@@ -132,11 +130,7 @@ A working directory, executable path, response file, generated configuration fil
 
 ### 4.3 Relationship to Application Engine
 
-The Engine/use-case authority determines why a process is being run, what higher-level prerequisites apply, whether the request is authorized, and whether returned evidence satisfies the application intent.
-
-Process Execution determines whether and how the bounded technical request was launched and what technically happened to it.
-
----
+The [Engine delegation contract](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-035) supplies the bounded request. The local launch, lifecycle and result models describe what Process Execution can observe for [application interpretation](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_19-application-level-interpretation).
 
 ## 5. Responsibility Model
 
@@ -934,20 +928,7 @@ Ordinary process execution uses the isolation limitation [DD-PROC-021](#dd-proc-
 
 ## 26. Relationship to DD-1.2 Execution Outcomes
 
-Process Execution returns technical execution evidence compatible with DD-1.2; it does not directly manufacture the final AppManager outcome.
-
-A normalized process result may contribute:
-
-- technical completion state;
-- launch/start evidence;
-- exit/termination evidence;
-- diagnostics;
-- warnings;
-- timing;
-- captured/stream metadata;
-- timeout/cancellation evidence;
-- provider availability evidence;
-- bounded provider detail.
+The [technical completion model](#_15-1-technical-completion-model), [events](#_21-output-and-progress-events) and [local diagnostics](#_22-diagnostics) feed [DD-1.2 evidence normalization](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_18-provider-result-normalization). Consumers can use launch/exit state, output metadata, timing, availability and cancellation/timeout evidence when interpreting a tool run.
 
 <a id="dd-proc-087"></a>
 
@@ -1164,29 +1145,27 @@ Where a domain Functional Specification assigns tool-specific meaning to exit co
 
 ## 34. Contract Consumers and Implementation Dependencies {#_34-downstream-detailed-design-requirements}
 
-Consumers shall consume this contract rather than recreate process wrappers independently.
+The consumer map below connects this process contract to specialist interpretation under the [Documentation Guide reading conventions](../project-documentation-guide-v01.md#detailed-design-reading-conventions).
 
 ### 34.1 Repository Capability
 
-DD-2.3 shall define repository semantics independently of whether its Version 1 provider uses Git CLI execution, a library, or another provider.
+[Repository Capability](dd-2-3-repository-capability-detailed-design-v01.md) may consume process evidence through a CLI provider; its normalized repository primitives remain the consumer seam.
 
 ### 34.2 Quality Capability
 
-Quality shall define tool selection, finding/result normalization and quality acceptance. Process Execution supplies process mechanics only.
+[Quality Capability](dd-2-8-quality-capability-detailed-design-v01.md) consumes process evidence for its check/result and criterion-evaluation contracts.
 
 ### 34.3 Documentation Capability
 
-Documentation shall define development/build/preview semantics and readiness/acceptance where relevant. Process Execution supplies process mechanics only.
+[Documentation Capability](dd-2-9-documentation-capability-detailed-design-v01.md) consumes process readiness and completion evidence for documentation tooling.
 
 ### 34.4 Nuxt Capability
 
-Nuxt shall define Nuxt-specific tool semantics independently of generic process lifecycle mechanics.
+[Nuxt Capability](dd-2-10-nuxt-capability-detailed-design-v01.md) supplies the technical Nuxt interpretation of delegated tooling.
 
 ### 34.5 AI Capability
 
-AI shall define provider/model request and response semantics independently of any local CLI process provider it may use.
-
----
+[AI Capability](dd-2-7-ai-capability-detailed-design-v01.md) interprets local CLI provider responses through its provider/model contract.
 
 ## 35. Final Design Position
 

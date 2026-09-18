@@ -856,7 +856,7 @@ Generated human-readable documentation as application authority follows [Design]
 
 ### 27.1 Resource Access
 
-Resource Access owns bounded read/write mechanics. Documentation Capability may consume supplied resource contents/evidence and return proposed output, but target persistence remains separately authorized.
+Documentation inputs and proposed outputs connect to the [Resource Access bounded request](dd-2-1-resource-access-detailed-design-v01.md#_9-bounded-resource-request-contract) at the separately authorized persistence stage.
 
 ### 27.2 Source Intelligence
 
@@ -876,11 +876,11 @@ AI supplies bounded proposed enrichment. Documentation Capability/owning Docs us
 
 ### 27.6 Process Execution
 
-Documentation tools may execute through DD-2.2. Process status remains technical evidence.
+Documentation tooling consumes [Process Execution](dd-2-2-process-execution-detailed-design-v01.md) readiness/completion evidence through its tooling contract.
 
 ### 27.7 Quality Capability
 
-Quality may independently assess documentation-related criteria; Documentation Capability does not inherit Quality gate authority.
+Independent Quality assessment consumes the [Quality criterion and gate contracts](dd-2-8-quality-capability-detailed-design-v01.md); documentation-specific validation remains the local validation concern.
 
 <a id="dd-doccap-088"></a>
 
@@ -1094,11 +1094,11 @@ Review input/profile/model contracts, source/domain/authored provenance, aggrega
 
 ### 35.1 DD-2.10 Nuxt Capability
 
-Nuxt Capability shall provide Nuxt-specific recognition, metadata and scaffolding/configuration facts without transferring Nuxt semantic authority to Documentation Capability. DD-2.9 may consume those facts for documentation models.
+[Nuxt Capability](dd-2-10-nuxt-capability-detailed-design-v01.md) supplies recognized Nuxt metadata, scaffolding and configuration facts for the documentation model. Source and Nuxt facts retain the provenance distinctions in §7.
 
 ### 35.2 Domain Detailed Designs
 
-The Docs-domain Detailed Design shall define documentation use-case orchestration using DD-2.9 and shall not duplicate shared inspection/model/render/provider contracts. App, Nuxt, Quality, AI and other domain designs may consume documentation models/proposals while retaining their own application authority.
+The [Docs domain](../dd_3_high_coupling_domains/dd-3-4-docs-domain-detailed-design-v01.md) composes the inspection/model/render contracts here into documentation workflows. App, Nuxt, Quality, AI and other consumers use those models/proposals under [Design §10.11](../appmanager-design-specification-v01.md#_10-11-cross-domain-workflows).
 
 ### 35.3 Implementation Specification
 

@@ -16,23 +16,9 @@
 
 ## 1. Purpose
 
-This specification defines the permanent internal Quality-domain design for quality-assurance intent across AppManager managed projects.
+This specification refines [Quality Functional contracts](../functional/quality-functional-specification-v01.md) for quality-assurance intent. Its operation policy, check plan, measurements and gate decisions connect tests, coverage, linting, type checking, validation and composite runs. Provider execution, check evidence and gate interpretation occupy separate stages in the local workflow.
 
-The Quality domain composes authoritative Application Core context with DD-2.8 Quality Capability and other bounded capabilities to realise tests, coverage, linting, type checking, approved validation, test UI operation, composite quality runs and quality-gate evaluation.
-
-The governing rule is:
-
-> **The Quality domain owns quality-assurance intent, operation-specific quality policy, quality-scope interpretation and Quality-domain acceptance; DD-2.8 Quality Capability owns bounded quality-capability recognition, execution, normalization and explicit criterion evaluation; the Application Engine retains final application authority.**
-
-A second rule is:
-
-> **Provider execution state, quality-check state, quality-gate state and final AppManager outcome are distinct semantic stages.**
-
-A third rule is:
-
-> **A Quality-domain use case is defined by quality intent, approved scope and required quality postconditions, not by one package script, test runner, linter, type checker, process command, CI provider or implementation topology.**
-
----
+The collaboration in §§5–6 applies [Design §6.2](../appmanager-design-specification-v01.md#_6-2-application-engine-authority) and [§6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) to the domain’s context, specialist delegation and final acceptance.
 
 ## 2. Scope
 
@@ -851,7 +837,7 @@ Detected context changes apply [FR-QUAL-110](../functional/quality-functional-sp
 
 ### DD-QUAL-072 — Provider output is untrusted evidence
 
-Provider reports/stdout/stderr/findings shall not redefine AppManager commands, policy, scope or configuration.
+The domain consumes provider reports, stdout/stderr and findings through the [Quality Capability untrusted-evidence boundary](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-093).
 
 <a id="dd-qual-073"></a>
 
