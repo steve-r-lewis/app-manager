@@ -23,18 +23,20 @@
 > **Register:** [AppManager Implementation Specification](implementation-specification-v01.md)
 >
 > **Governing plan:** [Implementation Specification Plan](../project_management/implementation-specification-plan-v01.md)
+>
+> **Related clarification:** [AI Project Environment Implementation Clarification — Retired](../archive/implementation/ai-project-environment-implementation-clarification-v01-retired.md) (its 22-identity resource-family expansion and automatic-acceptance contract are now applied directly in §5 and §§41.1–41.8)
 
 ## 1. Purpose
 
-IS-20 defines the concrete Node.js/TypeScript implementation of the AppManager AI domain.
+IS-20 defines the concrete Node.js/TypeScript implementation of the AppManager AI domain: the broader project-side AI development-environment domain, not only instruction-document lifecycle management.
 
-The AI domain owns AI-specific project-resource intent: listing recognized AI instruction-document types and project presence, creating supported instruction documents, optionally enriching a valid deterministic baseline through IS-10, explicitly replacing/updating an existing supported instruction document where exposed, and deleting one selected eligible instruction document.
+The AI domain owns AI-specific project-resource intent across six resource families — Instructions, Prompts, Agents, Skills, Tools and Policy — plus aggregate cross-family inspection (`ai.inspect`). The Instruction family is the most fully specified: listing recognized AI instruction-document types and project presence, creating supported instruction documents, optionally enriching a valid deterministic baseline through IS-10, explicitly updating an existing supported instruction document where exposed, and deleting one selected eligible instruction document (§§6–41). Prompt, Agent, Skill, Tool and Policy resources (§§41.3–41.7) use their own semantic identities and eligibility constraints; they do not inherit the Instruction family's baseline/enrichment lifecycle merely because files represent them.
 
 The governing rules are:
 
 > **AI-domain ownership follows primary application intent, not the presence of an LLM call.**
 
-> **IS-20 owns AI instruction-document policy and domain acceptance; IS-10 owns provider-independent AI execution; IS-1 retains final application authority.**
+> **IS-20 owns AI resource policy and domain acceptance across all six families; IS-10 owns provider-independent AI execution; IS-1 retains final application authority.**
 
 > **A deterministic baseline is the Version 1 creation foundation. Optional AI enrichment can improve proposed content but cannot become a hidden prerequisite where a valid baseline exists.**
 
@@ -48,7 +50,8 @@ The governing rules are:
 
 IS-20 implements:
 
-- semantic AI-domain operation identity;
+- semantic AI-domain operation identity across the Instruction, Prompt, Agent, Skill, Tool and Policy resource families;
+- aggregate cross-family AI-environment inspection (`ai.inspect`) and referential-integrity diagnostics;
 - supported AI instruction-document type catalogue and policy;
 - provider/tool association as descriptive metadata;
 - supported-type and project-presence listing;
@@ -57,8 +60,12 @@ IS-20 implements:
 - deterministic baseline generation from approved facts/resources;
 - optional IS-10 enrichment under explicit disclosure/context policy;
 - generated-content validation and project-fact acceptance;
-- existing-target protection and explicit replacement policy;
+- existing-target protection and explicit update policy;
 - exact eligible deletion;
+- Prompt/Agent definition list/create/update/delete under their own eligibility constraints;
+- Skill add/remove and Tool add/update/remove as provider-neutral integration management, with MCP and similar as representations rather than domain identity;
+- AI Policy inspection/configuration for context inclusion/exclusion and tool/execution/access restrictions;
+- the cross-domain automatic-acceptance contract for AI-generated proposal output (§41.8);
 - stale-state, cancellation, partial-effect and recovery interpretation;
 - deterministic Headless behavior;
 - AI-domain payloads beneath IS-1 canonical outcomes.
@@ -79,9 +86,14 @@ IS-20 does not own:
 - Quality explanation/triage — IS-18 when Quality intent is primary;
 - Settings template-resource CRUD — IS-19;
 - autonomous coding agents, arbitrary command/tool execution or executable plugins;
+- a generic AI action runner or arbitrary tool executor — Tool integration management (§41.6) configures registration, never executes the tool;
+- secret/credential storage — Settings/IS-19; IS-20 may retain credential-reference metadata only;
+- a generic source editor beyond the bounded Instruction/Prompt/Agent/Skill/Tool/Policy resource contracts;
 - provider management simply because a document is provider-associated;
 - generic project crawling for AI context;
 - prompts/presentation — IS-22.
+
+No `ai.prompt.run` or other prompt/agent/skill/tool execution command is introduced; Prompt, Agent, Skill and Tool resources are configured and referenced, never invoked, through IS-20.
 
 ---
 
@@ -93,11 +105,17 @@ app/
     └── ai/
         ├── contracts/
         │   ├── ai-use-case.ts
+        │   ├── ai-resource-graph.ts
         │   ├── instruction-document-type.ts
         │   ├── instruction-document-target.ts
         │   ├── instruction-document-state.ts
         │   ├── baseline-plan.ts
         │   ├── enrichment-plan.ts
+        │   ├── prompt-resource.ts
+        │   ├── agent-definition.ts
+        │   ├── skill-definition.ts
+        │   ├── tool-integration.ts
+        │   ├── ai-policy.ts
         │   ├── ai-document-effect.ts
         │   ├── ai-domain-result.ts
         │   ├── ai-recovery.ts
@@ -121,12 +139,31 @@ app/
         ├── orchestration/
         │   ├── ai-document-effect-runner.ts
         │   ├── ai-domain-acceptance.ts
-        │   └── ai-recovery-builder.ts
+        │   ├── ai-recovery-builder.ts
+        │   └── ai-automatic-acceptance.ts
         └── use-cases/
+            ├── inspect-ai-environment.ts
             ├── list-instruction-documents.ts
             ├── create-instruction-document.ts
-            ├── replace-instruction-document.ts
-            └── delete-instruction-document.ts
+            ├── update-instruction-document.ts
+            ├── delete-instruction-document.ts
+            ├── list-prompts.ts
+            ├── create-prompt.ts
+            ├── update-prompt.ts
+            ├── delete-prompt.ts
+            ├── list-agents.ts
+            ├── create-agent.ts
+            ├── update-agent.ts
+            ├── delete-agent.ts
+            ├── list-skills.ts
+            ├── add-skill.ts
+            ├── remove-skill.ts
+            ├── list-tools.ts
+            ├── add-tool.ts
+            ├── update-tool.ts
+            ├── remove-tool.ts
+            ├── inspect-ai-policy.ts
+            └── configure-ai-policy.ts
 ```
 
 This topology deliberately contains no provider adapter, generic chat service, global active model or autonomous-agent executor.
@@ -153,15 +190,33 @@ All AI-domain use cases participate in IS-1 availability/validate/execute. `AiDo
 Version 1 canonical IDs are:
 
 ```text
+ai.inspect
 ai.instruction.list
 ai.instruction.create
-ai.instruction.replace
+ai.instruction.update
 ai.instruction.delete
+ai.prompt.list
+ai.prompt.create
+ai.prompt.update
+ai.prompt.delete
+ai.agent.list
+ai.agent.create
+ai.agent.update
+ai.agent.delete
+ai.skill.list
+ai.skill.add
+ai.skill.remove
+ai.tool.list
+ai.tool.add
+ai.tool.update
+ai.tool.remove
+ai.policy.inspect
+ai.policy.configure
 ```
 
-`replace` is registered only when Version 1 product exposure retains explicit replacement/update behavior. It is never an implicit mode of `create`.
+Twenty-two identities, derived resource-first rather than by CRUD symmetry: each was tested for distinct user intent, provider-neutral meaning, independent value and separation from implementation mechanics. `ai.instruction.update` is the canonical successor to the former `ai.instruction.replace`; a compatibility alias may resolve to it but shall not create a second descriptor, policy or outcome identity. `ai.skill.add`/`remove` and `ai.tool.add`/`update`/`remove` use add/remove rather than create/delete because Skill and Tool resources are typically installed/configured references rather than authored-from-scratch content — this is a semantic distinction, not a naming inconsistency. `ai.tool.update` is restricted to non-secret configuration; secret/credential values remain Settings-owned (§4, §47). No `ai.prompt.run`, generic `ai.run`, `ai.mcp.*`, `ai.rule.*`, `ai.template.*`, provider CRUD or generic autonomous-agent execution command is established.
 
-Document type/provider/target remain structured inputs, not command IDs.
+Document type/provider/target remain structured inputs, not command IDs. §§6–41 specify the Instruction family in full; §§41.1–41.8 specify aggregate inspection, the remaining five families and the cross-domain automatic-acceptance contract.
 
 ---
 
@@ -479,21 +534,21 @@ If the target exists, create returns conflict/already-present evidence. It never
 
 ---
 
-## 25. Explicit Replacement
+## 25. Explicit Update
 
-If exposed, `ai.instruction.replace` is a separate consequential use case.
+`ai.instruction.update` is a separate consequential use case (the canonical successor to the former `ai.instruction.replace`; §5).
 
 It requires:
 
 - registered supported document type;
 - exact present target;
 - fresh revision evidence;
-- explicit replacement authorization;
+- explicit update authorization;
 - complete proposed replacement content;
 - IS-8 transformation plan preserving any required document invariants;
 - postcondition verification.
 
-Replacement cannot be smuggled through `create` and does not apply to heuristically observed unregistered documents.
+Update cannot be smuggled through `create` and does not apply to heuristically observed unregistered documents.
 
 ---
 
@@ -648,7 +703,7 @@ Acceptance is operation-specific:
 
 - list: supported types/presence/observations were represented truthfully without mutation;
 - create: exact supported type/target was absent, valid proposed content was produced, authorized write occurred and postconditions hold;
-- replace: exact registered target/revision was explicitly authorized and accepted transformed content/postconditions hold;
+- update: exact registered target/revision was explicitly authorized and accepted transformed content/postconditions hold;
 - delete: exact registered eligible target was removed or validly already absent under policy;
 - optional enrichment: provider evidence is subordinate and failure does not invalidate a valid baseline unless enrichment was required.
 
@@ -725,7 +780,7 @@ AI_PROVIDER_FAILED
 AI_PROVIDER_OUTPUT_INVALID
 AI_DISCLOSURE_REFUSED
 AI_SENSITIVE_CONTEXT_EXCLUDED
-AI_REPLACEMENT_NOT_AUTHORIZED
+AI_UPDATE_NOT_AUTHORIZED
 AI_DELETE_NOT_AUTHORIZED
 AI_PARTIAL_EFFECT
 AI_EFFECT_INDETERMINATE
@@ -735,13 +790,76 @@ AI_RECOVERY_REVALIDATION_REQUIRED
 
 Provider-native messages may be retained as protected evidence but are normalized before normal domain diagnostics. Credentials/project-sensitive context are omitted.
 
+### 41.1 Aggregate Inspection (`ai.inspect`)
+
+`ai.inspect` is strictly non-mutating. It reports the recognised project-side AI development environment across all six resource families in one call: for each family, the applicable resources, their presence/representation/partial-support state and cross-family referential-integrity diagnostics (§41.2). It composes the same per-family listing logic as `ai.instruction.list`/`ai.prompt.list`/`ai.agent.list`/`ai.skill.list`/`ai.tool.list`/`ai.policy.inspect` rather than duplicating recognition.
+
+`ai.inspect` never creates, normalizes, repairs, rewrites or deletes a resource, and never itself invokes IS-10.
+
+### 41.2 Resource Graph and Referential Integrity
+
+The domain resource graph refines the Functional resource families — `InstructionResource`, `PromptResource`, `AgentDefinition`, `SkillDefinition`, `ToolIntegration` and `AiPolicy` — plus their provider/environment representations (DD-4.3 §7.4).
+
+```ts
+export interface AiResourceReference {
+  readonly family: 'instruction' | 'prompt' | 'agent' | 'skill' | 'tool' | 'policy';
+  readonly id: string;
+  readonly representation?: AiResourceRepresentationReference;
+}
+
+export type AiResourceRepresentationState = 'present' | 'missing' | 'ambiguous' | 'unsupported' | 'partially_representable' | 'indeterminate';
+```
+
+IS-20 validates references between resources (for example an Agent referencing a Skill, or a Tool referencing an MCP representation) and preserves missing/ambiguous/unsupported/partially-representable states rather than collapsing them into a single failure. Matching provider filenames or shapes across resources does not establish equivalent identity; MCP is a representation of a Tool integration, not a distinct family.
+
+### 41.3 Prompt Resources
+
+`ai.prompt.list`/`create`/`update`/`delete` manage reusable, user-invoked AI task/request resources. A Prompt resource is configured and referenced; invoking it does not transfer the resulting application intent to AI — the owning use case that selects a prompt remains responsible for its own intent and acceptance. This is why no `ai.prompt.run` command exists (§2, §5).
+
+Prompt resources do not inherit the Instruction family's deterministic-baseline/enrichment lifecycle (§13–§22): `ai.prompt.create`/`update` accept explicit content directly, validated for format and known-secret exclusion (§35), and persisted/transformed through the same IS-4/IS-8 mechanics used elsewhere in the domain. Target resolution, existing-target protection, stale-state preconditions, cancellation, concurrency and recovery follow the same rules already established in §11, §24, §27, §32–34.
+
+### 41.4 Agent Definitions
+
+`ai.agent.list`/`create`/`update`/`delete` manage named specialist AI worker/configuration definitions. An Agent definition may reference Skills and Tools (§41.2); IS-20 validates those references but does not execute the agent or any tool it references.
+
+Agent definitions follow the same lightweight explicit-content model as Prompt resources (§41.3): no deterministic-baseline/enrichment lifecycle, same target/protection/stale-state/cancellation/concurrency/recovery machinery.
+
+### 41.5 Skill Definitions
+
+`ai.skill.list`/`add`/`remove` manage reusable specialist knowledge/capability packages. `add`/`remove` (rather than `create`/`delete`) reflects that a Skill is typically an installed/referenced package rather than content authored from scratch by the use case; a Skill's own content is not itself modified by IS-20.
+
+`ai.skill.add` requires an exact identified package/source and existing-target protection equivalent to §24; `ai.skill.remove` requires exact eligible target identity equivalent to §26. Removing a Skill that an Agent definition still references produces a referential-integrity diagnostic (§41.2) rather than a silent dangling reference.
+
+### 41.6 Tool Integrations
+
+`ai.tool.list`/`add`/`update`/`remove` manage provider-neutral external AI tool/data integrations, of which MCP is one representation/protocol (§41.2). `ai.tool.update` is restricted to non-secret configuration; actual credential/environment values remain Settings/IS-19-owned (§2, §47) and IS-20 retains at most a credential-reference.
+
+Tool integration management configures registration and connection metadata only. IS-20 never executes a registered tool, and tool registration never grants execution/mutation authority over anything the tool could reach.
+
+### 41.7 AI Policy
+
+`ai.policy.inspect`/`configure` manage AI-specific context inclusion/exclusion and tool/execution/access restrictions across the recognised environment and its representations. Configuration is validated and applied deterministically; it narrows visibility/operation within the managed scope already established by IS-2 (DD-4.3 §7.4) and cannot itself grant disclosure, execution or mutation authority beyond what the domain already restricts elsewhere in this specification.
+
+### 41.8 Automatic Acceptance Contract
+
+IS-10 output remains non-authoritative proposal evidence. An owning domain — including IS-20 itself and any of IS-15 Git, IS-16 Nuxt, IS-17 Docs or IS-18 Quality consuming IS-10 directly — may convert proposal evidence to accepted domain input automatically only when:
+
+1. the invocation/effective policy authorises automatic acceptance before generation;
+2. the owning domain defines the bounded output contract and deterministic acceptance criteria;
+3. validation succeeds;
+4. the result cannot broaden target/scope/authority;
+5. provenance records AI generation and the acceptance path where required; and
+6. IS-1 retains final application acceptance.
+
+IS-10/provider output never carries an authority flag that can self-authorise consequential work. This is the same rule IS-15 §14 applies to bulk commit-message acceptance: an authorised Git workflow may automatically accept bounded commit-message output under pre-authorised Git policy without per-message human interaction, while Git remains the owner of commit intent and acceptance. Invalid output handling (failure, deterministic fallback, bounded regeneration or escalation to required human review) belongs to the owning implementation; IS-10 does not choose that policy.
+
 ---
 
 ## 42. Headless and Interaction Semantics
 
-Headless callers provide/deterministically resolve operation, document type, enrichment mode and required authorization. Missing/ambiguous input fails safely without prompting or guessing.
+TUI, GUI and Headless adapters expose the same twenty-two canonical AI-domain operation identities (§5) across all six resource families; no adapter adds or omits an identity. Headless callers provide/deterministically resolve operation, resource identity/document type, enrichment mode where applicable and required authorization. Missing/ambiguous input fails safely without prompting or guessing.
 
-IS-22 may present supported document menus, enrichment consent and delete/replace confirmation but maps those choices to the same canonical use cases.
+IS-22 may present supported document/resource menus, enrichment consent and delete/update confirmation but maps those choices to the same canonical use cases across all six resource families.
 
 No IS-20 module imports prompt libraries, terminal colours, spinners or IDE APIs.
 
@@ -798,7 +916,7 @@ IS-20 neither absorbs those intents nor provides a generic “AI workflow” wra
 
 IS-19 may list/add/delete declarative AI-document template resources when template-resource management itself is the primary intent.
 
-Applying a selected template to create/replace/delete a project AI instruction document uses IS-20 semantics.
+Applying a selected template to create/update/delete a project AI instruction document uses IS-20 semantics.
 
 Template registration never grants IS-20 execution/mutation authority by itself.
 
@@ -816,10 +934,12 @@ IS-23 constructs:
 6. baseline planner/validator;
 7. enrichment planner/context/acceptance components;
 8. injected IS-4/IS-7/IS-8/IS-9/IS-10 collaborators;
-9. effect runner/acceptance/recovery components;
-10. four canonical AI-domain use cases, with replace registered only if product exposure is retained;
-11. immutable AI-domain use-case catalogue;
-12. IS-1 registrations.
+9. effect runner/acceptance/recovery components, including the shared automatic-acceptance component (§41.8);
+10. resource-graph aggregator for `ai.inspect` (§41.1–41.2);
+11. Prompt/Agent/Skill/Tool/Policy family components (§§41.3–41.7);
+12. twenty-two canonical AI-domain use cases;
+13. immutable AI-domain use-case catalogue;
+14. IS-1 registrations.
 
 No import-time AI-domain singleton, mutable active provider/model, direct `process.env`, provider registry import, `fetch`, cwd authority or service locator exists.
 
@@ -829,8 +949,8 @@ No import-time AI-domain singleton, mutable active provider/model, direct `proce
 
 Core tests cover at least:
 
-1. canonical list/create/delete identities;
-2. replace identity separately exposed/disabled by policy;
+1. all twenty-two canonical identities present, including `ai.inspect`;
+2. `ai.instruction.update` is the sole canonical successor to the retired `ai.instruction.replace`;
 3. primary-intent ownership;
 4. Git AI assistance does not route through IS-20;
 5. Docs AI assistance does not route through IS-20;
@@ -889,11 +1009,11 @@ Core tests cover at least:
 58. create protects existing target;
 59. generic force cannot overwrite;
 60. create uses IS-4 no-overwrite;
-61. replace is separate from create;
-62. replace requires registered target;
-63. replace requires revision/authorization;
-64. replace routes existing source through IS-8;
-65. unregistered candidate cannot be replaced;
+61. update is separate from create;
+62. update requires registered target;
+63. update requires revision/authorization;
+64. update routes existing source through IS-8;
+65. unregistered candidate cannot be updated;
 66. delete exact registered target;
 67. delete authorization required;
 68. delete absent target no-op;
@@ -940,9 +1060,22 @@ Core tests cover at least:
 109. IS-23 explicit composition;
 110. capability/provider substitution preserves domain policy;
 111. provider failure cannot mutate target directly;
-112. final acceptance remains IS-1-owned.
+112. final acceptance remains IS-1-owned;
+113. `ai.inspect` is non-mutating and never invokes IS-10 itself;
+114. `ai.inspect` composes existing per-family listing logic rather than duplicating recognition;
+115. cross-family referential-integrity diagnostics distinguish missing/ambiguous/unsupported/partially-representable state without collapsing to one failure;
+116. removing a Skill still referenced by an Agent definition produces a referential-integrity diagnostic, not a silent dangling reference;
+117. Prompt/Agent create/update do not require deterministic-baseline/enrichment machinery;
+118. Prompt invocation does not transfer application intent to AI, and no `ai.prompt.run` command exists;
+119. Skill add/remove and Tool add/update/remove use existing-target protection and exact-target deletion equivalent to Instruction create/delete;
+120. `ai.tool.update` cannot alter secret/credential values;
+121. tool registration never grants IS-20 execution authority over the registered tool;
+122. `ai.policy.configure` cannot grant disclosure/execution/mutation authority beyond existing domain restrictions;
+123. automatic acceptance requires policy resolved before generation, a bounded output contract, successful validation, no scope broadening and recorded provenance;
+124. automatic acceptance never lets IS-10/provider output self-authorise consequential work;
+125. the automatic-acceptance contract is shared: IS-15 Git bulk-commit acceptance uses the same six conditions as IS-20's own acceptance paths.
 
-Integration tests use controlled IS-4/IS-7/IS-8/IS-9/IS-10 substitutes and fixtures for supported/absent/present/ambiguous/unregistered documents, deterministic baselines, provider availability/failure/invalid output, disclosure refusal, contradictory facts, target races, partial effects, cancellation and Headless ambiguity.
+Integration tests use controlled IS-4/IS-7/IS-8/IS-9/IS-10 substitutes and fixtures for supported/absent/present/ambiguous/unregistered documents, deterministic baselines, provider availability/failure/invalid output, disclosure refusal, contradictory facts, target races, partial effects, cancellation, cross-family referential integrity and Headless ambiguity.
 
 ---
 
@@ -966,7 +1099,7 @@ Integration tests use controlled IS-4/IS-7/IS-8/IS-9/IS-10 substitutes and fixtu
 | `llmService` usage default `0` when absent | **REPLACE** | Missing usage remains unknown; domain does not infer zero cost/tokens. |
 | `llmService` logger calls/raw error strings | **RELOCATE / ADAPT** | IS-10 normalizes protected evidence; IS-20 emits safe domain diagnostics/events. |
 | `llmService` exported singleton | **REPLACE** | IS-23 explicit composition; no global mutable AI/provider state. |
-| current absence of AI instruction-document orchestration | **ADD** | Implement IS-20 catalogue/list/create/replace/delete semantics. |
+| current absence of AI instruction-document orchestration | **ADD** | Implement IS-20 catalogue/list/create/update/delete semantics across all six resource families. |
 | declarative AI templates/resources | **RETAIN / ADAPT through IS-9** | Preserve approved content/identity while keeping rendering proposed-only. |
 | future direct provider write/tool execution | **REJECT** | Provider output never directly mutates/executes. |
 | future autonomous coding-agent wrapper in AI domain | **REJECT for Version 1** | Outside approved product scope. |
@@ -991,16 +1124,21 @@ The current implementation therefore contains useful provider transport mechanic
 11. implement enrichment acceptance and contradiction handling;
 12. implement `ai.instruction.list`;
 13. implement protected `ai.instruction.create`;
-14. implement explicit `ai.instruction.replace` only if retained in product exposure;
+14. implement `ai.instruction.update`;
 15. implement exact eligible `ai.instruction.delete`;
 16. implement stale target/revision checks;
 17. implement partial-effect/recovery semantics;
 18. implement cancellation/concurrency/retry behavior;
 19. remove AI-domain dependency on `llmService`, provider registry, `process.env` and provider-native errors;
 20. migrate legacy provider mechanics behind IS-10 adapters/composition as specified by IS-10;
-21. add IS-22 adapter registrations;
-22. add IS-23 composition/IS-1 registration;
-23. run primary-intent, baseline, disclosure, provider-independence, target-safety, partial-effect and Headless conformance suites.
+21. implement `ai.inspect` aggregate resource-graph inspection (§41.1–41.2);
+22. implement Prompt and Agent list/create/update/delete (§41.3–41.4);
+23. implement Skill add/remove and Tool add/update/remove (§41.5–41.6);
+24. implement AI Policy inspect/configure (§41.7);
+25. implement the shared automatic-acceptance component and wire IS-15/IS-16/IS-17/IS-18 to it where they consume IS-10 (§41.8);
+26. add IS-22 adapter registrations for all twenty-two identities;
+27. add IS-23 composition/IS-1 registration;
+28. run primary-intent, baseline, disclosure, provider-independence, target-safety, partial-effect, cross-family and Headless conformance suites.
 
 ---
 
@@ -1020,6 +1158,9 @@ The current implementation therefore contains useful provider transport mechanic
 | provider/model semantics | DD-AI-002/015 and provider sections; FR-AI-080–087; IS-10 |
 | safety/privacy/trust | DD-4.3 safety/privacy sections; FR-AI-088–096; IS-10 |
 | results/failures | DD-4.3 result/failure sections; FR-AI-097–105 |
+| resource graph / aggregate inspection (§41.1–41.2) | DD-4.3 §7.4 resource graph; FR-AI-026–035 |
+| Prompt/Agent/Skill/Tool/Policy families (§41.3–41.7) | DD-4.3 §8.6 resource-family lifecycle |
+| automatic acceptance contract (§41.8) | Design §11.10; FR-AI-060 |
 | managed scope | DD-1.3; IS-2 |
 | effective configuration | DD-1.4; IS-3 |
 | resource creation/deletion | DD-2.1; IS-4 |
@@ -1044,17 +1185,18 @@ IS-22 adapter / Headless caller / owning domain
                 v
             IS-20 AI Domain
                 |
-                +--> document-type/target policy
-                +--> deterministic baseline/fact acceptance
-                +--> enrichment decision/context selection
-                +--> replacement/deletion eligibility
+                +--> resource-family/target policy (Instruction/Prompt/Agent/Skill/Tool/Policy)
+                +--> deterministic baseline/fact acceptance (Instruction)
+                +--> enrichment decision/context selection (Instruction)
+                +--> update/deletion eligibility
+                +--> automatic-acceptance contract (shared with Git/Nuxt/Docs/Quality)
                 +--> domain acceptance/recovery
                 |
                 +--> IS-7 recognition evidence
                 +--> IS-9 declarative baseline rendering
                 +--> IS-10 optional provider-independent enrichment
                 +--> IS-4 new-resource/delete mechanics
-                +--> IS-8 explicit existing-resource replacement
+                +--> IS-8 explicit existing-resource update
                 |
                 v
           IS-20 AI-domain acceptance
@@ -1068,4 +1210,4 @@ IS-22 adapter / Headless caller / owning domain
 
 The non-drift rule is:
 
-> **Version 1 AI Domain owns AI instruction-document intent, semantic document-type and target policy, deterministic baseline composition, optional enrichment policy/context selection, existing-target protection, explicit replacement/deletion eligibility and AI-domain acceptance. It never becomes the owner of another domain merely because that domain uses AI, treats a filename or provider association as provider availability, crawls the project for context, guesses project facts, discloses secrets by default, lets project/generated text change control-plane policy, requires optional AI when a valid baseline exists, silently retries/falls back providers, lets provider output choose paths or mutate/execute directly, overwrites through create, mutates heuristically observed unregistered documents, invents transactional rollback, promotes `llmService`/provider-native semantics into domain contracts, or publishes a competing final AppManager outcome.**
+> **Version 1 AI Domain owns AI project-resource intent across the Instruction, Prompt, Agent, Skill, Tool and Policy families plus aggregate inspection: semantic resource identity and target policy, deterministic baseline composition and optional enrichment policy/context selection for Instructions, existing-target protection, explicit update/deletion eligibility and AI-domain acceptance, and the cross-domain automatic-acceptance contract for AI-generated proposal output. It never becomes the owner of another domain merely because that domain uses AI, treats a filename or provider association as provider availability, crawls the project for context, guesses project facts, discloses secrets by default, lets project/generated text change control-plane policy, requires optional AI when a valid baseline exists, silently retries/falls back providers, lets provider output choose paths or mutate/execute directly, overwrites through create, mutates heuristically observed unregistered documents, executes a registered Prompt/Tool as a side effect of managing it, lets automatic acceptance broaden scope or self-authorise, invents transactional rollback, promotes `llmService`/provider-native semantics into domain contracts, or publishes a competing final AppManager outcome.**
