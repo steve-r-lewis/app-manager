@@ -36,7 +36,6 @@ None remain active: 9 vehicles integrated and retired during NCR-2. See the [sin
 
 | Clarification | Scope / purpose |
 |---|---|
-| [`app-command-model-implementation-clarification-v01.md`](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | PBC-1 IS-14 App correction. |
 | [`implementation-specification-rationalisation-clarification-v01.md`](../implementation/clarifications/implementation-specification-rationalisation-clarification-v01.md) | DR-7 rationalised Level 4 reading. |
 | [`nuxt-command-model-implementation-clarification-v01.md`](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | PBC-1 IS-16/IS-13 Nuxt correction. |
 | [`maintenance-coordinated-operations-implementation-clarification-v01.md`](../implementation/clarifications/maintenance-coordinated-operations-implementation-clarification-v01.md) | PBC-1 IS-21 coordinated Maintenance scope/classification plans, runners and per-resource results. |
