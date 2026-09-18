@@ -693,8 +693,9 @@ The Docs payload in [DD-DOCS-015](#dd-docs-015) is exposed under [FR-INV-021](..
 
 <a id="dd-docs-067"></a>
 
-**DD-DOCS-067 — Consequential preconditions are revalidated**  
-Output existence, target revision, relevant source facts and other material preconditions shall be revalidated before applying a previously prepared consequential action where staleness could matter.
+**DD-DOCS-067 — Consequential preconditions are revalidated**
+
+Output existence, target revision and relevant source facts bind the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) before a prepared consequential action is applied.
 
 <a id="dd-docs-068"></a>
 
@@ -727,8 +728,9 @@ Satisfied documentation postconditions bind [DD-1.2 no-op interpretation](../dd_
 
 <a id="dd-docs-072"></a>
 
-**DD-DOCS-072 — Accessible does not mean documentable**  
-Credentials, secrets, protected environment/configuration values and sensitive source content shall not be included merely because they are accessible within managed scope.
+**DD-DOCS-072 — Accessible does not mean documentable**
+
+Sensitive documentation inputs use [DD-DOCCAP-084](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-084), including credentials, protected configuration/environment and source content within managed scope.
 
 <a id="dd-docs-073"></a>
 
@@ -749,8 +751,10 @@ Docs diagnostics apply [FR-INV-040](../functional/application-invocation-functio
 
 <a id="dd-docs-076"></a>
 
-**DD-DOCS-076 — Generated references remain data until validated**  
-Paths, links, include directives, frontmatter or provider-specific references generated in documentation shall not independently authorize filesystem, process or application actions.
+**DD-DOCS-076 — Generated references remain data until validated**
+
+Generated paths, links, include directives, frontmatter and provider-specific references apply [DD-DOCCAP-098](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-098) at the domain’s downstream-effect boundary.
+
 
 ---
 

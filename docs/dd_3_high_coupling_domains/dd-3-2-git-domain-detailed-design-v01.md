@@ -495,9 +495,9 @@ The commit no-change decision applies [FR-GIT-029](../functional/git-functional-
 
 ### DD-GIT-023 — Commit message acceptance remains Git/application-owned
 
-A commit message may originate from explicit caller input, an approved deterministic source or an AI proposal, but the message used for commit creation shall be accepted under Git-domain/invocation policy before the commit primitive executes. Resolve the message per repository. Under [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow), authorized automatic acceptance uses deterministic Git criteria established before proposal generation; retain the distinction between the proposal and accepted message. AI completion does not establish commit success.
+Resolve each repository’s message under [FR-GIT-032](../functional/git-functional-specification-v01.md#fr-git-032) before its commit primitive executes. Under [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow), authorized automatic acceptance uses deterministic Git criteria established before proposal generation; the proposal/accepted-message distinction is defined in [DD-GIT-009](#dd-git-009).
 
-The coordinated result adds each repository's eligibility/planning state, material staging effects, accepted-message provenance, resulting revision, skip/already-satisfied reason and remaining/recovery action to the existing repository result. Failure, cancellation, staleness or uncertainty follows §12 without erasing earlier commits. Recovery that changes completed history requires a subsequent explicitly authorized Git operation; it is not an implicit rollback.
+The coordinated result adds each repository’s eligibility/planning state, material staging effects, accepted-message provenance, resulting revision, skip/already-satisfied reason and remaining/recovery action to the repository result. Failure, cancellation, staleness or uncertainty follows §12 without erasing earlier commits. Recovery that changes completed history requires a subsequent explicitly authorized Git operation; it is not an implicit rollback.
 
 <a id="dd-git-024"></a>
 
@@ -758,7 +758,7 @@ The domain supplies DD-2.3 intent through [DD-GIT-008](#dd-git-008) under [Desig
 
 ### DD-GIT-047 — Authorization is effect-relative
 
-The Git domain shall preserve the consequence classification of requested effects so DD-1 invocation/application policy can require appropriate authorization. Read-only inspection, ordinary consequential repository mutation and destructive remote deletion shall not be treated as equivalent authorization classes.
+Read-only inspection, ordinary consequential repository mutation and destructive remote deletion bind [FR-GIT-101](../functional/git-functional-specification-v01.md#fr-git-101) to the corresponding DD-1 authorization checkpoints.
 
 <a id="dd-git-048"></a>
 
@@ -770,7 +770,7 @@ Review the repository set under [FR-GIT-053](../functional/git-functional-specif
 
 ### DD-GIT-049 — Stale authorization-sensitive identity invalidates execution
 
-If repository or remote identity materially changes after authorization such that the authorized target is no longer the execution target, authorization shall not be silently carried forward.
+A material repository/remote identity change after authorization applies [DD-ENG-027](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-027) to the exact execution target.
 
 <a id="dd-git-050"></a>
 
@@ -811,7 +811,7 @@ Aggregate the repository records in [DD-GIT-013](#dd-git-013) under [DD-1.2 part
 
 ### DD-GIT-055 — Retry requires revalidation
 
-A retry or continuation after failure shall revalidate repository state, remote identity, managed scope and any authorization assumptions that may have become stale. A previous request shall not be blindly replayed merely because its provider operation failed.
+Retry/continuation applies [FR-GIT-108](../functional/git-functional-specification-v01.md#fr-git-108) and the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) to repository state, remote identity, managed scope and authorization assumptions before replay.
 
 <a id="dd-git-056"></a>
 

@@ -42,7 +42,7 @@ The register does not imply one Implementation Specification per source file, se
 |---|---|---|---|
 | `IS-1` | Application Runtime and Invocation | DD-1.1, DD-1.2, DD-1.5 | Authored |
 | `IS-2` | Managed Project Resolution | DD-1.3, DD-1.5 | Authored |
-| `IS-3` | Configuration Resolution | DD-1.4, DD-1.5 and bootstrap clarification | Authored |
+| `IS-3` | Configuration Resolution | DD-1.4 and [DD-1.5 staged lifecycle](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle) | Authored |
 | `IS-4` | Resource Access | DD-2.1 | Authored |
 | `IS-5` | Process Execution | DD-2.2 | Authored |
 | `IS-6` | Repository Capability | DD-2.3 | Authored |

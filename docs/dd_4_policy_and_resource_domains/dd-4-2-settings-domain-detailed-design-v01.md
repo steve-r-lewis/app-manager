@@ -397,8 +397,9 @@ App preparation consumes the environment operation in [FR-SET-060](../functional
 
 <a id="dd-set-032"></a>
 
-**DD-SET-032 — Contributor identity is unambiguous**  
-Add/remove operations shall use sufficient contributor identity to avoid accidental mutation of another entry.
+**DD-SET-032 — Contributor identity is unambiguous**
+
+Contributor add/remove identity binds [FR-SET-078](../functional/settings-functional-specification-v01.md#fr-set-078) and [FR-SET-080](../functional/settings-functional-specification-v01.md#fr-set-080) to the selected entry.
 
 <a id="dd-set-033"></a>
 
@@ -570,8 +571,9 @@ Creation collisions apply [FR-SET-061](../functional/settings-functional-specifi
 
 <a id="dd-set-056"></a>
 
-**DD-SET-056 — Indirection does not escape scope**  
-Symlinks, aliases, registry references or provider-resolved paths shall not allow a Settings operation to mutate outside the approved resource boundary.
+**DD-SET-056 — Indirection does not escape scope**
+
+Settings symlinks, aliases, registry references and provider-resolved paths apply the [Resource Access indirection contract](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) within the approved resource boundary.
 
 <a id="dd-set-057"></a>
 

@@ -368,9 +368,7 @@ Managed-root context before App lifecycle work follows [Design](../appmanager-de
 
 ### DD-APP-012 — Applicability before consequential execution
 
-Before consequential effects, the App domain shall determine whether the requested lifecycle action is applicable to the authoritative project context.
-
-A recognised but unsupported or unsatisfied action shall produce structured unavailability/precondition evidence rather than degrade into an opaque provider failure where the condition can be established beforehand.
+Pre-effect lifecycle applicability applies [FR-APP-011](../functional/app-functional-specification-v01.md#fr-app-011) and [FR-INV-015](../functional/application-invocation-functional-specification-v01.md#fr-inv-015) using the local applicability record, so known unmet preconditions are reported before delegated execution.
 
 <a id="dd-app-013"></a>
 
@@ -388,7 +386,7 @@ App stage postcondition acceptance follows [Design](../appmanager-design-specifi
 
 ### DD-APP-015 — Dependency-aware continuation
 
-A stage shall not execute when an unsatisfied earlier stage is a prerequisite for it. Independent optional stages may continue only where the workflow explicitly permits that behaviour and the resulting partial state remains safe and accurately reportable.
+Prerequisite-dependent stages apply [FR-APP-113](../functional/app-functional-specification-v01.md#fr-app-113). Independent optional stages may continue only where the workflow explicitly permits that behaviour and the resulting partial state remains safe and accurately reportable.
 
 ### 8.2 Prepare existing application
 
@@ -453,7 +451,7 @@ Repository readiness during preparation follows [FR-APP-019](../functional/app-f
 
 ### DD-APP-021 — Preparation acceptance
 
-Preparation acceptance shall be based on required lifecycle preparation postconditions, not on whether every optional stage was attempted. The result shall expose completed stages and unresolved required user action.
+Preparation acceptance is based on required lifecycle preparation postconditions, not whether every optional stage was attempted. Completed stages and unresolved user action use [FR-APP-022](../functional/app-functional-specification-v01.md#fr-app-022).
 
 ### 8.3 Post-installation lifecycle execution
 
@@ -497,7 +495,7 @@ Resolve supported Build applicability through [FR-APP-035](../functional/app-fun
 
 ### DD-APP-027 — Build acceptance
 
-Build acceptance shall require successful delegated execution plus any App-owned postcondition explicitly required by the resolved project/profile. Quality gates are not implicitly part of Build unless an approved App use case or configuration explicitly composes them.
+Build acceptance applies [FR-APP-036](../functional/app-functional-specification-v01.md#fr-app-036) to delegated execution and the resolved project/profile postconditions. Quality gates participate only when an approved App use case or configuration explicitly composes them.
 
 <a id="dd-app-028"></a>
 
@@ -511,9 +509,7 @@ App-controlled Build source changes apply [FR-XFORM-014](../functional/source-tr
 
 ### DD-APP-029 — Preview prerequisite policy
 
-The App domain shall deterministically define, from governed project/profile/configuration semantics, whether preview requires a validated prior build state, an App-composed build stage, or delegation to a project lifecycle action that establishes its own prerequisite failure.
-
-The selected policy shall not be inferred ad hoc from presentation mode.
+Preview binds [FR-APP-040](../functional/app-functional-specification-v01.md#fr-app-040) through governed project/profile/configuration policy selecting validated prior build state, an App-composed build stage, or a project lifecycle action that establishes its own prerequisite failure. Caller projection follows [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence).
 
 <a id="dd-app-030"></a>
 
@@ -547,7 +543,7 @@ Clean exclusions follows [FR-APP-045](../functional/app-functional-specification
 
 ### DD-APP-034 — Reset plan
 
-Reset shall establish a bounded effect plan distinct from Clean. It may include approved regenerable dependency-installation and build state, but shall exclude durable source/configuration and unrelated resources by default.
+Reset establishes a bounded effect plan distinct from Clean. Resource classes follow [FR-APP-052](../functional/app-functional-specification-v01.md#fr-app-052) and [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content), with explicit lock-state treatment under [DD-APP-035](#dd-app-035).
 
 <a id="dd-app-035"></a>
 
@@ -804,7 +800,7 @@ Durable source/configuration in lifecycle operations applies [Design](../appmana
 
 ### DD-APP-062 — Optional-stage semantics
 
-An optional stage shall be explicitly identified as optional by profile, effective configuration or invocation intent. Failure of an optional consequential follow-on may produce partial success rather than pretending either complete success or total non-effect.
+An optional stage shall be explicitly identified by profile, effective configuration or invocation intent. Optional consequential follow-on failures are interpreted under [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036).
 
 <a id="dd-app-063"></a>
 
@@ -899,7 +895,7 @@ Mixed completed, failed, cancelled and unattempted stages uses [DD-1.2](../dd_1_
 
 ### DD-APP-074 — Retry requires revalidation
 
-Retry, continuation or repair after failure shall revalidate relevant managed-project, configuration, resource/revision and lifecycle applicability evidence. Prior stage success shall not be assumed durable where underlying state may have changed.
+Retry, continuation or repair uses the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) for project, configuration, resource/revision and lifecycle applicability. Prior stage success is not assumed durable where the underlying state may have changed.
 
 <a id="dd-app-075"></a>
 
@@ -947,7 +943,7 @@ Application-level conflict coordination remains under DD-1 Application Engine au
 
 ### DD-APP-080 — Stale-plan invalidation
 
-A creation, Clean, Reset or other mutation plan shall be revalidated before application when material target/resource evidence has changed since planning.
+Creation, Clean, Reset and other mutation plans use [DD-ENG-024](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) when material target/resource evidence has changed since planning.
 
 <a id="dd-app-081"></a>
 

@@ -844,7 +844,7 @@ Nuxt generated-state facts support the bounded cleanup workflow in §8.14; they 
 
 ### DD-NUXT-054 — Quality execution remains Quality-owned
 
-Nuxt semantic validity shall not absorb tests, lint, type-check, coverage or general quality-gate semantics.
+Nuxt validity applies [FR-NUXT-011](../functional/nuxt-functional-specification-v01.md#fr-nuxt-011). Independent tests/lint/type-check/gates use [Quality ownership](../functional/quality-functional-specification-v01.md#fr-qual-001); general application build uses [FR-APP-034](../functional/app-functional-specification-v01.md#fr-app-034).
 
 <a id="dd-nuxt-055"></a>
 
@@ -905,7 +905,7 @@ Nuxt changes bind [Design §7.10](../appmanager-design-specification-v01.md#_7-1
 
 ### DD-NUXT-061 — Stale source/state requires deliberate handling
 
-Material source/relationship/target changes between planning and execution shall trigger revalidation, replanning or safe failure rather than blind application of stale assumptions.
+Material source/relationship/target changes apply the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) and [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020) before dependent mutation.
 
 <a id="dd-nuxt-062"></a>
 
@@ -1045,7 +1045,7 @@ Project/source content consumed by AI or specialist providers shall remain untru
 
 ### DD-NUXT-081 — AI disclosure is bounded
 
-Optional AI enrichment shall receive only the project/Nuxt context required for the approved task and shall follow DD-2.7 sensitive-context policy.
+Optional AI enrichment context applies [FR-AI-088](../functional/ai-functional-specification-v01.md#fr-ai-088) and [FR-AI-089](../functional/ai-functional-specification-v01.md#fr-ai-089) to the approved project/Nuxt task.
 
 <a id="dd-nuxt-082"></a>
 
@@ -1057,13 +1057,14 @@ Inspection/listing/results apply [FR-INV-040](../functional/application-invocati
 
 ### DD-NUXT-083 — Paths and generated targets remain bounded
 
-Generated or transformed resources shall remain within authorized managed/prospective creation scope and shall not escape scope via untrusted path, symlink or provider behavior.
+Managed and prospective-creation resource targets bind [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting) through the [Resource Access indirection boundary](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014).
 
 <a id="dd-nuxt-084"></a>
 
 ### DD-NUXT-084 — Provider output does not acquire authority
 
-Parser ASTs, Nuxt CLI output, templates, AI text and external provider claims shall be normalized/validated before being used as Nuxt-domain evidence.
+Parser ASTs, Nuxt CLI output, templates, AI text and external provider claims pass through normalization/validation at the Nuxt-domain evidence boundary under [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and [§11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance). AI proposal handling additionally applies [§11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow).
+
 
 ---
 

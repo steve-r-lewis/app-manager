@@ -1150,7 +1150,7 @@ Concrete TypeScript-config provider tests use fixtures covering ordinary `define
 | Nuxt validation | DD-NUXTCAP-034–036; FR-NUXT-011, 041, 107; IS-8/11 boundary |
 | layer model | DD-NUXTCAP-037–039; FR-NUXT-051–092 |
 | layer profiles | DD-NUXTCAP-040–043; FR-NUXT-051–070 |
-| scaffold/template | DD-NUXTCAP-044–047; FR-NUXT-058–070; IS-9; scaffold clarification |
+| scaffold/template | DD-NUXTCAP-044–047; FR-NUXT-058–070; IS-9; [DD-2.10 scaffold ownership](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | creation result/partial state | DD-NUXTCAP-048–050; FR-NUXT-068–070, 108–109 |
 | AI | DD-NUXTCAP-051–053; IS-10/12 |
 | repository boundary | DD-NUXTCAP-054–056; FR-NUXT-064–070; IS-6/15 |

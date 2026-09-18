@@ -137,7 +137,6 @@ The Application Engine is decomposed into logical responsibilities. These are no
 
 The Engine shall consume the canonical command catalogue defined by the Application Invocation Detailed Design and associate each executable command identity with exactly one owning application use-case definition.
 
-Registration shall not permit two independent semantic owners for the same canonical command identity.
 
 <a id="dd-eng-002"></a>
 
@@ -343,7 +342,7 @@ For operations that do not require project-aware configuration, irrelevant stage
 
 ### DD-CORE-BOOT-006 — Re-evaluate changed assumptions {#dd-core-boot-006}
 
-When later configuration or project resolution materially changes project, scope, provider, safety, authorization or consequential-effect assumptions, invalidate and re-evaluate the dependent decisions before any dependent effect. Preserve bootstrap provenance so the changed assumption can be identified. No consequential execution begins while a material bootstrap/project conflict remains unresolved.
+Later configuration/project resolution applies [DD-ENG-024](#dd-eng-024) and [DD-ENG-027](#dd-eng-027) to dependent decisions, including material provider-selection changes. Preserve bootstrap provenance so the changed assumption can be identified. No consequential execution begins while a material bootstrap/project conflict remains unresolved.
 
 ### DD-CORE-BOOT-007 — Bounded resolution {#dd-core-boot-007}
 
@@ -854,9 +853,8 @@ Technical resource access follows [Design](../appmanager-design-specification-v0
 
 ### DD-ENG-093 — Contract-oriented replaceability
 
-Responsibility seams shall be sufficiently explicit that a capability implementation, interaction adapter or future primary runtime can be replaced without redefining AppManager command semantics.
+The responsibility seams bind [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers) and [§6.10](../appmanager-design-specification-v01.md#_6-10-modular-typescript-and-future-host-portability) to capability, adapter and future primary-runtime replacement. This supports ADR-0001 without requiring speculative language-neutral serialization for in-process Version 1 contracts.
 
-This supports ADR-0001 without requiring speculative language-neutral serialization for in-process Version 1 contracts.
 
 ---
 

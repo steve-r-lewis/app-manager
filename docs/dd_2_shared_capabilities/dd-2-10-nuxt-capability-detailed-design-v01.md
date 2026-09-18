@@ -426,8 +426,9 @@ Nuxt semantic validity after source validation applies [FR-NUXT-041](../function
 
 <a id="dd-nuxtcap-035"></a>
 
-**DD-NUXTCAP-035 — Nuxt validation does not absorb Quality**  
-Nuxt-specific validity shall not become general test/lint/typecheck/build authority.
+**DD-NUXTCAP-035 — Nuxt validation does not absorb Quality**
+
+Nuxt validity applies [FR-NUXT-011](../functional/nuxt-functional-specification-v01.md#fr-nuxt-011). Independent tests/lint/type-check/gates use [Quality ownership](../functional/quality-functional-specification-v01.md#fr-qual-001); general application build uses [FR-APP-034](../functional/app-functional-specification-v01.md#fr-app-034).
 
 <a id="dd-nuxtcap-036"></a>
 

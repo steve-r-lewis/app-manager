@@ -363,7 +363,7 @@ A conforming context shall be capable of representing, where relevant:
 **DD-PROJ-007 — Read-only context consumption**  
 Commands and capabilities should consume Managed Project Context through read-only or immutable views such that inspecting context cannot itself mutate project state or redefine resolved relationships.
 
-The implementation need not use a particular immutable data structure, but shared consumers shall not casually mutate authoritative context in place.
+The implementation need not use a particular immutable data structure.
 
 ### 10.4 Context coherence
 

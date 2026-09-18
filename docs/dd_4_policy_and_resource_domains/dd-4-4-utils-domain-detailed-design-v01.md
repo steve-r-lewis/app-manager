@@ -284,8 +284,9 @@ Project identity, file identity, author identity, package name, current version 
 
 <a id="dd-util-018"></a>
 
-**DD-UTIL-018 — Per-target state remains attributable**  
-Multi-target operations shall retain target identity, observed state, decision, effect and postcondition evidence sufficiently to report partial completion truthfully.
+**DD-UTIL-018 — Per-target state remains attributable**
+
+Per-resource results bind [PBC-FR-MAINT-COORD-005](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-005) and [PBC-FR-MAINT-COORD-024](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-024), retaining observed state, decision and postcondition evidence alongside the attributed effects.
 
 <a id="dd-util-019"></a>
 
@@ -919,8 +920,10 @@ Instructions embedded in source comments, logs, temporary files or revision note
 
 <a id="dd-util-100"></a>
 
-**DD-UTIL-100 — Cleanup paths are safety-sensitive**  
-Symlinks, indirection, path normalization or equivalent resource mechanisms shall not be permitted to escape the authorized cleanup boundary.
+**DD-UTIL-100 — Cleanup paths are safety-sensitive**
+
+Cleanup target normalization and symlink/indirection handling apply the [Resource Access indirection contract](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) to the authorized cleanup boundary.
+
 
 ---
 

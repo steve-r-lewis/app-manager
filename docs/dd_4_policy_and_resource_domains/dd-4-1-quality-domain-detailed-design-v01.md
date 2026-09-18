@@ -411,7 +411,7 @@ Establish the Quality target set under [Design](../appmanager-design-specificati
 
 ### DD-QUAL-016 — Capability recognition is non-executing
 
-Recognition that a target supports a check shall not itself execute the check or establish a passing state.
+Target/check availability consumes the [Quality recognition boundary](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-008).
 
 ### 8.2 Test orchestration
 
@@ -547,7 +547,7 @@ Continuation decisions apply [FR-QUAL-084](../functional/quality-functional-spec
 
 ### DD-QUAL-034 — Unstarted work remains visible
 
-Checks not attempted because of fail-fast, cancellation or prerequisite failure shall remain represented with reason.
+The domain preserves the [unattempted-check evidence](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-058) and its fail-fast, cancellation or prerequisite reason.
 
 ### 8.10 Cross-domain consumption
 
@@ -590,7 +590,7 @@ Per-target/per-check state may additionally distinguish:
 
 ### DD-QUAL-036 — Domain state does not replace provider state
 
-Provider running/exited states and Quality check/gate states shall remain distinguishable.
+Provider running/exited evidence uses [DD-QUALCAP-023](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-023); gate interpretation applies [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075).
 
 <a id="dd-qual-037"></a>
 
@@ -751,7 +751,8 @@ Generated/provider effects apply [FR-INV-046](../functional/application-invocati
 
 ### DD-QUAL-060 — Retry requires fresh applicability
 
-A retry after provider failure, timeout, cancellation or stale-context detection shall revalidate relevant target, capability and policy assumptions rather than blindly replay stale execution state.
+Retry after provider failure, timeout, cancellation or stale-context detection uses the [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) for target, capability and policy assumptions.
+
 
 ---
 
@@ -814,13 +815,13 @@ Check repeatability applies [FR-QUAL-103](../functional/quality-functional-speci
 
 ### DD-QUAL-069 — Gate evaluation is deterministic over equivalent evidence and policy
 
-Given materially equivalent normalized check evidence and gate policy, gate interpretation shall be materially equivalent.
+Gate interpretation consumes the [deterministic evaluation contract](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-054) with the operation’s resolved policy.
 
 <a id="dd-qual-070"></a>
 
 ### DD-QUAL-070 — Provider-global state is not canonical Quality state
 
-One provider's internal watcher/server/cache state shall not define the AppManager Quality-domain state model.
+Provider watcher/server/cache state applies [DD-QUALCAP-075](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-075) at the domain state-model boundary.
 
 <a id="dd-qual-071"></a>
 
@@ -861,7 +862,8 @@ Provider working directory, project/configuration file and filters bind [Design]
 
 ### DD-QUAL-076 — AI explanation cannot replace Quality truth
 
-If AI is used to explain findings, normalized provider evidence and effective Quality policy remain authoritative for the Quality result.
+AI explanations consume [DD-QUALCAP-083](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-083) alongside the operation’s normalized evidence and effective policy.
+
 
 ---
 

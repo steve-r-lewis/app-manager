@@ -360,9 +360,14 @@ Core horizontal follow-up: DD-1.3 §17.2 and DD-1.4 §§4/16.2/32 now reference 
 
 Retained-clause checkpoint: 1220 distinct numbered reduction decisions and 220 unnumbered decisions are recorded. A second retained-clause review of all ten DD-2 owners removed further Functional repetition in AI retry/context, Quality tests/coverage/gates, Documentation coverage/tooling and Nuxt identity/configuration/scaffolding. Distinct request/state/provider compatibility and technical effect guarantees remain. Nuxt identity cannot be inferred from repository evidence (DD-NUXTCAP-008 local delta) separately from FR-NUXT-017 integration; Documentation unknown required meaning remains canonical DD-DOCCAP-013 because the narrower source/test Functional clauses do not cover every model relationship. Core bootstrap/preview/category mapping was also checked horizontally. All 1,915 DD definitions are preserved; 2,199 new targets resolve. Seven IS bodies remain unchanged below metadata, Design is unchanged, Functional identities are unchanged and Nuxt Functional changes are exactly two downstream navigation repairs. Remaining retained core/domain clauses and final cardinality/readability verification remain open.
 
+
+Core retained-clause review: DD-PROJ-007/008/010 remain distinct read-only context, coherent per-operation identity and root-entity/path contracts. DD-ENG-001 registration, 003 context, 004 checkpoints, 005 workflow, 015 compatibility, 018 requested/resolved distinctions, 024 stale assumptions, 027 changed plans, 033 upward-call boundary, 035 least-context delegation, 039/040 fallback/availability, 046 abstraction criterion, 048 technical rejection, 051 authorization evidence, 076 conflicts, 084/085 nested invocation, 094 extension fields, 097 executable-extension design and 100 invariant failure retain their local refinements. The repeated second registration sentence and repeated immutable-context sentence were removed. Bootstrap re-evaluation binds 024/027 while retaining provider selection, provenance and unresolved-conflict deltas.
+
+Checkpoint C — primary physical reduction complete; final checkpoint D verification pending. The retained-clause comparison now includes all 23 primaries, in addition to the complete initial vertical/horizontal read. 1257 distinct numbered bodies and 220 unnumbered section decisions have been reduced, with local deltas retained and canonical restorations excluded. App stage/recovery semantics, Git coordinated intent/message provenance, Nuxt artefact contributions, Docs profile/artefact acceptance, Quality policy/evaluation, Settings class-specific mutations, AI resource graph and Maintenance stronger-owner/per-resource workflow remain independently readable and distinct. Final completion, clean-tree/push and review-readiness gates are not claimed at this checkpoint.
+
 ### 10.1 Physical occurrence decisions
 
-Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`, retaining identified `LOCAL_DELTA`. Canonical clauses restored during preservation review are excluded from this deletion table. Unlisted local clauses remain subject to final horizontal review.
+Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOCAL_BINDING`, retaining identified `LOCAL_DELTA`. Canonical clauses restored during preservation review are excluded from this deletion table. Retained local contracts are accounted by the complete §8 inventory and horizontal distinction decisions above.
 
 | Occurrence | Direct owner references after reduction |
 |---|---|
@@ -1586,10 +1591,47 @@ Each row records a reviewed `DELETE_DUPLICATE` body replaced by `REFERENCE`/`LOC
 | `DD-NUXTCAP-072` | [FR-NUXT-095](../functional/nuxt-functional-specification-v01.md#fr-nuxt-095) |
 | `DD-NUXTCAP-075` | [FR-DOCS-100](../functional/docs-functional-specification-v01.md#fr-docs-100); [FR-NUXT-058](../functional/nuxt-functional-specification-v01.md#fr-nuxt-058); [scaffold collaboration contract](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | `DD-NUXTCAP-086` | [FR-NUXT-054](../functional/nuxt-functional-specification-v01.md#fr-nuxt-054) |
+| `DD-APP-012` | [FR-APP-011](../functional/app-functional-specification-v01.md#fr-app-011); [FR-INV-015](../functional/application-invocation-functional-specification-v01.md#fr-inv-015) |
+| `DD-APP-015` | [FR-APP-113](../functional/app-functional-specification-v01.md#fr-app-113) |
+| `DD-APP-021` | [FR-APP-022](../functional/app-functional-specification-v01.md#fr-app-022) |
+| `DD-APP-027` | [FR-APP-036](../functional/app-functional-specification-v01.md#fr-app-036) |
+| `DD-APP-029` | [FR-APP-040](../functional/app-functional-specification-v01.md#fr-app-040); [Design §4.6](../appmanager-design-specification-v01.md#_4-6-presentation-independence) |
+| `DD-APP-034` | [FR-APP-052](../functional/app-functional-specification-v01.md#fr-app-052); [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content); [DD-APP-035](../dd_3_high_coupling_domains/dd-3-1-app-domain-detailed-design-v01.md#dd-app-035) |
+| `DD-APP-062` | [FR-INV-036](../functional/application-invocation-functional-specification-v01.md#fr-inv-036) |
+| `DD-APP-074` | [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) |
+| `DD-APP-080` | [DD-ENG-024](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) |
+| `DD-GIT-047` | [FR-GIT-101](../functional/git-functional-specification-v01.md#fr-git-101) |
+| `DD-GIT-049` | [DD-ENG-027](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-027) |
+| `DD-GIT-055` | [FR-GIT-108](../functional/git-functional-specification-v01.md#fr-git-108); [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) |
+| `DD-GIT-023` | [FR-GIT-032](../functional/git-functional-specification-v01.md#fr-git-032); [Design §11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow); [DD-GIT-009](../dd_3_high_coupling_domains/dd-3-2-git-domain-detailed-design-v01.md#dd-git-009) |
+| `DD-NUXTCAP-035` | [FR-NUXT-011](../functional/nuxt-functional-specification-v01.md#fr-nuxt-011); [Quality ownership](../functional/quality-functional-specification-v01.md#fr-qual-001); [FR-APP-034](../functional/app-functional-specification-v01.md#fr-app-034) |
+| `DD-NUXT-054` | [FR-NUXT-011](../functional/nuxt-functional-specification-v01.md#fr-nuxt-011); [Quality ownership](../functional/quality-functional-specification-v01.md#fr-qual-001); [FR-APP-034](../functional/app-functional-specification-v01.md#fr-app-034) |
+| `DD-NUXT-061` | [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024); [FR-XFORM-020](../functional/source-transformation-functional-specification-v01.md#fr-xform-020) |
+| `DD-NUXT-081` | [FR-AI-088](../functional/ai-functional-specification-v01.md#fr-ai-088); [FR-AI-089](../functional/ai-functional-specification-v01.md#fr-ai-089) |
+| `DD-NUXT-083` | [Design §9.7](../appmanager-design-specification-v01.md#_9-7-managed-scope-and-operation-targeting); [Resource Access indirection boundary](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) |
+| `DD-NUXT-084` | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); [§11.11](../appmanager-design-specification-v01.md#_11-11-workflow-results-failure-and-acceptance); [§11.10](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) |
+| `DD-DOCS-067` | [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) |
+| `DD-DOCS-072` | [DD-DOCCAP-084](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-084) |
+| `DD-DOCS-076` | [DD-DOCCAP-098](../dd_2_shared_capabilities/dd-2-9-documentation-capability-detailed-design-v01.md#dd-doccap-098) |
+| `DD-QUAL-016` | [Quality recognition boundary](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-008) |
+| `DD-QUAL-034` | [unattempted-check evidence](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-058) |
+| `DD-QUAL-036` | [DD-QUALCAP-023](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-023); [FR-QUAL-075](../functional/quality-functional-specification-v01.md#fr-qual-075) |
+| `DD-QUAL-060` | [Engine stale-state checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) |
+| `DD-QUAL-069` | [deterministic evaluation contract](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-054) |
+| `DD-QUAL-070` | [DD-QUALCAP-075](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-075) |
+| `DD-QUAL-076` | [DD-QUALCAP-083](../dd_2_shared_capabilities/dd-2-8-quality-capability-detailed-design-v01.md#dd-qualcap-083) |
+| `DD-SET-032` | [FR-SET-078](../functional/settings-functional-specification-v01.md#fr-set-078); [FR-SET-080](../functional/settings-functional-specification-v01.md#fr-set-080) |
+| `DD-SET-056` | [Resource Access indirection contract](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) |
+| `DD-AI-044` | [DD-1.2 effect/uncertainty model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects) |
+| `DD-AI-074` | [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content); [Engine freshness checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024) |
+| `DD-UTIL-018` | [PBC-FR-MAINT-COORD-005](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-005); [PBC-FR-MAINT-COORD-024](../functional/utils-functional-specification-v01.md#pbc-fr-maint-coord-024) |
+| `DD-UTIL-100` | [Resource Access indirection contract](../dd_2_shared_capabilities/dd-2-1-resource-access-detailed-design-v01.md#dd-res-014) |
+| `DD-CORE-BOOT-006` | [DD-ENG-024](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024); [DD-ENG-027](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-027) |
+| `DD-ENG-093` | [Design §6.6](../appmanager-design-specification-v01.md#_6-6-capability-boundaries-and-providers); [§6.10](../appmanager-design-specification-v01.md#_6-10-modular-typescript-and-future-host-portability) |
 
 ### 10.2 Unnumbered occurrence decisions
 
-Section decisions remove duplicate normative bodies while retaining contextual narrative and local delta. Models and workflows remain subject to final horizontal review.
+Section decisions remove duplicate normative bodies while retaining contextual narrative and local delta. Models, workflows, test obligations and semantic distinctions are accounted by §8 and the retained-clause comparisons.
 
 | Occurrence | Direct owner references after reduction |
 |---|---|
@@ -1813,3 +1855,21 @@ Section decisions remove duplicate normative bodies while retaining contextual n
 | DD-2-10 §37.1 introduction | [Nuxt domain](../dd_3_high_coupling_domains/dd-3-3-nuxt-domain-detailed-design-v01.md); [§16](../dd_2_shared_capabilities/dd-2-10-nuxt-capability-detailed-design-v01.md#_16-layer-scaffolding-and-resource-registry) |
 | DD-1-2 Â§13 | [FR-INV-025](../functional/application-invocation-functional-specification-v01.md#fr-inv-025); [FR-INV-026](../functional/application-invocation-functional-specification-v01.md#fr-inv-026) |
 | DD-1-2 Â§9.5 | [DD-OUTCLAR-006](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#dd-outclar-006) |
+
+### 10.3 Final downstream navigation accounting
+
+The final retirement sweep includes bare source labels as well as hyperlinks. Nine Level-4 files are touched, including the navigation index and two still-active Implementation clarifications. Only metadata links and the following dependency/traceability labels change; all remaining text below metadata is byte-identical after reversing these exact source-label replacements. No Implementation requirement or clarification is reduced or retired.
+
+| File | Navigation-only change |
+|---|---|
+| [app-command-model-implementation-clarification-v01.md](../implementation/clarifications/app-command-model-implementation-clarification-v01.md) | Metadata source links only. |
+| [nuxt-command-model-implementation-clarification-v01.md](../implementation/clarifications/nuxt-command-model-implementation-clarification-v01.md) | Metadata source links only. |
+| [implementation-specification-v01.md](../implementation/implementation-specification-v01.md) | Metadata/source navigation where applicable; 1 exact bare clarification-source label replacement(s) in dependency/traceability text. |
+| [is-1-application-runtime-and-invocation-implementation-specification-v01.md](../implementation/is-1-application-runtime-and-invocation-implementation-specification-v01.md) | Metadata/source navigation where applicable; 2 exact bare clarification-source label replacement(s) in dependency/traceability text. |
+| [is-13-nuxt-capability-implementation-specification-v01.md](../implementation/is-13-nuxt-capability-implementation-specification-v01.md) | Metadata/source navigation where applicable; 1 exact bare clarification-source label replacement(s) in dependency/traceability text. |
+| [is-16-nuxt-domain-implementation-specification-v01.md](../implementation/is-16-nuxt-domain-implementation-specification-v01.md) | Metadata source links only. |
+| [is-2-managed-project-resolution-implementation-specification-v01.md](../implementation/is-2-managed-project-resolution-implementation-specification-v01.md) | Metadata/source navigation where applicable; 2 exact bare clarification-source label replacement(s) in dependency/traceability text. |
+| [is-23-build-and-runtime-assembly-implementation-specification-v01.md](../implementation/is-23-build-and-runtime-assembly-implementation-specification-v01.md) | Metadata/source navigation where applicable; 1 exact bare clarification-source label replacement(s) in dependency/traceability text. |
+| [is-3-configuration-resolution-implementation-specification-v01.md](../implementation/is-3-configuration-resolution-implementation-specification-v01.md) | Metadata source links only. |
+
+IS-2’s request-input sentence names DD-1.4 bootstrap eligibility instead of the retired staged clarification; its allowed input and all surrounding semantics are unchanged. IS-1, IS-2, IS-13 and IS-23 traceability labels name integrated outcome, bootstrap and scaffold owners. The Level-4 index points IS-3 to DD-1.4/DD-1.5. Nuxt Functional has exactly two downstream-DD navigation repairs; every other Functional body and Design are unchanged.

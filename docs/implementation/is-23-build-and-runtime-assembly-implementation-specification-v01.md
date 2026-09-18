@@ -269,7 +269,7 @@ No remaining migration step is labelled pending an unauthored primary IS; all ow
 | launcher -> IS-22 adapter -> IS-1 | IS-22; IS-1; Level 4 reconciliation |
 | Application Engine final authority | DD-1.5; IS-1 |
 | provider/process evidence not canonical outcome | DD-1.2; capability IS set |
-| explicit context/config rather than ambient globals | DD-1.3; DD-1.4; bootstrap clarification; IS-2; IS-3 |
+| explicit context/config rather than ambient globals | DD-1.3; DD-1.4; [DD-1.5 staged lifecycle](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#_8-orchestration-lifecycle); IS-2; IS-3 |
 | provider replaceability | ADR-0001; IS-6 through IS-13 |
 | TUI/Headless same application semantics | DD-1.1; IS-22 |
 | conforming legacy code retained/adapted | ADR-0001; Implementation Specification Plan §9 |

@@ -511,8 +511,10 @@ Completed creation/deletion effects follow [FR-INV-045](../functional/applicatio
 
 <a id="dd-ai-044"></a>
 
-**DD-AI-044 — Indeterminate effect is first-class**  
-If a local effect may have occurred but cannot be verified reliably, the domain shall represent indeterminate state rather than guess.
+**DD-AI-044 — Indeterminate effect is first-class**
+
+Unverified local effects use the [DD-1.2 effect/uncertainty model](../dd_1_application_core/dd-1-2-execution-outcomes-detailed-design-v01.md#_12-consequential-effects).
+
 
 ---
 
@@ -724,8 +726,10 @@ Repeated create requests remain subject to [FR-AI-041](../functional/ai-function
 
 <a id="dd-ai-074"></a>
 
-**DD-AI-074 — Listing may observe changing state**  
-A listing result is observation evidence and shall not be treated as immutable authorization for a later consequential operation.
+**DD-AI-074 — Listing may observe changing state**
+
+Listing evidence applies [Design §9.9](../appmanager-design-specification-v01.md#_9-9-non-destructive-ownership-and-unmanaged-content); a later consequential operation uses the [Engine freshness checkpoint](../dd_1_application_core/dd-1-5-application-engine-detailed-design-v01.md#dd-eng-024).
+
 
 ---
 
