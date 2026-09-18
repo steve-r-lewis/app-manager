@@ -1,3 +1,17 @@
+# Nuxt Command Model Implementation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-16 — Nuxt Domain Implementation Specification](../../implementation/is-16-nuxt-domain-implementation-specification-v01.md) §5 (13 canonical identities) and §§32.1–32.5 (the five added use cases); [IS-13 — Nuxt Capability Implementation Specification](../../implementation/is-13-nuxt-capability-implementation-specification-v01.md) §§21.1–21.5 (the minimum extended capability seam).
+>
+> **Disposition:** IS-16's canonical catalogue is corrected from eight to thirteen identities and IS-13 gains exactly the five methods DD-2.10 §6.1 specifies (`planArtefactPlacement`, `planModuleChange`, `planUpgrade`, `analyze`, `inspectGeneratedState`), reusing existing fact/plan/validation contracts wherever their semantics coincide rather than mirroring the command catalogue mechanically — as this clarification's §10 required. Both DD-3.3 §§8.10–8.14 and DD-2.10 §6.1 already specified this exact model as accepted authority. No information from this clarification remains solely recorded here.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # Nuxt Command Model Implementation Clarification
 
 > **Document type:** Implementation clarification
