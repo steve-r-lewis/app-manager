@@ -4,7 +4,7 @@
 >
 > **Version:** 01
 >
-> **Status:** Active during DR rationalisation
+> **Status:** Active — canonical Design/Functional ownership index
 >
 > **Normative product effect:** None. This map identifies existing canonical owners; it does not create product semantics.
 

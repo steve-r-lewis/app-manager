@@ -2,7 +2,7 @@
 
 > **Document type:** Project-management working evidence
 >
-> **Status:** Active for PBC-1 command review; NCR may retain or archive as assurance evidence
+> **Status:** Retained — PBC-1 Maintenance stronger-owner assessment at the 78-command checkpoint
 >
 > **Normative product effect:** None. This matrix records the ownership review; normative corrections are carried by the level-appropriate clarifications and later folded into primary owners by NCR.
 
