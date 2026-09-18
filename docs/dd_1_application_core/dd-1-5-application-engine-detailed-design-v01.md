@@ -966,7 +966,7 @@ Defines declarative resource selection/resolution and generation support without
 
 ## 25. Relationship to Domain Detailed Designs
 
-DD-3 and DD-4 describe the domain compositions invoked by [DD-ENG-005](#dd-eng-005). Their domain payloads and acceptance/recovery decisions fit the shared [execution context](#dd-eng-003) and [command extension contract](#dd-eng-094). The [Maintenance stronger-owner gate](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md#dd-util-066) is one such domain-specific decision, applied before maintenance planning.
+DD-3 and DD-4 describe the domain compositions invoked by [DD-ENG-005](#dd-eng-005). Their domain payloads and acceptance/recovery decisions fit the shared [execution context](#dd-eng-003) and [command extension contract](#dd-eng-094). The [Maintenance stronger-owner gate](../dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md#dd-util-066) is one such domain-specific decision, applied before maintenance planning.
 
 ## 26. Traceability
 

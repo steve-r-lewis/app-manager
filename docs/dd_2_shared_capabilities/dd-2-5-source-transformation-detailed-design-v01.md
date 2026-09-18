@@ -1307,7 +1307,7 @@ Nuxt configuration/source updates may use DD-2.5 but Nuxt retains Nuxt-domain se
 
 ### 46.4 Settings / Maintenance / AI
 
-[Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) and [Maintenance](../dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) supply bounded source-change intent; [AI proposals](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) can supply desired content. Their transformation requests enter the same plan/approval lifecycle here.
+[Settings](../dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) and [Maintenance](../dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md) supply bounded source-change intent; [AI proposals](../appmanager-design-specification-v01.md#_11-10-ai-assisted-workflow) can supply desired content. Their transformation requests enter the same plan/approval lifecycle here.
 
 ### 46.5 Implementation Specification
 

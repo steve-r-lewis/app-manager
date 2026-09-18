@@ -16,7 +16,7 @@
 >
 > **Other shared implementations:** [IS-4 — Resource Access](is-4-resource-access-implementation-specification-v01.md), [IS-7 — Source Intelligence](is-7-source-intelligence-implementation-specification-v01.md), [IS-8 — Source Transformation](is-8-source-transformation-implementation-specification-v01.md), [IS-9 — Resource Registry and Template](is-9-resource-registry-and-template-implementation-specification-v01.md)
 >
-> **Related domain implementations:** [IS-15 — Git Domain](is-15-git-domain-implementation-specification-v01.md), [IS-16 — Nuxt Domain](is-16-nuxt-domain-implementation-specification-v01.md), [IS-17 — Docs Domain](is-17-docs-domain-implementation-specification-v01.md), [IS-18 — Quality Domain](is-18-quality-domain-implementation-specification-v01.md), [IS-19 — Settings Domain](is-19-settings-domain-implementation-specification-v01.md), IS-21 Utils Domain, IS-22 Interaction Adapters, [IS-23 — Build and Runtime Assembly](is-23-build-and-runtime-assembly-implementation-specification-v01.md)
+> **Related domain implementations:** [IS-15 — Git Domain](is-15-git-domain-implementation-specification-v01.md), [IS-16 — Nuxt Domain](is-16-nuxt-domain-implementation-specification-v01.md), [IS-17 — Docs Domain](is-17-docs-domain-implementation-specification-v01.md), [IS-18 — Quality Domain](is-18-quality-domain-implementation-specification-v01.md), [IS-19 — Settings Domain](is-19-settings-domain-implementation-specification-v01.md), IS-21 Maintenance Domain, IS-22 Interaction Adapters, [IS-23 — Build and Runtime Assembly](is-23-build-and-runtime-assembly-implementation-specification-v01.md)
 >
 > **Runtime decision:** [ADR-0001 — Primary Application Runtime](../project_management/decisions/adr-0001-primary-application-runtime.md)
 >

@@ -58,7 +58,7 @@ The family number is an organisational identity, not an additional specification
 | DD-4.1 | [Quality Domain](./dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md) | Complete |
 | DD-4.2 | [Settings Domain](./dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md) | Complete |
 | DD-4.3 | [AI Domain](./dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md) | Complete |
-| DD-4.4 | [Maintenance Domain](./dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md) | Complete |
+| DD-4.4 | [Maintenance Domain](./dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md) | Complete |
 
 All Version 1 primary Detailed Design documents are authored. NCR-2 reduction is in progress; the seventeen former DD clarification vehicles have been integrated into primary owners and retired. The active register records their canonical identities and paths; completed decomposition/audit programmes are retained as project history rather than current design authority.
 

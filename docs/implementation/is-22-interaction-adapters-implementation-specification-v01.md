@@ -14,7 +14,7 @@
 >
 > **Primary runtime implementation:** [IS-1 — Application Runtime and Invocation](is-1-application-runtime-and-invocation-implementation-specification-v01.md)
 >
-> **Domain implementations:** [IS-14 — App Domain](is-14-app-domain-implementation-specification-v01.md), [IS-15 — Git Domain](is-15-git-domain-implementation-specification-v01.md), [IS-16 — Nuxt Domain](is-16-nuxt-domain-implementation-specification-v01.md), [IS-17 — Docs Domain](is-17-docs-domain-implementation-specification-v01.md), [IS-18 — Quality Domain](is-18-quality-domain-implementation-specification-v01.md), [IS-19 — Settings Domain](is-19-settings-domain-implementation-specification-v01.md), [IS-20 — AI Domain](is-20-ai-domain-implementation-specification-v01.md), [IS-21 — Utils Domain](is-21-utils-domain-implementation-specification-v01.md)
+> **Domain implementations:** [IS-14 — App Domain](is-14-app-domain-implementation-specification-v01.md), [IS-15 — Git Domain](is-15-git-domain-implementation-specification-v01.md), [IS-16 — Nuxt Domain](is-16-nuxt-domain-implementation-specification-v01.md), [IS-17 — Docs Domain](is-17-docs-domain-implementation-specification-v01.md), [IS-18 — Quality Domain](is-18-quality-domain-implementation-specification-v01.md), [IS-19 — Settings Domain](is-19-settings-domain-implementation-specification-v01.md), [IS-20 — AI Domain](is-20-ai-domain-implementation-specification-v01.md), [IS-21 — Maintenance Domain](is-21-utils-domain-implementation-specification-v01.md)
 >
 > **Build/runtime:** [IS-23 — Build and Runtime Assembly](is-23-build-and-runtime-assembly-implementation-specification-v01.md)
 >
@@ -194,7 +194,7 @@ Unknown and recognized-but-unavailable remain distinct.
 
 ## 8. Canonical Command Identity
 
-IS-22 consumes the canonical `<domain>.<name>` IDs established by IS-1 and the domain Implementation Specifications.
+IS-22 consumes the canonical `<domain>.<name>` IDs established by IS-1 and the domain Implementation Specifications. `<name>` is a single verb for a leaf operation (for example `cleanup`) or a dotted `<resource>.<verb>` path where the owning domain's canonical operation identities distinguish resources (for example `headers.validate`, `environment.create`). Segment depth is established per identity by the owning domain's Functional Specification, not by a fixed IS-22 schema; IS-22 treats the full dotted string after the domain as one opaque name.
 
 TUI menu values and Headless positional/option syntax map to those IDs. Display labels, aliases and menu positions are never persisted or passed as semantic command identity.
 

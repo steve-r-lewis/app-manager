@@ -47,7 +47,7 @@ The completed decomposition plan remains historical evidence. Detailed Design au
 | `DD-4.1` | Quality Domain | `docs/dd_4_policy_and_resource_domains/dd-4-1-quality-domain-detailed-design-v01.md` | Complete |
 | `DD-4.2` | Settings Domain | `docs/dd_4_policy_and_resource_domains/dd-4-2-settings-domain-detailed-design-v01.md` | Complete |
 | `DD-4.3` | AI Domain | `docs/dd_4_policy_and_resource_domains/dd-4-3-ai-domain-detailed-design-v01.md` | Complete |
-| `DD-4.4` | Maintenance Domain | `docs/dd_4_policy_and_resource_domains/dd-4-4-utils-domain-detailed-design-v01.md` | Complete |
+| `DD-4.4` | Maintenance Domain | `docs/dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md` | Complete |
 
 ## 4. Lifecycle State
 

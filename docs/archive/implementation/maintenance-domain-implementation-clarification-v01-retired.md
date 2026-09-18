@@ -1,10 +1,24 @@
+# Maintenance Domain Implementation Clarification — Retired
+
+> **Status:** Retired
+>
+> This document has been superseded and is no longer authoritative. All information that remains relevant to the project has been dispositioned within the current documentation hierarchy.
+>
+> **Successor:** [IS-21 — Maintenance Domain Implementation Specification](../../implementation/is-21-utils-domain-implementation-specification-v01.md) (canonical `maintenance.*` operation identities, `app/domains/maintenance/` module boundary, `MAINT_*` diagnostics, `maintenance.*` events, stronger-owner gate, and use-case mapping); [DD-4.4 — Maintenance Domain](../../dd_4_policy_and_resource_domains/dd-4-4-maintenance-domain-detailed-design-v01.md).
+>
+> **Disposition:** The reclassification this clarification specified — renaming IS-21's canonical identities, module boundary, diagnostics and events from `utils.*`/`UTIL_*` to `maintenance.*`/`MAINT_*` — has been applied directly to IS-21 itself, including a filename-compatibility disclaimer matching the one already present in the Functional Specification. No information from this clarification remains solely recorded here.
+
+---
+
+*Original clarification content preserved below for provenance.*
+
 # Maintenance Domain Implementation Clarification
 
 > **Document type:** Implementation clarification
 >
 > **Status:** Active — temporary PBC-1 integration vehicle
 >
-> **Primary implementation:** [IS-21 — Utils Domain](../is-21-utils-domain-implementation-specification-v01.md)
+> **Primary implementation:** [IS-21 — Maintenance Domain](../is-21-utils-domain-implementation-specification-v01.md)
 >
 > **DD binding:** Maintenance Domain Reclassification Clarification (DD-4.4 clarification)
 

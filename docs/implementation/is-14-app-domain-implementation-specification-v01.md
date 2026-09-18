@@ -16,7 +16,7 @@
 >
 > **Shared capabilities:** [IS-4 — Resource Access](is-4-resource-access-implementation-specification-v01.md), [IS-5 — Process Execution](is-5-process-execution-implementation-specification-v01.md), [IS-6 — Repository Capability](is-6-repository-capability-implementation-specification-v01.md), [IS-7 — Source Intelligence](is-7-source-intelligence-implementation-specification-v01.md), [IS-8 — Source Transformation](is-8-source-transformation-implementation-specification-v01.md), [IS-9 — Resource Registry and Template](is-9-resource-registry-and-template-implementation-specification-v01.md), [IS-10 — AI Capability](is-10-ai-capability-implementation-specification-v01.md), [IS-11 — Quality Capability](is-11-quality-capability-implementation-specification-v01.md), [IS-12 — Documentation Capability](is-12-documentation-capability-implementation-specification-v01.md), [IS-13 — Nuxt Capability](is-13-nuxt-capability-implementation-specification-v01.md)
 >
-> **Related domain implementations:** IS-15 Git Domain, IS-16 Nuxt Domain, IS-17 Docs Domain, IS-18 Quality Domain, IS-19 Settings Domain, IS-20 AI Domain, IS-21 Utils Domain
+> **Related domain implementations:** IS-15 Git Domain, IS-16 Nuxt Domain, IS-17 Docs Domain, IS-18 Quality Domain, IS-19 Settings Domain, IS-20 AI Domain, IS-21 Maintenance Domain
 >
 > **Interaction/runtime:** IS-22 Interaction Adapters, [IS-23 — Build and Runtime Assembly](is-23-build-and-runtime-assembly-implementation-specification-v01.md)
 >
